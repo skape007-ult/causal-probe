@@ -1,0 +1,90 @@
+{
+ "model": "Qwen/Qwen2.5-0.5B-Instruct",
+ "torch": "2.15.0",
+ "n_prompts": 5,
+ "answer_tokens": {
+  "yes": {
+   "Yes": 9454,
+   " Yes": 7414,
+   "yes": 9693,
+   " yes": 9834,
+   "YES": 14004,
+   " YES": 14080
+  },
+  "no": {
+   "No": 2753,
+   " No": 2308,
+   "no": 2152,
+   " no": 902,
+   "NO": 8996,
+   " NO": 5664
+  }
+ },
+ "configs": {
+  "cpu/float32": {
+   "items_per_s": 2.7033567792038373
+  },
+  "mps/float32": {
+   "max_abs_logit_diff": 0.0001150369644165039,
+   "max_abs_answer_logit_diff_gap": 5.340576171875e-05,
+   "top1_agree": 1.0,
+   "any_nan": false,
+   "batched_vs_single": {
+    "max_abs_logit_diff": 8.058547973632812e-05,
+    "max_abs_answer_logit_diff_gap": 2.47955322265625e-05,
+    "top1_agree": 1.0,
+    "any_nan": false
+   },
+   "items_per_s": 0.8019275505164803,
+   "mps_alloc_gb": 8.246738944
+  },
+  "mps/float16": {
+   "max_abs_logit_diff": 0.05046415328979492,
+   "max_abs_answer_logit_diff_gap": 0.022785186767578125,
+   "top1_agree": 1.0,
+   "any_nan": false,
+   "batched_vs_single": {
+    "max_abs_logit_diff": 0.0546875,
+    "max_abs_answer_logit_diff_gap": 0.015626907348632812,
+    "top1_agree": 1.0,
+    "any_nan": false
+   },
+   "items_per_s": 8.520053792399047,
+   "mps_alloc_gb": 2.254127104
+  },
+  "mps/bfloat16": {
+   "max_abs_logit_diff": 0.39995813369750977,
+   "max_abs_answer_logit_diff_gap": 0.08920097351074219,
+   "top1_agree": 1.0,
+   "any_nan": false,
+   "batched_vs_single": {
+    "max_abs_logit_diff": 0.5,
+    "max_abs_answer_logit_diff_gap": 0.12495994567871094,
+    "top1_agree": 1.0,
+    "any_nan": false
+   },
+   "items_per_s": 8.228192697946957,
+   "mps_alloc_gb": 2.285584384
+  }
+ },
+ "cpu_batched_vs_single": {
+  "max_abs_logit_diff": 9.608268737792969e-05,
+  "max_abs_answer_logit_diff_gap": 4.38690185546875e-05,
+  "top1_agree": 1.0,
+  "any_nan": false
+ },
+ "ref_answer_logit_diff": [
+  -0.9290771484375,
+  -0.9642047882080078,
+  -1.0740985870361328,
+  -0.8242568969726562,
+  -0.3147239685058594
+ ],
+ "transformer_lens_vs_hf": {
+  "max_abs_logit_diff": 7.200241088867188e-05,
+  "max_abs_answer_logit_diff_gap": 3.24249267578125e-05,
+  "top1_agree": 1.0,
+  "any_nan": false
+ },
+ "mean_bench_tokens": 209.09375
+}

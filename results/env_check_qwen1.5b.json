@@ -1,0 +1,71 @@
+{
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "torch": "2.15.0",
+ "n_prompts": 5,
+ "answer_tokens": {
+  "yes": {
+   "Yes": 9454,
+   " Yes": 7414,
+   "yes": 9693,
+   " yes": 9834,
+   "YES": 14004,
+   " YES": 14080
+  },
+  "no": {
+   "No": 2753,
+   " No": 2308,
+   "no": 2152,
+   " no": 902,
+   "NO": 8996,
+   " NO": 5664
+  }
+ },
+ "configs": {
+  "cpu/ref": {
+   "items_per_s": 0.1835132614106682
+  },
+  "mps/float16": {
+   "max_abs_logit_diff": 0.0625,
+   "max_abs_answer_logit_diff_gap": 0.03125,
+   "top1_agree": 1.0,
+   "any_nan": false,
+   "batched_vs_single": {
+    "max_abs_logit_diff": 0.078125,
+    "max_abs_answer_logit_diff_gap": 0.015625,
+    "top1_agree": 1.0,
+    "any_nan": false
+   },
+   "items_per_s": 2.233105634339683,
+   "mps_alloc_gb": 5.249908736
+  },
+  "mps/bfloat16": {
+   "max_abs_logit_diff": 0.671875,
+   "max_abs_answer_logit_diff_gap": 0.20284271240234375,
+   "top1_agree": 1.0,
+   "any_nan": false,
+   "batched_vs_single": {
+    "max_abs_logit_diff": 0.5625,
+    "max_abs_answer_logit_diff_gap": 0.24970245361328125,
+    "top1_agree": 1.0,
+    "any_nan": false
+   },
+   "items_per_s": 2.4664949781665007,
+   "mps_alloc_gb": 5.250957312
+  }
+ },
+ "cpu_batched_vs_single": {
+  "max_abs_logit_diff": 0.06640625,
+  "max_abs_answer_logit_diff_gap": 0.015651702880859375,
+  "top1_agree": 1.0,
+  "any_nan": false
+ },
+ "cpu_ref_dtype": "float16",
+ "ref_answer_logit_diff": [
+  -3.6562061309814453,
+  -2.921834945678711,
+  -1.734354019165039,
+  -2.0450191497802734,
+  0.3151988983154297
+ ],
+ "mean_bench_tokens": 209.09375
+}

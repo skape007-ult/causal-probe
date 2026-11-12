@@ -1,0 +1,44 @@
+{
+ "model": "google/gemma-2-2b-it",
+ "torch": "2.15.0",
+ "n_prompts": 5,
+ "answer_tokens": {
+  "yes": {
+   "Yes": 3553,
+   " Yes": 6287,
+   "yes": 3276,
+   " yes": 7778,
+   "YES": 17480,
+   " YES": 21869
+  },
+  "no": {
+   "No": 1294,
+   " No": 1307,
+   "no": 956,
+   " no": 793,
+   "NO": 5349,
+   " NO": 6390
+  }
+ },
+ "configs": {
+  "mps/float16": {
+   "any_nan": false,
+   "answer_logit_diff": [
+    0.23441505432128906,
+    -2.984373092651367,
+    -0.24995803833007812,
+    -3.5,
+    2.3907814025878906
+   ],
+   "batched_vs_single": {
+    "max_abs_logit_diff": 0.046875,
+    "max_abs_answer_logit_diff_gap": 0.015626907348632812,
+    "top1_agree": 1.0,
+    "any_nan": false
+   },
+   "items_per_s": 0.23135776093084853,
+   "mps_alloc_gb": 6.75356672
+  }
+ },
+ "mean_bench_tokens": 188.46875
+}

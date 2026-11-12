@@ -10,3 +10,4 @@ checkpoints/
 *.npy
 *.npz
 .DS_Store
+logs/

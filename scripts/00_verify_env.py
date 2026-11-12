@@ -21,8 +21,8 @@ def final_logits(model, tok, texts, device, batch=False):
     outs = []
     if batch:
         enc = tok(texts, add_special_tokens=False, return_tensors="pt", padding=True).to(device)
-        with torch.no_grad():
-            lg = model(**enc).logits[:, -1].float().cpu()
+        with torch.no_grad():   # production path: unembed the last position only
+            lg = models.final_logits(model, enc.input_ids, enc.attention_mask).cpu()
         return lg
     for t in texts:
         enc = tok(t, add_special_tokens=False, return_tensors="pt").to(device)

@@ -19,7 +19,7 @@ from collections import Counter, defaultdict
 import numpy as np
 
 from .config import (C2C_PROBE_PER_PREMISE, C2C_PROBE_PREMISES, CLADDER_N,
-                     DATA_RAW, SEED)
+                     DATA_RAW, N_SUB, SEED)
 
 csv.field_size_limit(10**9)
 HYP_SEP = "\nHypothesis: "
@@ -159,4 +159,8 @@ def get_dataset(tag: str) -> list[dict]:
         return [rename_variables(i) for i in load_c2c("test")]
     if tag == "cladder":
         return cladder_sample()
+    if tag in ("c2c_test_sub", "cladder_sub"):   # evenly spaced subsets for generation / few-shot
+        full = get_dataset(tag.removesuffix("_sub"))
+        idx = np.unique(np.linspace(0, len(full) - 1, N_SUB).round().astype(int))
+        return [full[i] for i in idx]
     raise KeyError(tag)

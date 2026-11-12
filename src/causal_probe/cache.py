@@ -20,7 +20,10 @@ import torch
 from . import data, models, prompts
 from .config import CACHE, K_SHOTS, POSITIONS, SEED
 
-TOKEN_BUDGET = {"qwen0.5b": 6000, "qwen1.5b": 3500, "gemma2b": 2000}
+# Tokens per batch (batch size x longest item). Gemma runs one item at a time: on this
+# machine batching gives it no speed-up (the GPU is already saturated) and the extra
+# activation memory pushes it into swap (measured: B=1 0.6 s/item, B=4 2.6-6 s/batch).
+TOKEN_BUDGET = {"qwen0.5b": 6000, "qwen1.5b": 3500, "gemma2b": 1}
 
 
 def cache_dir(model_name: str, tag: str, random_init: bool = False) -> Path:
@@ -31,7 +34,9 @@ def fewshot_examples(dataset: str) -> list[dict]:
     """Fixed demonstrations. Corr2Cause: from dev (short premises, <=4 variables).
     CLadder: from the full set minus our subsample."""
     if dataset == "c2c":
-        return prompts.pick_shots(data.load_c2c("dev"), K_SHOTS, SEED, max_chars=450)
+        test_prems = {i["group"] for i in data.load_c2c("test")}
+        pool = [i for i in data.load_c2c("dev") if i["group"] not in test_prems]
+        return prompts.pick_shots(pool, K_SHOTS, SEED, max_chars=450)
     used = {i["uid"] for i in data.cladder_sample()}
     pool = [i for i in data.load_cladder() if i["uid"] not in used]
     return prompts.pick_shots(pool, K_SHOTS, SEED, max_chars=450)
@@ -89,7 +94,7 @@ def save_readout(model, ans: dict, path: Path):
              norm_weight=norm.weight.detach().float().cpu().numpy(),
              norm_eps=float(getattr(norm, "eps", getattr(norm, "variance_epsilon", 1e-6))),
              norm_type=type(norm).__name__,
-             W_U=model.lm_head.weight[ids].detach().float().cpu().numpy(),
+             W_U=models.unembed_rows(model, ids).numpy(),
              n_yes=len(ans["yes"]),
              softcap=float(getattr(model.config, "final_logit_softcapping", 0) or 0))
 
@@ -114,6 +119,9 @@ def build_cache(model_name: str, tag: str, random_init: bool = False, model=None
     ans = models.answer_token_ids(tok)
     yes_ids, no_ids = list(ans["yes"].values()), list(ans["no"].values())
     save_readout(model, ans, out / "readout.npz")
+    # With the embedding matrix on disk (Gemma), full-vocab logits per batch would page 1.2 GB
+    # through memory and stall the GPU; there we store answer-token logits only.
+    full_vocab = models.has_cheap_full_vocab(model)
 
     encs = [prompts.encode_with_positions(tok, it, shots) for it in items]
     lengths = [len(e["input_ids"]) for e in encs]
@@ -139,13 +147,17 @@ def build_cache(model_name: str, tag: str, random_init: bool = False, model=None
                 mask[r, T - n:] = 1
                 idx[r] = torch.tensor([encs[i]["pos"][p] + (T - n) for p in POSITIONS])
             coll.idx = idx.to(device)
-            logits = model(input_ids=ids.to(device), attention_mask=mask.to(device)).logits[:, -1].float()
+            h = models.body_forward(model, ids, mask).last_hidden_state[:, -1]
             res = coll.pop()
-            top = logits.max(-1)
+            al = models.answer_logits_from_hidden(model, h, ans)
+            if device.type == "mps" and not full_vocab:
+                torch.mps.empty_cache()     # keep the allocator from growing into swap
+            if full_vocab:      # top-1 token over the whole vocabulary (diagnostic)
+                top = models.logits_from_hidden(model, h).max(-1)
             for r, j in enumerate(batch):
                 resid[j] = res[r]
-                ans_logits[j] = logits[r, yes_ids + no_ids].cpu().numpy()
-                top1[j] = (top.indices[r].item(), top.values[r].item())
+                ans_logits[j] = al[r].numpy()
+                top1[j] = (top.indices[r].item(), top.values[r].item()) if full_vocab else (-1, np.nan)
         resid = torch.stack(resid).numpy()
         assert np.isfinite(resid).all(), "non-finite activations"
         r16 = resid.astype(np.float16)
@@ -174,8 +186,9 @@ def build_cache(model_name: str, tag: str, random_init: bool = False, model=None
         uids=[i["uid"] for i in items], labels=[i["label"] for i in items],
         n_tokens=lengths, pos=[[e["pos"][p] for p in POSITIONS] for e in encs],
         answer_tokens=ans, ans_logits=ans_logits.tolist(), logit_diff=ld.tolist(),
-        top1_id=top1[:, 0].astype(int).tolist(), top1_logit=top1[:, 1].tolist(),
-        top1_tok=[tok.decode([int(t)]) for t in top1[:, 0]],
+        top1_id=top1[:, 0].astype(int).tolist() if full_vocab else None,
+        top1_logit=top1[:, 1].tolist() if full_vocab else None,
+        top1_tok=[tok.decode([int(t)]) for t in top1[:, 0]] if full_vocab else None,
         max_abs_activation=float(max(float(p["max_abs"]) for p in parts)),
         fewshot_uids=[s["uid"] for s in shots] if shots else None,
         device=str(device), model_dtype=str(next(model.parameters()).dtype),
@@ -199,18 +212,34 @@ def load_cache(model_name: str, tag: str, random_init: bool = False, mmap: bool 
 @torch.no_grad()
 def generate_answers(model, tok, items: list[dict], shots=None, max_new_tokens: int = 6,
                      budget: int = 2000) -> list[str]:
-    """Greedy-decode a short answer for each item (for 'generated text' scoring)."""
-    device = next(model.parameters()).device
-    texts = [prompts.render(tok, it, shots) for it in items]
-    lengths = [len(tok(t, add_special_tokens=False).input_ids) for t in texts]
+    """Greedy-decode a short answer for each item (for 'generated text' scoring).
+    Own greedy loop with a key-value cache (equivalent to generate(do_sample=False)), so it
+    also works when the embedding matrix lives on disk."""
+    encs = [tok(prompts.render(tok, it, shots), add_special_tokens=False).input_ids for it in items]
+    lengths = [len(e) for e in encs]
     out = [None] * len(items)
     for batch in make_batches(lengths, budget):
-        enc = tok([texts[i] for i in batch], add_special_tokens=False, return_tensors="pt",
-                  padding=True).to(device)
-        gen = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False,
-                             pad_token_id=tok.pad_token_id)
+        T = max(lengths[i] for i in batch)
+        ids = torch.full((len(batch), T), tok.pad_token_id, dtype=torch.long)
+        mask = torch.zeros((len(batch), T), dtype=torch.long)
         for r, i in enumerate(batch):
-            out[i] = tok.decode(gen[r, enc.input_ids.shape[1]:], skip_special_tokens=True)
+            ids[r, T - lengths[i]:] = torch.tensor(encs[i]); mask[r, T - lengths[i]:] = 1
+        new, past, cur = [], None, ids
+        for _ in range(max_new_tokens):
+            o = models.body_forward(model, cur, mask, past_key_values=past, use_cache=True)
+            past = o.past_key_values
+            nxt = models.logits_from_hidden(model, o.last_hidden_state[:, -1]).argmax(-1)
+            new.append(nxt)
+            cur = nxt[:, None]
+            mask = torch.cat([mask, torch.ones((len(batch), 1), dtype=torch.long)], 1)
+        new = torch.stack(new, 1)
+        for r, i in enumerate(batch):
+            toks = new[r].tolist()
+            for stop in (tok.eos_token_id, tok.convert_tokens_to_ids("<|im_end|>"),
+                         tok.convert_tokens_to_ids("<end_of_turn>")):
+                if stop is not None and stop in toks:
+                    toks = toks[: toks.index(stop)]
+            out[i] = tok.decode(toks, skip_special_tokens=True)
     return out
 
 

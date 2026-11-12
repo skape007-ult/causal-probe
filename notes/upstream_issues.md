@@ -27,3 +27,16 @@ print(sum(prem(r) in tr for r in dev), len({prem(r) for r in dev} & tr))   # 42 
 
 ## U5. TransformerLens 4: `HookedTransformer` import fails with an ImportError that points at a doc path
 - `from transformer_lens import HookedTransformer` raises `ImportError: 'HookedTransformer' was removed in TransformerLens 4.0 ... See docs/source/content/migrating_to_v4.md` — a repo-relative path that does not exist in the installed wheel, with no URL. Minor doc gap. (transformer-lens 4.4.0.)
+
+## U6. transformers 5.22: `output_hidden_states` last entry is post-final-norm for Qwen2 (silent trap for logit lens)
+- With `Qwen/Qwen2.5-0.5B-Instruct`, `out.hidden_states[-1]` equals `model.model.norm(last_block_output)`, while `hidden_states[:-1]` are raw (pre-norm) block outputs. Anyone doing a logit lens via `hidden_states` and applying `model.model.norm` themselves double-normalises the last layer only. The docstring ("hidden-states of the model at the output of each layer") does not say the final norm is included. I have not checked whether this differs from transformers 4.x or across architectures.
+- Repro (prints False / True / True):
+```python
+import torch; from transformers import AutoModelForCausalLM, AutoTokenizer
+n="Qwen/Qwen2.5-0.5B-Instruct"; tok=AutoTokenizer.from_pretrained(n); m=AutoModelForCausalLM.from_pretrained(n)
+g={}; m.model.layers[-1].register_forward_hook(lambda mod,a,o: g.__setitem__("x", o[0] if isinstance(o,tuple) else o))
+m.model.layers[-2].register_forward_hook(lambda mod,a,o: g.__setitem__("x2", o[0] if isinstance(o,tuple) else o))
+hs=m(tok("The cat sat on the mat",return_tensors="pt").input_ids, output_hidden_states=True).hidden_states
+print(torch.allclose(hs[-1],g["x"],atol=1e-4), torch.allclose(hs[-1],m.model.norm(g["x"]),atol=1e-4), torch.allclose(hs[-2],g["x2"],atol=1e-4))
+```
+- Our cache uses forward hooks on the blocks, so it is unaffected (tests/test_cache.py checks both facts).

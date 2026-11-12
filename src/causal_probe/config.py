@@ -25,8 +25,7 @@ MODELS = {
 C2C_PROBE_PREMISES = 300      # premises sampled from train
 C2C_PROBE_PER_PREMISE = 8     # 4 positive + 4 negative hypotheses per premise
 CLADDER_N = 3000              # stratified by label x query_type (rung is a function of query_type)
-N_GEN = 300                   # items per dataset scored by generated text as well as logits
-N_FEWSHOT = 500               # items per dataset for the few-shot behavioural run
+N_SUB = 500                   # evenly spaced subset per dataset: generated-text scoring and few-shot runs
 K_SHOTS = 4
 
 POSITIONS = ("final", "content_end", "premise_end")

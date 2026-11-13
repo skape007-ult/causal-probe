@@ -254,7 +254,8 @@ def main():
                       f"(majority {v['majority']:.3f})  AUROC {v['auroc']['est']:.3f} [{v['auroc']['lo']:.3f}, {v['auroc']['hi']:.3f}]  "
                       f"best-threshold acc {v['best_threshold_acc']['est']:.3f}  -> {v['reading']}")
     print("\n" + ("DONE with problems:\n  - " + "\n  - ".join(problems) if problems else "DONE: everything expected is present and consistent."))
-    print("Next: OMP_NUM_THREADS=2 nice ./scripts/run_tier1.sh " + (large or "<model>") + " 2    (probes and baselines for the new model, CPU, a few hours)")
+    print("Next (see notes/progress.md, 'When the Kaggle zips come back'): ./scripts/guarded.sh tier1 ./scripts/run_tier1.sh "
+          + (large or "<model>") + " 2    (probes and baselines for the new model, CPU, a few hours)")
     sys.exit(1 if problems and not a.allow_partial else 0)
 
 

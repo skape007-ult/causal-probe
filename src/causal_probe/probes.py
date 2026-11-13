@@ -17,7 +17,7 @@ from .config import N_FOLDS, SEED
 
 PROBE_C = 0.01               # the original fixed value (decision D7); kept as a sensitivity run
 PROBE_CS = (0.01, 0.1, 1.0)  # nested-CV grid (decision D17)
-TFIDF_CS = (0.1, 1.0, 10.0)
+TFIDF_CS = (0.1, 1.0, 10.0, 100.0)   # 100 added after the Tier 1 audit (optimum was at the grid edge)
 INNER_FOLDS = 3
 
 
@@ -119,6 +119,36 @@ def query_only_oof(items: list[dict], y: np.ndarray, folds) -> np.ndarray:
         prior = {k: (y[tr][keys[tr] == k].mean() if (keys[tr] == k).any() else y[tr].mean())
                  for k in np.unique(keys)}
         s[te] = [prior[k] - 0.5 for k in keys[te]]
+    return s
+
+
+def _hyp_key(it):
+    return it["query"] if it["dataset"] == "c2c" else f"{it['graph_id']}|{it['query_type']}"
+
+
+def hyp_prior_oof(items: list[dict], y: np.ndarray, folds) -> np.ndarray:
+    """Label prior given the exact hypothesis string (Corr2Cause), estimated on training folds.
+    Uses no premise and no activations. Added after the Tier 1 audit, which found that the
+    hypothesis string alone predicts the label with ~0.86 accuracy in the balanced pool
+    (variables are canonically ordered, so e.g. 'A directly causes D.' is usually valid).
+    For CLadder the key is graph|query_type (questions do not recur across stories)."""
+    keys = np.array([_hyp_key(it) for it in items])
+    s = np.zeros(len(y), np.float32)
+    for tr, te in folds:
+        prior = {k: y[tr][keys[tr] == k].mean() for k in np.unique(keys[tr])}
+        s[te] = [prior.get(k, y[tr].mean()) - 0.5 for k in keys[te]]
+    return s
+
+
+def tfidf_query_oof(items: list[dict], y: np.ndarray, folds, C: float = 10.0) -> np.ndarray:
+    """TF-IDF on the hypothesis / question text only (1-3 grams). The long premise dilutes the
+    hypothesis tokens in a full-text TF-IDF vector; this variant does not have that handicap."""
+    texts = np.array([it["query"] for it in items], dtype=object)
+    s = np.zeros(len(y), np.float32)
+    for tr, te in folds:
+        vec = TfidfVectorizer(ngram_range=(1, 3), lowercase=False, token_pattern=r"(?u)\b\w+\b", min_df=1, sublinear_tf=True)
+        clf = LogisticRegression(C=C, max_iter=1000).fit(vec.fit_transform(texts[tr]), y[tr])
+        s[te] = clf.decision_function(vec.transform(texts[te]))
     return s
 
 
@@ -224,14 +254,46 @@ def structural_features(items: list[dict]) -> np.ndarray:
     return np.array(rows, np.float32)
 
 
-def structural_oof(items: list[dict], y: np.ndarray, folds) -> np.ndarray:
-    """Out-of-fold scores of a gradient-boosted classifier on `structural_features` (non-linear,
-    so template x structure interactions are available to it). Returns logit-like scores."""
+def _oof_prior(items_tr, y_tr, n_inner: int = 5):
+    """Hypothesis-string prior as a feature for the TRAINING rows, computed out-of-fold over
+    inner premise-grouped folds, so a row's own label (and its premise-mates') never enters its
+    own feature. (A leave-one-out encoding leaks the complement of the label in balanced cells:
+    the model learns 'prior slightly below average -> positive' and collapses on test data.)"""
+    from sklearn.model_selection import GroupKFold
+    keys = np.array([_hyp_key(i) for i in items_tr]); g = np.array([i["group"] for i in items_tr])
+    out = np.full(len(y_tr), float(np.mean(y_tr)), np.float32)
+    for a, b in GroupKFold(n_splits=min(n_inner, len(set(g)))).split(keys, y_tr, g):
+        prior = {k: y_tr[a][keys[a] == k].mean() for k in np.unique(keys[a])}
+        out[b] = [prior.get(k, y_tr[a].mean()) for k in keys[b]]
+    return out
+
+
+def _train_prior(items_tr, y_tr, items_te):
+    ktr = np.array([_hyp_key(i) for i in items_tr])
+    prior = {k: y_tr[ktr == k].mean() for k in np.unique(ktr)}
+    return np.array([prior.get(_hyp_key(i), y_tr.mean()) for i in items_te], np.float32)
+
+
+def structural_fit_predict(items_tr, y_tr, items_te) -> np.ndarray:
+    """Gradient boosting on structural_features; for Corr2Cause also the hypothesis-string prior
+    (the strongest text-only baseline we use). Returns logit-like scores for the test items.
+    CLadder gets no prior feature: its query/graph types are already one-hot features and are
+    label-balanced by construction."""
     from sklearn.ensemble import HistGradientBoostingClassifier
-    X = structural_features(items)
+    Xtr, Xte = structural_features(items_tr), structural_features(items_te)
+    if items_tr[0]["dataset"] == "c2c":
+        Xtr = np.column_stack([Xtr, _oof_prior(items_tr, y_tr)])
+        Xte = np.column_stack([Xte, _train_prior(items_tr, y_tr, items_te)])
+    clf = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.1, random_state=0).fit(Xtr, y_tr)
+    pr = np.clip(clf.predict_proba(Xte)[:, 1], 1e-4, 1 - 1e-4)
+    return np.log(pr / (1 - pr)).astype(np.float32)
+
+
+def structural_oof(items: list[dict], y: np.ndarray, folds) -> np.ndarray:
+    """Out-of-fold scores of `structural_fit_predict` (non-linear, so template x structure
+    interactions are available to it)."""
     s = np.zeros(len(y), np.float32)
+    arr = np.array(items, dtype=object)
     for tr, te in folds:
-        clf = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.1, random_state=0).fit(X[tr], y[tr])
-        pr = np.clip(clf.predict_proba(X[te])[:, 1], 1e-4, 1 - 1e-4)
-        s[te] = np.log(pr / (1 - pr))
+        s[te] = structural_fit_predict(list(arr[tr]), y[tr], list(arr[te]))
     return s

@@ -29,6 +29,14 @@ def acc_fn(y, s):
     return stats.accuracy(y, (s > 0).astype(int))
 
 
+def bacc_fn(y, s):
+    """Balanced accuracy (mean of the two class recalls); NaN if a class is absent."""
+    p = (s > 0).astype(int)
+    if (y == 1).sum() == 0 or (y == 0).sum() == 0:
+        return float("nan")
+    return 0.5 * (float((p[y == 1] == 1).mean()) + float((p[y == 0] == 0).mean()))
+
+
 def diff_acc(y, a, b):
     return acc_fn(y, a) - acc_fn(y, b)
 
@@ -43,8 +51,10 @@ def block(y, scores: dict, groups, ref="gold_probe"):
     if len(y) < 20:
         out["skipped"] = "fewer than 20 items"
         return out
+    out["majority_rate"] = float(max(np.mean(y), 1 - np.mean(y)))
     for k, s in scores.items():
-        out[k] = {"accuracy": ci(acc_fn, (y, s), groups), "auroc": ci(stats.auroc, (y, s), groups)}
+        out[k] = {"accuracy": ci(acc_fn, (y, s), groups), "auroc": ci(stats.auroc, (y, s), groups),
+                  "balanced_accuracy": ci(bacc_fn, (y, s), groups)}
     for k, s in scores.items():
         if k != ref:
             out[f"{ref}_minus_{k}"] = {"accuracy": ci(diff_acc, (y, scores[ref], s), groups),
@@ -93,10 +103,20 @@ def main():
         picked_scores[name] = oofs[best[1]][name]
         return best[2], best[3]
 
+    from causal_probe.config import PROBE_SEEDS
+    seed_folds = [probes.folds_for(items, sd) for sd in PROBE_SEEDS]
+
+    def tfidf_at(tc):
+        key = f"tfidf_C{tc:g}"
+        if key in oof.files:
+            return oof[key]
+        return np.stack([probes.tfidf_oof(items, y, f, C=tc) for f in seed_folds])   # grid value added after caching
+
     def pick_tfidf():
-        accs = {tc: float(((oof[f"tfidf_C{tc:g}"][:, sel] > 0) == y[sel][None]).mean()) for tc in TCs}
+        S = {tc: tfidf_at(tc) for tc in TCs}
+        accs = {tc: float(((S[tc][:, sel] > 0) == y[sel][None]).mean()) for tc in TCs}
         tc = max(accs, key=accs.get)
-        return tc, oof[f"tfidf_C{tc:g}"].mean(0), accs
+        return tc, S[tc].mean(0), accs
 
     res = {"model": a.model, "tag": a.tag, "n": int(len(y)),
            "n_select": int(sel.sum()), "n_report": int(rep.sum()),
@@ -113,16 +133,39 @@ def main():
     scores = {"gold_probe": picked_scores["gold"][:, L_gold].mean(0),
               "tfidf": tfidf_scores, "type_prior": oof["type_prior"].mean(0),
               "model_logit_diff": ld}
-    if True:
-        # Post-hoc, stronger text baseline (added after the TF-IDF criterion was first met; see
-        # notes/log.md): gradient boosting on parsed text features (Corr2Cause: premise statements
-        # bound to the hypothesis variables; CLadder: quoted probabilities, their differences and
-        # the question's polarity). Same grouped folds as the probes. Not part of the pre-registered verdict.
-        from causal_probe.config import PROBE_SEEDS
-        scores["structural"] = np.mean([probes.structural_oof(items, y, probes.folds_for(items, sd))
-                                        for sd in PROBE_SEEDS], 0)
-        res["structural_accuracy_all_items"] = stats.accuracy(y, (scores["structural"] > 0).astype(int))
-        res["structural_auroc_all_items"] = stats.auroc(y, scores["structural"])
+    # Stronger text-only baselines (post-hoc; D18 and the Tier 1 audit, see notes/log.md). Same grouped
+    # folds as the probes. None is part of the pre-registered verdict; all enter the audited verdict.
+    #   structural   gradient boosting on parsed text features + hypothesis-string prior
+    #   hyp_prior    label prior given the exact hypothesis string (Corr2Cause only)
+    #   tfidf_query  TF-IDF of the hypothesis / question alone
+    scores["structural"] = np.mean([probes.structural_oof(items, y, f) for f in seed_folds], 0)
+    scores["tfidf_query"] = np.mean([probes.tfidf_query_oof(items, y, f) for f in seed_folds], 0)
+    if a.tag == "c2c_probe":
+        scores["hyp_prior"] = np.mean([probes.hyp_prior_oof(items, y, f) for f in seed_folds], 0)
+    text_names = [k for k in ("tfidf", "type_prior", "hyp_prior", "tfidf_query", "structural") if k in scores]
+    text_sel_acc = {k: acc_fn(y[sel], scores[k][sel]) for k in text_names}
+    best_text = max(text_sel_acc, key=text_sel_acc.get)          # chosen on the selection half
+    scores["best_text"] = scores[best_text]
+    res["best_text_baseline"] = best_text
+    res["text_baselines_selection_half_accuracy"] = text_sel_acc
+    res["text_baselines_all_items"] = {k: {"accuracy": acc_fn(y, scores[k]), "auroc": stats.auroc(y, scores[k])} for k in text_names}
+    res["structural_accuracy_all_items"] = res["text_baselines_all_items"]["structural"]["accuracy"]
+    res["structural_auroc_all_items"] = res["text_baselines_all_items"]["structural"]["auroc"]
+    # Other token positions: (layer, C) chosen on the selection half, accuracy on the report half.
+    # premise_end precedes the hypothesis/question, so label information there is a context-only shortcut.
+    res["positions"] = {}
+    for pname in ("content_end", "premise_end"):
+        key = f"gold_at_{pname}"
+        best = None
+        for c in Cs:
+            S = oofs[c][key]
+            acc = ((S[:, :, sel] > 0) == y[sel][None, None]).mean((0, 2))
+            if best is None or acc.max() > best[0]:
+                best = (acc.max(), c, int(acc.argmax()))
+        sp = oofs[best[1]][key][:, best[2]].mean(0)
+        res["positions"][pname] = {"selected_layer": best[2], "selected_C": best[1],
+                                   "accuracy": ci(acc_fn, (y[rep], sp[rep]), groups[rep]),
+                                   "final_minus_this_accuracy": ci(diff_acc, (y[rep], scores["gold_probe"][rep], sp[rep]), groups[rep])}
     if "random_init" in oof.files:
         L_r, _ = pick("random_init")
         res["selected_layer_random_init"] = L_r
@@ -226,6 +269,30 @@ def main():
             "survives": bool(res["verdict"]["represents_but_doesnt_say"] and sl is not None and sl > 0),
         }
 
+    # ---- audited verdict (added after the independent Tier 1 audit; see notes/log.md)
+    # Problems with the pre-registered one: (i) "accuracy on model-wrong items > 0.5" is not a test
+    # against chance when the wrong set is mostly one class; (ii) TF-IDF and the template prior are
+    # weak stand-ins for "what the text gives away". The audited test compares the probe with the
+    # strongest text-only baseline (chosen on the selection half), on all report items and inside
+    # each calibrated model-answer stratum (threshold-free AUROC).
+    wy = res["model_wrong"].get("frac_gold_yes")
+    aud = {
+        "definition": "gold probe must beat the strongest text-only baseline (chosen on the selection half among "
+                      + ", ".join(text_names) + "): 95% CI lower bound > 0 for the paired accuracy difference on all "
+                      "report items AND for the paired AUROC difference inside both calibrated model-answer strata.",
+        "best_text_baseline": best_text,
+        "raw_wrong_items_frac_gold_yes": wy,
+        "raw_wrong_items_criterion_applicable": bool(wy is not None and 0.2 <= wy <= 0.8),
+        "all_items_probe_minus_best_text_accuracy": res["all_items"]["gold_probe_minus_best_text"]["accuracy"],
+        "all_items_probe_minus_best_text_auroc": res["all_items"]["gold_probe_minus_best_text"]["auroc"],
+        "calibrated_strata_probe_minus_best_text_auroc": {
+            sname: cw[sname]["gold_probe_minus_best_text"]["auroc"] for sname in ("model_said_yes", "model_said_no")
+            if "gold_probe_minus_best_text" in cw[sname]},
+    }
+    los = [aud["all_items_probe_minus_best_text_accuracy"]["lo"]] + [v["lo"] for v in aud["calibrated_strata_probe_minus_best_text_auroc"].values()]
+    aud["represents_beyond_best_text_baseline"] = bool(len(los) == 3 and all(v is not None and v > 0 for v in los))
+    res["verdict"]["audited"] = aud
+
     # ---- external check for Corr2Cause: train on the whole pool, test on the natural-distribution test set
     if a.tag == "c2c_probe":
         pres, _, _ = cache.load_cache(a.model, "c2c_probe")
@@ -243,11 +310,11 @@ def main():
         tmpl = np.array([i["template"] for i in items]); ttmpl = np.array([i["template"] for i in titems])
         prior = {k: y[tmpl == k].mean() - 0.5 for k in np.unique(tmpl)}
         s_prior = np.array([prior.get(k, 0.0) for k in ttmpl], np.float32)
-        from sklearn.ensemble import HistGradientBoostingClassifier
-        hgb = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.1, random_state=0).fit(probes.structural_features(items), y)
-        pr = np.clip(hgb.predict_proba(probes.structural_features(titems))[:, 1], 1e-4, 1 - 1e-4)
+        hq = np.array([i["query"] for i in items]); thq = np.array([i["query"] for i in titems])
+        hp = {k: y[hq == k].mean() - 0.5 for k in np.unique(hq)}
         tscores = {"gold_probe": s_probe, "tfidf": s_tfidf, "type_prior": s_prior, "model_logit_diff": tld,
-                   "structural": np.log(pr / (1 - pr))}
+                   "structural": probes.structural_fit_predict(items, y, titems),
+                   "hyp_prior": np.array([hp.get(k, 0.0) for k in thq], np.float32)}
         ext = {"note": "probe/TF-IDF trained on the balanced train pool at the selected layer; evaluated on test.csv "
                        "(15.5% positive, 21 premises, 2-6 variables vs 4-6 in the pool: a distribution shift). "
                        "Use AUROC; accuracy at threshold 0 reflects the balanced training prior.",
@@ -272,6 +339,11 @@ def main():
         print(f"   post-hoc structural baseline on wrong items: {mw['structural']['accuracy']['est']:.3f}; probe - structural "
               f"{mw['gold_probe_minus_structural']['accuracy']['est']:+.3f} [{mw['gold_probe_minus_structural']['accuracy']['lo']:+.3f},"
               f"{mw['gold_probe_minus_structural']['accuracy']['hi']:+.3f}] -> survives={res['verdict']['post_hoc_structural_baseline']['survives']}")
+    print(f"   AUDITED: best text baseline = {best_text}; all report items probe - best_text acc "
+          f"{aud['all_items_probe_minus_best_text_accuracy']['est']:+.3f} [{aud['all_items_probe_minus_best_text_accuracy']['lo']:+.3f},"
+          f"{aud['all_items_probe_minus_best_text_accuracy']['hi']:+.3f}]; strata AUROC diffs "
+          + ", ".join(f"{k.replace('model_', '')} {v['est']:+.3f} [{v['lo']:+.3f},{v['hi']:+.3f}]" for k, v in aud["calibrated_strata_probe_minus_best_text_auroc"].items())
+          + f" -> {aud['represents_beyond_best_text_baseline']}")
     for sname in ("model_said_yes", "model_said_no"):
         b = res[sname]
         if "gold_probe" in b:

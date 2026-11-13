@@ -52,7 +52,7 @@ def test_positions(tok, items):
 
 def test_fewshot_format(tok):
     pool = data.load_c2c("dev")
-    shots = prompts.pick_shots(pool, 4, seed=0, max_chars=400)
+    shots = prompts.pick_shots(pool, 4, seed=0, max_chars=450)
     assert [s["label"] for s in shots] == [1, 0, 1, 0]
     assert len({s["uid"] for s in shots}) == 4
     item = data.load_c2c("test")[5]

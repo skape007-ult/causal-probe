@@ -15,7 +15,9 @@ PARAMS_B = {"qwen0.5b": 0.494, "qwen1.5b": 1.54, "gemma2b": 2.61}   # parameter 
 
 def main():
     out = {"models": {}, "note": "selected layer = argmax of gold-probe accuracy on the selection half of "
-                                 "premises/stories; all metrics are on the report half (see 05_confound.py)."}
+                                 "premises/stories. Probe/baseline accuracies and their differences are on the report "
+                                 "half (see 05_confound.py). Selectivity and first_layer_within_1pt_* are computed "
+                                 "on all items from the per-layer curves at the selected C."}
     for m in MODELS:
         row = {"params_billion": PARAMS_B[m], "datasets": {}}
         for tag in ("c2c_probe", "cladder"):
@@ -41,6 +43,10 @@ def main():
                  "probe_minus_tfidf_accuracy": a["gold_probe_minus_tfidf"]["accuracy"],
                  "probe_minus_tfidf_auroc": a["gold_probe_minus_tfidf"]["auroc"],
                  "probe_minus_type_prior_accuracy": a["gold_probe_minus_type_prior"]["accuracy"],
+                 "best_text_baseline": c.get("best_text_baseline"),
+                 "best_text_accuracy": a.get("best_text", {}).get("accuracy"),
+                 "probe_minus_best_text_accuracy": a.get("gold_probe_minus_best_text", {}).get("accuracy"),
+                 "audited_criterion_met": c["verdict"].get("audited", {}).get("represents_beyond_best_text_baseline"),
                  "selectivity_at_selected_layer": float(gold[c["selected_layer_gold"]] - ctrl[c["selected_layer_gold"]]),
                  "max_selectivity": float((gold - ctrl).max()),
                  "represents_but_doesnt_say": c["verdict"]["represents_but_doesnt_say"],
@@ -79,7 +85,7 @@ def main():
     for m, row in out["models"].items():
         for tag, d in row["datasets"].items():
             print(f"{m:9s} {tag:10s} probe {d['gold_probe_accuracy']['est']:.3f} tfidf {d['tfidf_accuracy']['est']:.3f} "
-                  f"Δ {d['probe_minus_tfidf_accuracy']['est']:+.3f} [{d['probe_minus_tfidf_accuracy']['lo']:+.3f},{d['probe_minus_tfidf_accuracy']['hi']:+.3f}] "
+                  f"Δbest_text({d['best_text_baseline']}) {d['probe_minus_best_text_accuracy']['est']:+.3f} [{d['probe_minus_best_text_accuracy']['lo']:+.3f},{d['probe_minus_best_text_accuracy']['hi']:+.3f}] "
                   f"layer {d['selected_layer']}/{d['n_layers']} ({d['selected_layer_relative_depth']:.2f}) sel {d['selectivity_at_selected_layer']:+.3f}")
     for k, v in out["pairwise"].items():
         print(k, f"{v['est']:+.3f} [{v['lo']:+.3f},{v['hi']:+.3f}]")

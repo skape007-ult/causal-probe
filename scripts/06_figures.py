@@ -100,21 +100,26 @@ def fig_lens():
         res = load(f"lens_{m}.json")
         for i, tag in enumerate(tags):
             ax = axes[i, j]
-            for key, col, lab in (("correct", "#2a78d6", "model correct"), ("incorrect", "#e34948", "model incorrect")):
-                c = res[tag]["gold_signed"][key]
-                if c is None:
+            # Raw Yes-No lens logit difference by gold label and by whether the final answer is right.
+            # (The gold-signed version is a mirror-image artefact when the model's answer is nearly
+            # constant: "incorrect" is then just "gold = Yes". Tier 1 audit, finding 5.)
+            for key, col, ls in (("gold=yes/correct", "#2a78d6", "-"), ("gold=yes/incorrect", "#2a78d6", "--"),
+                                 ("gold=no/correct", "#eb6834", "-"), ("gold=no/incorrect", "#eb6834", "--")):
+                c = res[tag]["raw_by_gold_and_correct"][key]
+                if c is None or c["n"] < 20:
                     continue
                 x = depth(len(c["mean"]))[1:]      # layer 0 (raw embeddings) is off-scale noise under the lens
-                ax.plot(x, c["mean"][1:], color=col, label=f"{lab} (n={c['n']})")
-                ax.fill_between(x, c["lo"][1:], c["hi"][1:], color=col, alpha=0.18, lw=0)
+                g, k = key.split("/")
+                ax.plot(x, c["mean"][1:], color=col, ls=ls, lw=1.8, label=f"{g.replace('=', ' ')}, model {k} (n={c['n']})")
+                ax.fill_between(x, c["lo"][1:], c["hi"][1:], color=col, alpha=0.12, lw=0)
             ax.axhline(0, color=AXIS, lw=1)
             ax.set_title(f"{MODEL_LAB[m]} · {DATASET_LAB[tag]}", fontsize=9)
             ax.legend(fontsize=7, loc="upper left")
             if i == len(tags) - 1:
                 ax.set_xlabel("layer (0 = embeddings)")
             if j == 0:
-                ax.set_ylabel("gold-signed answer logit diff\n(>0 leans to correct answer)")
-    fig.suptitle("Logit lens at the final prompt position, split by whether the model's final answer is correct (layer 0 omitted)", fontsize=9, color=INK2)
+                ax.set_ylabel("lens Yes − No logit difference\n(>0 leans to Yes)")
+    fig.suptitle("Logit lens at the final prompt position: colour = gold label, dashes = model's final answer wrong (layer 0 omitted)", fontsize=9, color=INK2)
     fig.tight_layout()
     save(fig, "fig2_logit_lens.png")
 
@@ -156,9 +161,13 @@ def fig_probes():
             tf = f"tfidf_C{c['selected_C_tfidf']:g}"
             for bname, col, lab in ((tf, INK, "TF-IDF text baseline"), ("type_prior", "#6250d6", "type-prior baseline")):
                 ax.axhline(r["baselines"][bname]["accuracy"]["est"], color=col, ls="-.", lw=1, label=lab)
-            if "structural_accuracy_all_items" in c:
-                ax.axhline(c["structural_accuracy_all_items"], color="#1baf7a", ls="-.", lw=1.4,
-                           label="structural text features (post-hoc)")
+            tb = c.get("text_baselines_all_items", {})
+            if "structural" in tb:
+                ax.axhline(tb["structural"]["accuracy"], color="#1baf7a", ls="-.", lw=1.4,
+                           label="parsed text features + hypothesis prior (post-hoc)")
+            if "hyp_prior" in tb:
+                ax.axhline(tb["hyp_prior"]["accuracy"], color="#e34948", ls="-.", lw=1.4,
+                           label="hypothesis-string prior (post-hoc)")
             ax.axhline(0.5, color=AXIS, lw=1)
             ax.set_title(f"{MODEL_LAB[m]} (model acc. {r['model_accuracy']:.2f}; probe C = {r['probe_C']:g})", fontsize=9)
             ax.set_xlabel("layer (0 = embeddings)")
@@ -212,18 +221,21 @@ def fig_confound():
         ms = [m for m in MODELS if (RESULTS / f"confound_{m}_{tag}.json").exists()]
         if not ms:
             continue
-        scorers = [("gold_probe", "#2a78d6", "gold probe"), ("structural", "#1baf7a", "structural text features (post-hoc)"),
+        scorers = [("gold_probe", "#2a78d6", "gold probe"),
+                   ("structural", "#1baf7a", "parsed text features + hyp. prior (post-hoc)"),
+                   ("hyp_prior", "#e34948", "hypothesis-string prior (post-hoc)"),
                    ("tfidf", INK, "TF-IDF"),
-                   ("type_prior", "#6250d6", "type prior"), ("random_init_probe", "#e87ba4", "random-init probe"),
+                   ("random_init_probe", "#e87ba4", "random-init probe"),
                    ("model_logit_diff", "#eb6834", "model's own logit diff")]
-        panels = [("model_wrong", "accuracy", "Accuracy on items the model gets WRONG"),
-                  ("model_said_yes", "auroc", "AUROC within 'model said Yes'"),
-                  ("model_said_no", "auroc", "AUROC within 'model said No'")]
+        panels = [("all_items", "accuracy", "Accuracy, all report-half items"),
+                  ("model_said_yes", "auroc", "AUROC within 'model leans Yes' (calibrated)"),
+                  ("model_said_no", "auroc", "AUROC within 'model leans No' (calibrated)")]
         fig, axes = plt.subplots(1, 3, figsize=(12, 3.5), sharey=True)
         w = 0.13
         for ax, (sub, metric, title) in zip(axes, panels):
             for i, m in enumerate(ms):
-                b = load(f"confound_{m}_{tag}.json")[sub]
+                cj = load(f"confound_{m}_{tag}.json")
+                b = cj[sub] if sub == "all_items" else cj["calibrated"][sub]
                 if "gold_probe" not in b:
                     ax.text(i, 0.55, f"n={b['n']}\n(too few)", ha="center", color=MUTED, fontsize=8)
                     continue
@@ -241,7 +253,7 @@ def fig_confound():
             ax.set_title(title, fontsize=9); ax.grid(axis="x", visible=False)
         h, l = axes[0].get_legend_handles_labels()
         fig.legend(h, l, loc="lower center", ncol=6, fontsize=8, bbox_to_anchor=(0.5, -0.08))
-        fig.suptitle(f"Does the gold probe know more than the model says? · {DATASET_LAB[tag]} · report half only; dashed = chance",
+        fig.suptitle(f"Does the gold probe hold more than the text gives away? · {DATASET_LAB[tag]} · report half only; dashed = chance",
                      fontsize=9, color=INK2)
         fig.tight_layout()
         save(fig, f"fig5_confound_{tag}.png")
@@ -356,7 +368,7 @@ def fig_cross_model():
                 continue
             d = row["datasets"][tag]
             x = row["params_billion"]
-            for ax, key in ((axes[0], "gold_probe_accuracy"), (axes[1], "probe_minus_tfidf_accuracy")):
+            for ax, key in ((axes[0], "gold_probe_accuracy"), (axes[1], "probe_minus_best_text_accuracy")):
                 v = d[key]
                 ax.errorbar(x, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], color=MODEL_COL[m], marker=mk,
                             ms=7, capsize=3, mfc=MODEL_COL[m] if tag == "c2c_probe" else SURF, lw=1)
@@ -364,7 +376,7 @@ def fig_cross_model():
                             facecolor=MODEL_COL[m] if tag == "c2c_probe" else SURF)
             axes[2].scatter(x, d["first_layer_within_1pt_relative_depth"], color=MODEL_COL[m], marker=mk, s=14, alpha=0.6)
     axes[0].axhline(0.5, color=INK2, ls="--", lw=1); axes[1].axhline(0, color=INK2, ls="--", lw=1)
-    axes[0].set_title("Gold-probe accuracy (report half)"); axes[1].set_title("Probe − TF-IDF accuracy (paired)")
+    axes[0].set_title("Gold-probe accuracy (report half)"); axes[1].set_title("Probe − strongest text baseline (paired acc.)")
     axes[2].set_title("Relative depth of selected layer\n(small dot: first layer within 1 pt of max)", fontsize=9)
     axes[2].set_ylim(0, 1.05)
     for ax in axes:

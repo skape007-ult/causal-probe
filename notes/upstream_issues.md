@@ -67,3 +67,13 @@ qt = np.array([i["query_type"] for i in items])
 print(stats.accuracy(y, (s > 0).astype(int)), {t: stats.accuracy(y[qt == t], (s[qt == t] > 0).astype(int)) for t in ("backadj", "collider_bias")})
 ```
 - Not yet checked on the full 10,112 items or against the paper's own shortcut analysis.
+
+## U10. Corr2Cause: the hypothesis string alone predicts the label (canonical variable ordering)
+- In `train.csv`, 60% of distinct hypothesis strings are (almost) never valid (positive rate < 2%), while a few are valid most of the time (e.g. "There exists at least one collider (i.e., common effect) of A and B." 77%). A per-string label prior, with premise-grouped CV on a label-balanced sample of 2,400 train items, reaches 0.857 accuracy / 0.91 AUROC without reading the premise. Presumably a by-product of canonical node ordering when enumerating graphs (edges tend to go from earlier to later letters), and related to U3 (`child` never positive). It means (a) fine-tuned or probed models can score well from the hypothesis alone, and (b) the paper's variable-refactorisation result has a simple mechanism.
+- Repro:
+```python
+import numpy as np; from causal_probe import data, probes, stats
+items = data.get_dataset("c2c_probe"); y = np.array([i["label"] for i in items])
+s = probes.hyp_prior_oof(items, y, probes.folds_for(items, 0)); print(stats.accuracy(y, (s > 0).astype(int)), stats.auroc(y, s))
+```
+- Found by the independent audit; re-verified by me. Not checked against the released 3-class data.

@@ -100,15 +100,43 @@ def test_rename_variables(c2c_test):
         assert back == it["context"] + "|" + it["query"]
 
 
-def test_debiased_pool_has_no_hypothesis_shortcut():
+def test_debiased_pool_has_no_single_input_shortcut():
+    """Every hypothesis string and every premise is exactly half valid, in the pool, in every
+    cross-validation fold (train and test side) and in both halves of the selection/report split."""
     from collections import Counter
+    import numpy as np
     pool = data.get_dataset("c2c_debiased")
-    cells = Counter((i["query"], i["label"]) for i in pool)
-    strings = {q for q, _ in cells}
-    assert all(cells[(q, 0)] == cells[(q, 1)] > 0 for q in strings)     # every string exactly 50/50
     assert len({i["uid"] for i in pool}) == len(pool)
-    tpl = Counter((i["template"], i["label"]) for i in pool)
-    assert all(tpl[(t, 0)] == tpl[(t, 1)] for t in {t for t, _ in tpl})  # hence every template too
-    test_prems = {i["group"] for i in data.load_c2c("test")}
-    assert not ({i["group"] for i in pool} & test_prems)
     assert [i["uid"] for i in data.get_dataset("c2c_debiased")] == [i["uid"] for i in pool]   # deterministic
+
+    def balanced(items, key):
+        c = Counter((i[key], i["label"]) for i in items)
+        return all(c[(k, 0)] == c[(k, 1)] > 0 for k in {k for k, _ in c})
+
+    assert balanced(pool, "query") and balanced(pool, "group") and balanced(pool, "template")
+    assert Counter(Counter(i["group"] for i in pool).values()) == {2: len(pool) // 2}     # each premise: 1 valid + 1 invalid
+    assert not ({i["group"] for i in pool} & {i["group"] for i in data.load_c2c("test")})
+    for seed in (0, 1, 2):
+        folds = data.grouped_folds(pool, 5, seed)
+        assert sorted(np.concatenate([te for _, te in folds]).tolist()) == list(range(len(pool)))
+        for tr, te in folds:
+            assert not set(tr) & set(te)
+            for part in (tr, te):
+                sub = [pool[j] for j in part]
+                assert balanced(sub, "query") and balanced(sub, "group")
+    sel = data.selection_mask(pool)
+    for half in (sel, ~sel):
+        sub = [i for i, m in zip(pool, half) if m]
+        assert balanced(sub, "query") and balanced(sub, "group")
+
+
+def test_selection_mask_matches_original_split():
+    """selection_mask must reproduce the split used for every result computed before it existed."""
+    import numpy as np
+    from causal_probe.config import SEED
+    for tag in ("c2c_probe", "cladder"):
+        items = data.get_dataset(tag)
+        groups = np.array([i["group"] for i in items])
+        ug = np.unique(groups)
+        sel_groups = set(np.random.default_rng(SEED + 7).permutation(ug)[: len(ug) // 2])
+        assert (data.selection_mask(items) == np.array([g in sel_groups for g in groups])).all()

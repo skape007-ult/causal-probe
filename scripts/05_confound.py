@@ -17,7 +17,7 @@ import json
 
 import numpy as np
 
-from causal_probe import cache, probes, stats
+from causal_probe import cache, data, probes, stats
 from causal_probe.config import ALL_MODELS, MODELS, RESULTS, SEED
 
 
@@ -65,7 +65,7 @@ def block(y, scores: dict, groups, ref="gold_probe"):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True, choices=ALL_MODELS)
-    ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder"])
+    ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder", "c2c_debiased"])
     ap.add_argument("--fixed-c", action="store_true")
     a = ap.parse_args()
     suffix = "_fixedC" if a.fixed_c else ""
@@ -82,10 +82,7 @@ def main():
     groups = np.array([i["group"] for i in items])
 
     # split-half over groups: select layer on `sel`, report on `rep`
-    ug = np.unique(groups)
-    rng = np.random.default_rng(SEED + 7)
-    sel_groups = set(rng.permutation(ug)[: len(ug) // 2])
-    sel = np.array([g in sel_groups for g in groups]); rep = ~sel
+    sel = data.selection_mask(items); rep = ~sel     # seeded half of premises / stories (blocks for the debiased pool)
 
     picked_C, picked_scores = {}, {}
 
@@ -140,7 +137,7 @@ def main():
     #   tfidf_query  TF-IDF of the hypothesis / question alone
     scores["structural"] = np.mean([probes.structural_oof(items, y, f) for f in seed_folds], 0)
     scores["tfidf_query"] = np.mean([probes.tfidf_query_oof(items, y, f) for f in seed_folds], 0)
-    if a.tag == "c2c_probe":
+    if a.tag.startswith("c2c"):
         scores["hyp_prior"] = np.mean([probes.hyp_prior_oof(items, y, f) for f in seed_folds], 0)
     text_names = [k for k in ("tfidf", "type_prior", "hyp_prior", "tfidf_query", "structural") if k in scores]
     text_sel_acc = {k: acc_fn(y[sel], scores[k][sel]) for k in text_names}
@@ -156,6 +153,8 @@ def main():
     res["positions"] = {}
     for pname in ("content_end", "premise_end"):
         key = f"gold_at_{pname}"
+        if key not in oof.files:        # final-position-only cache (Kaggle export)
+            continue
         best = None
         for c in Cs:
             S = oofs[c][key]
@@ -294,7 +293,7 @@ def main():
     res["verdict"]["audited"] = aud
 
     # ---- external check for Corr2Cause: train on the whole pool, test on the natural-distribution test set
-    if a.tag == "c2c_probe":
+    if a.tag == "c2c_probe" and (cache.cache_dir(a.model, "c2c_test") / "resid.npy").exists():
         pres, _, _ = cache.load_cache(a.model, "c2c_probe")
         tres, tmeta, titems = cache.load_cache(a.model, "c2c_test")
         ty = np.array(tmeta["labels"]); tld = np.array(tmeta["logit_diff"], np.float32)

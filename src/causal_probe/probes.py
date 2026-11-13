@@ -262,7 +262,9 @@ def _oof_prior(items_tr, y_tr, n_inner: int = 5):
     from sklearn.model_selection import GroupKFold
     keys = np.array([_hyp_key(i) for i in items_tr]); g = np.array([i["group"] for i in items_tr])
     out = np.full(len(y_tr), float(np.mean(y_tr)), np.float32)
-    for a, b in GroupKFold(n_splits=min(n_inner, len(set(g)))).split(keys, y_tr, g):
+    inner = (data.grouped_folds(list(items_tr), n_inner, 0) if "block" in items_tr[0]
+             else GroupKFold(n_splits=min(n_inner, len(set(g)))).split(keys, y_tr, g))
+    for a, b in inner:
         prior = {k: y_tr[a][keys[a] == k].mean() for k in np.unique(keys[a])}
         out[b] = [prior.get(k, y_tr[a].mean()) for k in keys[b]]
     return out

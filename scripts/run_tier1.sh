@@ -4,8 +4,11 @@ set -eu
 cd "$(dirname "$0")/.."
 PY=.venv/bin/python; M="$1"; J="${2:-6}"
 $PY scripts/02_behaviour.py --model "$M"
-$PY scripts/03_logit_lens.py --model "$M"
-for T in c2c_probe cladder; do
+# models cached on Kaggle come back with final-token activations for the probe sets only; their
+# logit lens was computed there (results/lens_<model>.json is in results.zip)
+if [ -e "${CAUSAL_PROBE_CACHE:-cache}/$M/c2c_test/resid.npy" ]; then $PY scripts/03_logit_lens.py --model "$M"; fi
+for T in c2c_probe cladder c2c_debiased; do
+  [ -e "${CAUSAL_PROBE_CACHE:-cache}/$M/$T/resid.npy" ] || { echo "no cache for $M/$T, skipped"; continue; }
   for C in 0.01 0.1 1; do
     $PY scripts/04_probes.py --model "$M" --tag "$T" --jobs "$J" --C "$C"
   done

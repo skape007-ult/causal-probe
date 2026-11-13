@@ -7,7 +7,7 @@ import json
 
 import numpy as np
 
-from causal_probe import cache, stats
+from causal_probe import cache, data, stats
 from causal_probe.config import MODELS, RESULTS, SEED
 
 PARAMS_B = {"qwen0.5b": 0.494, "qwen1.5b": 1.54, "gemma2b": 2.61}   # parameter counts (billions), from model cards
@@ -69,10 +69,7 @@ def main():
             oof = np.load(cache.cache_dir(m, tag) / f"probe_oof_C{out['models'][m]['datasets'][tag]['selected_C']:g}.npz")
             _, meta, items = cache.load_cache(m, tag)
             groups = np.array([i["group"] for i in items])
-            ug = np.unique(groups)
-            rng = np.random.default_rng(SEED + 7)
-            selg = set(rng.permutation(ug)[: len(ug) // 2])
-            rep = np.array([g not in selg for g in groups])
+            rep = ~data.selection_mask(items)
             sc[m] = (oof["y"][rep], oof["gold"][:, out["models"][m]["datasets"][tag]["selected_layer"]].mean(0)[rep], groups[rep])
         for i in range(len(ms)):
             for j in range(i + 1, len(ms)):

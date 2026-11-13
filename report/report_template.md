@@ -184,23 +184,48 @@ Gold-label probes on the debiased pool (report half; layer and regularisation ch
 
 <sub>Source: `results/confound_<model>_c2c_debiased.json`. "(pending: …)" marks runs that have not finished.</sub>
 
-**Reading (two local Qwen models; Gemma and the larger model are added when the Kaggle activations arrive).**
+**Verdicts under the two criteria, unchanged.** The audited criterion (probe beats the strongest text-only baseline; D19) is **not met** for either model: the parsed-feature classifier beats the probe by {{confound_qwen0.5b_c2c_debiased.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} (Qwen2.5-0.5B) and {{confound_qwen1.5b_c2c_debiased.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} (Qwen2.5-1.5B). The original pre-registered criterion as coded (D11: against TF-IDF and the template prior, on wrongly answered items) is met for both models on this pool; as explained in Section 3.4 it does not test the claim, and it is reported, not relied on.
 
-- *The audited criterion is still not met.* The parsed-feature classifier beats the probe for both models: by {{confound_qwen0.5b_c2c_debiased.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} (Qwen2.5-0.5B) and {{confound_qwen1.5b_c2c_debiased.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} (Qwen2.5-1.5B).
-- *For Qwen2.5-0.5B little is left.* Its probe scores {{confound_qwen0.5b_c2c_debiased.json|all_items/gold_probe/accuracy|ci}}, {{confound_qwen0.5b_c2c_debiased.json|all_items/gold_probe_minus_random_init_probe/accuracy|signedci}} above a probe on a randomly initialised copy of the same network. Most of what is decodable at the final token is what an untrained network already exposes about the prompt.
-- *For Qwen2.5-1.5B a real effect remains.* Its probe scores {{confound_qwen1.5b_c2c_debiased.json|all_items/gold_probe/accuracy|ci}} (AUROC {{confound_qwen1.5b_c2c_debiased.json|all_items/gold_probe/auroc|ci}}) on a pool where hypothesis-only and premise-only classifiers are at exactly 0.500, whole-prompt TF-IDF at {{confound_qwen1.5b_c2c_debiased.json|all_items/tfidf/accuracy|est}} and the random-init control at {{confound_qwen1.5b_c2c_debiased.json|all_items/random_init_probe/accuracy|est}} (trained minus random-init {{confound_qwen1.5b_c2c_debiased.json|all_items/gold_probe_minus_random_init_probe/accuracy|signedci}}). Probe accuracy stays at the random-init level through the first half of the network and rises between layers 14 and 22 (`results/probes_qwen1.5b_c2c_debiased_C1.json`). The model's own answers on these items are at chance (AUROC {{answer_bias.json|qwen1.5b/c2c_debiased/auroc|ci}}). So this model's activations carry linearly decodable information about the validity of the premise–hypothesis combination that its answers do not use.
-- *What that information is.* The same probes, pointed at properties a parser reads off the prompt, decode them well:
+#### 3.6.1 Post-hoc reading: two kinds of baseline
 
-<!-- TABLE:probe_content -->
+*Everything in 3.6.1 to 3.6.4 was designed after the debiased-pool probe results were seen (13 November; `scripts/05b_probe_content.py`, `notes/log.md`). It is a labelled post-hoc analysis and changes neither criterion above.*
 
-  For Qwen2.5-1.5B, whether the two variables named in the hypothesis are adjacent in the premise's skeleton is readable at {{probe_content_qwen1.5b_c2c_debiased.json|properties/adjacent/probe/final/accuracy|ci}} (majority rate {{probe_content_qwen1.5b_c2c_debiased.json|properties/adjacent/majority_rate|num}}). That is the first step of the standard algorithm for this task, and it is what the parsed-feature baseline computes explicitly.
+The text baselines are of two different kinds, and comparing a probe with them answers two different questions.
 
-<!-- TABLE:probe_complementarity -->
+- **(a) Shallow confound controls**: bag-of-words of the prompt, the hypothesis-string prior, the premise alone, a probe on a randomly initialised copy of the model, and the probe trained on shuffled labels. Beating these shows that the probe is not exploiting surface statistics of the prompt, the architecture alone, or a leak.
+- **(b) Structure-aware reference**: the parsed-feature classifier. It binds the premise's statements to the two queried variables, which approximates solving the task from the text. It is not a confound; it marks how far explicit structure extraction gets.
 
-  Combining the probe's score with the parsed-feature classifier's score improves on the parsed features alone by {{probe_content_qwen1.5b_c2c_debiased.json|complementarity/stacked_probe_plus_parsed/minus_parsed_alone_accuracy|signedci}} (Qwen2.5-1.5B) and {{probe_content_qwen0.5b_c2c_debiased.json|complementarity/stacked_probe_plus_parsed/minus_parsed_alone_accuracy|signedci}} (Qwen2.5-0.5B): the activations hold a little validity information that this particular parser lacks, about two points.
-- *Status of these analyses.* The debiased pool, the random-init comparison at this pool and the property probes are post hoc. The pre-registered criterion as coded passes for both models on this pool; as before, it compares against TF-IDF and the template prior only and is not the test applied here.
+<!-- TABLE:debiased_two_groups -->
 
-In short: on a pool with single-input shortcuts removed, the smallest model shows almost nothing beyond a random network, and the 1.5B model shows partial computation (binding premise statements to the queried variables) that is readable from its activations and not expressed in its answers. Neither shows more than a shallow parser extracts from the text.
+For Qwen2.5-1.5B the probe ({{probe_content_qwen1.5b_c2c_debiased.json|baselines/gold_probe/accuracy|ci}}) is above every shallow control, the strongest being the random-init probe ({{probe_content_qwen1.5b_c2c_debiased.json|baselines/shallow_confound_controls/probe_on_random_init_model/accuracy|ci}}; probe minus control {{probe_content_qwen1.5b_c2c_debiased.json|baselines/shallow_confound_controls/probe_on_random_init_model/probe_minus_this_accuracy|signedci}}), and below the structure-aware reference ({{probe_content_qwen1.5b_c2c_debiased.json|baselines/structure_aware_reference/parsed_features/accuracy|ci}}). For Qwen2.5-0.5B the probe ({{probe_content_qwen0.5b_c2c_debiased.json|baselines/gold_probe/accuracy|ci}}) exceeds the random-init probe by only {{probe_content_qwen0.5b_c2c_debiased.json|baselines/shallow_confound_controls/probe_on_random_init_model/probe_minus_this_accuracy|signedci}}. Both models' own answers on this pool are at chance (AUROC {{answer_bias.json|qwen0.5b/c2c_debiased/auroc|ci}} and {{answer_bias.json|qwen1.5b/c2c_debiased/auroc|ci}}). For Qwen2.5-1.5B, probe accuracy stays at the random-init level through the first half of the network and rises between layers 14 and 22 (`results/probes_qwen1.5b_c2c_debiased_C1.json`).
+
+#### 3.6.2 Does the probe add predictive power beyond the parsed features?
+
+Gradient boosting on the parsed features alone, against the same model with the probe's score added as one column. The probe score is produced by nested cross-validation, so that no label from a test fold reaches any feature.
+
+<!-- TABLE:debiased_incremental -->
+
+No measurable gain: {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/gain_accuracy|signedci}} accuracy for Qwen2.5-1.5B and {{probe_content_qwen0.5b_c2c_debiased.json|incremental_value/gain_accuracy|signedci}} for Qwen2.5-0.5B. What the probe reads is, as far as this test can tell, contained in what the parser extracts. (A cruder version of this test, a logistic regression on the two out-of-fold scores, had suggested a two-point gain; it was not nested and is withdrawn, see `notes/log.md`.)
+
+#### 3.6.3 Which parsed properties can be read from the activations?
+
+A probe for each binary property a parser reads off the item, at the layer the gold probe uses, with a shuffled-label control and the same probe on the random-init model.
+
+<!-- TABLE:debiased_properties -->
+
+Properties of the *queried pair* that require binding premise statements to the two hypothesis variables are decodable from the trained models far better than from random-init copies. For Qwen2.5-1.5B, "the pair is adjacent in the skeleton" has AUROC {{probe_content_qwen1.5b_c2c_debiased.json|properties/by_property/pair_adjacent_in_skeleton/at_gold_probe_layer/trained/auroc|ci}} against {{probe_content_qwen1.5b_c2c_debiased.json|properties/by_property/pair_adjacent_in_skeleton/at_gold_probe_layer/random_init/auroc|ci}} at random init, and "a common neighbour lies in a separating set" {{probe_content_qwen1.5b_c2c_debiased.json|properties/by_property/common_neighbour_in_a_separating_set/at_gold_probe_layer/trained/auroc|ci}} against {{probe_content_qwen1.5b_c2c_debiased.json|properties/by_property/common_neighbour_in_a_separating_set/at_gold_probe_layer/random_init/auroc|ci}}. Premise-level counts (how many statements, six variables) are perfectly decodable from the random-init model as well, so they reflect prompt length and say nothing about computation. Shuffled-label controls are at 0.5 except where the property is rare (a small-sample effect of shuffling an imbalanced label).
+
+#### 3.6.4 Is the probe's signal carried by one or two properties?
+
+The gold probe's AUROC inside strata of each strong property, weighted over strata, next to its unstratified AUROC. If one property carried the signal, the AUROC inside its strata would fall towards 0.5.
+
+<!-- TABLE:debiased_strata -->
+
+It does not fall for any single property: for Qwen2.5-1.5B {{probe_content_qwen1.5b_c2c_debiased.json|stratified/by_stratifier/pair_adjacent_in_skeleton/pair_weighted_within_stratum_probe_auroc|ci}} inside adjacency strata against {{probe_content_qwen1.5b_c2c_debiased.json|stratified/overall_probe_auroc|ci}} overall. This matches the structure of the pool, in which no single property predicts the label (last column of the previous table: 0.51 to 0.55) and validity depends on their combination with the hypothesis template. Inside the joint strata of template × adjacency × common neighbour, which together predict the label at {{probe_content_qwen1.5b_c2c_debiased.json|stratified/by_stratifier/template_x_adjacent_x_common_neighbour/gold_accuracy_from_stratifier_alone|num}}, the probe's AUROC is {{probe_content_qwen1.5b_c2c_debiased.json|stratified/by_stratifier/template_x_adjacent_x_common_neighbour/pair_weighted_within_stratum_probe_auroc|ci}}; inside the parsed classifier's two prediction strata it is {{probe_content_qwen1.5b_c2c_debiased.json|stratified/by_stratifier/parsed_classifier_prediction/pair_weighted_within_stratum_probe_auroc|ci}}. The probe is reading a combination of structural properties, not one of them.
+
+#### 3.6.5 What this supports
+
+For Qwen2.5-1.5B on the debiased pool: the activations encode part of the premise's structure as it bears on the queried pair, beyond every shallow control, built up between layers 14 and 22; less than a hand-written parse of the prompt, and nothing measurable beyond that parse; not reducible to one or two parsed properties; and not expressed in the model's answers, which are at chance. For Qwen2.5-0.5B the same pattern is much weaker and, at the final token, barely distinguishable from a random network. Whether the encoded information is *used* by the model is a causal question; the steering evidence on it is in Section 4.1. Gemma-2-2B and Qwen2.5-3B are added when their activations arrive from the Kaggle run. All of 3.6.1 to 3.6.4 is post hoc and is the subject of the third independent audit.
 
 ## 4. Tier 2 results
 

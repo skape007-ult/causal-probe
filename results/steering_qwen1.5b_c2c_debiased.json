@@ -1,0 +1,1501 @@
+{
+ "model": "qwen1.5b",
+ "tag": "c2c_debiased",
+ "layer": 22,
+ "n_items": 300,
+ "n_layers": 28,
+ "selected_layer_gold": 22,
+ "layer_selection": "05_confound",
+ "device": "mps:0",
+ "sub_batch": 8,
+ "alphas": [
+  0.25,
+  0.5,
+  1.0,
+  2.0,
+  4.0,
+  8.0
+ ],
+ "s_unit_rms_deviation": 11.774104118347168,
+ "probe_C": 1.0,
+ "mean_resid_norm": 92.11351013183594,
+ "baseline": {
+  "accuracy": {
+   "est": 0.4766666666666667,
+   "lo": 0.4231984561467806,
+   "hi": 0.5268547687531387,
+   "n": 300,
+   "n_groups": 269
+  },
+  "frac_yes": 0.12333333333333334,
+  "mean_logit_diff": -2.2374107837677,
+  "max_abs_diff_vs_cache": 0.043365478515625,
+  "baseline_matches_cache": true
+ },
+ "direction_geometry": {
+  "cos_gold_probe_vs_diffmeans": 0.1327478587627411,
+  "cos_gold_probe_vs_model_out": -0.025788310915231705,
+  "cos_diffmeans_vs_model_out": 0.3280278444290161,
+  "class_mean_separation_over_s_unit": 0.04042179509997368,
+  "proj_std_over_s_unit": {
+   "gold_probe": 0.0035121554974466562,
+   "gold_diffmeans": 0.3543064296245575,
+   "model_out": 0.30286142230033875,
+   "random_0": 0.030438119545578957,
+   "random_1": 0.026005294173955917,
+   "random_2": 0.019530517980456352
+  }
+ },
+ "directions": {
+  "gold_probe": {
+   "add": [
+    {
+     "alpha": 0.25,
+     "accuracy_toward_gold": {
+      "est": 0.47,
+      "lo": 0.41774954252352736,
+      "hi": 0.5204116578138105,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.48333333333333334,
+      "lo": 0.4318936877076412,
+      "hi": 0.5340411917275272,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.006666666666666667,
+      "lo": 0.0,
+      "hi": 0.016722408026755852,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.006666666666666667,
+      "lo": 0.0,
+      "hi": 0.016722408026755852,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.11666666666666667,
+     "frac_yes_minus": 0.13,
+     "mean_delta_logit_diff_plus": -0.0544038824737072,
+     "mean_delta_logit_diff_minus": 0.053667474538087845
+    },
+    {
+     "alpha": 0.5,
+     "accuracy_toward_gold": {
+      "est": 0.4666666666666667,
+      "lo": 0.4123332748332748,
+      "hi": 0.5198742166318503,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.48333333333333334,
+      "lo": 0.4318936877076412,
+      "hi": 0.5340411917275272,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.006666666666666667,
+      "lo": 0.0,
+      "hi": 0.016722408026755852,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.01,
+      "lo": 0.0,
+      "hi": 0.022448770491803268,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.11666666666666667,
+     "frac_yes_minus": 0.13333333333333333,
+     "mean_delta_logit_diff_plus": -0.11096251010894775,
+     "mean_delta_logit_diff_minus": 0.1055644154548645
+    },
+    {
+     "alpha": 1.0,
+     "accuracy_toward_gold": {
+      "est": 0.45666666666666667,
+      "lo": 0.4054031606357188,
+      "hi": 0.5083070367448527,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.49333333333333335,
+      "lo": 0.4415539632781012,
+      "hi": 0.5454545454545454,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.02,
+      "lo": 0.006578947368421052,
+      "hi": 0.035950658952105426,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.016666666666666666,
+      "lo": 0.003366720900277947,
+      "hi": 0.03106507230255837,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.10333333333333333,
+     "frac_yes_minus": 0.14,
+     "mean_delta_logit_diff_plus": -0.22074972093105316,
+     "mean_delta_logit_diff_minus": 0.20098251104354858
+    },
+    {
+     "alpha": 2.0,
+     "accuracy_toward_gold": {
+      "est": 0.4533333333333333,
+      "lo": 0.40202702702702703,
+      "hi": 0.5049222006112809,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.5033333333333333,
+      "lo": 0.45203814687975646,
+      "hi": 0.5555555555555556,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.03333333333333333,
+      "lo": 0.013604289173296437,
+      "hi": 0.05480452766411669,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.016666666666666666,
+      "lo": 0.003366720900277947,
+      "hi": 0.030750087512032873,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.09,
+     "frac_yes_minus": 0.14,
+     "mean_delta_logit_diff_plus": -0.4209064841270447,
+     "mean_delta_logit_diff_minus": 0.3505254089832306
+    },
+    {
+     "alpha": 4.0,
+     "accuracy_toward_gold": {
+      "est": 0.45,
+      "lo": 0.3972481219619973,
+      "hi": 0.50161865350947,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.51,
+      "lo": 0.45972474152004356,
+      "hi": 0.5635784958140179,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.05,
+      "lo": 0.026653594771241833,
+      "hi": 0.07446284989824173,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.016666666666666666,
+      "lo": 0.003333056478405316,
+      "hi": 0.03071935340595633,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.07333333333333333,
+     "frac_yes_minus": 0.13333333333333333,
+     "mean_delta_logit_diff_plus": -0.6725829243659973,
+     "mean_delta_logit_diff_minus": 0.5384467840194702
+    },
+    {
+     "alpha": 8.0,
+     "accuracy_toward_gold": {
+      "est": 0.34,
+      "lo": 0.2929150307057284,
+      "hi": 0.3953507371941024,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.64,
+      "lo": 0.587657247867644,
+      "hi": 0.6928506550699108,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.05333333333333334,
+      "lo": 0.02970052761855133,
+      "hi": 0.07924114559106915,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.24666666666666667,
+      "lo": 0.19730797101449277,
+      "hi": 0.2966693548387097,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.07,
+     "frac_yes_minus": 0.37,
+     "mean_delta_logit_diff_plus": -0.06452398747205734,
+     "mean_delta_logit_diff_minus": 1.7691043615341187
+    }
+   ],
+   "ablate": {
+    "flip_rate": {
+     "est": 0.0033333333333333335,
+     "lo": 0.0,
+     "hi": 0.010238907849829351,
+     "n": 300,
+     "n_groups": 269
+    },
+    "accuracy": {
+     "est": 0.48,
+     "lo": 0.4280799268860086,
+     "hi": 0.5315667396304403,
+     "n": 300,
+     "n_groups": 269
+    },
+    "mean_abs_delta_logit_diff": 0.004201863426715136,
+    "mean_delta_logit_diff": -0.00046667736023664474
+   }
+  },
+  "gold_diffmeans": {
+   "add": [
+    {
+     "alpha": 0.25,
+     "accuracy_toward_gold": {
+      "est": 0.5533333333333333,
+      "lo": 0.5017182130584192,
+      "hi": 0.6051823229535345,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.4066666666666667,
+      "lo": 0.3569023569023569,
+      "hi": 0.4584825695171347,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.1,
+      "lo": 0.06799319727891157,
+      "hi": 0.13576891021309184,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.04666666666666667,
+      "lo": 0.023803511303511302,
+      "hi": 0.07096774193548387,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.22333333333333333,
+     "frac_yes_minus": 0.07666666666666666,
+     "mean_delta_logit_diff_plus": 0.49299752712249756,
+     "mean_delta_logit_diff_minus": -0.47735321521759033
+    },
+    {
+     "alpha": 0.5,
+     "accuracy_toward_gold": {
+      "est": 0.64,
+      "lo": 0.587657247867644,
+      "hi": 0.6900058922558922,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.33666666666666667,
+      "lo": 0.28903654485049834,
+      "hi": 0.38889335476956055,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.21333333333333335,
+      "lo": 0.16827230077539584,
+      "hi": 0.25667123287671234,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.09,
+      "lo": 0.05940105523710266,
+      "hi": 0.12416107382550336,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.33666666666666667,
+     "frac_yes_minus": 0.03333333333333333,
+     "mean_delta_logit_diff_plus": 0.9952369928359985,
+     "mean_delta_logit_diff_minus": -0.9350814819335938
+    },
+    {
+     "alpha": 1.0,
+     "accuracy_toward_gold": {
+      "est": 0.75,
+      "lo": 0.7,
+      "hi": 0.7954848484848485,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.23333333333333334,
+      "lo": 0.18687978142076503,
+      "hi": 0.28053826285638594,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.4,
+      "lo": 0.3422796494905126,
+      "hi": 0.452062948467058,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.11666666666666667,
+      "lo": 0.08360507246376811,
+      "hi": 0.15614617940199335,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.5233333333333333,
+     "frac_yes_minus": 0.006666666666666667,
+     "mean_delta_logit_diff_plus": 1.9883350133895874,
+     "mean_delta_logit_diff_minus": -1.7592672109603882
+    },
+    {
+     "alpha": 2.0,
+     "accuracy_toward_gold": {
+      "est": 0.9133333333333333,
+      "lo": 0.8775405725430103,
+      "hi": 0.9425724019474019,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.056666666666666664,
+      "lo": 0.033219841147609515,
+      "hi": 0.08223684210526316,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.7333333333333333,
+      "lo": 0.6806290322580645,
+      "hi": 0.7843137254901961,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.12333333333333334,
+      "lo": 0.08843537414965986,
+      "hi": 0.161186863327674,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.8566666666666667,
+     "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 3.829477548599243,
+     "mean_delta_logit_diff_minus": -3.027437448501587
+    },
+    {
+     "alpha": 4.0,
+     "accuracy_toward_gold": {
+      "est": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.8766666666666667,
+      "lo": 0.8388131366723259,
+      "hi": 0.9115646258503401,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.12333333333333334,
+      "lo": 0.08843537414965986,
+      "hi": 0.161186863327674,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 1.0,
+     "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 7.04896879196167,
+     "mean_delta_logit_diff_minus": -4.390648365020752
+    },
+    {
+     "alpha": 8.0,
+     "accuracy_toward_gold": {
+      "est": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.8766666666666667,
+      "lo": 0.8388131366723259,
+      "hi": 0.9115646258503401,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.12333333333333334,
+      "lo": 0.08843537414965986,
+      "hi": 0.161186863327674,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 1.0,
+     "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 13.999332427978516,
+     "mean_delta_logit_diff_minus": -5.4856414794921875
+    }
+   ],
+   "ablate": {
+    "flip_rate": {
+     "est": 0.07333333333333333,
+     "lo": 0.046045106639146884,
+     "hi": 0.10239784468652109,
+     "n": 300,
+     "n_groups": 269
+    },
+    "accuracy": {
+     "est": 0.49,
+     "lo": 0.4391626367169846,
+     "hi": 0.5397596371637509,
+     "n": 300,
+     "n_groups": 269
+    },
+    "mean_abs_delta_logit_diff": 0.5520995259284973,
+    "mean_delta_logit_diff": 0.013663813471794128
+   }
+  },
+  "model_out": {
+   "add": [
+    {
+     "alpha": 0.25,
+     "accuracy_toward_gold": {
+      "est": 0.54,
+      "lo": 0.488444981621908,
+      "hi": 0.5919855568790947,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.4166666666666667,
+      "lo": 0.36911434592390685,
+      "hi": 0.4715858873841768,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.07666666666666666,
+      "lo": 0.047134092603891266,
+      "hi": 0.10884353741496598,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.04666666666666667,
+      "lo": 0.023803511303511302,
+      "hi": 0.07096774193548387,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.2,
+     "frac_yes_minus": 0.07666666666666666,
+     "mean_delta_logit_diff_plus": 0.43432608246803284,
+     "mean_delta_logit_diff_minus": -0.431458443403244
+    },
+    {
+     "alpha": 0.5,
+     "accuracy_toward_gold": {
+      "est": 0.62,
+      "lo": 0.5656455862977602,
+      "hi": 0.6711432380251908,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.35333333333333333,
+      "lo": 0.30418476574619924,
+      "hi": 0.4052465540671714,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.19,
+      "lo": 0.1489579275418777,
+      "hi": 0.23076923076923078,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.07666666666666666,
+      "lo": 0.049019607843137254,
+      "hi": 0.10596906558711579,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.31333333333333335,
+     "frac_yes_minus": 0.04666666666666667,
+     "mean_delta_logit_diff_plus": 0.8674265742301941,
+     "mean_delta_logit_diff_minus": -0.8584752678871155
+    },
+    {
+     "alpha": 1.0,
+     "accuracy_toward_gold": {
+      "est": 0.7333333333333333,
+      "lo": 0.6831603063218944,
+      "hi": 0.7814675096670963,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.26,
+      "lo": 0.21210828420726033,
+      "hi": 0.3053760953421481,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.36,
+      "lo": 0.30478335318642047,
+      "hi": 0.41233849912973625,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.11333333333333333,
+      "lo": 0.07983826754385964,
+      "hi": 0.15050625372245385,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.48333333333333334,
+     "frac_yes_minus": 0.01,
+     "mean_delta_logit_diff_plus": 1.7208956480026245,
+     "mean_delta_logit_diff_minus": -1.6886258125305176
+    },
+    {
+     "alpha": 2.0,
+     "accuracy_toward_gold": {
+      "est": 0.8533333333333334,
+      "lo": 0.80919478461004,
+      "hi": 0.8926174496644296,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.10333333333333333,
+      "lo": 0.0718898480894064,
+      "hi": 0.13681899469885675,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.6266666666666667,
+      "lo": 0.5659643308080808,
+      "hi": 0.6835059781488353,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.12333333333333334,
+      "lo": 0.08843537414965986,
+      "hi": 0.161186863327674,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 0.75,
+     "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 3.294262170791626,
+     "mean_delta_logit_diff_minus": -3.218424081802368
+    },
+    {
+     "alpha": 4.0,
+     "accuracy_toward_gold": {
+      "est": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.8766666666666667,
+      "lo": 0.8388131366723259,
+      "hi": 0.9115646258503401,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.12333333333333334,
+      "lo": 0.08843537414965986,
+      "hi": 0.161186863327674,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 1.0,
+     "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 5.6303181648254395,
+     "mean_delta_logit_diff_minus": -5.778446197509766
+    },
+    {
+     "alpha": 8.0,
+     "accuracy_toward_gold": {
+      "est": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy_away_from_gold": {
+      "est": 0.0,
+      "lo": 0.0,
+      "hi": 0.0,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_plus": {
+      "est": 0.8766666666666667,
+      "lo": 0.8388131366723259,
+      "hi": 0.9115646258503401,
+      "n": 300,
+      "n_groups": 269
+     },
+     "flip_rate_minus": {
+      "est": 0.12333333333333334,
+      "lo": 0.08843537414965986,
+      "hi": 0.161186863327674,
+      "n": 300,
+      "n_groups": 269
+     },
+     "frac_yes_plus": 1.0,
+     "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 7.217237949371338,
+     "mean_delta_logit_diff_minus": -8.747236251831055
+    }
+   ],
+   "ablate": {
+    "flip_rate": {
+     "est": 0.06666666666666667,
+     "lo": 0.039735099337748346,
+     "hi": 0.0960396209180178,
+     "n": 300,
+     "n_groups": 269
+    },
+    "accuracy": {
+     "est": 0.48333333333333334,
+     "lo": 0.4322375660804833,
+     "hi": 0.5331181015452539,
+     "n": 300,
+     "n_groups": 269
+    },
+    "mean_abs_delta_logit_diff": 0.43719029426574707,
+    "mean_delta_logit_diff": 0.0410827174782753
+   }
+  },
+  "random_each": [
+   {
+    "add": [
+     {
+      "alpha": 0.25,
+      "accuracy_toward_gold": {
+       "est": 0.48,
+       "lo": 0.4280799268860086,
+       "hi": 0.5315667396304403,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.47,
+       "lo": 0.41774954252352736,
+       "hi": 0.5204116578138105,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.006666666666666667,
+       "lo": 0.0,
+       "hi": 0.016722408026755852,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.0033333333333333335,
+       "lo": 0.0,
+       "hi": 0.01020408163265306,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.13,
+      "frac_yes_minus": 0.12,
+      "mean_delta_logit_diff_plus": 0.005341269075870514,
+      "mean_delta_logit_diff_minus": -0.004813671112060547
+     },
+     {
+      "alpha": 0.5,
+      "accuracy_toward_gold": {
+       "est": 0.48333333333333334,
+       "lo": 0.4318936877076412,
+       "hi": 0.5340411917275272,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.47,
+       "lo": 0.41774954252352736,
+       "hi": 0.5204116578138105,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.006666666666666667,
+       "lo": 0.0,
+       "hi": 0.016722408026755852,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.006666666666666667,
+       "lo": 0.0,
+       "hi": 0.016722408026755852,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.13,
+      "frac_yes_minus": 0.11666666666666667,
+      "mean_delta_logit_diff_plus": 0.010449645109474659,
+      "mean_delta_logit_diff_minus": -0.010469112545251846
+     },
+     {
+      "alpha": 1.0,
+      "accuracy_toward_gold": {
+       "est": 0.48,
+       "lo": 0.42809335914234664,
+       "hi": 0.5313583434755436,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.46,
+       "lo": 0.4067768361581921,
+       "hi": 0.5102040816326531,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.006666666666666667,
+       "lo": 0.0,
+       "hi": 0.016835016835016835,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.013333333333333334,
+       "lo": 0.003278688524590164,
+       "hi": 0.026758097461336443,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.13,
+      "frac_yes_minus": 0.11,
+      "mean_delta_logit_diff_plus": 0.021504592150449753,
+      "mean_delta_logit_diff_minus": -0.023028526455163956
+     },
+     {
+      "alpha": 2.0,
+      "accuracy_toward_gold": {
+       "est": 0.49,
+       "lo": 0.4366606529209622,
+       "hi": 0.540006711409396,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.45,
+       "lo": 0.3979772530953067,
+       "hi": 0.5033135108347975,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.013333333333333334,
+       "lo": 0.003257064596641144,
+       "hi": 0.026755852842809364,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.02666666666666667,
+       "lo": 0.010101010101010102,
+       "hi": 0.04560260586319218,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.13666666666666666,
+      "frac_yes_minus": 0.09666666666666666,
+      "mean_delta_logit_diff_plus": 0.06315959990024567,
+      "mean_delta_logit_diff_minus": -0.04434024915099144
+     },
+     {
+      "alpha": 4.0,
+      "accuracy_toward_gold": {
+       "est": 0.5166666666666667,
+       "lo": 0.46532903290329036,
+       "hi": 0.568202861952862,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.44,
+       "lo": 0.3898207193600716,
+       "hi": 0.4931518497810083,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.043333333333333335,
+       "lo": 0.02054794520547945,
+       "hi": 0.06711409395973154,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.03333333333333333,
+       "lo": 0.013790741615493624,
+       "hi": 0.05333333333333334,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.16666666666666666,
+      "frac_yes_minus": 0.09,
+      "mean_delta_logit_diff_plus": 0.3552267551422119,
+      "mean_delta_logit_diff_minus": 0.0792197436094284
+     },
+     {
+      "alpha": 8.0,
+      "accuracy_toward_gold": {
+       "est": 0.4766666666666667,
+       "lo": 0.4161073825503356,
+       "hi": 0.5377238335435056,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.49666666666666665,
+       "lo": 0.4389337521792046,
+       "hi": 0.5562913907284768,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.37666666666666665,
+       "lo": 0.3221296740172579,
+       "hi": 0.4271755647282954,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.39666666666666667,
+       "lo": 0.3376374458874459,
+       "hi": 0.4503356463169315,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.5,
+      "frac_yes_minus": 0.52,
+      "mean_delta_logit_diff_plus": 2.066876173019409,
+      "mean_delta_logit_diff_minus": 2.1763479709625244
+     }
+    ],
+    "ablate": {
+     "flip_rate": {
+      "est": 0.0033333333333333335,
+      "lo": 0.0,
+      "hi": 0.01020408163265306,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy": {
+      "est": 0.47333333333333333,
+      "lo": 0.4199948805460751,
+      "hi": 0.5247649764976497,
+      "n": 300,
+      "n_groups": 269
+     },
+     "mean_abs_delta_logit_diff": 0.004657465498894453,
+     "mean_delta_logit_diff": -0.001047592144459486
+    }
+   },
+   {
+    "add": [
+     {
+      "alpha": 0.25,
+      "accuracy_toward_gold": {
+       "est": 0.4633333333333333,
+       "lo": 0.408780136033043,
+       "hi": 0.5167813576999819,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.4866666666666667,
+       "lo": 0.4349315068493151,
+       "hi": 0.5371684822577679,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.01,
+       "lo": 0.0,
+       "hi": 0.022877692060430728,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.013333333333333334,
+       "lo": 0.003246753246753247,
+       "hi": 0.02702702702702703,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.11333333333333333,
+      "frac_yes_minus": 0.13666666666666666,
+      "mean_delta_logit_diff_plus": -0.0912681519985199,
+      "mean_delta_logit_diff_minus": 0.09380927681922913
+     },
+     {
+      "alpha": 0.5,
+      "accuracy_toward_gold": {
+       "est": 0.4533333333333333,
+       "lo": 0.4013372425629291,
+       "hi": 0.5066236203090508,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.5066666666666667,
+       "lo": 0.45636846998004715,
+       "hi": 0.5574405160110606,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.02666666666666667,
+       "lo": 0.010032608695652175,
+       "hi": 0.04561008170021893,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.02666666666666667,
+       "lo": 0.010033444816053512,
+       "hi": 0.04421768707482993,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.09666666666666666,
+      "frac_yes_minus": 0.15,
+      "mean_delta_logit_diff_plus": -0.18083569407463074,
+      "mean_delta_logit_diff_minus": 0.19036860764026642
+     },
+     {
+      "alpha": 1.0,
+      "accuracy_toward_gold": {
+       "est": 0.4266666666666667,
+       "lo": 0.37623762376237624,
+       "hi": 0.4805435305435305,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.53,
+       "lo": 0.47854429130620707,
+       "hi": 0.5821917808219178,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.03666666666666667,
+       "lo": 0.016665282392026578,
+       "hi": 0.059602649006622516,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.06666666666666667,
+       "lo": 0.039728563959567795,
+       "hi": 0.09798127576729271,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.08666666666666667,
+      "frac_yes_minus": 0.19,
+      "mean_delta_logit_diff_plus": -0.3575710952281952,
+      "mean_delta_logit_diff_minus": 0.39416804909706116
+     },
+     {
+      "alpha": 2.0,
+      "accuracy_toward_gold": {
+       "est": 0.36666666666666664,
+       "lo": 0.3154191880294862,
+       "hi": 0.4164002732240437,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.5933333333333334,
+       "lo": 0.5407892958507907,
+       "hi": 0.6447659620362381,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.056666666666666664,
+       "lo": 0.033000586242834806,
+       "hi": 0.08417508417508418,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.17,
+       "lo": 0.12786178631995476,
+       "hi": 0.20875420875420875,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.06666666666666667,
+      "frac_yes_minus": 0.29333333333333333,
+      "mean_delta_logit_diff_plus": -0.7135536670684814,
+      "mean_delta_logit_diff_minus": 0.8563913106918335
+     },
+     {
+      "alpha": 4.0,
+      "accuracy_toward_gold": {
+       "est": 0.24666666666666667,
+       "lo": 0.20327736647276573,
+       "hi": 0.293582558775287,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.73,
+       "lo": 0.6779604707472268,
+       "hi": 0.7789192949907235,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.10333333333333333,
+       "lo": 0.07142857142857142,
+       "hi": 0.1379339370718681,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.38,
+       "lo": 0.3235245098039216,
+       "hi": 0.4285948477751756,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.02,
+      "frac_yes_minus": 0.5033333333333333,
+      "mean_delta_logit_diff_plus": -1.5254477262496948,
+      "mean_delta_logit_diff_minus": 2.0151114463806152
+     },
+     {
+      "alpha": 8.0,
+      "accuracy_toward_gold": {
+       "est": 0.006666666666666667,
+       "lo": 0.0,
+       "hi": 0.016666666666666666,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.9933333333333333,
+       "lo": 0.9801324503311258,
+       "hi": 1.0,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.12333333333333334,
+       "lo": 0.08843537414965986,
+       "hi": 0.161186863327674,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.8633333333333333,
+       "lo": 0.8225792689639987,
+       "hi": 0.9013675142188022,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.0,
+      "frac_yes_minus": 0.9866666666666667,
+      "mean_delta_logit_diff_plus": -3.5785460472106934,
+      "mean_delta_logit_diff_minus": 4.237746715545654
+     }
+    ],
+    "ablate": {
+     "flip_rate": {
+      "est": 0.006666666666666667,
+      "lo": 0.0,
+      "hi": 0.016668060200668893,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy": {
+      "est": 0.4766666666666667,
+      "lo": 0.42610580941766507,
+      "hi": 0.5282487108068503,
+      "n": 300,
+      "n_groups": 269
+     },
+     "mean_abs_delta_logit_diff": 0.008833898231387138,
+     "mean_delta_logit_diff": 0.00112152099609375
+    }
+   },
+   {
+    "add": [
+     {
+      "alpha": 0.25,
+      "accuracy_toward_gold": {
+       "est": 0.48333333333333334,
+       "lo": 0.4318936877076412,
+       "hi": 0.5340411917275272,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.4633333333333333,
+       "lo": 0.408780136033043,
+       "hi": 0.5167813576999819,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.013333333333333334,
+       "lo": 0.003246753246753247,
+       "hi": 0.02702702702702703,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.006666666666666667,
+       "lo": 0.0,
+       "hi": 0.016722408026755852,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.13666666666666666,
+      "frac_yes_minus": 0.11666666666666667,
+      "mean_delta_logit_diff_plus": 0.057225193828344345,
+      "mean_delta_logit_diff_minus": -0.053251851350069046
+     },
+     {
+      "alpha": 0.5,
+      "accuracy_toward_gold": {
+       "est": 0.49333333333333335,
+       "lo": 0.4415539632781012,
+       "hi": 0.5454545454545454,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.4533333333333333,
+       "lo": 0.4013372425629291,
+       "hi": 0.5066236203090508,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.016666666666666666,
+       "lo": 0.003366720900277947,
+       "hi": 0.03106507230255837,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.023333333333333334,
+       "lo": 0.0068015719801434085,
+       "hi": 0.04109942098573647,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.14,
+      "frac_yes_minus": 0.1,
+      "mean_delta_logit_diff_plus": 0.11757875978946686,
+      "mean_delta_logit_diff_minus": -0.10391614586114883
+     },
+     {
+      "alpha": 1.0,
+      "accuracy_toward_gold": {
+       "est": 0.5166666666666667,
+       "lo": 0.464877031181379,
+       "hi": 0.5680291884195539,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.44333333333333336,
+       "lo": 0.3908757037772073,
+       "hi": 0.49679116298925985,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.04,
+       "lo": 0.020066889632107024,
+       "hi": 0.06186665539969578,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.03333333333333333,
+       "lo": 0.013604289173296437,
+       "hi": 0.05480452766411669,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.16333333333333333,
+      "frac_yes_minus": 0.09,
+      "mean_delta_logit_diff_plus": 0.2452543079853058,
+      "mean_delta_logit_diff_minus": -0.18771064281463623
+     },
+     {
+      "alpha": 2.0,
+      "accuracy_toward_gold": {
+       "est": 0.5366666666666666,
+       "lo": 0.48514101410141014,
+       "hi": 0.5890457082237904,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.41333333333333333,
+       "lo": 0.36363636363636365,
+       "hi": 0.4684437463679923,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.08666666666666667,
+       "lo": 0.05573770491803279,
+       "hi": 0.12251815851313821,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.03666666666666667,
+       "lo": 0.016665282392026578,
+       "hi": 0.059602649006622516,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.21,
+      "frac_yes_minus": 0.08666666666666667,
+      "mean_delta_logit_diff_plus": 0.5332959890365601,
+      "mean_delta_logit_diff_minus": -0.26679983735084534
+     },
+     {
+      "alpha": 4.0,
+      "accuracy_toward_gold": {
+       "est": 0.6,
+       "lo": 0.5439579261672096,
+       "hi": 0.6523214091846705,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.36666666666666664,
+       "lo": 0.3139716275381805,
+       "hi": 0.4224645214521452,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.23666666666666666,
+       "lo": 0.1891780025058171,
+       "hi": 0.2814675096670963,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.016666666666666666,
+       "lo": 0.0033444816053511705,
+       "hi": 0.03322259136212625,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.36,
+      "frac_yes_minus": 0.12666666666666668,
+      "mean_delta_logit_diff_plus": 1.3060921430587769,
+      "mean_delta_logit_diff_minus": 0.18320892751216888
+     },
+     {
+      "alpha": 8.0,
+      "accuracy_toward_gold": {
+       "est": 0.74,
+       "lo": 0.6925610706860706,
+       "hi": 0.7893704121964992,
+       "n": 300,
+       "n_groups": 269
+      },
+      "accuracy_away_from_gold": {
+       "est": 0.2633333333333333,
+       "lo": 0.21781841449451067,
+       "hi": 0.3098016589738444,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_plus": {
+       "est": 0.8133333333333334,
+       "lo": 0.7684368856348721,
+       "hi": 0.8561872909698997,
+       "n": 300,
+       "n_groups": 269
+      },
+      "flip_rate_minus": {
+       "est": 0.33666666666666667,
+       "lo": 0.2823020819065881,
+       "hi": 0.38699707429919256,
+       "n": 300,
+       "n_groups": 269
+      },
+      "frac_yes_plus": 0.9366666666666666,
+      "frac_yes_minus": 0.46,
+      "mean_delta_logit_diff_plus": 4.043008804321289,
+      "mean_delta_logit_diff_minus": 1.9847253561019897
+     }
+    ],
+    "ablate": {
+     "flip_rate": {
+      "est": 0.0033333333333333335,
+      "lo": 0.0,
+      "hi": 0.01020408163265306,
+      "n": 300,
+      "n_groups": 269
+     },
+     "accuracy": {
+      "est": 0.47333333333333333,
+      "lo": 0.4199948805460751,
+      "hi": 0.5247649764976497,
+      "n": 300,
+      "n_groups": 269
+     },
+     "mean_abs_delta_logit_diff": 0.0060874177142977715,
+     "mean_delta_logit_diff": -0.0003459676227066666
+    }
+   }
+  ],
+  "random_mean": {
+   "add": [
+    {
+     "alpha": 0.25,
+     "accuracy_toward_gold": 0.47555555555555556,
+     "accuracy_away_from_gold": 0.47333333333333333,
+     "flip_rate_plus": 0.01,
+     "flip_rate_minus": 0.007777777777777778,
+     "mean_abs_delta_logit_diff": 0.051278204967578254
+    },
+    {
+     "alpha": 0.5,
+     "accuracy_toward_gold": 0.4766666666666666,
+     "accuracy_away_from_gold": 0.4766666666666666,
+     "flip_rate_plus": 0.016666666666666666,
+     "flip_rate_minus": 0.01888888888888889,
+     "mean_abs_delta_logit_diff": 0.10295469965785742
+    },
+    {
+     "alpha": 1.0,
+     "accuracy_toward_gold": 0.47444444444444445,
+     "accuracy_away_from_gold": 0.4777777777777778,
+     "flip_rate_plus": 0.02777777777777778,
+     "flip_rate_minus": 0.03777777777777778,
+     "mean_abs_delta_logit_diff": 0.20810999845465025
+    },
+    {
+     "alpha": 2.0,
+     "accuracy_toward_gold": 0.46444444444444444,
+     "accuracy_away_from_gold": 0.4855555555555556,
+     "flip_rate_plus": 0.052222222222222225,
+     "flip_rate_minus": 0.07777777777777778,
+     "mean_abs_delta_logit_diff": 0.4366697520017624
+    },
+    {
+     "alpha": 4.0,
+     "accuracy_toward_gold": 0.45444444444444443,
+     "accuracy_away_from_gold": 0.5122222222222222,
+     "flip_rate_plus": 0.12777777777777777,
+     "flip_rate_minus": 0.14333333333333334,
+     "mean_abs_delta_logit_diff": 1.0622555414835613
+    },
+    {
+     "alpha": 8.0,
+     "accuracy_toward_gold": 0.4077777777777778,
+     "accuracy_away_from_gold": 0.5844444444444444,
+     "flip_rate_plus": 0.4377777777777778,
+     "flip_rate_minus": 0.5322222222222223,
+     "mean_abs_delta_logit_diff": 3.2294770081837973
+    }
+   ],
+   "ablate": {
+    "flip_rate": 0.0044444444444444444,
+    "mean_abs_delta_logit_diff": 0.006526260481526454
+   }
+  }
+ }
+}

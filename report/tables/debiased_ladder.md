@@ -28,5 +28,33 @@
 | Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.053 [-0.080, -0.026] |
 | Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.063 [-0.095, -0.036] |
 | Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.113 [-0.139, -0.088] |
+| Gemma-2-2B | — | **Gold-label probe, final token, layer 17** | 0.763 [0.739, 0.787] | 0.840 [0.820, 0.859] | — |
+| Gemma-2-2B | (a0) single-input control: 0.50 by construction | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.263 [+0.239, +0.287] |
+| Gemma-2-2B | (a0) single-input control: 0.50 by construction | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.263 [+0.239, +0.287] |
+| Gemma-2-2B | (a0) single-input control: 0.50 by construction | Bag-of-words, whole prompt (linear) | 0.489 [0.460, 0.516] | 0.514 [0.481, 0.545] | +0.274 [+0.238, +0.309] |
+| Gemma-2-2B | (a0) single-input control: 0.50 by construction | Probe trained on shuffled labels (20 shuffles) | 0.500 ± 0.016 (max 0.524) | – | – |
+| Gemma-2-2B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: premise-level counts | 0.593 [0.565, 0.619] | 0.619 [0.588, 0.650] | +0.170 [+0.136, +0.201] |
+| Gemma-2-2B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: bag-of-words of the premise | 0.659 [0.630, 0.688] | 0.706 [0.676, 0.736] | +0.103 [+0.069, +0.139] |
+| Gemma-2-2B | (a) shallow confound control: interaction, nothing bound to the queried variables | Probe on a randomly initialised copy of the model | 0.568 [0.541, 0.593] | 0.593 [0.563, 0.622] | +0.195 [+0.163, +0.228] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statement counts for each queried variable separately | 0.743 [0.717, 0.768] | 0.819 [0.795, 0.843] | +0.020 [-0.008, +0.049] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statements naming the queried pair (lookup) | 0.765 [0.741, 0.786] | 0.834 [0.811, 0.855] | -0.002 [-0.035, +0.030] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–2-grams (no parser) | 0.742 [0.717, 0.767] | 0.821 [0.797, 0.844] | +0.021 [-0.009, +0.052] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.042 [-0.071, -0.012] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.053 [-0.082, -0.025] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.103 [-0.131, -0.073] |
+| Qwen2.5-3B | — | **Gold-label probe, final token, layer 25** | 0.765 [0.743, 0.788] | 0.845 [0.826, 0.866] | — |
+| Qwen2.5-3B | (a0) single-input control: 0.50 by construction | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.265 [+0.243, +0.288] |
+| Qwen2.5-3B | (a0) single-input control: 0.50 by construction | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.265 [+0.243, +0.288] |
+| Qwen2.5-3B | (a0) single-input control: 0.50 by construction | Bag-of-words, whole prompt (linear) | 0.489 [0.460, 0.516] | 0.514 [0.481, 0.545] | +0.276 [+0.242, +0.312] |
+| Qwen2.5-3B | (a0) single-input control: 0.50 by construction | Probe trained on shuffled labels (20 shuffles) | 0.499 ± 0.014 (max 0.525) | – | – |
+| Qwen2.5-3B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: premise-level counts | 0.593 [0.565, 0.619] | 0.619 [0.588, 0.650] | +0.172 [+0.139, +0.206] |
+| Qwen2.5-3B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: bag-of-words of the premise | 0.659 [0.630, 0.688] | 0.706 [0.676, 0.736] | +0.106 [+0.072, +0.142] |
+| Qwen2.5-3B | (a) shallow confound control: interaction, nothing bound to the queried variables | Probe on a randomly initialised copy of the model | 0.594 [0.568, 0.619] | 0.629 [0.600, 0.658] | +0.171 [+0.140, +0.204] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statement counts for each queried variable separately | 0.743 [0.717, 0.768] | 0.819 [0.795, 0.843] | +0.022 [-0.006, +0.051] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statements naming the queried pair (lookup) | 0.765 [0.741, 0.786] | 0.834 [0.811, 0.855] | +0.000 [-0.030, +0.029] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–2-grams (no parser) | 0.742 [0.717, 0.767] | 0.821 [0.797, 0.844] | +0.023 [-0.006, +0.055] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.040 [-0.068, -0.013] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.050 [-0.081, -0.022] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.100 [-0.127, -0.073] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>

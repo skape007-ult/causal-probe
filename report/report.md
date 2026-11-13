@@ -120,14 +120,14 @@ Accuracy alone cannot tell "no information" from "information hidden by a bias t
 | Qwen2.5-3B | Corr2Cause test | zero-shot | 1162 | 0.05 | 0.812 [0.768, 0.862] | 0.845 | 0.534 [0.493, 0.573] | 0.838 [0.794, 0.892] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-3B | Corr2Cause pool | zero-shot | 2400 | 0.05 | 0.509 [0.500, 0.519] | 0.500 | 0.581 [0.559, 0.603] | 0.593 [0.573, 0.613] | informative (AUROC CI above 0.5) |
 | Qwen2.5-3B | Corr2Cause debiased pool | zero-shot | 2400 | 0.04 | 0.495 [0.487, 0.503] | 0.500 | 0.507 [0.484, 0.530] | 0.506 [0.490, 0.524] | at chance (AUROC CI includes 0.5) |
-| Qwen2.5-3B | CLadder | zero-shot | 3000 | 0.50 | 0.526 [0.503, 0.547] | 0.500 | 0.543 [0.521, 0.567] | 0.501 [0.482, 0.522] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | CLadder | zero-shot | 3000 | 0.50 | 0.526 [0.502, 0.548] | 0.500 | 0.543 [0.518, 0.568] | 0.507 [0.487, 0.528] | informative (AUROC CI above 0.5) |
 | Qwen2.5-3B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.04 | 0.822 [0.783, 0.868] | 0.845 | 0.512 [0.463, 0.553] | 0.844 [0.802, 0.896] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-3B | Corr2Cause test (500 items) | 4-shot | 500 | 0.46 | 0.556 [0.517, 0.596] | 0.840 | 0.538 [0.507, 0.569] | 0.838 [0.797, 0.890] | informative (AUROC CI above 0.5) |
-| Qwen2.5-3B | CLadder (500 items) | 4-shot | 500 | 0.56 | 0.560 [0.514, 0.609] | 0.500 | 0.564 [0.518, 0.610] | 0.494 [0.457, 0.533] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | CLadder (500 items) | 4-shot | 500 | 0.56 | 0.560 [0.518, 0.602] | 0.500 | 0.564 [0.517, 0.608] | 0.510 [0.476, 0.543] | informative (AUROC CI above 0.5) |
 
 <sub>Source: `results/answer_bias.json`</sub>
 
-Reading. On the original Corr2Cause sets the logit difference is weakly informative: AUROC 0.589 [0.531, 0.660] for Qwen2.5-0.5B, 0.561 [0.503, 0.614] for Qwen2.5-1.5B on test, and 0.56 to 0.59 on the balanced pool for all three, where a re-thresholded answer reaches about 0.57 accuracy. So the smallest model is biased rather than empty there. This weak signal does not survive on the debiased pool of Section 3.6 for any model (0.505 [0.485, 0.526], 0.510 [0.488, 0.533], 0.492 [0.468, 0.515] and 0.507 [0.484, 0.530] for Qwen2.5-0.5B, Qwen2.5-1.5B, Gemma-2-2B and Qwen2.5-3B). Renaming the variables removes it for three of the four models (Qwen2.5-0.5B 0.511 [0.455, 0.572], Gemma-2-2B 0.504 [0.464, 0.531], Qwen2.5-3B 0.512 [0.463, 0.553]) but not for Qwen2.5-1.5B (0.579 [0.523, 0.630]); an earlier version of this paragraph quoted the 0.5B model only. On CLadder the three local models are at chance by AUROC as well (0.50 to 0.52); Qwen2.5-3B is slightly above (0.543 [0.521, 0.567]). The behavioural picture is therefore: at chance on the task, with a small shortcut-driven signal on the original Corr2Cause items that is masked by answer bias.
+Reading. On the original Corr2Cause sets the logit difference is weakly informative: AUROC 0.589 [0.531, 0.660] for Qwen2.5-0.5B, 0.561 [0.503, 0.614] for Qwen2.5-1.5B on test, and 0.56 to 0.59 on the balanced pool for all three, where a re-thresholded answer reaches about 0.57 accuracy. So the smallest model is biased rather than empty there. This weak signal does not survive on the debiased pool of Section 3.6 for any model (0.505 [0.485, 0.526], 0.510 [0.488, 0.533], 0.492 [0.468, 0.515] and 0.507 [0.484, 0.530] for Qwen2.5-0.5B, Qwen2.5-1.5B, Gemma-2-2B and Qwen2.5-3B). Renaming the variables removes it for three of the four models (Qwen2.5-0.5B 0.511 [0.455, 0.572], Gemma-2-2B 0.504 [0.464, 0.531], Qwen2.5-3B 0.512 [0.463, 0.553]) but not for Qwen2.5-1.5B (0.579 [0.523, 0.630]); an earlier version of this paragraph quoted the 0.5B model only. On CLadder the three local models are at chance by AUROC as well (0.50 to 0.52); Qwen2.5-3B is slightly above (0.543 [0.518, 0.568]). The behavioural picture is therefore: at chance on the task, with a small shortcut-driven signal on the original Corr2Cause items that is masked by answer bias.
 
 Other checks. Four demonstrations change the bias, not the skill: Qwen2.5-0.5B flips to mostly Yes (accuracy change -0.526 [-0.611, -0.456]), Gemma loses -0.118 [-0.186, -0.054]. Scoring by answer-token logits and by generated text disagree on under 1% of items for the Qwen models; for Gemma on CLadder 13% of first tokens are neither Yes nor No (first-token-only check, 100 items). Renaming variables flips 0.085 [0.062, 0.106] of Qwen2.5-1.5B's answers and 0.091 [0.074, 0.109] of Gemma's.
 
@@ -251,7 +251,7 @@ Probe accuracy by token position:
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | 0.905 [0.887, 0.922] | 0.499 [0.497, 0.500] | +0.364 [+0.341, +0.387] | -0.042 [-0.061, -0.022] | 0.596 [0.568, 0.623] | – | – |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | 0.623 [0.598, 0.647] | 0.556 [0.528, 0.580] | +0.070 [+0.021, +0.120] | +0.003 [-0.032, +0.038] | 0.519 [0.494, 0.548] | – | – |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 Probes decode the gold label from held-out premises at 0.807 [0.784, 0.828], 0.870 [0.850, 0.890] and 0.863 [0.841, 0.886] on the Corr2Cause pool, and at 0.561 [0.534, 0.586], 0.605 [0.580, 0.631] and 0.626 [0.590, 0.664] on CLadder (report half; layer and regularisation chosen on the other half). The controls behave as controls should: shuffled labels give 0.50, and a randomly initialised model gives 0.50 to 0.62. Taken alone, this is the pattern that is usually read as "the model represents the answer".
 
@@ -271,9 +271,10 @@ All scorers on the report half:
 | Qwen2.5-1.5B | Corr2Cause debiased pool | 0.752 [0.729, 0.776] | 0.518 [0.495, 0.541] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.816 [0.792, 0.837] | 0.579 [0.554, 0.604] | 0.494 [0.474, 0.513] |
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.848 [0.827, 0.868] | 0.859 [0.839, 0.879] | 0.919 [0.902, 0.935] | 0.596 [0.568, 0.623] | 0.507 [0.483, 0.532] |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.510 [0.482, 0.541] | – | 0.800 [0.767, 0.839] | 0.519 [0.494, 0.548] | 0.506 [0.464, 0.549] |
+| Gemma-2-2B | Corr2Cause debiased pool | 0.763 [0.739, 0.787] | 0.518 [0.495, 0.541] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.816 [0.792, 0.837] | 0.568 [0.542, 0.593] | 0.494 [0.468, 0.518] |
 | Qwen2.5-3B | Corr2Cause debiased pool | 0.765 [0.743, 0.788] | 0.518 [0.495, 0.541] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.816 [0.792, 0.837] | 0.594 [0.568, 0.619] | 0.490 [0.478, 0.501] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 Audited criterion (and, for comparison, the pre-registered one as coded):
 
@@ -287,9 +288,10 @@ Audited criterion (and, for comparison, the pre-registered one as coded):
 | Qwen2.5-1.5B | Corr2Cause debiased pool | 0.752 [0.729, 0.776] | structural | 0.816 [0.792, 0.837] | -0.063 [-0.094, -0.034] | -0.053 [-0.090, -0.015] | -0.094 [-0.125, -0.065] | no | yes | no (84% gold-Yes) |
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | structural | 0.919 [0.902, 0.935] | -0.056 [-0.078, -0.033] | -0.020 [-0.039, -0.001] | -0.030 [-0.051, -0.008] | no | no | yes |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | structural | 0.800 [0.767, 0.839] | -0.174 [-0.220, -0.133] | -0.159 [-0.215, -0.100] | -0.237 [-0.297, -0.185] | no | yes | yes |
+| Gemma-2-2B | Corr2Cause debiased pool | 0.763 [0.739, 0.787] | structural | 0.816 [0.792, 0.837] | -0.053 [-0.081, -0.023] | -0.049 [-0.091, -0.010] | -0.076 [-0.103, -0.050] | no | yes | yes |
 | Qwen2.5-3B | Corr2Cause debiased pool | 0.765 [0.743, 0.788] | structural | 0.816 [0.792, 0.837] | -0.050 [-0.079, -0.020] | -0.039 [-0.080, +0.000] | -0.074 [-0.103, -0.047] | no | yes | no (95% gold-Yes) |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 ![confound c2c](../figures/fig5_confound_c2c_probe.png)
 ![confound cladder](../figures/fig5_confound_cladder.png)
@@ -447,12 +449,12 @@ Gold-label probes on the debiased pool (report half; layer and regularisation ch
 |---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | 0.633 [0.609, 0.658] | 0.604 [0.580, 0.628] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.029 [+0.000, +0.059] | -0.183 [-0.214, -0.149] | 0.737 [0.713, 0.760] | 0.601 [0.578, 0.625] |
 | Qwen2.5-1.5B | 0.752 [0.729, 0.776] | 0.579 [0.554, 0.604] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.174 [+0.142, +0.207] | -0.063 [-0.094, -0.034] | 0.788 [0.766, 0.809] | 0.585 [0.560, 0.610] |
-| Gemma-2-2B (activations from Kaggle) | (pending: confound_gemma2b_c2c_debiased.json all_items/gold_probe/accuracy) | (pending: confound_gemma2b_c2c_debiased.json all_items/random_init_probe/accuracy) | (pending: confound_gemma2b_c2c_debiased.json all_items/tfidf/accuracy) | (pending: confound_gemma2b_c2c_debiased.json all_items/structural/accuracy) | (pending: confound_gemma2b_c2c_debiased.json all_items/gold_probe_minus_random_init_probe/accuracy) | (pending: confound_gemma2b_c2c_debiased.json verdict/audited/all_items_probe_minus_best_text_accuracy) | (pending: confound_gemma2b_c2c_debiased.json positions/content_end/accuracy) | (pending: confound_gemma2b_c2c_debiased.json positions/content_end/random_init_accuracy) |
-| Qwen2.5-3B (activations from Kaggle) | 0.765 [0.743, 0.788] | 0.594 [0.568, 0.619] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.171 [+0.138, +0.205] | -0.050 [-0.079, -0.020] | (pending: confound_qwen3b_c2c_debiased.json positions/content_end/accuracy) | (pending: confound_qwen3b_c2c_debiased.json positions/content_end/random_init_accuracy) |
+| Gemma-2-2B (activations from Kaggle) | 0.763 [0.739, 0.787] | 0.568 [0.542, 0.593] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.195 [+0.163, +0.228] | -0.053 [-0.081, -0.023] | not exported | not exported |
+| Qwen2.5-3B (activations from Kaggle) | 0.765 [0.743, 0.788] | 0.594 [0.568, 0.619] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.171 [+0.138, +0.205] | -0.050 [-0.079, -0.020] | not exported | not exported |
 
-<sub>Source: `results/confound_<model>_c2c_debiased.json`. "(pending: …)" marks runs that have not finished.</sub>
+<sub>Source: `results/confound_<model>_c2c_debiased.json`. For the two models cached on Kaggle only the final-token activations were exported in the first run.</sub>
 
-**Verdicts under the two criteria, unchanged.** The audited criterion (probe beats the strongest text-only baseline; D19) is **not met** for either model: the parsed-feature classifier beats the probe by -0.183 [-0.214, -0.149] (Qwen2.5-0.5B) and -0.063 [-0.094, -0.034] (Qwen2.5-1.5B). The original pre-registered criterion as coded (D11: against TF-IDF and the template prior, on wrongly answered items) is met for both models on this pool; as explained in Section 3.4 it does not test the claim, and it is reported, not relied on.
+**Verdicts under the two criteria, unchanged.** The audited criterion (probe beats the strongest text-only baseline; D19) is **not met** for any of the four models: the probe trails the parsed-feature classifier by -0.183 [-0.214, -0.149] (Qwen2.5-0.5B), -0.063 [-0.094, -0.034] (Qwen2.5-1.5B), -0.053 [-0.081, -0.023] (Gemma-2-2B) and -0.050 [-0.079, -0.020] (Qwen2.5-3B). The three larger models land within a point and a half of one another (0.75 to 0.77): going from 1.5 to 3 billion parameters makes no visible difference. The original pre-registered criterion as coded (D11: against TF-IDF and the template prior, on wrongly answered items) is met for all four models on this pool; as explained in Section 3.4 it does not test the claim, and it is reported, not relied on.
 
 #### 3.6.1 Post-hoc reading: a ladder of baselines in two groups
 
@@ -493,10 +495,40 @@ In this pool a classifier that sees only the hypothesis, or only the premise, is
 | Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.053 [-0.080, -0.026] |
 | Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.063 [-0.095, -0.036] |
 | Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.113 [-0.139, -0.088] |
+| Gemma-2-2B | — | **Gold-label probe, final token, layer 17** | 0.763 [0.739, 0.787] | 0.840 [0.820, 0.859] | — |
+| Gemma-2-2B | (a0) single-input control: 0.50 by construction | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.263 [+0.239, +0.287] |
+| Gemma-2-2B | (a0) single-input control: 0.50 by construction | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.263 [+0.239, +0.287] |
+| Gemma-2-2B | (a0) single-input control: 0.50 by construction | Bag-of-words, whole prompt (linear) | 0.489 [0.460, 0.516] | 0.514 [0.481, 0.545] | +0.274 [+0.238, +0.309] |
+| Gemma-2-2B | (a0) single-input control: 0.50 by construction | Probe trained on shuffled labels (20 shuffles) | 0.500 ± 0.016 (max 0.524) | – | – |
+| Gemma-2-2B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: premise-level counts | 0.593 [0.565, 0.619] | 0.619 [0.588, 0.650] | +0.170 [+0.136, +0.201] |
+| Gemma-2-2B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: bag-of-words of the premise | 0.659 [0.630, 0.688] | 0.706 [0.676, 0.736] | +0.103 [+0.069, +0.139] |
+| Gemma-2-2B | (a) shallow confound control: interaction, nothing bound to the queried variables | Probe on a randomly initialised copy of the model | 0.568 [0.541, 0.593] | 0.593 [0.563, 0.622] | +0.195 [+0.163, +0.228] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statement counts for each queried variable separately | 0.743 [0.717, 0.768] | 0.819 [0.795, 0.843] | +0.020 [-0.008, +0.049] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statements naming the queried pair (lookup) | 0.765 [0.741, 0.786] | 0.834 [0.811, 0.855] | -0.002 [-0.035, +0.030] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–2-grams (no parser) | 0.742 [0.717, 0.767] | 0.821 [0.797, 0.844] | +0.021 [-0.009, +0.052] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.042 [-0.071, -0.012] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.053 [-0.082, -0.025] |
+| Gemma-2-2B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.103 [-0.131, -0.073] |
+| Qwen2.5-3B | — | **Gold-label probe, final token, layer 25** | 0.765 [0.743, 0.788] | 0.845 [0.826, 0.866] | — |
+| Qwen2.5-3B | (a0) single-input control: 0.50 by construction | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.265 [+0.243, +0.288] |
+| Qwen2.5-3B | (a0) single-input control: 0.50 by construction | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.265 [+0.243, +0.288] |
+| Qwen2.5-3B | (a0) single-input control: 0.50 by construction | Bag-of-words, whole prompt (linear) | 0.489 [0.460, 0.516] | 0.514 [0.481, 0.545] | +0.276 [+0.242, +0.312] |
+| Qwen2.5-3B | (a0) single-input control: 0.50 by construction | Probe trained on shuffled labels (20 shuffles) | 0.499 ± 0.014 (max 0.525) | – | – |
+| Qwen2.5-3B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: premise-level counts | 0.593 [0.565, 0.619] | 0.619 [0.588, 0.650] | +0.172 [+0.139, +0.206] |
+| Qwen2.5-3B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: bag-of-words of the premise | 0.659 [0.630, 0.688] | 0.706 [0.676, 0.736] | +0.106 [+0.072, +0.142] |
+| Qwen2.5-3B | (a) shallow confound control: interaction, nothing bound to the queried variables | Probe on a randomly initialised copy of the model | 0.594 [0.568, 0.619] | 0.629 [0.600, 0.658] | +0.171 [+0.140, +0.204] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statement counts for each queried variable separately | 0.743 [0.717, 0.768] | 0.819 [0.795, 0.843] | +0.022 [-0.006, +0.051] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statements naming the queried pair (lookup) | 0.765 [0.741, 0.786] | 0.834 [0.811, 0.855] | +0.000 [-0.030, +0.029] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–2-grams (no parser) | 0.742 [0.717, 0.767] | 0.821 [0.797, 0.844] | +0.023 [-0.006, +0.055] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.040 [-0.068, -0.013] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.050 [-0.081, -0.022] |
+| Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.100 [-0.127, -0.073] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
 
 For Qwen2.5-1.5B the final-token probe (0.752 [0.728, 0.774] accuracy, AUROC 0.829 [0.807, 0.850]) is above every control in group (a): the strongest is the per-template bag-of-words of the premise (0.659 [0.630, 0.688]; probe minus control +0.093 [+0.060, +0.125]). Within group (b) it is indistinguishable from the per-template lookup of statements naming the pair (0.765 [0.741, 0.786]; difference -0.013 [-0.045, +0.016]) and from per-variable statement counts (0.743 [0.717, 0.768]), and below the per-string 4-gram model (0.805 [0.784, 0.827]), the hand parse (0.816 [0.792, 0.837]) and their stack (0.865 [0.845, 0.884]). "Shallow" and "structure-aware" are ends of a continuum, and the probe sits where the binding starts: at the level of looking up what the premise says about the two queried variables.
+
+Gemma-2-2B (0.763 [0.739, 0.787]) and Qwen2.5-3B (0.765 [0.743, 0.788]) sit in the same place on the ladder as Qwen2.5-1.5B: above the per-template bag-of-words of the premise (by +0.103 [+0.069, +0.139] and +0.106 [+0.072, +0.142]), indistinguishable from the per-template lookup of statements naming the pair (-0.002 [-0.035, +0.030] and +0.000 [-0.030, +0.029]), and below the hand parse (-0.053 [-0.082, -0.025] and -0.050 [-0.081, -0.022]).
 
 For Qwen2.5-0.5B the final-token probe (0.633 [0.611, 0.657]) is **not** above group (a): it is level with the random-init probe (0.604 [0.580, 0.628]; difference +0.029 [+0.002, +0.060], one random initialisation) and no better than the per-template bag-of-words (0.659 [0.630, 0.688]; difference -0.026 [-0.062, +0.006]). At the final token there is no evidence of binding for this model. Evidence for it exists elsewhere: at the end of the hypothesis its probe scores 0.737 [0.713, 0.760], and the adjacency probe below is well above its controls.
 
@@ -506,8 +538,10 @@ Robustness of the headline number:
 |---|---|---|---|---|
 | Qwen2.5-0.5B | 0.633 | 0.624 / 0.634 / 0.624 | 0.497 ± 0.013 | 0.620 [0.596, 0.646] |
 | Qwen2.5-1.5B | 0.752 | 0.736 / 0.741 / 0.754 | 0.498 ± 0.013 | 0.708 [0.684, 0.730] |
+| Gemma-2-2B | 0.763 | 0.746 / 0.754 / 0.759 | 0.500 ± 0.016 | 0.712 [0.687, 0.736] |
+| Qwen2.5-3B | 0.765 | 0.754 / 0.754 / 0.763 | 0.499 ± 0.014 | 0.714 [0.690, 0.736] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
 
 The reported accuracy is an ensemble over three fold assignments; single assignments are one to two points lower for Qwen2.5-1.5B. A probe trained on the selection half only (half the data) scores lower still. The shuffled-label null is centred on 0.50 with a standard deviation of about 0.013.
 
@@ -521,10 +555,14 @@ Nested logistic stacking: for every outer fold, the text model's score and the p
 | Qwen2.5-0.5B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.868 [0.849, 0.886] | +0.002 [-0.003, +0.008] | +0.000 [-0.000, +0.001] | -0.000 [-0.004, +0.003] |
 | Qwen2.5-1.5B | hand-written parse | 0.817 [0.794, 0.840] | 0.839 [0.818, 0.858] | +0.022 [+0.005, +0.038] | +0.017 [+0.010, +0.024] | +0.019 [+0.008, +0.029] |
 | Qwen2.5-1.5B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.865 [0.844, 0.884] | -0.001 [-0.010, +0.008] | +0.003 [+0.001, +0.005] | -0.001 [-0.008, +0.005] |
+| Gemma-2-2B | hand-written parse | 0.817 [0.794, 0.840] | 0.852 [0.832, 0.870] | +0.034 [+0.021, +0.048] | +0.020 [+0.014, +0.026] | +0.025 [+0.015, +0.035] |
+| Gemma-2-2B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.874 [0.855, 0.891] | +0.009 [-0.002, +0.019] | +0.003 [+0.001, +0.006] | +0.007 [+0.000, +0.014] |
+| Qwen2.5-3B | hand-written parse | 0.817 [0.794, 0.840] | 0.850 [0.829, 0.869] | +0.033 [+0.018, +0.047] | +0.022 [+0.016, +0.029] | +0.020 [+0.008, +0.031] |
+| Qwen2.5-3B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.874 [0.856, 0.893] | +0.009 [+0.000, +0.018] | +0.004 [+0.002, +0.007] | +0.005 [-0.002, +0.012] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
 
-For Qwen2.5-1.5B the probe adds +0.022 [+0.005, +0.038] accuracy (AUROC +0.017 [+0.010, +0.024]) to the hand-written parse, and -0.001 [-0.010, +0.008] to the strongest text-only model. For Qwen2.5-0.5B: +0.009 [-0.002, +0.018] and +0.002 [-0.003, +0.008]. So the activations hold about two points' worth of validity information that this particular hand parse lacks, and nothing measurable that a stronger text-only model lacks.
+For Qwen2.5-1.5B the probe adds +0.022 [+0.005, +0.038] accuracy (AUROC +0.017 [+0.010, +0.024]) to the hand-written parse, and -0.001 [-0.010, +0.008] to the strongest text-only model. For Qwen2.5-0.5B: +0.009 [-0.002, +0.018] and +0.002 [-0.003, +0.008]. For Gemma-2-2B: +0.034 [+0.021, +0.048] over the hand parse and +0.009 [-0.002, +0.019] over the strongest text-only model; for Qwen2.5-3B: +0.033 [+0.018, +0.047] and +0.009 [+0.000, +0.018]. So the activations of the three larger models hold two to three points' worth of validity information that this particular hand parse lacks. Over the strongest text-only model the gain is zero for Qwen2.5-1.5B and about one point, with an interval that reaches zero, for Gemma-2-2B and Qwen2.5-3B. There is a mild trend with model size and no clear excess over text in any model.
 
 *History of this number, for the record.* A first, non-nested stacking gave +0.023; I withdrew it for not being nested and replaced it with "add the probe score as one column to gradient boosting", which gave +0.006 [−0.015, +0.026] and which I reported as "no measurable gain". The third audit showed with a synthetic column of known value that this second test cannot detect a two-point gain, and that proper nesting reproduces the first number. The insensitive test's result is kept in the result file (`gbm_plus_one_column_insensitive`).
 
@@ -552,10 +590,30 @@ A probe for each binary property a parser reads off the item, at the layer the g
 | Qwen2.5-1.5B | many correlation statements (≥ median) | 0.59 | 1.000 [0.999, 1.000] | 0.508 ± 0.029 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
 | Qwen2.5-1.5B | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.503 ± 0.023 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
 | Qwen2.5-1.5B | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.997, 0.999] | 0.506 ± 0.030 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Gemma-2-2B | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.963 [0.952, 0.972] | 0.495 ± 0.018 | 0.605 [0.574, 0.632] | 0.628 | 0.682 [0.653, 0.712] | 0.899 [0.883, 0.916] | – | 0.539 |
+| Gemma-2-2B | queried pair correlates | 0.92 | 0.988 [0.977, 0.995] | 0.407 ± 0.064 | 0.891 [0.857, 0.919] | 0.896 | 0.946 [0.927, 0.961] | 0.988 [0.974, 0.996] | – | 0.525 |
+| Gemma-2-2B | pair has a common neighbour | 0.83 | 0.800 [0.767, 0.831] | 0.461 ± 0.028 | 0.695 [0.657, 0.731] | 0.700 | 0.749 [0.713, 0.786] | 0.828 [0.800, 0.857] | – | 0.553 |
+| Gemma-2-2B | a common neighbour lies in a separating set | 0.70 | 0.933 [0.915, 0.947] | 0.511 ± 0.017 | 0.633 [0.599, 0.662] | 0.650 | 0.718 [0.686, 0.748] | 0.871 [0.848, 0.892] | – | 0.506 |
+| Gemma-2-2B | a common neighbour lies in no separating set | 0.84 | 0.914 [0.892, 0.935] | 0.505 ± 0.020 | 0.699 [0.658, 0.738] | 0.717 | 0.799 [0.770, 0.826] | 0.864 [0.839, 0.890] | – | 0.510 |
+| Gemma-2-2B | premise has six variables | 0.97 | 0.998 [0.992, 1.000] | 0.482 ± 0.074 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [0.999, 1.000] | 1.000 [0.999, 1.000] | – | 0.500 |
+| Gemma-2-2B | many correlation statements (≥ median) | 0.59 | 1.000 [0.999, 1.000] | 0.503 ± 0.028 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Gemma-2-2B | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.515 ± 0.025 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Gemma-2-2B | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.998, 1.000] | 0.510 ± 0.027 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-3B | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.980 [0.973, 0.986] | 0.491 ± 0.017 | 0.601 [0.572, 0.634] | 0.638 | 0.682 [0.653, 0.712] | 0.899 [0.883, 0.916] | – | 0.539 |
+| Qwen2.5-3B | queried pair correlates | 0.92 | 0.996 [0.991, 0.999] | 0.442 ± 0.049 | 0.873 [0.841, 0.903] | 0.891 | 0.946 [0.927, 0.961] | 0.988 [0.974, 0.996] | – | 0.525 |
+| Qwen2.5-3B | pair has a common neighbour | 0.83 | 0.844 [0.817, 0.868] | 0.473 ± 0.035 | 0.704 [0.666, 0.739] | 0.707 | 0.749 [0.713, 0.786] | 0.828 [0.800, 0.857] | – | 0.553 |
+| Qwen2.5-3B | a common neighbour lies in a separating set | 0.70 | 0.952 [0.939, 0.964] | 0.497 ± 0.017 | 0.618 [0.584, 0.652] | 0.654 | 0.718 [0.686, 0.748] | 0.871 [0.848, 0.892] | – | 0.506 |
+| Qwen2.5-3B | a common neighbour lies in no separating set | 0.84 | 0.939 [0.920, 0.955] | 0.506 ± 0.019 | 0.691 [0.648, 0.730] | 0.734 | 0.799 [0.770, 0.826] | 0.864 [0.839, 0.890] | – | 0.510 |
+| Qwen2.5-3B | premise has six variables | 0.97 | 0.999 [0.997, 1.000] | 0.467 ± 0.054 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [0.999, 1.000] | 1.000 [0.999, 1.000] | – | 0.500 |
+| Qwen2.5-3B | many correlation statements (≥ median) | 0.59 | 1.000 [1.000, 1.000] | 0.497 ± 0.023 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-3B | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.503 ± 0.024 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-3B | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.998, 1.000] | 0.508 ± 0.018 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
 
 "The queried pair is adjacent in the skeleton" is decodable from Qwen2.5-1.5B at AUROC 0.980 [0.974, 0.986], against 0.619 [0.589, 0.649] from the random-init copy at the same layer (0.647 at its best layer), 0.682 [0.653, 0.712] from text without binding, and 0.562 [0.528, 0.592] at the end of the premise, where the model cannot yet know which pair is asked about. A text model with per-variable statement counts and no pair lookup already reaches 0.899 [0.883, 0.916] for this property, so most of what the probe reads requires binding statements to each queried variable; the excess over that (+0.081 [+0.066, +0.097]) is what points to the pair being bound. For Qwen2.5-0.5B the same property is decodable at 0.892 [0.874, 0.909] (random-init 0.656 [0.625, 0.687]; per-variable text 0.899 [0.883, 0.916]). Premise-level counts are perfectly decodable from every source, including the random-init model and the end of the premise, and say nothing about computation. "The pair correlates" is nearly as decodable without any binding (it is true for 92% of items). Shuffled-label nulls for rare properties sit a little below 0.5; that is a property of shuffling an imbalanced label, confirmed over repeated shuffles.
+
+For Gemma-2-2B and Qwen2.5-3B adjacency is decodable at AUROC 0.963 [0.952, 0.972] and 0.980 [0.973, 0.986], against 0.605 [0.574, 0.632] and 0.601 [0.572, 0.634] from their random-init copies. The end-of-premise check is not available for these two models (final-token activations only).
 
 #### 3.6.4 Is the probe's signal carried by one property, and how much is shared with text?
 
@@ -579,10 +637,26 @@ The gold probe's AUROC computed only over valid/invalid pairs that fall in the s
 | Qwen2.5-1.5B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.829 [0.807, 0.850] | 0.775 [0.745, 0.806] |
 | Qwen2.5-1.5B | quintiles of the hand-parse score | 5 | 0.818 | 0.829 [0.807, 0.850] | 0.723 [0.683, 0.761] |
 | Qwen2.5-1.5B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.829 [0.807, 0.850] | 0.607 [0.550, 0.664] |
+| Gemma-2-2B | hypothesis template | 5 | 0.500 | 0.840 [0.820, 0.859] | 0.848 [0.827, 0.867] |
+| Gemma-2-2B | pair adjacent in skeleton | 2 | 0.539 | 0.840 [0.820, 0.859] | 0.835 [0.814, 0.856] |
+| Gemma-2-2B | pair correlated | 2 | 0.525 | 0.840 [0.820, 0.859] | 0.839 [0.818, 0.860] |
+| Gemma-2-2B | pair has a common neighbour | 2 | 0.553 | 0.840 [0.820, 0.859] | 0.838 [0.817, 0.860] |
+| Gemma-2-2B | template × adjacent × common neighbour | 20 | 0.760 | 0.840 [0.820, 0.859] | 0.778 [0.747, 0.810] |
+| Gemma-2-2B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.840 [0.820, 0.859] | 0.778 [0.747, 0.808] |
+| Gemma-2-2B | quintiles of the hand-parse score | 5 | 0.818 | 0.840 [0.820, 0.859] | 0.739 [0.700, 0.776] |
+| Gemma-2-2B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.840 [0.820, 0.859] | 0.661 [0.603, 0.715] |
+| Qwen2.5-3B | hypothesis template | 5 | 0.500 | 0.845 [0.826, 0.866] | 0.851 [0.831, 0.873] |
+| Qwen2.5-3B | pair adjacent in skeleton | 2 | 0.539 | 0.845 [0.826, 0.866] | 0.839 [0.819, 0.859] |
+| Qwen2.5-3B | pair correlated | 2 | 0.525 | 0.845 [0.826, 0.866] | 0.843 [0.824, 0.864] |
+| Qwen2.5-3B | pair has a common neighbour | 2 | 0.553 | 0.845 [0.826, 0.866] | 0.847 [0.827, 0.869] |
+| Qwen2.5-3B | template × adjacent × common neighbour | 20 | 0.760 | 0.845 [0.826, 0.866] | 0.790 [0.759, 0.822] |
+| Qwen2.5-3B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.845 [0.826, 0.866] | 0.798 [0.771, 0.826] |
+| Qwen2.5-3B | quintiles of the hand-parse score | 5 | 0.818 | 0.845 [0.826, 0.866] | 0.756 [0.720, 0.791] |
+| Qwen2.5-3B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.845 [0.826, 0.866] | 0.656 [0.605, 0.708] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
 
-It does not fall inside strata of any single parsed property, which is expected because no single property predicts the label in this pool. It does fall inside strata of text-derived *scores*: for Qwen2.5-1.5B from 0.829 [0.807, 0.850] overall to 0.723 [0.683, 0.761] within quintiles of the hand-parse score and to 0.607 [0.550, 0.664] within 25 cells of two text scores; for Qwen2.5-0.5B to 0.500 [0.446, 0.566]. Most of the probe's signal is shared with what text models extract.
+It does not fall inside strata of any single parsed property, which is expected because no single property predicts the label in this pool. It does fall inside strata of text-derived *scores*: for Qwen2.5-1.5B from 0.829 [0.807, 0.850] overall to 0.723 [0.683, 0.761] within quintiles of the hand-parse score and to 0.607 [0.550, 0.664] within 25 cells of two text scores; for Qwen2.5-0.5B to 0.500 [0.446, 0.566]; for Gemma-2-2B and Qwen2.5-3B to 0.661 [0.603, 0.715] and 0.656 [0.605, 0.708]. Most of the probe's signal is shared with what text models extract; a little more is left over in the two largest models than in Qwen2.5-1.5B.
 
 #### 3.6.5 Do the model's answers express it?
 
@@ -602,20 +676,35 @@ Pooled over all items the answers are at chance (AUROC 0.510 [0.488, 0.532] for 
 | Qwen2.5-1.5B | non-child descendant | 450 | 0.430 [0.375, 0.485] | 0.394 | 0.460 | 0.469 [0.409, 0.532] | -0.127 [-0.224, -0.028] | 0.817 [0.778, 0.859] |
 | Qwen2.5-1.5B | non-parent ancestor | 450 | 0.449 [0.393, 0.508] | 0.448 | 0.446 | 0.434 [0.374, 0.496] | -0.133 [-0.229, -0.046] | 0.776 [0.730, 0.819] |
 | Qwen2.5-1.5B | parent: "X directly causes Y" | 700 | 0.628 [0.581, 0.673] | 0.644 | 0.613 | 0.649 [0.603, 0.693] | +0.359 [+0.283, +0.425] | 0.886 [0.859, 0.912] |
+| Gemma-2-2B | all templates | 2400 | 0.473 [0.452, 0.493] | – | – | – | -0.077 [-0.118, -0.035] | – |
+| Gemma-2-2B | has_collider | 500 | 0.560 [0.510, 0.611] | 0.609 | 0.521 | 0.370 [0.315, 0.426] | +0.135 [+0.032, +0.236] | 0.757 [0.710, 0.806] |
+| Gemma-2-2B | has_confounder | 300 | 0.507 [0.430, 0.575] | 0.458 | 0.562 | 0.309 [0.238, 0.383] | +0.009 [-0.094, +0.110] | 0.772 [0.713, 0.826] |
+| Gemma-2-2B | non-child descendant | 450 | 0.482 [0.422, 0.540] | 0.440 | 0.517 | 0.557 [0.499, 0.619] | -0.077 [-0.164, +0.028] | 0.777 [0.729, 0.826] |
+| Gemma-2-2B | non-parent ancestor | 450 | 0.480 [0.424, 0.534] | 0.484 | 0.483 | 0.439 [0.381, 0.492] | -0.115 [-0.212, -0.011] | 0.772 [0.725, 0.817] |
+| Gemma-2-2B | parent: "X directly causes Y" | 700 | 0.387 [0.347, 0.432] | 0.393 | 0.375 | 0.420 [0.374, 0.465] | -0.262 [-0.338, -0.184] | 0.910 [0.887, 0.934] |
+| Qwen2.5-3B | all templates | 2400 | 0.511 [0.491, 0.534] | – | – | – | +0.049 [+0.009, +0.088] | – |
+| Qwen2.5-3B | has_collider | 500 | 0.565 [0.513, 0.621] | 0.545 | 0.588 | 0.515 [0.457, 0.573] | +0.119 [+0.026, +0.212] | 0.756 [0.711, 0.801] |
+| Qwen2.5-3B | has_confounder | 300 | 0.415 [0.348, 0.489] | 0.470 | 0.375 | 0.196 [0.136, 0.257] | -0.207 [-0.314, -0.088] | 0.762 [0.706, 0.816] |
+| Qwen2.5-3B | non-child descendant | 450 | 0.444 [0.390, 0.499] | 0.467 | 0.421 | 0.582 [0.524, 0.643] | -0.191 [-0.288, -0.089] | 0.817 [0.775, 0.855] |
+| Qwen2.5-3B | non-parent ancestor | 450 | 0.506 [0.447, 0.564] | 0.473 | 0.528 | 0.637 [0.579, 0.693] | +0.027 [-0.074, +0.119] | 0.774 [0.727, 0.820] |
+| Qwen2.5-3B | parent: "X directly causes Y" | 700 | 0.561 [0.517, 0.609] | 0.555 | 0.563 | 0.605 [0.560, 0.652] | +0.211 [+0.136, +0.284] | 0.920 [0.896, 0.942] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
 
-For "X directly causes Y" hypotheses, Qwen2.5-1.5B's answer logit does track validity (0.628 [0.581, 0.673]; similar in both halves of the data) and correlates with the probe's score (+0.359 [+0.283, +0.425]). For the two indirect-causation templates and for confounders it is weakly *anti*-correlated with validity, and for colliders flat. Summed over templates these cancel. So it is not accurate to say the model's answers ignore what the probe reads: for the simplest relation they use it in the right direction, and for others in the wrong one. This breakdown is post hoc over five templates and two models; the direct-causation effect for Qwen2.5-1.5B is about five standard errors.
+For "X directly causes Y" hypotheses, Qwen2.5-1.5B's answer logit does track validity (0.628 [0.581, 0.673]; similar in both halves of the data) and correlates with the probe's score (+0.359 [+0.283, +0.425]). For the two indirect-causation templates and for confounders it is weakly *anti*-correlated with validity, and for colliders flat. Summed over templates these cancel. So it is not accurate to say the model's answers ignore what the probe reads: for the simplest relation they use it in the right direction, and for others in the wrong one. This breakdown is post hoc over five templates; the direct-causation effect for Qwen2.5-1.5B is about five standard errors.
+
+The other two models do not repeat that pattern, which is a reason not to read much into it. Qwen2.5-3B tracks validity for direct-causation hypotheses more weakly (0.561 [0.517, 0.609]) and runs against it for confounder hypotheses (0.415 [0.348, 0.489]). Gemma-2-2B runs *against* validity for direct-causation hypotheses (0.387 [0.347, 0.432]; correlation of its answer logit with the probe's score -0.262 [-0.338, -0.184]). What all four models share is that the answer depends on whether the queried pair is adjacent, with a sign that differs by hypothesis type and by model; Section 4.4 tests whether that dependence runs through a linear encoding of adjacency.
 
 #### 3.6.6 What this supports
 
 On a Corr2Cause pool built so that the hypothesis alone and the premise alone are exactly uninformative:
 
 - **Qwen2.5-1.5B.** A linear probe on the final-token activations predicts validity above every interaction control that binds nothing to the queried variables, at the level of a per-template lookup of the statements naming the queried pair, and below a parser-free per-hypothesis n-gram model and a hand-written parse. It adds about two points to the hand parse and nothing measurable to a stronger text-only model. Whether the queried pair is adjacent in the premise's skeleton is linearly readable, far better than from a random-init copy or from text without binding, and not before the hypothesis is read. The answers are at chance when pooled but track validity for direct-causation hypotheses and run against it for others.
+- **Gemma-2-2B and Qwen2.5-3B.** The same picture as Qwen2.5-1.5B at the final token: probe accuracy 0.76 to 0.77, equal to the per-template pair lookup, five points below the hand parse, about three points of incremental value over the hand parse and at most one over the strongest text-only model. Their answers are at chance when pooled; by hypothesis type they differ from Qwen2.5-1.5B and from each other.
 - **Qwen2.5-0.5B.** At the final token nothing beyond no-binding controls; some binding is visible at the end of the hypothesis and in the adjacency probe.
-- **Not supported:** that either model holds a "correct answer" it fails to give; that the activations contain validity information unavailable to a text-only classifier; that the information is unused.
+- **Not supported:** that any of the four models holds a "correct answer" it fails to give; that the activations contain validity information unavailable to a text-only classifier; that the information is unused.
 
-Gemma-2-2B and Qwen2.5-3B are added when their activations arrive from the Kaggle run. The steering evidence is in Section 4.1.
+The steering evidence is in Section 4.1 and the test of the adjacency encoding in Section 4.4.
 
 ## 4. Tier 2 results
 
@@ -675,8 +764,80 @@ This section was rewritten after the second independent audit (Section 6), which
 | Qwen2.5-1.5B | CLadder | 24/28 | random direction 0 | +0.140 [+0.122, +0.163] | 0.78 | 34.2 | +0.0041 | +0.0001 | 0.496 | 0.577 |
 | Qwen2.5-1.5B | CLadder | 24/28 | random direction 1 | -0.257 [-0.268, -0.246] | 0.00 | 68.3 | -0.0038 | -0.0002 | 0.473 | 0.393 |
 | Qwen2.5-1.5B | CLadder | 24/28 | random direction 2 | +0.198 [+0.186, +0.210] | 0.97 | 32.9 | +0.0060 | +0.0004 | 0.525 | 0.654 |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | gold-label probe weights | +0.247 [+0.224, +0.269] | 0.87 | 151.0 | +0.0016 | +0.0026 | 0.917 | 0.555 |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | gold difference of class means | +2.091 [+1.963, +2.215] | 0.94 | 1.7 | +1.2253 | +0.4718 | 0.637 | 0.994 |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | model-answer probe weights (positive control) | +1.796 [+1.759, +1.831] | 1.00 | 3.2 | +0.5564 | +0.0785 | 0.560 | 1.000 |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | random direction 0 | +0.969 [+0.901, +1.036] | 0.96 | 38.6 | +0.0251 | +0.0073 | 0.591 | 0.943 |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | random direction 1 | -0.094 [-0.117, -0.072] | 0.42 | 32.9 | -0.0028 | -0.0007 | 0.572 | 0.993 |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | random direction 2 | +0.063 [+0.044, +0.082] | 0.67 | 66.5 | +0.0009 | +0.0000 | 0.524 | 0.958 |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | gold-label probe weights | -0.259 [-0.278, -0.239] | 0.07 | 219.9 | -0.0012 | -0.0019 | 0.861 | 0.559 |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | gold difference of class means | +0.136 [+0.112, +0.159] | 0.73 | 3.6 | +0.0373 | +0.0128 | 0.626 | 0.755 |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | model-answer probe weights (positive control) | +0.113 [+0.104, +0.122] | 0.94 | 15.9 | +0.0071 | +0.0006 | 0.538 | 0.996 |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | random direction 0 | +0.008 [-0.011, +0.026] | 0.59 | 54.9 | +0.0001 | +0.0000 | 0.543 | 0.755 |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | random direction 1 | -0.182 [-0.193, -0.171] | 0.01 | 87.3 | -0.0021 | +0.0004 | 0.433 | 0.578 |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | random direction 2 | +0.322 [+0.309, +0.334] | 1.00 | 85.5 | +0.0038 | +0.0003 | 0.549 | 0.417 |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | gold-label probe weights | -0.182 [-0.195, -0.169] | 0.00 | 180.6 | -0.0010 | -0.0016 | 0.906 | 0.544 |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | gold difference of class means | +2.896 [+2.801, +2.992] | 1.00 | 1.6 | +1.8215 | +0.5959 | 0.615 | 1.000 |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | model-answer probe weights (positive control) | +2.376 [+2.333, +2.418] | 1.00 | 3.2 | +0.7374 | +0.1157 | 0.570 | 1.000 |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | random direction 0 | +0.373 [+0.366, +0.381] | 1.00 | 71.4 | +0.0052 | -0.0003 | 0.514 | 0.959 |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | random direction 1 | +0.050 [+0.042, +0.057] | 0.82 | 48.7 | +0.0010 | -0.0000 | 0.499 | 0.917 |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | random direction 2 | +0.158 [+0.151, +0.165] | 1.00 | 78.0 | +0.0020 | -0.0002 | 0.483 | 0.891 |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | gold-label probe weights | +0.468 [+0.453, +0.481] | 1.00 | 349.1 | +0.0013 | +0.0021 | 0.780 | 0.473 |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | gold difference of class means | -1.766 [-1.814, -1.718] | 0.00 | 3.3 | -0.5297 | -0.0609 | 0.525 | 0.013 |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | model-answer probe weights (positive control) | +1.854 [+1.804, +1.901] | 1.00 | 4.2 | +0.4376 | -0.0123 | 0.486 | 1.000 |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | random direction 0 | +0.553 [+0.497, +0.607] | 0.82 | 42.6 | +0.0130 | -0.0003 | 0.496 | 0.845 |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | random direction 1 | +0.046 [+0.018, +0.073] | 0.57 | 43.7 | +0.0011 | -0.0000 | 0.489 | 0.888 |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | random direction 2 | +0.170 [+0.149, +0.191] | 0.78 | 55.7 | +0.0031 | -0.0000 | 0.496 | 0.618 |
+| Gemma-2-2B | CLadder | 20/26 | gold-label probe weights | -0.719 [-0.743, -0.689] | 0.00 | 285.8 | -0.0025 | -0.0040 | 0.648 | 0.557 |
+| Gemma-2-2B | CLadder | 20/26 | gold difference of class means | +1.007 [+0.985, +1.032] | 1.00 | 1.8 | +0.5486 | +0.0634 | 0.505 | 0.852 |
+| Gemma-2-2B | CLadder | 20/26 | model-answer probe weights (positive control) | +3.943 [+3.831, +4.064] | 1.00 | 4.8 | +0.8279 | +0.0582 | 0.517 | 0.998 |
+| Gemma-2-2B | CLadder | 20/26 | random direction 0 | +0.278 [+0.234, +0.326] | 0.75 | 62.5 | +0.0045 | -0.0007 | 0.476 | 0.360 |
+| Gemma-2-2B | CLadder | 20/26 | random direction 1 | -0.147 [-0.171, -0.123] | 0.18 | 62.1 | -0.0024 | +0.0000 | 0.486 | 0.593 |
+| Gemma-2-2B | CLadder | 20/26 | random direction 2 | +0.313 [+0.279, +0.342] | 1.00 | 66.6 | +0.0047 | +0.0005 | 0.511 | 0.688 |
+| Gemma-2-2B | CLadder | 13/26 | gold-label probe weights | -0.145 [-0.166, -0.120] | 0.07 | 352.0 | -0.0004 | -0.0006 | 0.580 | 0.488 |
+| Gemma-2-2B | CLadder | 13/26 | gold difference of class means | -0.248 [-0.264, -0.232] | 0.00 | 3.3 | -0.0756 | -0.0111 | 0.478 | 0.562 |
+| Gemma-2-2B | CLadder | 13/26 | model-answer probe weights (positive control) | +0.226 [+0.201, +0.248] | 0.96 | 64.3 | +0.0035 | -0.0000 | 0.513 | 0.911 |
+| Gemma-2-2B | CLadder | 13/26 | random direction 0 | -0.030 [-0.056, -0.005] | 0.48 | 41.5 | -0.0007 | -0.0000 | 0.481 | 0.527 |
+| Gemma-2-2B | CLadder | 13/26 | random direction 1 | -0.042 [-0.061, -0.026] | 0.39 | 41.9 | -0.0010 | +0.0001 | 0.509 | 0.559 |
+| Gemma-2-2B | CLadder | 13/26 | random direction 2 | -0.017 [-0.031, -0.001] | 0.38 | 58.6 | -0.0003 | -0.0000 | 0.491 | 0.443 |
+| Gemma-2-2B | CLadder | 22/26 | gold-label probe weights | +0.099 [+0.078, +0.119] | 0.83 | 280.3 | +0.0004 | +0.0006 | 0.656 | 0.532 |
+| Gemma-2-2B | CLadder | 22/26 | gold difference of class means | +1.030 [+0.982, +1.085] | 1.00 | 1.8 | +0.5591 | +0.0626 | 0.506 | 0.855 |
+| Gemma-2-2B | CLadder | 22/26 | model-answer probe weights (positive control) | +4.413 [+4.311, +4.526] | 1.00 | 4.5 | +0.9794 | +0.0636 | 0.516 | 0.999 |
+| Gemma-2-2B | CLadder | 22/26 | random direction 0 | +0.501 [+0.485, +0.520] | 1.00 | 58.3 | +0.0086 | -0.0009 | 0.482 | 0.274 |
+| Gemma-2-2B | CLadder | 22/26 | random direction 1 | +0.082 [+0.073, +0.092] | 0.95 | 46.0 | +0.0018 | +0.0001 | 0.494 | 0.833 |
+| Gemma-2-2B | CLadder | 22/26 | random direction 2 | +0.251 [+0.223, +0.279] | 1.00 | 57.4 | +0.0044 | +0.0005 | 0.510 | 0.673 |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | gold-label probe weights | -0.776 [-0.813, -0.737] | 0.01 | 64.4 | -0.0121 | -0.0197 | 0.919 | 0.622 |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | gold difference of class means | +4.768 [+4.390, +5.144] | 0.92 | 1.7 | +2.7888 | +1.4156 | 0.657 | 0.985 |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | model-answer probe weights (positive control) | +4.711 [+4.362, +5.046] | 0.99 | 3.5 | +1.3557 | +0.4743 | 0.613 | 0.999 |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | random direction 0 | +0.641 [+0.598, +0.679] | 1.00 | 30.7 | +0.0209 | +0.0056 | 0.617 | 0.924 |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | random direction 1 | +0.219 [+0.149, +0.297] | 0.59 | 53.4 | +0.0041 | +0.0016 | 0.604 | 0.813 |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | random direction 2 | -0.329 [-0.370, -0.290] | 0.14 | 59.4 | -0.0055 | +0.0002 | 0.458 | 0.272 |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | gold-label probe weights | +0.118 [+0.106, +0.130] | 0.90 | 103.8 | +0.0011 | +0.0015 | 0.798 | 0.614 |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | gold difference of class means | +0.131 [+0.106, +0.158] | 0.62 | 3.1 | +0.0422 | +0.0104 | 0.597 | 0.882 |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | model-answer probe weights (positive control) | +0.342 [+0.324, +0.359] | 1.00 | 19.0 | +0.0179 | +0.0054 | 0.603 | 0.970 |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | random direction 0 | +0.152 [+0.143, +0.162] | 0.96 | 40.8 | +0.0037 | -0.0000 | 0.507 | 0.457 |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | random direction 1 | +0.160 [+0.146, +0.172] | 0.97 | 39.8 | +0.0040 | +0.0002 | 0.536 | 0.578 |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | random direction 2 | +0.032 [+0.012, +0.053] | 0.50 | 61.5 | +0.0005 | -0.0000 | 0.507 | 0.616 |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | gold-label probe weights | +0.670 [+0.651, +0.689] | 1.00 | 105.0 | +0.0064 | +0.0104 | 0.901 | 0.623 |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | gold difference of class means | +4.907 [+4.796, +5.026] | 1.00 | 1.5 | +3.3455 | +1.2556 | 0.625 | 0.994 |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | model-answer probe weights (positive control) | +5.710 [+5.625, +5.787] | 1.00 | 3.0 | +1.8815 | +0.4651 | 0.600 | 1.000 |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | random direction 0 | +0.855 [+0.829, +0.881] | 1.00 | 68.4 | +0.0125 | -0.0037 | 0.439 | 0.508 |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | random direction 1 | -0.076 [-0.088, -0.066] | 0.21 | 49.3 | -0.0015 | -0.0005 | 0.622 | 0.963 |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | random direction 2 | -0.105 [-0.122, -0.088] | 0.18 | 47.9 | -0.0022 | +0.0005 | 0.427 | 0.071 |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | gold-label probe weights | -0.244 [-0.303, -0.182] | 0.23 | 228.3 | -0.0011 | -0.0017 | 0.791 | 0.491 |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | gold difference of class means | +3.912 [+3.663, +4.150] | 0.95 | 4.5 | +0.8618 | +0.1548 | 0.544 | 0.941 |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | model-answer probe weights (positive control) | +5.173 [+4.886, +5.436] | 1.00 | 5.2 | +1.0032 | +0.0333 | 0.512 | 0.999 |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | random direction 0 | +0.641 [+0.601, +0.681] | 1.00 | 33.9 | +0.0189 | +0.0006 | 0.523 | 0.897 |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | random direction 1 | +0.124 [+0.062, +0.186] | 0.57 | 62.1 | +0.0020 | +0.0001 | 0.523 | 0.734 |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | random direction 2 | -0.336 [-0.369, -0.302] | 0.11 | 52.0 | -0.0065 | -0.0001 | 0.510 | 0.337 |
+| Qwen2.5-3B | CLadder | 29/36 | gold-label probe weights | +0.797 [+0.692, +0.937] | 0.91 | 130.9 | +0.0061 | +0.0093 | 0.639 | 0.621 |
+| Qwen2.5-3B | CLadder | 29/36 | gold difference of class means | +12.240 [+12.052, +12.427] | 1.00 | 2.1 | +5.7158 | +0.9348 | 0.536 | 0.987 |
+| Qwen2.5-3B | CLadder | 29/36 | model-answer probe weights (positive control) | +11.255 [+11.061, +11.419] | 1.00 | 4.3 | +2.6211 | +0.3838 | 0.541 | 0.997 |
+| Qwen2.5-3B | CLadder | 29/36 | random direction 0 | +0.790 [+0.734, +0.857] | 1.00 | 29.5 | +0.0268 | +0.0006 | 0.516 | 0.803 |
+| Qwen2.5-3B | CLadder | 29/36 | random direction 1 | -0.743 [-0.795, -0.698] | 0.00 | 23.6 | -0.0315 | +0.0021 | 0.492 | 0.122 |
+| Qwen2.5-3B | CLadder | 29/36 | random direction 2 | -0.424 [-0.479, -0.376] | 0.12 | 39.9 | -0.0106 | +0.0002 | 0.506 | 0.342 |
 
-<sub>Source: `results/steering_analysis_qwen0.5b_c2c_probe.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen0.5b_c2c_debiased.json`, `results/steering_analysis_qwen0.5b_cladder.json`, `results/steering_analysis_qwen1.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_c2c_debiased.json`, `results/steering_analysis_qwen1.5b_cladder.json`</sub>
+<sub>Source: `results/steering_analysis_qwen0.5b_c2c_probe.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen0.5b_c2c_debiased.json`, `results/steering_analysis_qwen0.5b_cladder.json`, `results/steering_analysis_qwen1.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_c2c_debiased.json`, `results/steering_analysis_qwen1.5b_cladder.json`, `results/steering_analysis_gemma2b_c2c_probe.json`, `results/steering_analysis_gemma2b_c2c_probe_d0.5.json`, `results/steering_analysis_gemma2b_c2c_probe_d0.85.json`, `results/steering_analysis_gemma2b_c2c_debiased.json`, `results/steering_analysis_gemma2b_cladder.json`, `results/steering_analysis_gemma2b_cladder_d0.5.json`, `results/steering_analysis_gemma2b_cladder_d0.85.json`, `results/steering_analysis_qwen3b_c2c_probe.json`, `results/steering_analysis_qwen3b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen3b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen3b_c2c_debiased.json`, `results/steering_analysis_qwen3b_cladder.json`</sub>
 
 ![steering c2c](../figures/fig6_steering_c2c_probe.png)
 ![steering debiased](../figures/fig6_steering_c2c_debiased.png)
@@ -692,6 +853,12 @@ This section was rewritten after the second independent audit (Section 6), which
 | Qwen2.5-0.5B | Corr2Cause debiased pool | final | 14 | gold-label probe weights | -0.229 [-0.235, -0.222] | 88 | 0.104 | 0.373 | shuffled-label probe | 85 | 0.075 | 0.360 | 3.0 | 0.0031 | 0.0032 | 80 | 2.9 |
 | Qwen2.5-0.5B | Corr2Cause debiased pool | final | 14 | gold difference of class means | +0.150 [+0.144, +0.157] | 63 | 0.104 | 0.373 | shuffled-label difference of means | 90 | 0.063 | 0.191 | 2.4 | 0.1132 | 0.3692 | 30 | 0.8 |
 | Qwen2.5-0.5B | Corr2Cause debiased pool | final | 14 | model-answer probe weights (positive control) | +0.525 [+0.516, +0.532] | 100 | 0.104 | 0.373 | shuffled-label probe | 100 | 0.075 | 0.360 | 7.0 | 0.0234 | 0.0032 | 100 | 50.4 |
+| Qwen2.5-0.5B | Corr2Cause pool | end of hypothesis | 11 | gold-label probe weights | -0.133 [-0.147, -0.117] | 70 | 0.080 | 0.328 | shuffled-label probe | 60 | 0.112 | 0.307 | 1.2 | 0.0086 | 0.0021 | 100 | 4.8 |
+| Qwen2.5-0.5B | Corr2Cause pool | end of hypothesis | 11 | gold difference of class means | +0.092 [+0.083, +0.101] | 56 | 0.080 | 0.328 | shuffled-label difference of means | 60 | 0.081 | 0.209 | 1.1 | 0.4286 | 0.4047 | 60 | 1.4 |
+| Qwen2.5-0.5B | Corr2Cause pool | end of hypothesis | 11 | model-answer probe weights (positive control) | +0.261 [+0.243, +0.280] | 95 | 0.080 | 0.328 | shuffled-label probe | 95 | 0.112 | 0.307 | 2.3 | 0.0116 | 0.0021 | 100 | 12.9 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | end of hypothesis | 13 | gold-label probe weights | +0.095 [+0.074, +0.115] | 61 | 0.069 | 0.320 | shuffled-label probe | 50 | 0.099 | 0.231 | 1.0 | 0.0063 | 0.0057 | 55 | 1.1 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | end of hypothesis | 13 | gold difference of class means | +0.287 [+0.262, +0.313] | 99 | 0.069 | 0.320 | shuffled-label difference of means | 100 | 0.067 | 0.215 | 4.3 | 0.1323 | 0.5085 | 55 | 1.3 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | end of hypothesis | 13 | model-answer probe weights (positive control) | +0.756 [+0.709, +0.807] | 100 | 0.069 | 0.320 | shuffled-label probe | 100 | 0.099 | 0.231 | 7.6 | 0.0280 | 0.0057 | 100 | 37.6 |
 | Qwen2.5-1.5B | Corr2Cause pool | final | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 | 0.0159 | 0.0052 | 100 | 5.6 |
 | Qwen2.5-1.5B | Corr2Cause pool | final | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 | 0.5324 | 0.3511 | 85 | 2.3 |
 | Qwen2.5-1.5B | Corr2Cause pool | final | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 | 0.3503 | 0.0052 | 100 | 800.8 |
@@ -699,7 +866,7 @@ This section was rewritten after the second independent audit (Section 6), which
 | Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 | 0.3543 | 0.4113 | 60 | 1.4 |
 | Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 | 0.3029 | 0.0026 | 100 | 1798.5 |
 
-<sub>Source: `results/steering_controls_qwen0.5b_c2c_probe.json`, `results/steering_controls_qwen0.5b_c2c_debiased.json`, `results/steering_controls_qwen1.5b_c2c_probe.json`, `results/steering_controls_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/steering_controls_qwen0.5b_c2c_probe.json`, `results/steering_controls_qwen0.5b_c2c_debiased.json`, `results/steering_controls_qwen0.5b_c2c_probe_hyp.json`, `results/steering_controls_qwen0.5b_c2c_debiased_hyp.json`, `results/steering_controls_qwen1.5b_c2c_probe.json`, `results/steering_controls_qwen1.5b_c2c_debiased.json`</sub>
 
 **What the data show.**
 
@@ -768,8 +935,80 @@ Flip rates and the earlier "accuracy when pushed towards gold" (now called contr
 | Qwen2.5-1.5B | CLadder | 24/28 | random direction 0 | 0.17 [0.13, 0.21] | 0.14 [0.10, 0.18] | 0.65 [0.58, 0.73] | 0.35 [0.29, 0.41] | 0.0076 | 0.0061 | no |
 | Qwen2.5-1.5B | CLadder | 24/28 | random direction 1 | 0.33 [0.27, 0.38] | 0.18 [0.13, 0.22] | 0.26 [0.20, 0.32] | 0.76 [0.71, 0.82] | 0.0053 | 0.0061 | no |
 | Qwen2.5-1.5B | CLadder | 24/28 | random direction 2 | 0.27 [0.22, 0.32] | 0.12 [0.08, 0.16] | 0.71 [0.65, 0.78] | 0.32 [0.26, 0.39] | 0.0069 | 0.0061 | no |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | gold-label probe weights | 0.04 [0.02, 0.07] | 0.16 [0.12, 0.21] | 0.54 [0.49, 0.58] | 0.42 [0.37, 0.46] | 0.0050 | 0.0062 | no |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | gold difference of class means | 0.47 [0.41, 0.53] | 0.28 [0.22, 0.33] | 0.89 [0.86, 0.93] | 0.15 [0.11, 0.19] | 1.1813 | 0.0062 | yes |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | model-answer probe weights (positive control) | 0.72 [0.67, 0.78] | 0.28 [0.22, 0.33] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.5263 | 0.0062 | yes |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | random direction 0 | 0.19 [0.14, 0.24] | 0.18 [0.14, 0.23] | 0.68 [0.63, 0.73] | 0.31 [0.27, 0.36] | 0.0263 | 0.0062 | yes |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | random direction 1 | 0.00 [0.00, 0.00] | 0.08 [0.05, 0.11] | 0.51 [0.46, 0.56] | 0.45 [0.40, 0.50] | 0.0073 | 0.0062 | no |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | random direction 2 | 0.04 [0.02, 0.06] | 0.16 [0.12, 0.21] | 0.56 [0.51, 0.61] | 0.41 [0.36, 0.46] | 0.0050 | 0.0062 | no |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | gold-label probe weights | 0.11 [0.08, 0.15] | 0.09 [0.06, 0.12] | 0.38 [0.34, 0.43] | 0.58 [0.54, 0.64] | 0.0050 | 0.0059 | no |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | gold difference of class means | 0.08 [0.05, 0.11] | 0.17 [0.13, 0.22] | 0.61 [0.56, 0.66] | 0.36 [0.31, 0.41] | 0.0547 | 0.0059 | yes |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | model-answer probe weights (positive control) | 0.04 [0.02, 0.07] | 0.13 [0.09, 0.17] | 0.57 [0.52, 0.62] | 0.40 [0.35, 0.45] | 0.0089 | 0.0059 | no |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | random direction 0 | 0.04 [0.02, 0.07] | 0.09 [0.06, 0.12] | 0.41 [0.37, 0.47] | 0.55 [0.50, 0.60] | 0.0052 | 0.0059 | no |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | random direction 1 | 0.12 [0.08, 0.16] | 0.06 [0.03, 0.08] | 0.39 [0.34, 0.44] | 0.55 [0.51, 0.60] | 0.0048 | 0.0059 | no |
+| Gemma-2-2B | Corr2Cause pool | 13/26 | random direction 2 | 0.10 [0.07, 0.13] | 0.18 [0.13, 0.23] | 0.62 [0.57, 0.67] | 0.34 [0.30, 0.39] | 0.0056 | 0.0059 | no |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | gold-label probe weights | 0.02 [0.00, 0.03] | 0.05 [0.02, 0.07] | 0.46 [0.41, 0.52] | 0.50 [0.45, 0.55] | 0.0045 | 0.0058 | no |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | gold difference of class means | 0.72 [0.67, 0.78] | 0.28 [0.22, 0.33] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 1.7006 | 0.0058 | yes |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | model-answer probe weights (positive control) | 0.72 [0.67, 0.78] | 0.28 [0.22, 0.33] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.6990 | 0.0058 | yes |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | random direction 0 | 0.11 [0.07, 0.14] | 0.11 [0.07, 0.15] | 0.59 [0.54, 0.64] | 0.38 [0.33, 0.43] | 0.0068 | 0.0058 | no |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | random direction 1 | 0.04 [0.02, 0.06] | 0.04 [0.02, 0.06] | 0.48 [0.44, 0.53] | 0.50 [0.45, 0.55] | 0.0048 | 0.0058 | no |
+| Gemma-2-2B | Corr2Cause pool | 22/26 | random direction 2 | 0.09 [0.06, 0.13] | 0.11 [0.07, 0.15] | 0.58 [0.53, 0.64] | 0.38 [0.33, 0.43] | 0.0051 | 0.0058 | no |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | gold-label probe weights | 0.24 [0.19, 0.28] | 0.19 [0.15, 0.23] | 0.70 [0.65, 0.75] | 0.27 [0.22, 0.32] | 0.0045 | 0.0063 | no |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | gold difference of class means | 0.24 [0.19, 0.28] | 0.68 [0.63, 0.74] | 0.04 [0.02, 0.06] | 0.96 [0.93, 0.98] | 0.4507 | 0.0063 | yes |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | model-answer probe weights (positive control) | 0.76 [0.72, 0.81] | 0.24 [0.19, 0.28] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.3792 | 0.0063 | yes |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | random direction 0 | 0.13 [0.09, 0.16] | 0.06 [0.04, 0.09] | 0.55 [0.49, 0.61] | 0.36 [0.31, 0.42] | 0.0152 | 0.0063 | no |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | random direction 1 | 0.08 [0.05, 0.11] | 0.06 [0.03, 0.08] | 0.53 [0.47, 0.58] | 0.40 [0.35, 0.46] | 0.0067 | 0.0063 | no |
+| Gemma-2-2B | Corr2Cause debiased pool | 17/26 | random direction 2 | 0.07 [0.04, 0.10] | 0.08 [0.05, 0.11] | 0.48 [0.43, 0.54] | 0.48 [0.42, 0.53] | 0.0056 | 0.0063 | no |
+| Gemma-2-2B | CLadder | 20/26 | gold-label probe weights | 0.04 [0.02, 0.06] | 0.22 [0.17, 0.28] | 0.42 [0.33, 0.50] | 0.65 [0.58, 0.73] | 0.0047 | 0.0052 | no |
+| Gemma-2-2B | CLadder | 20/26 | gold difference of class means | 0.36 [0.30, 0.41] | 0.49 [0.40, 0.56] | 0.96 [0.94, 0.99] | 0.12 [0.06, 0.19] | 0.4658 | 0.0052 | yes |
+| Gemma-2-2B | CLadder | 20/26 | model-answer probe weights (positive control) | 0.38 [0.32, 0.44] | 0.62 [0.56, 0.68] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.7086 | 0.0052 | yes |
+| Gemma-2-2B | CLadder | 20/26 | random direction 0 | 0.33 [0.28, 0.38] | 0.07 [0.04, 0.11] | 0.67 [0.59, 0.74] | 0.39 [0.32, 0.48] | 0.0071 | 0.0052 | no |
+| Gemma-2-2B | CLadder | 20/26 | random direction 1 | 0.04 [0.01, 0.06] | 0.09 [0.06, 0.12] | 0.57 [0.49, 0.66] | 0.52 [0.44, 0.59] | 0.0048 | 0.0052 | no |
+| Gemma-2-2B | CLadder | 20/26 | random direction 2 | 0.16 [0.12, 0.21] | 0.26 [0.18, 0.33] | 0.75 [0.70, 0.80] | 0.33 [0.25, 0.43] | 0.0060 | 0.0052 | no |
+| Gemma-2-2B | CLadder | 13/26 | gold-label probe weights | 0.12 [0.07, 0.16] | 0.10 [0.06, 0.13] | 0.42 [0.34, 0.51] | 0.63 [0.55, 0.70] | 0.0043 | 0.0053 | no |
+| Gemma-2-2B | CLadder | 13/26 | gold difference of class means | 0.18 [0.13, 0.22] | 0.12 [0.08, 0.16] | 0.38 [0.29, 0.46] | 0.68 [0.60, 0.74] | 0.0613 | 0.0053 | yes |
+| Gemma-2-2B | CLadder | 13/26 | model-answer probe weights (positive control) | 0.14 [0.10, 0.17] | 0.14 [0.09, 0.18] | 0.67 [0.61, 0.73] | 0.39 [0.31, 0.48] | 0.0051 | 0.0053 | no |
+| Gemma-2-2B | CLadder | 13/26 | random direction 0 | 0.06 [0.03, 0.09] | 0.03 [0.01, 0.06] | 0.55 [0.48, 0.63] | 0.54 [0.46, 0.62] | 0.0047 | 0.0053 | no |
+| Gemma-2-2B | CLadder | 13/26 | random direction 1 | 0.09 [0.05, 0.12] | 0.08 [0.04, 0.13] | 0.49 [0.39, 0.58] | 0.60 [0.52, 0.68] | 0.0046 | 0.0053 | no |
+| Gemma-2-2B | CLadder | 13/26 | random direction 2 | 0.05 [0.03, 0.08] | 0.07 [0.04, 0.10] | 0.56 [0.48, 0.64] | 0.53 [0.46, 0.59] | 0.0046 | 0.0053 | no |
+| Gemma-2-2B | CLadder | 22/26 | gold-label probe weights | 0.20 [0.14, 0.26] | 0.06 [0.03, 0.09] | 0.61 [0.53, 0.68] | 0.46 [0.37, 0.54] | 0.0040 | 0.0052 | no |
+| Gemma-2-2B | CLadder | 22/26 | gold difference of class means | 0.38 [0.32, 0.44] | 0.49 [0.39, 0.57] | 0.96 [0.94, 0.99] | 0.10 [0.04, 0.17] | 0.3950 | 0.0052 | yes |
+| Gemma-2-2B | CLadder | 22/26 | model-answer probe weights (positive control) | 0.38 [0.32, 0.44] | 0.62 [0.56, 0.68] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.8671 | 0.0052 | yes |
+| Gemma-2-2B | CLadder | 22/26 | random direction 0 | 0.28 [0.22, 0.33] | 0.07 [0.05, 0.10] | 0.71 [0.65, 0.78] | 0.36 [0.28, 0.45] | 0.0088 | 0.0052 | no |
+| Gemma-2-2B | CLadder | 22/26 | random direction 1 | 0.03 [0.00, 0.05] | 0.05 [0.02, 0.07] | 0.57 [0.50, 0.64] | 0.53 [0.45, 0.61] | 0.0042 | 0.0052 | no |
+| Gemma-2-2B | CLadder | 22/26 | random direction 2 | 0.22 [0.16, 0.28] | 0.18 [0.12, 0.23] | 0.74 [0.68, 0.79] | 0.33 [0.24, 0.42] | 0.0062 | 0.0052 | no |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | gold-label probe weights | 0.03 [0.01, 0.06] | 0.03 [0.01, 0.05] | 0.50 [0.46, 0.55] | 0.50 [0.46, 0.55] | 0.0151 | 0.0131 | no |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | gold difference of class means | 0.76 [0.70, 0.81] | 0.03 [0.01, 0.06] | 0.94 [0.91, 0.96] | 0.15 [0.11, 0.19] | 2.9668 | 0.0131 | yes |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | model-answer probe weights (positive control) | 0.49 [0.43, 0.55] | 0.03 [0.01, 0.06] | 0.82 [0.77, 0.86] | 0.29 [0.24, 0.34] | 1.1681 | 0.0131 | yes |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | random direction 0 | 0.12 [0.08, 0.16] | 0.03 [0.01, 0.06] | 0.58 [0.53, 0.63] | 0.43 [0.38, 0.47] | 0.0218 | 0.0131 | no |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | random direction 1 | 0.02 [0.00, 0.03] | 0.01 [0.00, 0.02] | 0.51 [0.46, 0.56] | 0.52 [0.47, 0.57] | 0.0156 | 0.0131 | no |
+| Qwen2.5-3B | Corr2Cause pool | 25/36 | random direction 2 | 0.03 [0.01, 0.06] | 0.00 [0.00, 0.01] | 0.49 [0.45, 0.53] | 0.53 [0.48, 0.57] | 0.0125 | 0.0131 | no |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | gold-label probe weights | 0.00 [0.00, 0.00] | 0.01 [0.00, 0.02] | 0.51 [0.47, 0.56] | 0.52 [0.47, 0.57] | 0.0105 | 0.0136 | no |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | gold difference of class means | 0.02 [0.00, 0.03] | 0.01 [0.00, 0.02] | 0.53 [0.48, 0.57] | 0.50 [0.46, 0.55] | 0.0573 | 0.0136 | yes |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | model-answer probe weights (positive control) | 0.02 [0.01, 0.04] | 0.01 [0.00, 0.02] | 0.53 [0.48, 0.58] | 0.50 [0.45, 0.54] | 0.0177 | 0.0136 | no |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | random direction 0 | 0.00 [0.00, 0.00] | 0.00 [0.00, 0.01] | 0.52 [0.47, 0.57] | 0.51 [0.47, 0.56] | 0.0106 | 0.0136 | no |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | random direction 1 | 0.01 [0.00, 0.02] | 0.00 [0.00, 0.00] | 0.52 [0.48, 0.57] | 0.51 [0.47, 0.56] | 0.0119 | 0.0136 | no |
+| Qwen2.5-3B | Corr2Cause pool | 18/36 | random direction 2 | 0.01 [0.00, 0.03] | 0.01 [0.00, 0.02] | 0.53 [0.48, 0.57] | 0.51 [0.46, 0.55] | 0.0112 | 0.0136 | no |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | gold-label probe weights | 0.07 [0.05, 0.10] | 0.02 [0.01, 0.04] | 0.55 [0.51, 0.60] | 0.46 [0.41, 0.50] | 0.0097 | 0.0114 | no |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | gold difference of class means | 0.20 [0.15, 0.25] | 0.03 [0.01, 0.06] | 0.62 [0.57, 0.67] | 0.39 [0.34, 0.44] | 3.2282 | 0.0114 | yes |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | model-answer probe weights (positive control) | 0.68 [0.62, 0.74] | 0.03 [0.01, 0.06] | 0.88 [0.84, 0.91] | 0.17 [0.13, 0.21] | 1.6372 | 0.0114 | yes |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | random direction 0 | 0.05 [0.02, 0.07] | 0.03 [0.01, 0.06] | 0.54 [0.49, 0.59] | 0.46 [0.42, 0.51] | 0.0129 | 0.0114 | no |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | random direction 1 | 0.01 [0.00, 0.02] | 0.01 [0.00, 0.03] | 0.52 [0.47, 0.57] | 0.52 [0.48, 0.57] | 0.0090 | 0.0114 | no |
+| Qwen2.5-3B | Corr2Cause pool | 31/36 | random direction 2 | 0.00 [0.00, 0.00] | 0.05 [0.02, 0.07] | 0.49 [0.44, 0.53] | 0.53 [0.48, 0.58] | 0.0096 | 0.0114 | no |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | gold-label probe weights | 0.03 [0.02, 0.06] | 0.03 [0.02, 0.05] | 0.52 [0.47, 0.58] | 0.46 [0.40, 0.51] | 0.0092 | 0.0125 | no |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | gold difference of class means | 0.81 [0.77, 0.85] | 0.03 [0.02, 0.05] | 0.91 [0.87, 0.94] | 0.06 [0.03, 0.09] | 0.6433 | 0.0125 | yes |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | model-answer probe weights (positive control) | 0.81 [0.77, 0.86] | 0.03 [0.02, 0.05] | 0.91 [0.88, 0.94] | 0.07 [0.04, 0.10] | 0.8207 | 0.0125 | yes |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | random direction 0 | 0.10 [0.07, 0.13] | 0.03 [0.02, 0.05] | 0.57 [0.51, 0.62] | 0.43 [0.38, 0.48] | 0.0205 | 0.0125 | no |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | random direction 1 | 0.02 [0.01, 0.04] | 0.01 [0.00, 0.03] | 0.48 [0.43, 0.53] | 0.50 [0.44, 0.55] | 0.0126 | 0.0125 | no |
+| Qwen2.5-3B | Corr2Cause debiased pool | 25/36 | random direction 2 | 0.03 [0.02, 0.05] | 0.01 [0.00, 0.02] | 0.47 [0.42, 0.52] | 0.51 [0.46, 0.56] | 0.0128 | 0.0125 | no |
+| Qwen2.5-3B | CLadder | 29/36 | gold-label probe weights | 0.09 [0.05, 0.13] | 0.23 [0.19, 0.27] | 0.71 [0.67, 0.74] | 0.39 [0.34, 0.44] | 0.0123 | 0.0125 | no |
+| Qwen2.5-3B | CLadder | 29/36 | gold difference of class means | 0.49 [0.42, 0.55] | 0.51 [0.45, 0.58] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 5.5224 | 0.0125 | yes |
+| Qwen2.5-3B | CLadder | 29/36 | model-answer probe weights (positive control) | 0.49 [0.42, 0.55] | 0.51 [0.45, 0.58] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 2.6181 | 0.0125 | yes |
+| Qwen2.5-3B | CLadder | 29/36 | random direction 0 | 0.06 [0.04, 0.08] | 0.10 [0.07, 0.13] | 0.64 [0.59, 0.67] | 0.47 [0.43, 0.51] | 0.0235 | 0.0125 | no |
+| Qwen2.5-3B | CLadder | 29/36 | random direction 1 | 0.19 [0.15, 0.23] | 0.13 [0.10, 0.17] | 0.40 [0.35, 0.44] | 0.72 [0.68, 0.76] | 0.0308 | 0.0125 | no |
+| Qwen2.5-3B | CLadder | 29/36 | random direction 2 | 0.12 [0.09, 0.16] | 0.21 [0.17, 0.25] | 0.39 [0.35, 0.43] | 0.72 [0.68, 0.76] | 0.0145 | 0.0125 | no |
 
-<sub>Source: `results/steering_analysis_qwen0.5b_c2c_probe.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen0.5b_c2c_debiased.json`, `results/steering_analysis_qwen0.5b_cladder.json`, `results/steering_analysis_qwen1.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_c2c_debiased.json`, `results/steering_analysis_qwen1.5b_cladder.json`</sub>
+<sub>Source: `results/steering_analysis_qwen0.5b_c2c_probe.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen0.5b_c2c_debiased.json`, `results/steering_analysis_qwen0.5b_cladder.json`, `results/steering_analysis_qwen1.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_c2c_debiased.json`, `results/steering_analysis_qwen1.5b_cladder.json`, `results/steering_analysis_gemma2b_c2c_probe.json`, `results/steering_analysis_gemma2b_c2c_probe_d0.5.json`, `results/steering_analysis_gemma2b_c2c_probe_d0.85.json`, `results/steering_analysis_gemma2b_c2c_debiased.json`, `results/steering_analysis_gemma2b_cladder.json`, `results/steering_analysis_gemma2b_cladder_d0.5.json`, `results/steering_analysis_gemma2b_cladder_d0.85.json`, `results/steering_analysis_qwen3b_c2c_probe.json`, `results/steering_analysis_qwen3b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen3b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen3b_c2c_debiased.json`, `results/steering_analysis_qwen3b_cladder.json`</sub>
 
 ### 4.2 Patching: where does a change of variable reach the answer position?
 

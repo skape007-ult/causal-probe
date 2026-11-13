@@ -3,7 +3,11 @@
 set -eu
 cd "$(dirname "$0")/.."
 PY=.venv/bin/python; M="$1"; J="${2:-6}"
-$PY scripts/02_behaviour.py --model "$M"
+# behaviour: for models cached on a GPU machine the test-set activations are not on the laptop and
+# results/behaviour_<model>.json came back with the run; it is not recomputed here
+if [ -e "${CAUSAL_PROBE_CACHE:-cache}/$M/c2c_test/resid.npy" ] || [ ! -e "results/behaviour_$M.json" ]; then
+  $PY scripts/02_behaviour.py --model "$M"
+fi
 # models cached on Kaggle come back with final-token activations for the probe sets only; their
 # logit lens was computed there (results/lens_<model>.json is in results.zip)
 if [ -e "${CAUSAL_PROBE_CACHE:-cache}/$M/c2c_test/resid.npy" ]; then $PY scripts/03_logit_lens.py --model "$M"; fi

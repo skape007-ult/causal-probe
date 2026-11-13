@@ -15,7 +15,7 @@ Do small open-weight language models internally represent the correct answer to 
 
 - **Behaviour.** Qwen2.5-0.5B, Qwen2.5-1.5B and Gemma-2-2B answer both benchmarks at chance. Part of that is answer bias, but the bias-free ranking score is also near 0.5 (table below).
 - **Probes.** Linear probes read the gold label at 0.807 to 0.870 accuracy on a balanced Corr2Cause pool. This is **not** evidence of a hidden correct answer: the hypothesis string alone, with no premise and no model, predicts the label at 0.859, and a parsed-feature text classifier at 0.924. Against the strongest text-only baseline the probe loses in all six model × benchmark cells.
-- **A fair test.** On a debiased Corr2Cause pool where neither the hypothesis alone nor the premise alone carries any label information: *pending*.
+- **A fair test.** On a debiased Corr2Cause pool where neither the hypothesis alone nor the premise alone carries any label information, the gold probe scores 0.633 [0.609, 0.658] for Qwen2.5-0.5B (a randomly initialised copy: 0.604) and 0.752 [0.729, 0.776] for Qwen2.5-1.5B (random copy: 0.579), while both models answer at chance. A parsed-feature text classifier scores 0.816 [0.792, 0.837], so the audited criterion is still not met; but the 1.5B model does carry information about the answer that it does not use. Probes for parsed properties show what it is: whether the two queried variables are adjacent in the premise's skeleton is readable from its activations at 0.928. Gemma-2-2B and Qwen2.5-3B: *pending the Kaggle run*.
 - **Steering and patching.** *Pending the independent audit and the Kaggle run.*
 
 ## What was pre-registered, what passed, what was retracted

@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
-from .config import CACHE, LORA, MODELS, QUANT_4BIT, REMOTE_MODELS, SEED
+from .config import CACHE, LORA, MODELS, QUANT_4BIT, REMOTE_MODELS, SEED, MULTI_GPU
 
 HF_IDS = {**MODELS, **REMOTE_MODELS}
 
@@ -110,6 +110,16 @@ def load_model(name: str, device: str | None = None, dtype=None, random_init: bo
         from transformers import BitsAndBytesConfig
         q = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.float16)
         model = AutoModelForCausalLM.from_pretrained(hf_id, quantization_config=q, device_map={"": 0}).eval()
+        for p in model.parameters():
+            p.requires_grad_(False)
+        return model
+    if name in MULTI_GPU:
+        # float16 weights placed over all visible GPUs by accelerate. Untested on the laptop (no
+        # CUDA); used only for the 7B behaviour check when the 4-bit path is not available. Hooks
+        # that add vectors move them to the device of the activation they modify.
+        assert device == "cuda" and torch.cuda.device_count() >= 2 and not random_init, \
+            f"{name} needs two CUDA GPUs and has no random-init control"
+        model = AutoModelForCausalLM.from_pretrained(hf_id, dtype=torch.float16, device_map="auto").eval()
         for p in model.parameters():
             p.requires_grad_(False)
         return model

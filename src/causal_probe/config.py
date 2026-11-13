@@ -29,8 +29,10 @@ MODELS = {
 REMOTE_MODELS = {
     "qwen3b": "Qwen/Qwen2.5-3B-Instruct",
     "qwen7b-4bit": "Qwen/Qwen2.5-7B-Instruct",     # loaded in 4-bit (bitsandbytes), CUDA only
+    "qwen7b": "Qwen/Qwen2.5-7B-Instruct",          # float16 spread over two 16 GB GPUs (fallback if 4-bit fails)
 }
 QUANT_4BIT = {"qwen7b-4bit"}
+MULTI_GPU = {"qwen7b"}                              # too large for one 16 GB GPU in float16
 
 # LoRA fine-tuned variants: short name -> (base model short name, adapter directory).
 CHECKPOINTS = ROOT / "checkpoints"

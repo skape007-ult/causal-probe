@@ -289,6 +289,19 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 *Why:* the user's rule is to stop any job that pushes memory into swap. A 1.5B model (3.1 GB of weights) on an 8 GB machine with a desktop session cannot run with zero swap; with the cap, swap stayed flat at 3 to 4 GB and throughput steady. The first uncapped attempt reached 5.5 GB of wired memory and was stopped.
 *Would change it:* if the user prefers zero swap use, the remaining 1.5B passes go to Kaggle.
 
+### D27. Scope freeze lifted; round 2 of GPU work (Fri 13 Nov, 16:35; user request)
+*Decision:* keep experimenting until Sunday 10:00, then package. Four more GPU runs, one per model (three on Kaggle, one on Colab), each a single "Run all": a 7B behaviour check; matched steering controls for Gemma and Qwen 3B; steering at the end-of-hypothesis token; label-preserving patching pairs; and a causal test of the adjacency information. Qwen 1.5B interventions move off the laptop (Colab). Qwen 0.5B runs everything locally.
+*Alternatives:* stop at the audited Tier 1 and 2 results and spend the time on the write-up.
+*Why:* the user no longer needs to understand everything by Sunday, and the open questions the audits left (are the steering nulls a property of the one site tested; does patching show anything beyond a prompt difference; is the one structured signal in the answers, the dependence on adjacency, causal) are all answerable with a few GPU hours.
+*Would change it:* a failed run on Saturday evening. Then the affected item is reported as not done; nothing is rushed on Sunday.
+
+### D28. The CLadder sample is pinned to a committed list of ids (Fri 13 Nov, 16:40; a bug of mine)
+*Decision:* `data.cladder_sample()` returns the laptop's 3,000-item sample from `src/causal_probe/pinned/cladder_sample_seed0_n3000.json` on every machine. Caches from the first Kaggle run that hold a different draw are loaded by item id and flagged.
+*What happened:* the stratified sampler gives the last two of its 3,000 places to the strata with the largest rounding remainders. Four strata tie, and the sort that orders them is not stable: NumPy breaks the tie one way on the laptop (ARM) and the other way on Kaggle (x86). The seeded draw then differs from the fourth stratum on: 2,271 of 3,000 items are shared. Found when the Qwen 3B CLadder cache failed the ingest's item-order check.
+*What it affects:* Qwen 3B's CLadder numbers (behaviour, probes, steering) and Gemma's CLadder steering and SAE results are computed on the Kaggle draw: same stratification, same size, 76% of the same items. They are valid on their own but are not item-for-item comparable with the laptop models' CLadder results. Nothing on Corr2Cause is affected (those pools are built without the tie).
+*Alternatives:* fix the tie-break. Rejected: either fix changes the laptop's sample, and every laptop CLadder result was computed from it.
+*Would change it:* nothing; round-2 runs use the pinned list.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.

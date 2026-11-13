@@ -116,3 +116,26 @@ I need: the summary table from the last cell (or the `[FAILED ...]` lines), and 
 lines printed under the failed stage. If the install cell failed, the lines after `FAILED:`.
 I will fix the code, re-pin the notebook and tell you the new commit and which stages to put in
 `SKIP_STAGES`.
+
+## 6. Round-2 runs
+
+The four round-2 notebooks (KAGGLE.md, "Round 2") each write `results_<run>.zip` and
+`cache_<run>_<model>.zip`. Put each run's downloads into `kaggle_in/<run>/` (zipped, or as the
+folders a browser makes by unzipping them) and run
+
+```bash
+.venv/bin/python scripts/kaggle_ingest.py --run <run>
+```
+
+with `<run>` one of `r2_qwen3b`, `r2_qwen7b`, `r2_gemma`, `r2_qwen15b`. The checks are the same as
+for the first run, with three differences: the expected commit is the one pinned in that run's
+notebook; the expected stages are the ones the run itself planned (`results/round2_status_<run>.json`);
+and a downloaded cache replaces the laptop's activations only when it holds strictly more token
+positions for the same items (round 2 adds the end-of-hypothesis token for the debiased pool).
+
+A partial round-2 run looks like a partial first run: the summary lists `FAILED` or `not run`
+stages; `results_<run>.zip` exists from the first stage on; the cache zip exists only if the run
+reached its export step. `--allow-partial` ingests what is there.
+
+Note on the first run's downloads (13 Nov): Safari unpacked the zips into `results/`, `cache/`,
+`cache-1/` ...; the ingest accepts that layout.

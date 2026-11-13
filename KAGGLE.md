@@ -124,3 +124,82 @@ exported cache is about 1.9 GB. The default is the 3B model in float16, which wa
   tested separately on the cached Gemma activations.
 - Not tested: anything that only exists on Kaggle (the CUDA device path, the pinned install on
   their image, 4-bit loading, the T4 timings).
+
+---
+
+# Round 2 (after the first run came back)
+
+The first run finished in 143 minutes with all 25 stages succeeding. Round 2 is four smaller
+notebooks, one per model, so that they can run on two machines at once and a failure in one does not
+cost the others. All four are thin wrappers around `scripts/gpu_round2.py`.
+
+| Notebook | Where | Token | What it runs | Estimated GPU time |
+|---|---|---|---|---|
+| **A** `notebooks/kaggle_r2_qwen3b.ipynb` | Kaggle, T4 x2 | none | Qwen 3B: matched steering controls (final token and end of hypothesis), adjacency causal test at four sites, label-preserving and label-changing patching pairs | 3 – 3.5 h |
+| **B** `notebooks/kaggle_r2_qwen7b.ipynb` | Kaggle, T4 x2 | none | Qwen 7B behaviour only: answer logits on the debiased pool, the official test set, CLadder and the original pool (in that order) | 1.5 – 3 h |
+| **C** `notebooks/colab_r2_qwen1.5b.ipynb` | Colab, T4 | none | Qwen 1.5B: end-of-hypothesis steering controls, adjacency causal test, label-preserving patching pairs | 1.5 – 2 h |
+| **D** `notebooks/kaggle_r2_gemma.ipynb` | Kaggle, T4 x2 | `HF_TOKEN` secret | Gemma 2B: matched steering controls at both tokens, adjacency causal test, label-preserving patching pairs | 2.5 – 3 h |
+
+Kaggle total: about 7 – 9.5 hours of the weekly 30 (the first run used 2.4). Colab: about 2 hours.
+Qwen 0.5B runs the same jobs on the laptop. The SAE tier already ran in the first notebook.
+
+**Where the estimates come from.** The first run's measured stage times on a T4: one steered
+forward pass of the final token costs 6–8 ms for Gemma and Qwen 3B; the 3B cache of 4,800 items
+takes about 15 minutes. A matched-controls run is 150 items x 287 vectors; an adjacency-test site
+is up to 500 items x 259 vectors. Steering at the end of the hypothesis re-runs the five or six
+template tokens that follow it, which I have assumed costs two to four times as much: that factor
+is the main uncertainty, and I could only measure it on the laptop. Each adjacency-test site
+measures its own speed on the first five items and shortens itself to fit 35 minutes (it keeps a
+prefix that is balanced over hypothesis templates, and records how many items it ran).
+
+**The 7B notebook is the least certain.** It first tries 4-bit loading (bitsandbytes), which has
+never run for this project (the package is not available on the laptop, and the first Kaggle run
+recorded it as not installed; this notebook installs it). If that stage fails within twelve
+minutes, it falls back to float16 weights spread over the two T4s, which is also untested. The
+cache builder stops itself every 50 minutes and resumes, up to four times; whatever is finished
+is reported, and the debiased pool comes first.
+
+## Steps
+
+**Kaggle (A, B, D).** As for the first notebook: *Create → New Notebook → File → Import
+Notebook*, upload the `.ipynb`, set **Accelerator = GPU T4 x2** and **Internet = On**, attach the
+`HF_TOKEN` secret for notebook D only, then *Save Version → Save & Run All (Commit)*. If Kaggle
+lets you run two GPU sessions at once, start A and B together; otherwise A first.
+
+**Colab (C).** Open <https://colab.research.google.com>, *File → Upload notebook*, choose
+`notebooks/colab_r2_qwen1.5b.ipynb`. *Runtime → Change runtime type → T4 GPU*. *Runtime → Run
+all*. Keep the tab open until the last cell finishes: a free Colab session ends when the tab is
+closed or left idle, and its files are deleted. The last cell downloads the zip files through the
+browser; allow multiple downloads when asked. If the downloads are blocked, open the Files panel
+(folder icon on the left) and download them from `/content/out`.
+
+## Bringing a round-2 run back
+
+Each run goes into its own sub-folder of `kaggle_in/`, named after the run, zipped or unzipped:
+
+```
+kaggle_in/
+├── r2_qwen3b/     results_r2_qwen3b.zip,  cache_r2_qwen3b_qwen3b.zip      (about 0.8 GB)
+├── r2_qwen7b/     results_r2_qwen7b.zip,  cache_r2_qwen7b_qwen7b-4bit.zip (about 1 GB)
+├── r2_gemma/      results_r2_gemma.zip,   cache_r2_gemma_gemma2b.zip      (about 0.6 GB)
+└── r2_qwen15b/    results_r2_qwen15b.zip, cache_r2_qwen15b_qwen1.5b.zip   (about 0.5 GB)
+```
+
+Then, one command per run (the run name is the folder name):
+
+```bash
+.venv/bin/python scripts/kaggle_ingest.py --run r2_qwen3b
+```
+
+It checks the files, the pinned commit, and that every planned stage succeeded; extracts only what
+the run created or changed; keeps the laptop's activations unless the download holds more token
+positions for the same items; and rebuilds tables, figures and documents. `--allow-partial` and
+`--dry-run` work as before. For the 7B run it prints the behaviour table.
+
+## What is tested and what is not (round 2)
+
+Tested on the laptop with Qwen 0.5B: every stage of `scripts/gpu_round2.py` in smoke-test mode
+through the same command the notebooks issue; the steering shortcut at the end-of-hypothesis token
+against a full forward pass (`tests/test_steer.py`); the ingest on the smoke-test output. Not
+tested: anything that needs CUDA (4-bit loading, two-GPU placement), the Colab secrets and
+download cells, and run times.

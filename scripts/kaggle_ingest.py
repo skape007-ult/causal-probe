@@ -35,10 +35,18 @@ ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
 
 
-def pinned_commit() -> str | None:
-    nb = ROOT / "notebooks" / "kaggle_gpu.ipynb"
-    m = re.search(r'COMMIT\s*=\s*\\"([0-9a-f]{40})', nb.read_text()) if nb.exists() else None
-    return m.group(1) if m else None
+def pinned_commit(run: str | None = None) -> str | None:
+    """The commit pinned in the notebook of this run (round 1: notebooks/kaggle_gpu.ipynb; round 2:
+    the notebook whose RUN_NAME is `run`)."""
+    nbs = [ROOT / "notebooks" / "kaggle_gpu.ipynb"] if run is None else sorted((ROOT / "notebooks").glob("*_r2_*.ipynb"))
+    for nb in nbs:
+        txt = nb.read_text() if nb.exists() else ""
+        if run is not None and not re.search(r'RUN_NAME\s*=\s*\\"%s\\"' % re.escape(run), txt):
+            continue
+        m = re.search(r'COMMIT\s*=\s*\\"([0-9a-f]{40})', txt)
+        if m:
+            return m.group(1)
+    return None
 
 
 def expected_stages(gemma: bool, large: str | None, quant: bool) -> list[str]:
@@ -71,9 +79,9 @@ class Src:
         if self.is_zip:
             self.z = zipfile.ZipFile(path)
             self.names = [n for n in self.z.namelist() if not n.endswith("/")]
-            self.top = "results" if path.name == "results.zip" else "cache"
+            self.top = "results" if path.name.startswith("results") else "cache"
         else:
-            self.top = "results" if path.name == "results" else "cache"
+            self.top = "results" if path.name.startswith("results") else "cache"
             self.names = sorted(f"{self.top}/{f.relative_to(path).as_posix()}" for f in path.rglob("*")
                                 if f.is_file() and f.name != ".DS_Store")
 
@@ -100,9 +108,9 @@ class Src:
 
 
 def find_sources(src: Path):
-    res = src / "results.zip" if (src / "results.zip").exists() else (src / "results" if (src / "results").is_dir() else None)
-    caches = sorted(src.glob("cache_*.zip")) + sorted(d for d in src.iterdir() if d.is_dir() and d.name.startswith("cache"))
-    return (Src(res) if res else None), [Src(c) for c in caches]
+    res = sorted(src.glob("results*.zip")) + sorted(d for d in src.iterdir() if d.is_dir() and d.name.startswith("results"))
+    caches = sorted(src.glob("cache*.zip")) + sorted(d for d in src.iterdir() if d.is_dir() and d.name.startswith("cache"))
+    return (Src(res[0]) if res else None), [Src(c) for c in caches]
 
 
 def git_blob(commit: str, path: str) -> bytes | None:
@@ -112,7 +120,9 @@ def git_blob(commit: str, path: str) -> bytes | None:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default=str(ROOT / "kaggle_in"), help="folder with results.zip and cache_*.zip")
+    ap.add_argument("--run", default=None, help="round-2 run name (r2_qwen3b, r2_qwen7b, r2_gemma, r2_qwen15b); "
+                                                "the downloads are then expected in kaggle_in/<run>/")
+    ap.add_argument("--dir", default=None, help="folder with the downloads (default: kaggle_in/, or kaggle_in/<run>/ with --run)")
     ap.add_argument("--commit", default=None, help="expected code commit (default: the one pinned in the notebook)")
     ap.add_argument("--large", default="qwen3b", help="larger model that was run; 'none' if LARGE_MODEL was None")
     ap.add_argument("--no-gemma", action="store_true", help="the run had RUN_GEMMA = False")
@@ -123,9 +133,9 @@ def main():
     sys.path.insert(0, str(ROOT / "src"))
     from causal_probe.config import CACHE, QUANT_4BIT, RESULTS
 
-    src = Path(a.dir)
+    src = Path(a.dir) if a.dir else (ROOT / "kaggle_in" / a.run if a.run else ROOT / "kaggle_in")
     large = None if a.large.lower() == "none" else a.large
-    commit = a.commit or pinned_commit()
+    commit = a.commit or pinned_commit(a.run)
     problems, notes = [], []
     report = {"dir": str(src), "expected_commit": commit}
 
@@ -149,7 +159,7 @@ def main():
 
     # ------------------------------------------------------------------ 2. commit
     print("== 2. code version ==")
-    env = zjson("results/kaggle_environment.json")
+    env = zjson(f"results/round2_environment_{a.run}.json" if a.run else "results/kaggle_environment.json")
     if env is None:
         problems.append("results/kaggle_environment.json is missing (the run stopped before its second stage)")
     else:
@@ -163,9 +173,14 @@ def main():
 
     # ------------------------------------------------------------------ 3. stages
     print("== 3. stages ==")
-    status = zjson("results/kaggle_run_status.json") or {"stages": {}}
+    status = zjson(f"results/round2_status_{a.run}.json" if a.run else "results/kaggle_run_status.json") or {"stages": {}}
     st = status["stages"]
-    exp = expected_stages(not a.no_gemma, large, bool(large) and large in QUANT_4BIT)
+    if a.run:
+        exp = status.get("planned", [])
+        if not exp:
+            problems.append(f"results/round2_status_{a.run}.json is missing or lists no planned stages (wrong folder, or the run never started)")
+    else:
+        exp = expected_stages(not a.no_gemma, large, bool(large) and large in QUANT_4BIT)
     missing, failed = [], []
     for name in exp:
         s = st.get(name)
@@ -182,8 +197,11 @@ def main():
     finished = "export" in status
     print(f"  run reached the export step: {'yes' if finished else 'NO (the run was cut short)'}; "
           f"total {status.get('total_minutes', '?')} min")
-    exp_models = (["gemma2b", "gemma2b-rand"] if not a.no_gemma else []) + \
-                 ([large] + ([] if large in QUANT_4BIT else [f"{large}-rand"]) if large else [])
+    if a.run:
+        exp_models = list(status.get("models_run", []))
+    else:
+        exp_models = (["gemma2b", "gemma2b-rand"] if not a.no_gemma else []) + \
+                     ([large] + ([] if large in QUANT_4BIT else [f"{large}-rand"]) if large else [])
     have = {Path(n).parts[1] for S in caches for n in S.names}          # model folders present in any cache archive
     for mn in exp_models:
         if mn not in have:
@@ -210,6 +228,9 @@ def main():
     for n in sorted(names):
         if n.endswith("/") or not n.startswith("results/"):
             continue
+        if a.run and (n in ("results/kaggle_environment.json", "results/kaggle_run_status.json", "results/kaggle_ingest_report.json")
+                      or n.startswith("results/kaggle_logs/")):
+            continue                           # round-1 records; this run's own are round2_*_<run>
         blob = R.read(n)
         if commit and git_blob(commit, n) == blob:
             skipped += 1                       # unchanged copy of a file from the pinned commit
@@ -238,23 +259,31 @@ def main():
             zip_has_resid = any(n.endswith("resid.npy") for n in members)
             local_has_resid = (dst / "resid.npy").exists()
             dst.mkdir(parents=True, exist_ok=True)
+            core = ("meta.json", "readout.npz", "resid.npy")
+            mode = "all"                    # copy everything
+            if local_has_resid and zip_has_resid:
+                # replace the local activations only if the download holds strictly more token
+                # positions for the same items (round 2 adds the end-of-hypothesis token)
+                lm = json.loads((dst / "meta.json").read_text())
+                im = json.loads(S.read(next(n for n in members if n.endswith("meta.json"))))
+                more = set(im["positions"]) > set(lm["positions"]) and im["uids"] == lm["uids"]
+                mode = "all" if more else "extras"
+            elif local_has_resid and not zip_has_resid:
+                mode = "beside"             # keep the laptop cache; store the GPU run's logits beside it
             for n in members:
                 base = Path(n).name
-                if local_has_resid and not zip_has_resid:
-                    # keep the laptop cache intact; store Kaggle's logits beside it
-                    if base == "meta.json":
-                        base = "meta_kaggle.json"
-                    elif base == "readout.npz":
-                        base = "readout_kaggle.npz"
-                elif local_has_resid and zip_has_resid:
-                    print(f"  SKIPPED {rel}: activations exist both locally and in the download (delete the local folder to replace it)")
-                    break
+                if base in core:
+                    if mode == "extras":
+                        continue
+                    if mode == "beside":
+                        base = {"meta.json": "meta_kaggle.json", "readout.npz": "readout_kaggle.npz"}[base]
                 S.copy_to(n, dst / base)
-            else:
-                kind = "activations + logits" if zip_has_resid else ("logits only, beside the local cache" if local_has_resid else "logits / generated answers only")
-                print(f"  {str(rel):38s} {kind}")
-                if zip_has_resid:
-                    loaded.append(rel)
+            kind = {"all": "activations + logits" if zip_has_resid else "logits / generated answers / raw intervention outputs",
+                    "extras": "raw intervention outputs only (local activations kept)",
+                    "beside": "logits beside the local cache, raw intervention outputs"}[mode]
+            print(f"  {str(rel):38s} {kind}")
+            if zip_has_resid and mode == "all":
+                loaded.append(rel)
 
     # ------------------------------------------------------------------ 6. caches load
     print("== 6. checking extracted caches ==")
@@ -274,7 +303,7 @@ def main():
             print(f"  FAIL {rel}: {type(e).__name__}: {e}")
     report["caches_loaded"] = [str(r) for r in loaded]
     report["problems"] = problems
-    (RESULTS / "kaggle_ingest_report.json").write_text(json.dumps(report, indent=1))
+    (RESULTS / (f"round2_ingest_report_{a.run}.json" if a.run else "kaggle_ingest_report.json")).write_text(json.dumps(report, indent=1))
 
     # ------------------------------------------------------------------ 7. fold in
     if not a.no_fold:
@@ -288,15 +317,17 @@ def main():
                 problems.append(f"{script} failed")
                 print("    " + "\n    ".join((r.stdout + r.stderr).strip().splitlines()[-6:]))
         ab = RESULTS / "answer_bias.json"
-        if large and ab.exists() and large in json.loads(ab.read_text()):
+        shown = [m for m in (status.get("models_run", []) if a.run else [large]) if m and "behaviour" in (status.get("jobs") or ["behaviour"])]
+        for large in [m for m in shown if ab.exists() and m in json.loads(ab.read_text())]:
             print(f"\n== behaviour of {large} (logit-scored; is it above chance?) ==")
             for tag, v in json.loads(ab.read_text())[large].items():
                 print(f"  {tag:22s} {v['mode']:28s} Yes-rate {v['yes_rate']:.2f}  accuracy {v['accuracy']['est']:.3f} "
                       f"(majority {v['majority']:.3f})  AUROC {v['auroc']['est']:.3f} [{v['auroc']['lo']:.3f}, {v['auroc']['hi']:.3f}]  "
                       f"best-threshold acc {v['best_threshold_acc']['est']:.3f}  -> {v['reading']}")
     print("\n" + ("DONE with problems:\n  - " + "\n  - ".join(problems) if problems else "DONE: everything expected is present and consistent."))
-    print("Next (see notes/progress.md, 'When the Kaggle zips come back'): ./scripts/guarded.sh tier1 ./scripts/run_tier1.sh "
-          + (large or "<model>") + " 2    (probes and baselines for the new model, CPU, a few hours)")
+    if not a.run:
+        print("Next (see notes/progress.md, 'When the Kaggle zips come back'): ./scripts/guarded.sh tier1 ./scripts/run_tier1.sh "
+              + (large or "<model>") + " 2    (probes and baselines for the new model, CPU, a few hours)")
     sys.exit(1 if problems and not a.allow_partial else 0)
 
 

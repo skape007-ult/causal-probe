@@ -349,7 +349,10 @@ def main():
         f"report-half AUROC for the property {rep_auroc[0]:.3f} / {rep_auroc[1]:.3f}")
 
     rng = np.random.default_rng(SEED + 17)
-    idx = np.sort(np.concatenate([rng.permutation(np.where(rep & (tm == k))[0])[: a.per_template] for k in sorted(set(tm))]))
+    # evaluation items in round-robin order over templates, so that any prefix is balanced over
+    # templates (the run is shortened to a prefix if the timing check says it would not fit)
+    per = [rng.permutation(np.where(rep & (tm == k))[0])[: a.per_template] for k in sorted(set(tm))]
+    idx = np.array([p[r] for r in range(max(len(p) for p in per)) for p in per if r < len(p)])
     tok = models.load_tokenizer(a.model)
     model = models.load_model(a.model)
     ans = models.answer_token_ids(tok)
@@ -359,13 +362,17 @@ def main():
     start = 0
     if ckpt.exists():
         zc = np.load(ckpt)
-        if zc["out"].shape == out.shape and np.array_equal(zc["idx"], idx) and np.allclose(zc["D"], D, atol=1e-6):
+        m_ = len(zc["idx"])          # a checkpoint of a shortened run holds a prefix of the item list
+        if zc["out"].shape[1] == K and np.array_equal(zc["idx"], idx[:m_]) and np.allclose(zc["D"], D, atol=1e-6):
+            idx, out = idx[:m_], out[:m_]
             start = int(zc["done"]); out[:start] = zc["out"][:start]
             log(f"resuming at item {start}/{len(idx)}")
     t_loop = time.time()
     for n_, i in enumerate(idx):
         if n_ < start:
             continue
+        if n_ >= len(out):          # the run was shortened by the timing check
+            break
         enc = prompts.encode_with_positions(tok, items[i])
         vecs = torch.tensor(build_vectors(X[i], mu, D, fam, bases, sd, int(t[i]), gap_sd))
         out[n_] = steer.steered_logit_diffs(model, enc["input_ids"], layer, vecs, ans, sub_batch=a.sub_batch, pos=enc["pos"][a.position])
@@ -373,8 +380,12 @@ def main():
             per_item = (time.time() - t_loop) / 5
             proj = per_item * (len(idx) - n_ - 1) / 60
             log(f"[timing] {per_item:.2f} s/item ({K} vectors) -> projected {proj:.1f} min for the remaining {len(idx) - n_ - 1} items")
-            if proj > a.max_minutes:
-                raise SystemExit(f"projected {proj:.0f} min > --max-minutes {a.max_minutes:.0f}; lower --per-template")
+            if proj > a.max_minutes and start == 0:
+                keep = int(a.max_minutes * 60 / per_item)
+                if keep < 100:
+                    raise SystemExit(f"projected {proj:.0f} min > --max-minutes {a.max_minutes:.0f} and fewer than 100 items would fit")
+                log(f"[timing] shortening the run to the first {keep} items (balanced over templates) to fit {a.max_minutes:.0f} min")
+                idx, out = idx[:keep], out[:keep]
         if (n_ + 1) % 50 == 0:
             np.savez(ckpt, idx=idx, out=out, done=n_ + 1, D=D)
             log(f"{n_ + 1}/{len(idx)}")

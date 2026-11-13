@@ -112,7 +112,7 @@ def sh(cmd, **kw):
 
 VENV = TEMP + "/venv"
 PY, level = None, None
-extra = " bitsandbytes" if "4bit" in MODELS else ""
+extra = ""
 if os.path.exists(VENV + "/bin/python") and os.path.exists(TEMP + "/install_level"):
     PY, level = VENV + "/bin/python", open(TEMP + "/install_level").read()
     if level.startswith("3"): PY = sys.executable
@@ -129,8 +129,14 @@ else:
 print("install level:", level, "| python:", PY, "| %.0f min so far" % ((time.time() - t_start) / 60))
 r = subprocess.run([PY, "-c", "import torch, transformers, sklearn, causal_probe; print('torch', torch.__version__, '| transformers', transformers.__version__, '| cuda', torch.cuda.is_available(), '| GPUs', torch.cuda.device_count())"], capture_output=True, text=True)
 print(r.stdout or r.stderr[-800:])
-if extra:
-    r = subprocess.run([PY, "-c", "import bitsandbytes; print('bitsandbytes', bitsandbytes.__version__)"], capture_output=True, text=True)
+if "4bit" in MODELS:
+    # 4-bit loading needs bitsandbytes. Installed separately and allowed to fail, so that it cannot
+    # change the pinned packages above; without it the runner falls back to float16 on two GPUs.
+    if PY != sys.executable:
+        sh(f"uv pip install -q --no-deps --python {PY} bitsandbytes")
+    else:
+        sh(f"{sys.executable} -m pip install -q --no-deps bitsandbytes")
+    r = subprocess.run([PY, "-c", "import torch, bitsandbytes; print('bitsandbytes', bitsandbytes.__version__, '| torch still', torch.__version__)"], capture_output=True, text=True)
     print(r.stdout or "bitsandbytes not importable (the float16 two-GPU fallback will be used): " + r.stderr[-300:])
 '''
 

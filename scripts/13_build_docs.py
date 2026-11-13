@@ -70,3 +70,6 @@ if __name__ == "__main__":
                      ("report/README_template.md", "README.md")):
         if (ROOT / src).exists():
             build(ROOT / src, ROOT / dst)
+    # study material: study/templates/<name>.md -> study/<name>.md (same markers)
+    for src in sorted((ROOT / "study" / "templates").glob("*.md")) if (ROOT / "study" / "templates").exists() else []:
+        build(src, ROOT / "study" / src.name)

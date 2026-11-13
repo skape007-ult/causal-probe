@@ -4,43 +4,43 @@ Repo root: this directory. Venv: `.venv` (uv, Python 3.12). Run things as `.venv
 
 **Compute rules (user instruction, Fri 13 Nov):** this 8 GB laptop does light work only: CPU analysis on existing caches, figures, writing, and Qwen 0.5B/1.5B GPU jobs one at a time. `OMP_NUM_THREADS=2`, background jobs under `nice`, stop any job that pushes memory into swap. **No Gemma model passes on this machine. Do not run `scripts/queue_night.sh`.** Gemma interventions, the SAE tier and the larger model run on Kaggle (`KAGGLE.md`), launched by the user.
 
-Last updated: Fri 2026-11-13 15:10 (Toronto).
+Last updated: Fri 2026-11-13 17:15 (Toronto).
+
+**Scope (user, Fri 16:25):** the scope freeze is lifted; push the science until Sunday 10:00, then package (decision D27). Heavy runs on Kaggle and Colab, launched by the user.
 
 ## Where things stand
 
 | Piece | State |
 |---|---|
-| Tier 1, three local models, original item sets | Done, audited (Qwen) / reviewed (Gemma); in tables, figures, `report/report.md` |
-| Step 2: text baselines on the benchmarks | Done: `scripts/14_benchmark_baselines.py`, `report/benchmark_text_baselines.md`, `notes/literature_check.md` |
-| Step 3: debiased pool | Done and audited for Qwen 0.5B and 1.5B: caches, probes, audited comparison, post-hoc ladder analysis (`scripts/05b_probe_content.py`), report section 3.6. Gemma and the larger model: waiting for Kaggle |
-| Step 4: Kaggle | Notebook launched by the user Friday ~11:20 on code commit `406d994`. Ingest: `notes/kaggle_ingest.md`, `scripts/kaggle_ingest.py` |
-| Tier 2, Qwen models | Audited twice (`notes/audit_tier2_raw.md`, `notes/audit_debiased_raw.md`); steering re-analysed with signed slopes and matched controls; report section 4 rewritten |
-| Audits | Three done and logged. A fourth is due on the Kaggle results (Gemma interventions, SAE, Qwen 3B) |
-| EXPLAINER | Story, primer (incl. SAE), decisions D1–D26, figure guide, 37 questions. Tier 3 questions still to write |
+| Tier 1 and Steps 2–3 for Qwen 0.5B, 1.5B (and Gemma on the original sets) | Done, audited, written up |
+| First Kaggle run (commit `406d994`) | Back and ingested Fri 16:40: all 25 stages ok. Gemma steering/patching/SAE; Qwen 3B cache, behaviour, lens, steering. Results committed |
+| CLadder sample | Bug found and fixed (decision D28): the sample is pinned to a committed id list; Qwen 3B's CLadder cache is a different draw and is loaded by id |
+| Qwen 3B and Gemma: probes, baselines, debiased-pool analysis, steering re-analysis | **Running**: `scripts/queue_ingest.sh` under `scripts/guarded.sh` (log `logs/queue_ingest.log`, started Fri 16:41, several hours of CPU) |
+| Round-2 GPU code | Written and smoke-tested on Qwen 0.5B: `scripts/gpu_round2.py`, `07c` (end-of-hypothesis token), `08 --label-mode same`, `16_feature_causal.py` |
+| Round-2 notebooks | `notebooks/kaggle_r2_qwen3b.ipynb`, `kaggle_r2_qwen7b.ipynb`, `kaggle_r2_gemma.ipynb`, `colab_r2_qwen1.5b.ipynb`; regenerate with `scripts/make_round2_notebooks.py <sha>`; guide in `KAGGLE.md` ("Round 2") |
+| Prior-work check | `notes/prior_work.md` (agent, Fri); folded into the benchmark note |
+| study/ | Draft being written by an agent into `study/templates/` (built by `13_build_docs.py`); round-2 slots to fill |
+| Tier 3 (SAE) | Results in (`results/sae_*.json`), tables built (`sae_*`), text not written |
 
-## Nothing is running locally
+## If the laptop restarts
 
-All local jobs finished Friday 15:01. Every local model job goes through `scripts/guarded.sh` (decision D26).
+1. Re-run the CPU queue; every step skips nothing but is idempotent: `./scripts/guarded.sh queue_ingest ./scripts/queue_ingest.sh` (or run the remaining lines of that script by hand; check `logs/queue_ingest.log` for the last `===` line).
+2. Qwen 0.5B round-2 jobs on the laptop (not started yet at 17:15):
+   `./scripts/guarded.sh r2_local ./.venv/bin/python -u scripts/gpu_round2.py --run r2_qwen05b --models qwen0.5b --jobs controls_hyp,feature,patch_same --out kaggle_out`
+3. Then `scripts/12_tables.py`, `06_figures.py`, `13_build_docs.py`.
 
-## When the Kaggle zips come back (user will say so)
+## When a round-2 download arrives
 
-1. `.venv/bin/python scripts/kaggle_ingest.py` (validates, extracts, regenerates tables/figures/documents, prints the larger model's behaviour). Details: `notes/kaggle_ingest.md`.
-2. Tell the user in a few lines whether Qwen 3B is above chance on the original and debiased pools (table `answer_bias`; also the per-template view once step 4 has run). That decides whether Kaggle quota goes to a 7B model.
-3. `OMP_NUM_THREADS=2 ./scripts/guarded.sh tier1_qwen3b ./scripts/run_tier1.sh qwen3b 2` (probes on c2c_probe, cladder, c2c_debiased; skips the lens, which ran on Kaggle).
-4. `./scripts/guarded.sh debiased_gemma2b ./scripts/run_debiased.sh gemma2b 2`, then `scripts/05b_probe_content.py --model gemma2b` and `--model qwen3b` (the end-of-premise check is skipped automatically for final-token-only caches).
-5. `scripts/07b_steering_analysis.py` for every new `steering_<model>_<tag>[suffix].json` (Gemma, Qwen 3B; suffixes `_d0.5`, `_d0.85`). The Kaggle run has three random directions only: no matched controls for those models unless a second session runs `07c_steering_controls.py`.
-6. `scripts/15_answer_bias.py`, `09_cross_model.py`, `12_tables.py`, `06_figures.py`, `13_build_docs.py`.
-7. Fourth independent audit on the new results; then update README, report (sections 3.6, 4, 5) and EXPLAINER.
-8. Compare the larger model's `steer_select_*` layer with the layer `05_confound.py` picks (decision D22).
+`kaggle_in/<run>/` then `.venv/bin/python scripts/kaggle_ingest.py --run <run>` (runs: `r2_qwen3b`, `r2_qwen7b`, `r2_gemma`, `r2_qwen15b`). For `r2_qwen3b`, `r2_gemma`, `r2_qwen15b` the debiased-pool cache gains the end-of-hypothesis token: re-run `scripts/05b_probe_content.py --model <m>` afterwards (property probes by position). For `r2_qwen7b`: report behaviour first; if above chance on the debiased pool, run `./scripts/run_debiased.sh qwen7b-4bit 2` and `05b`.
+
+## Still to do (in order)
+
+1. Audit 4 (independent agent) on: the Kaggle results as ingested, the CLadder-sample handling, and each round-2 result as it arrives. The audit must attack the adjacency causal claim specifically.
+2. Report: section 3 rows for Gemma and Qwen 3B on the debiased pool; section 4 (matched controls at two tokens, label-preserving pairs, adjacency test); section 5 (SAE); README; EXPLAINER "Start here", primer entries, figure guide, Tier 3 questions.
+3. Figures for the round-2 results (check each visually).
+4. study/: fill the round-2 slots.
+5. Packaging from Sunday 10:00: `run_all.sh` dry check, final chat post (headline per tier, surprises against logged expectations, what audits caught, five things to verify by hand).
 
 ## Deadlines
 
-- Tonight 23:00: Tier 1 write-up with three local models, Steps 2–3. (Steps 2 and the Tier 1 prose are pushed; Step 3 needs the probe runs above.)
-- Saturday 10:00: Kaggle notebook ready (done Friday 10:50).
 - Sunday 10:00: packaging starts regardless. Sunday 14:00: final push.
-
-## Still to do after that
-
-- Tier 3 (SAE) write-up from the Kaggle results; Tier 3 questions in EXPLAINER.
-- Packaging (Sunday 10:00): README final pass (limitations section is a stub), `scripts/run_all.sh` dry check, final chat post (headline results per tier, surprises against logged expectations, what the audits caught, five things to verify by hand).
-- Not done and listed as such: label-preserving minimal pairs for patching; steering at the end-of-hypothesis position; matched steering controls for Gemma and Qwen 3B.

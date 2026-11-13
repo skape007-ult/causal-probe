@@ -127,9 +127,11 @@ Reading:
 
 For scale, the paper reports a best F1 of 33.38 among off-the-shelf models (BART MNLI, Table 4)
 and 94.74 for the best fine-tuned model (RoBERTa-Large MNLI, Table 5a), against 0.0 for the
-always-majority baseline. We did not rerun those models, and the paper notes that its experiments
-were not rerun on the de-duplicated v2.0 data (Sec. 3.7 footnote), so the comparison with our
-numbers on the released v2.0 files is indicative only: the hypothesis-only baseline sits above the
+always-majority baseline. We did not rerun those models. The paper describes the released v2.0
+data as a de-duplicated version of the original and says it expects results to change little
+(Sec. 3.7 footnote, App. D); we could not establish from the text which version the reported
+numbers were computed on, so the comparison with our numbers on the released v2.0 files is
+indicative only: the hypothesis-only baseline sits above the
 off-the-shelf models and well below the fine-tuned ones on valid-class F1.
 
 ### Label-balanced pools (as used for probing)
@@ -198,8 +200,12 @@ Reading:
 - The numbers-and-polarity baseline reaches 0.835 [0.818, 0.853] on held-out stories. It is at 1.00 for `backadj` and `collider_bias`, above 0.9 for `ate`, `ett` and `marginal`, and at chance for `det-counterfactual` (0.480 [0.460, 0.501]).
 
 Most of this is already documented. Clarke et al. (2026) report 86.8% accuracy for a random forest
-on similar surface features under ten-fold cross-validation on a freshly generated 9,866-item set,
-with a per-type breakdown and an account of the generator rules responsible (their Sec. 3.2 and App. A.4, Table 3); the CLadder paper
+on similar surface features (quoted probabilities, comparisons between them, keyword flags) under
+ten-fold cross-validation on 9,866 items regenerated with the CLadder code, with a per-type
+breakdown (their Sec. 3.2; Table 3 in App. A.4; features in App. A.8) and an account of the
+generator rules responsible (App. A.7). They do not say whether folds keep stories together. Pacchiardi et al. (2024) include CLadder in a study of
+how well word 2-grams predict benchmark answers, which is the counterpart of the bag-of-words rows
+above. The CLadder paper
 itself notes that collider-bias questions have a fixed answer in canonical form (App. A.2). What
 this note adds is narrow: the estimate on the released v1.5 file with stories held out, and the
 observation that with an explicit feature for which method is the case-by-case one, `backadj`
@@ -216,10 +222,27 @@ items with their feature set).
 | Number of distinct premises per split; premises shared between splits | Not in the paper. The overlap counts match those in the course-project README cited above |
 | CLadder answers are largely predictable from quoted numbers and question polarity | Clarke et al. (2026); CLadder App. A.2 for collider bias |
 | Story-held-out estimate on `full_v1.5_default.csv`; `backadj` fully predictable with one extra feature | Reported here |
-| A premise-paired, string-balanced Corr2Cause pool on which hypothesis-only and premise-only classifiers are at chance in every fold | Constructed here |
+| A premise-paired, string-balanced Corr2Cause pool on which hypothesis-only and premise-only classifiers are at chance in every fold | Constructed here. The nearest published item we found is the hand-balanced evaluation sample of Bagheri et al. (2025, Sec. 4.2): 60 valid and 60 invalid items with equal counts per number of variables, balanced on labels and variable count but not on hypothesis strings or premises |
 
-The literature search behind this table is recorded, with what was and was not read directly, in
-`notes/literature_check.md`. It may have missed work; OpenReview pages could not be opened.
+"We found no earlier report" means exactly that. The search behind this table is recorded in
+`notes/prior_work.md`: every paper listed there was opened in the session (abstract or full text,
+marked per entry), the queries are listed so that the search can be repeated, and unverified
+leads are listed separately. Its limits: pages were read through a tool that summarises them, PDFs
+without an HTML version could not be read, and OpenReview and Google Scholar could not be opened.
+An earlier, quicker pass is in `notes/literature_check.md`.
+
+### Related work that uses these benchmarks
+
+- **Label imbalance on Corr2Cause** is stated in the original paper and in several follow-ups that
+  therefore report F1 on the valid class (Sgouritsa et al., 2024; Bagheri et al., 2025; Sun et al.,
+  2025; Kadziolka and Salehkaleybar, 2025). None of the follow-ups we opened reports a
+  hypothesis-only, premise-only or other partial-input classifier.
+- **Probing on CLadder.** Ding and Zhang (2026) train linear probes on last-token states for the
+  causal direction of paired CLadder prompts and report probe accuracy of at least 0.969 against
+  Yes/No output accuracy of 0.35 to 0.53, with a control task in the sense of Hewitt and Liang.
+  Yu (2026) probes for the family of variable names. Neither reports a text-only classifier for
+  the probed label. We found no probing, patching, steering or sparse-autoencoder study on
+  Corr2Cause.
 
 ## Why this matters for probing studies
 
@@ -252,6 +275,13 @@ Gururangan et al., 2018) and control tasks for probes (Hewitt and Liang, 2019).
 - Jin, Z., Liu, J., Lyu, Z., Poff, S., Sachan, M., Mihalcea, R., Diab, M., Schölkopf, B. (2024). Can Large Language Models Infer Causation from Correlation? ICLR 2024. arXiv:2306.05836.
 - Jin, Z., Chen, Y., Leeb, F., Gresele, L., Kamal, O., Lyu, Z., Blin, K., Gonzalez Adauto, F., Kleiman-Weiner, M., Sachan, M., Schölkopf, B. (2023). CLadder: Assessing Causal Reasoning in Language Models. NeurIPS 2023. arXiv:2312.04350.
 - Clarke, J., Karn, I., Murray, P., Hill, KJ, Jensen, D. (2026). Evaluating Causal Reasoning in LLMs: A Case Study in the Challenges of Procedural Generation. arXiv:2610.38100.
+- Pacchiardi, Tesic, Cheke, Hernández-Orallo (2024). Leaving the barn door open for Clever Hans: Simple features predict LLM benchmark answers. arXiv:2410.11672.
+- Sgouritsa, Aglietti, Teh, Doucet, Gretton, Chiappa (2024). Prompting Strategies for Enabling Large Language Models to Infer Causation from Correlation. arXiv:2412.13952.
+- Bagheri, Alinejad, Dehshiri, Bello, Akhondi-Asl (2025). C²P: Featuring Large Language Models with Causal Reasoning. arXiv:2407.18069.
+- Sun, Nogueira, Silva (2025). Structured Thinking Matters: Improving LLMs Generalization in Causal Inference Tasks. arXiv:2505.18034.
+- Kadziolka, Salehkaleybar (2025). Causal Reasoning in Pieces: Modular In-Context Learning for Causal Discovery. arXiv:2507.23488.
+- Ding, Zhang (2026). Causal Tongue-Tie: LLMs Can Encode Causal Direction, But Their Yes/No Outputs Fail to Express. EMNLP 2026. arXiv:2605.25891.
+- Yu (2026; surnames only for the seven entries above: first names were not verified). Vernier: Probing Representational Misalignment Behind Lexical Gaps in Causal Reasoning. arXiv:2606.15733.
 - Poliak, A., Naradowsky, J., Haldar, A., Rudinger, R., Van Durme, B. (2018). Hypothesis Only Baselines in Natural Language Inference. *SEM 2018.
 - Gururangan, S., Swayamdipta, S., Levy, O., Schwartz, R., Bowman, S., Smith, N. A. (2018). Annotation Artifacts in Natural Language Inference Data. NAACL-HLT 2018.
 - Hewitt, J., Liang, P. (2019). Designing and Interpreting Probes with Control Tasks. EMNLP-IJCNLP 2019.

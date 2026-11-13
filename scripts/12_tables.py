@@ -273,14 +273,14 @@ def t_steering():
                               ci(f4["controllability_toward_gold"], 2), ci(f4["controllability_away_from_gold"], 2),
                               num(x["ablation"]["mean_abs_delta_logit_diff"], 4), num(r["ablation_noise_floor_logit_diff"], 4),
                               "yes" if x["ablation"]["above_noise_floor"] else "no"])
-        for tag in ("c2c_probe", "c2c_debiased", "cladder"):
-            c = load(f"steering_controls_{m}_{tag}.json")
+        for tag, hyp in (("c2c_probe", ""), ("c2c_debiased", ""), ("cladder", ""), ("c2c_probe", "_hyp"), ("c2c_debiased", "_hyp")):
+            c = load(f"steering_controls_{m}_{tag}{hyp}.json")
             if not c:
                 continue
-            src3.append(f"steering_controls_{m}_{tag}.json")
+            src3.append(f"steering_controls_{m}_{tag}{hyp}.json")
             for d, lab in names:
                 x = c["real"][d]; mf = x["matched_control_family"]; fam = c["families"]
-                rows3.append([LAB[m], DS[tag], c["layer"], lab, ci(x["slope_per_s"], signed=True),
+                rows3.append([LAB[m], DS[tag], "end of hypothesis" if hyp else "final", c["layer"], lab, ci(x["slope_per_s"], signed=True),
                               f"{100 * x['versus']['isotropic']['percentile_of_abs_slope_per_s']:.0f}",
                               num(fam["isotropic"]["abs_slope_per_s"]["median"]), num(fam["isotropic"]["abs_slope_per_s"]["max"]),
                               mf.replace("_", "-label ", 1).replace("diffmeans", "difference of means"),
@@ -299,7 +299,7 @@ def t_steering():
          "Controllability away from gold (4s)", "Ablation mean |ΔLD|", "Noise floor", "Ablation above 3× floor"], rows2, src))
     if rows3:
         write("steering_controls", table(
-            ["Model", "Item set", "Layer", "Direction", "Slope per unit s", "Percentile among 100 isotropic directions (|slope|)",
+            ["Model", "Item set", "Token", "Layer", "Direction", "Slope per unit s", "Percentile among 100 isotropic directions (|slope|)",
              "Isotropic median |slope|", "Isotropic max |slope|", "Matched control family (20 directions)",
              "Percentile among matched controls", "Matched median |slope|", "Matched max |slope|", "Ratio to matched median",
              "Natural SD along this direction (units of s)", "Natural SD, matched controls (median)",
@@ -521,6 +521,156 @@ def t_probe_content():
          "Probe trained on the selection half only"], rF, src))
 
 
+def t_patching_same():
+    """Label-changing vs label-preserving minimal pairs (round 2)."""
+    import numpy as np
+    rows, src = [], []
+    for m in MODELS:
+        ch, sm = load(f"patching_{m}.json"), load(f"patching_{m}_same.json")
+        if not sm:
+            continue
+        src += [f"patching_{m}_same.json"] + ([f"patching_{m}.json"] if ch else [])
+        for kind in ("hyp", "prem"):
+            for lab, r in (("label changes (Yes → No)", ch), ("label preserved", sm)):
+                if not r:
+                    continue
+                k = r["kinds"][kind]; b = k["behaviour_on_pairs"]
+                fin = np.array(k["pooled_recovery"], float)[:, -1]
+                first = next((r["layers"][i] for i, v in enumerate(fin) if v >= 0.5), None)
+                byl = k.get("by_common_label", {})
+                rows.append([LAB[m], kind, lab, k["n_pairs"],
+                             " / ".join(str(byl[c]["n_pairs"]) for c in ("1", "0") if c in byl) or "–",
+                             ci(b["mean_delta"], signed=True), num(b["mean_abs_delta"]),
+                             " / ".join(num(byl[c]["mean_abs_delta"]) for c in ("1", "0") if c in byl) or "–",
+                             first if first is not None else "–", f"{first / r['layers'][-1]:.2f}" if first is not None else "–"])
+    if rows:
+        write("patching_label_preserving", table(
+            ["Model", "Pair kind", "Pairs", "n", "of which Yes/Yes, No/No", "Mean D = LD(first) − LD(second)", "Mean |D|",
+             "Mean |D|: Yes/Yes, No/No", "First layer with ≥ 0.5 recovery at final token", "…as relative depth"], rows, src))
+
+
+FEATURE_SITES = (("adj_final_best", "final token, best layer"), ("adj_hyp_best", "end of hypothesis, best layer"),
+                 ("adj_final_first90", "final token, first layer at 90%"), ("adj_hyp_first90", "end of hypothesis, first layer at 90%"))
+TSHORT = {"parent": "parent", "non-parent ancestor": "ancestor", "non-child descendant": "descendant",
+          "has_collider": "collider", "has_confounder": "confounder"}
+
+
+def t_feature_causal():
+    """Interventions on the adjacency direction (round 2, scripts/16_feature_causal.py)."""
+    dn = (("feat_probe", "adjacency probe weights"), ("feat_dom", "adjacency difference of means"),
+          ("gold_probe", "gold-label probe weights"), ("model_out", "model-answer probe weights"))
+    r1, r2, r3, r4, src = [], [], [], [], []
+    for m in MODELS:
+        for site, slab in FEATURE_SITES:
+            r = load(f"feature_causal_{m}_c2c_debiased_{site}.json")
+            if not r:
+                continue
+            src.append(f"feature_causal_{m}_c2c_debiased_{site}.json")
+            tms = sorted(r["observational_by_template"], key=lambda k: list(TSHORT).index(k))
+            where = f"{slab} ({r['layer']}/{r['n_layers']})"
+            for d, lab in dn:
+                x = r["slope_per_own_sd"][d]; pt = x["pattern_across_templates"]
+                r1.append([LAB[m], where, r["n_items"], lab, ci(x["pooled"], 4, signed=True),
+                           f"{100 * x['pooled']['vs_matched_controls']['percentile']:.0f}",
+                           num(x["pooled"]["vs_matched_controls"]["control_max"], 4, signed=True),
+                           " · ".join(f"{TSHORT[k]} {x['by_template'][k]['est']:+.3f}" for k in tms),
+                           f"{pt['n_sign_agreements']}/{len(tms)}", num(pt["pearson_r"]["value"], 2, signed=True),
+                           f"{100 * pt['pearson_r']['percentile']:.0f}",
+                           num(pt["range_across_templates"]["value"], 3), f"{100 * pt['range_across_templates']['percentile']:.0f}"])
+            for k in tms:
+                o = r["observational_by_template"][k]
+                for d, lab in dn[:2]:
+                    x = r["slope_per_own_sd"][d]["by_template"][k]
+                    sh = r["shift_to_other_class"][d]["by_template"][k]
+                    r2.append([LAB[m], where, TSHORT[k], lab, num(o["within_string_auroc_answer_for_property"]),
+                               num(o["mean_logit_diff_gap_property_1_minus_0"], 3, signed=True), ci(x, 4, signed=True),
+                               f"{100 * x['signed_percentile_among_controls']:.0f}", ci(sh, 3, signed=True),
+                               f"{100 * sh['vs_matched_controls']['percentile']:.0f}",
+                               num(sh["auroc_property_baseline"]), num(sh["auroc_property_after_shift"]),
+                               num(sh["auroc_property_after_shift_controls_mean"])])
+            for d, x in r["ablation"].items():
+                lab = dict(dn).get(d, f"rank-{r['rank']} adjacency subspace")
+                for k in tms:
+                    y = x["by_template"][k]
+                    r3.append([LAB[m], where, lab, TSHORT[k], num(y["baseline"]["auroc_gold"]),
+                               num(y["change_in_auroc_gold"]["value"], 3, signed=True),
+                               f"{num(y['change_in_auroc_gold']['control_min'], 3, signed=True)} to {num(y['change_in_auroc_gold']['control_max'], 3, signed=True)}",
+                               num(y["baseline"]["auroc_property"]),
+                               num(y["change_in_auroc_property"]["value"], 3, signed=True),
+                               f"{num(y['change_in_auroc_property']['control_min'], 3, signed=True)} to {num(y['change_in_auroc_property']['control_max'], 3, signed=True)}",
+                               num(y["mean_abs_delta_logit_diff"]["value"], 3), num(y["mean_abs_delta_logit_diff"]["control_max"], 3)])
+            g = r["direction_geometry"]
+            r4.append([LAB[m], where, num(r["selection_auroc_at_layer"]), num(g["report_half_auroc_for_property"]["feat_probe"]),
+                       num(g["report_half_auroc_for_property"]["feat_dom"]), num(r["class_gap_in_own_sd"]["feat_probe"], 2),
+                       num(r["class_gap_in_own_sd"]["feat_dom"], 2), num(g["cos_feat_probe_vs_feat_dom"], 2),
+                       num(g["cos_feat_probe_vs_gold_probe"], 2), num(g["cos_feat_probe_vs_model_out"], 2),
+                       num(r["baseline_logit_diff_sd"], 2), num(r["baseline_max_abs_diff_vs_cache"], 2)])
+    if not src:
+        return
+    write("adjacency_sites", table(
+        ["Model", "Site (layer)", "Adjacency AUROC, selection half (CV)", "…report half, probe direction", "…report half, difference of means",
+         "Class gap along probe direction (own SDs)", "…along difference of means", "cos(probe, diff. of means)",
+         "cos(adjacency probe, gold probe)", "cos(adjacency probe, model-answer probe)", "SD of the answer logit difference",
+         "Max |unsteered − cached| logit difference"], r4, src))
+    write("adjacency_slopes", table(
+        ["Model", "Site (layer)", "Items", "Direction", "Slope: Δ(Yes−No logit) per natural SD, all templates",
+         "Percentile of |slope| among 20 matched controls", "Largest matched-control slope", "Slope by hypothesis template",
+         "Signs agreeing with the observational pattern", "Correlation with the observational pattern (5 templates)",
+         "Percentile of that correlation among controls", "Range of slopes across templates", "Percentile of that range among controls"], r1, src))
+    write("adjacency_by_template", table(
+        ["Model", "Site (layer)", "Template", "Direction", "Observed: AUROC of answer for adjacency (within string)",
+         "Observed: logit-difference gap, adjacent − not adjacent", "Steering slope per natural SD", "Signed percentile among matched controls",
+         "Shift to the other class: effect towards Yes per push towards adjacent", "Percentile among matched controls",
+         "AUROC of answer for adjacency: unsteered", "…after the shift", "…after the shift, control mean"], r2, src))
+    write("adjacency_ablation", table(
+        ["Model", "Site (layer)", "Removed", "Template", "AUROC of answer for gold label: unsteered", "Change after removal",
+         "Change, range over 20 controls", "AUROC of answer for adjacency: unsteered", "Change after removal", "Change, range over 20 controls",
+         "Mean |Δ logit difference|", "…largest control"], r3, src))
+
+
+def t_sae():
+    """Tier 3: SAE features for causal structure on Gemma-2-2B (first Kaggle run)."""
+    f, a = load("sae_features.json"), load("sae_ablation.json")
+    if not f:
+        return
+    r1, r2, r3 = [], [], []
+    for layer, lv in f["layers"].items():
+        for pos, pv in lv["positions"].items():
+            rc = pv["reconstruction"]
+            r1.append([layer, pos.replace("_", " "), num(rc["fraction_variance_unexplained"], 2), num(rc["relative_squared_error"], 2),
+                       num(rc["cosine_recon"], 2), num(rc["mean_l0"], 0), pv["n_features_ever_active"]])
+            for st, sv in pv["structures"].items():
+                top = sv["top_features"]
+                best = max(top, key=lambda t: t["auroc_heldout_stories"])
+                import numpy as np
+                r2.append([layer, pos.replace("_", " "), st, sv["n_target_eval"], num(float(np.mean([t["auroc_discovery"] for t in top])), 2),
+                           num(float(np.mean([t["auroc_heldout_stories"] for t in top])), 2),
+                           f"{best['feature']} ({best['auroc_heldout_stories']:.2f})",
+                           sum(t["auroc_heldout_stories"] >= 0.7 for t in top)])
+    write("sae_reconstruction", table(
+        ["Block", "Token", "Fraction of variance unexplained", "Relative squared error", "Cosine(reconstruction, activation)",
+         "Mean active features", "Features ever active"], r1, ["sae_features.json"]))
+    write("sae_features", table(
+        ["Block", "Token", "Graph type", "Held-out items of that type", "Mean AUROC of the 10 selected features, discovery stories",
+         "…held-out stories", "Best feature (held-out AUROC)", "Features with held-out AUROC ≥ 0.70"], r2, ["sae_features.json"]))
+    if a:
+        for st, sv in a["structures"].items():
+            for where, key in (("items of that graph type", "target_structure"), ("items of other graph types", "other_structures")):
+                x = sv[key]
+                r3.append([st, where, x["n"], ci(x["mean_abs_delta_top"]), num(x["mean_abs_delta_random"]),
+                           " / ".join(num(v, 2) for v in x["mean_abs_delta_random_each"]),
+                           # the stored "top_minus_random" interval subtracts |mean over random sets|, not the mean of
+                           # their absolute effects, so it overstates the gap; the difference of the two columns is shown
+                           num(x["mean_abs_delta_top"]["est"] - x["mean_abs_delta_random"], 3, signed=True),
+                           num(x["mean_signed_delta_top"], 3, signed=True), num(x["flip_rate_top"], 2), num(x["flip_rate_random"], 2),
+                           num(x["accuracy_baseline"], 2), num(x["accuracy_top_ablated"], 2)])
+        write("sae_ablation", table(
+            ["Graph type whose top-10 features are removed", "Evaluated on", "Items", "Mean |Δ logit difference|, top features",
+             "…random features (mean of 3 sets)", "…each random set", "Top − random (difference of the two means)", "Mean signed Δ", "Flip rate, top", "Flip rate, random",
+             "Accuracy before", "Accuracy after"], r3, ["sae_ablation.json"]))
+
+
 if __name__ == "__main__":
     t_behaviour(); t_probes(); t_confound(); t_confound(suffix="_fixedC", name="confound_fixedC"); t_audited(); t_external()
     t_steering(); t_patching(); t_cross_model(); t_benchmarks(); t_answer_bias(); t_probe_content()
+    t_patching_same(); t_feature_causal(); t_sae()

@@ -119,7 +119,9 @@ def load_model(name: str, device: str | None = None, dtype=None, random_init: bo
         # that add vectors move them to the device of the activation they modify.
         assert device == "cuda" and torch.cuda.device_count() >= 2 and not random_init, \
             f"{name} needs two CUDA GPUs and has no random-init control"
-        model = AutoModelForCausalLM.from_pretrained(hf_id, dtype=torch.float16, device_map="auto").eval()
+        # leave room on the first GPU, where the inputs and the batch's activations start
+        mem = {i: ("9GiB" if i == 0 else "14GiB") for i in range(torch.cuda.device_count())}
+        model = AutoModelForCausalLM.from_pretrained(hf_id, dtype=torch.float16, device_map="auto", max_memory=mem).eval()
         for p in model.parameters():
             p.requires_grad_(False)
         return model

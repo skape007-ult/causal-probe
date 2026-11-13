@@ -134,7 +134,9 @@ def t_probes(models=MODELS, name="probes_summary"):
                          ci(a["gold_probe_minus_tfidf"]["accuracy"], signed=True)])
     write(name, table(
         ["Model", "Dataset", "Layer", "C", "Gold probe acc.", "TF-IDF acc.", "Type prior acc.", "Random-init probe acc.",
-         "Shuffled labels", "Control task", "Selectivity", "Probe − TF-IDF"], rows, sorted(set(src))))
+         "Shuffled labels (all items)", "Control task (all items)", "Selectivity (all items)", "Probe − TF-IDF"], rows, sorted(set(src))) +
+        "\n<sub>Layer index counts the embeddings as 0, so layer l is the output of block l−1. Probe/TF-IDF/prior/random-init columns: report half, "
+        "scores averaged over 3 seeds. Shuffled/control/selectivity: all items, mean of per-seed accuracies at the selected layer and C.</sub>\n")
 
 
 def t_confound(models=MODELS, suffix="", name="confound"):
@@ -148,10 +150,12 @@ def t_confound(models=MODELS, suffix="", name="confound"):
             for label, root in (("raw", c), ("calibrated", c["calibrated"])):
                 w = root["model_wrong"]
                 if "gold_probe" not in w:
-                    rows.append([LAB[m], DS[tag], label, w["n"]] + ["–"] * 8)
+                    rows.append([LAB[m], DS[tag], label, w["n"]] + ["–"] * 10)
                     continue
                 v = c["verdict"] if label == "raw" else c["verdict"]["calibrated"]
-                rows.append([LAB[m], DS[tag], label, w["n"], ci(w["gold_probe"]["accuracy"]), ci(w["tfidf"]["accuracy"]),
+                rows.append([LAB[m], DS[tag], label, w["n"], num(w.get("frac_gold_yes"), 2),
+                             ci(w["gold_probe"].get("balanced_accuracy")),
+                             ci(w["gold_probe"]["accuracy"]), ci(w["tfidf"]["accuracy"]),
                              ci(w["type_prior"]["accuracy"]), ci(w["gold_probe_minus_tfidf"]["accuracy"], signed=True),
                              ci(w["gold_probe_minus_type_prior"]["accuracy"], signed=True),
                              "**yes**" if v["represents_but_doesnt_say"] else "no",
@@ -167,11 +171,52 @@ def t_confound(models=MODELS, suffix="", name="confound"):
                                   ci(b.get("structural", {}).get("auroc")),
                                   ci(b.get("gold_probe_minus_structural", {}).get("auroc"), signed=True)])
     write(f"{name}_wrong_items", table(
-        ["Model", "Dataset", "Model answer", "n wrong", "Gold probe acc.", "TF-IDF acc.", "Type prior acc.", "Probe − TF-IDF",
-         "Probe − type prior", "Pre-registered criterion met", "Structural baseline acc. (post-hoc)", "Probe − structural (post-hoc)"], rows, src))
+        ["Model", "Dataset", "Model answer", "n wrong", "Frac. gold-Yes among them", "Gold probe balanced acc.", "Gold probe acc.", "TF-IDF acc.", "Type prior acc.", "Probe − TF-IDF",
+         "Probe − type prior", "Pre-registered criterion met", "Parsed features + prior acc. (post-hoc)", "Probe − parsed features (post-hoc)"], rows, src))
     write(f"{name}_within_strata", table(
         ["Model", "Dataset", "Model answer", "Stratum", "n", "Gold probe AUROC", "TF-IDF AUROC", "Type prior AUROC",
          "Model logit-diff AUROC", "Probe − TF-IDF", "Structural AUROC (post-hoc)", "Probe − structural (post-hoc)"], rows2, src))
+
+
+def t_audited(models=MODELS):
+    rows, rows2, src = [], [], []
+    for m in models:
+        for tag in ("c2c_probe", "cladder"):
+            c = load(f"confound_{m}_{tag}.json")
+            if not c or "audited" not in c.get("verdict", {}):
+                continue
+            src.append(f"confound_{m}_{tag}.json")
+            v = c["verdict"]["audited"]; a = c["all_items"]; tb = c["text_baselines_all_items"]
+            st = v["calibrated_strata_probe_minus_best_text_auroc"]
+            rows.append([LAB[m], DS[tag], ci(a["gold_probe"]["accuracy"]), v["best_text_baseline"].replace("_", " "),
+                         ci(a["best_text"]["accuracy"]), ci(v["all_items_probe_minus_best_text_accuracy"], signed=True),
+                         ci(st.get("model_said_yes"), signed=True), ci(st.get("model_said_no"), signed=True),
+                         "**yes**" if v["represents_beyond_best_text_baseline"] else "no",
+                         "yes" if c["verdict"]["represents_but_doesnt_say"] else "no",
+                         "yes" if v["raw_wrong_items_criterion_applicable"] else f"no ({v['raw_wrong_items_frac_gold_yes']:.0%} gold-Yes)"])
+            rows2.append([LAB[m], DS[tag], ci(a["gold_probe"]["accuracy"])] +
+                         [ci(a[k]["accuracy"]) if k in a else "–" for k in ("tfidf", "type_prior", "tfidf_query", "hyp_prior", "structural")] +
+                         [ci(a.get("random_init_probe", {}).get("accuracy")), ci(a["model_logit_diff"]["accuracy"])])
+    write("audited_verdict", table(
+        ["Model", "Dataset", "Gold probe acc.", "Strongest text baseline", "Its acc.", "Probe − baseline (acc., all items)",
+         "Probe − baseline (AUROC, model leans Yes)", "Probe − baseline (AUROC, model leans No)", "Audited criterion met",
+         "Pre-registered criterion met (as coded)", "Pre-registered wrong-items test applicable"], rows, src))
+    write("text_baselines", table(
+        ["Model", "Dataset", "Gold probe", "TF-IDF (full prompt)", "Template / type prior", "TF-IDF (question only)",
+         "Hypothesis-string prior", "Parsed features + prior (GBM)", "Random-init probe", "Model's own answer"], rows2, src))
+    rows = []
+    for m in models:
+        for tag in ("c2c_probe", "cladder"):
+            c = load(f"confound_{m}_{tag}.json")
+            if not c or "positions" not in c:
+                continue
+            a = c["all_items"]; ps = c["positions"]
+            rows.append([LAB[m], DS[tag], ci(a["gold_probe"]["accuracy"]), ci(ps["content_end"]["accuracy"]),
+                         ci(ps["premise_end"]["accuracy"]), ci(ps["premise_end"]["final_minus_this_accuracy"], signed=True),
+                         ci(ps["content_end"]["final_minus_this_accuracy"], signed=True)])
+    write("probe_positions", table(
+        ["Model", "Dataset", "Final token", "End of hypothesis / question", "End of premise / context (question not yet read)",
+         "Final − end of premise", "Final − end of hypothesis"], rows, src))
 
 
 def t_external(models=MODELS):
@@ -184,10 +229,11 @@ def t_external(models=MODELS):
         e = c["external_c2c_test"]["all_items"]
         rows.append([LAB[m], e["n"], ci(e["gold_probe"]["auroc"]), ci(e["tfidf"]["auroc"]), ci(e["type_prior"]["auroc"]),
                      ci(e["model_logit_diff"]["auroc"]), ci(e["gold_probe_minus_tfidf"]["auroc"], signed=True),
+                     ci(e.get("hyp_prior", {}).get("auroc")), ci(e.get("gold_probe_minus_hyp_prior", {}).get("auroc"), signed=True),
                      ci(e.get("structural", {}).get("auroc")), ci(e.get("gold_probe_minus_structural", {}).get("auroc"), signed=True)])
     write("external_c2c_test", table(
         ["Model", "n", "Gold probe AUROC", "TF-IDF AUROC", "Type prior AUROC", "Model logit-diff AUROC", "Probe − TF-IDF",
-         "Structural AUROC (post-hoc)", "Probe − structural (post-hoc)"], rows, src))
+         "Hypothesis-prior AUROC", "Probe − hypothesis prior", "Parsed features + prior AUROC", "Probe − parsed features"], rows, src))
 
 
 def t_steering():
@@ -256,10 +302,10 @@ def t_cross_model():
     for m, row in r["models"].items():
         for tag, d in row["datasets"].items():
             rows.append([LAB[m], row["params_billion"], DS[tag], num(d["model_accuracy"]), ci(d["gold_probe_accuracy"]),
-                         ci(d["probe_minus_tfidf_accuracy"], signed=True), ci(d.get("probe_minus_random_init_accuracy"), signed=True),
+                         ci(d.get("probe_minus_best_text_accuracy"), signed=True), ci(d.get("probe_minus_random_init_accuracy"), signed=True),
                          f"{d['selected_layer']}/{d['n_layers']} ({d['selected_layer_relative_depth']:.2f})",
                          num(d["first_layer_within_1pt_relative_depth"], 2), num(d["selectivity_at_selected_layer"], signed=True)])
-    txt = table(["Model", "Params (B)", "Dataset", "Model acc.", "Gold probe acc.", "Probe − TF-IDF", "Probe − random-init",
+    txt = table(["Model", "Params (B)", "Dataset", "Model acc.", "Gold probe acc.", "Probe − strongest text baseline", "Probe − random-init",
                  "Selected layer (rel. depth)", "First layer within 1 pt (rel.)", "Selectivity"], rows, ["cross_model.json"])
     rows = [[k, ci(v, signed=True)] for k, v in r["pairwise"].items()]
     txt += "\n" + table(["Comparison (gold-probe accuracy, paired)", "Difference"], rows, ["cross_model.json"])
@@ -267,5 +313,5 @@ def t_cross_model():
 
 
 if __name__ == "__main__":
-    t_behaviour(); t_probes(); t_confound(); t_confound(suffix="_fixedC", name="confound_fixedC"); t_external()
+    t_behaviour(); t_probes(); t_confound(); t_confound(suffix="_fixedC", name="confound_fixedC"); t_audited(); t_external()
     t_steering(); t_patching(); t_cross_model()

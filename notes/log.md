@@ -186,3 +186,10 @@ Scope: steering, patching and cross-model code and results for the two Qwen mode
 21–22 *(minor)*: cross-model: three models from two families cannot show scaling; docstring titles that claim more than the experiments test are reworded.
 
 **Against my logged expectations (Thursday, steering):** I expected "probe direction ≈ random, model-output direction flips". The first half is not established (too few random directions; and for 1.5B the probe direction is at the top of the random range with a consistent sign). The second half is true but is a positive control. What does stand, and is stronger than what I claimed: at natural scale the probe direction has essentially no effect on the answer.
+
+### 11:58 Expectations before the matched-control steering run (`scripts/07c_steering_controls.py`)
+Not yet run. 100 isotropic directions, 20 shuffled-label probe directions, 20 shuffled-label difference-of-means directions; slope of the answer logit difference at α = 1.
+- *Gold-probe direction versus shuffled-label probe directions:* I expect it to sit inside their distribution (below the 95th percentile of |slope|) for Qwen 0.5B, and near the top for Qwen 1.5B on Corr2Cause, where the audit found a sign-consistent slope of −0.37. If it is inside the distribution in both models, "the probe's weight direction does no more than a label-free direction of the same kind" may be stated; if it is above it in 1.5B, I have to report a real, wrong-signed effect.
+- *Gold difference of means versus shuffled-label difference of means:* I expect the gold one to be larger than the median shuffled one on Corr2Cause (it separates the model's own answer, which correlates with hypothesis identity), but not far outside the range: within a factor of 3 of the shuffled maximum. On CLadder I expect no difference at all.
+- *Model-output direction:* far above every control (positive control).
+- *Would surprise me:* the gold-probe direction beyond every one of 120 control directions in the smaller model; or the gold difference of means ten times the shuffled ones (which would make it gold-specific after all).

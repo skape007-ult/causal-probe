@@ -1,4 +1,10 @@
-"""Tier 2b: where is the answer determined? Activation patching on Corr2Cause minimal pairs.
+"""Tier 2b: where does a change of variable in the prompt reach the answer position?
+Activation patching on Corr2Cause minimal pairs.
+
+Scope (Tier 2 audit, finding 14). The models do not separate these pairs by gold label (mean D is
+about zero), and the effect size below is normalised by each pair's own D. So the result localises
+where ANY difference between the two prompts reaches the final token, not where a causal judgement
+is made. The random-donor control is uninformative as run (few pairs have a donor; finding 15).
 
 Writes results/patching_<model>.json and cache/<model>/patching.npz (raw per-pair numbers).
 

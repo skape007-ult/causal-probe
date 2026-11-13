@@ -1,4 +1,9 @@
-"""Tier 2a: is the probed direction causally used? Steering + directional ablation.
+"""Tier 2a: what does adding a decodable direction do to the answer? Steering + directional ablation.
+
+Scope (Tier 2 audit): one layer and the final prompt token only. A null effect here shows that later
+layers do not read that direction AT THIS SITE; it cannot show that the decoded information is unused.
+The summary written by this script is superseded by 07b_steering_analysis.py (signed slopes, both
+signs, natural scale) and 07c_steering_controls.py (matched random controls).
 
 Writes results/steering_<model>_<tag>.json (and raw logit diffs to cache/<model>/<tag>/steering.npz).
 
@@ -7,10 +12,12 @@ of premises/stories only, evaluated on items from the *report half*):
   gold_probe      weight vector of the gold-label logistic probe
   gold_diffmeans  mean(gold-yes activations) - mean(gold-no activations)
   model_out       probe for the model's own (median-split) answer
-  random_k        3 random directions (control: same norm, no meaning)
+  random_k        3 isotropic random directions (too few, and not matched to either kind of real
+                  direction: see 07c_steering_controls.py for the controls the comparison needs)
 Interventions at the final prompt position:
   add  +/- alpha * s * direction, where s = RMS distance of an activation from the mean
-       activation at that layer (so alpha = 1 is "one typical item-to-item deviation")
+       activation at that layer. s is a norm over ALL dimensions, not the spread along one
+       direction: along a probe weight vector alpha = 1 is tens to hundreds of natural SDs
   ablate  remove the item's own component along the direction (set it to the dataset mean)
 """
 import argparse
@@ -121,7 +128,8 @@ def main():
     start = 0
     if ckpt.exists():
         z = np.load(ckpt)
-        if int(z["layer"]) == layer and np.array_equal(z["idx"], idx) and z["out"].shape == out.shape:
+        same_dirs = "D" in z.files and z["D"].shape == D.shape and np.allclose(z["D"], D, atol=1e-6) and float(z["s_unit"]) == s_unit
+        if int(z["layer"]) == layer and np.array_equal(z["idx"], idx) and z["out"].shape == out.shape and same_dirs:
             start = int(z["done"]); out[:start] = z["out"][:start]
             print(f"resuming at item {start}/{len(idx)}", flush=True)
     t_loop = time.time()
@@ -142,12 +150,12 @@ def main():
                 raise SystemExit(f"projected {proj:.0f} min > --max-minutes {a.max_minutes:.0f}; "
                                  f"lower --sub-batch or --n and re-run")
         if (n + 1) % 25 == 0:
-            np.savez(ckpt, idx=idx, out=out, done=n + 1, layer=layer)
+            np.savez(ckpt, idx=idx, out=out, done=n + 1, layer=layer, D=D, s_unit=s_unit)
             print(f"{n + 1}/{len(idx)} {time.time() - t0:.0f}s", flush=True)
         if model.device.type == "mps" and n % 10 == 0:
             torch.mps.empty_cache()
     np.savez(cache.cache_dir(a.model, a.tag) / f"steering{a.suffix}.npz", idx=idx, out=out, names=names,
-             alphas=ALPHAS, layer=layer, s_unit=s_unit)
+             alphas=ALPHAS, layer=layer, s_unit=s_unit, D=D, probe_C=probe_C)
     ckpt.unlink(missing_ok=True)
 
     # ---------------- summarise

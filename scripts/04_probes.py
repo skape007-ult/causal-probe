@@ -54,7 +54,7 @@ def main():
     suffix = f"_C{C:g}"
     t0 = time.time()
     resid, meta, items = cache.load_cache(a.model, a.tag)
-    resid = np.asarray(resid)                       # into RAM once (float16)
+    # resid stays a read-only memory-map: joblib workers map the same file, so nothing is copied
     y = np.array(meta["labels"])
     m = (np.array(meta["logit_diff"]) > 0).astype(int)
     groups = np.array([i["group"] for i in items])
@@ -96,7 +96,6 @@ def main():
     if has_rand:
         rres, rmeta, _ = cache.load_cache(a.model, a.tag, random_init=True)
         assert rmeta["uids"] == meta["uids"]
-        rres = np.asarray(rres)
         pl = Parallel(n_jobs=a.jobs)(delayed(run_layer)(rres, l, 0, gjobs, C, groups) for l in range(L))
         oof["random_init"] = np.stack([[pl[l][f"gold/{s}"] for l in range(L)] for s in PROBE_SEEDS])
         del rres

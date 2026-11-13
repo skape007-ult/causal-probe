@@ -17,7 +17,7 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
          jobs="cache,controls,controls_hyp,feature,patch_same,patch,export", fallback="", token=False,
          title="Round 2 / A: Qwen2.5-3B interventions",
          what="matched steering controls at the final and end-of-hypothesis tokens, the adjacency causal test at four sites, "
-              "label-preserving and label-changing patching pairs", est="about 3 hours"),
+              "label-preserving and label-changing patching pairs", est="3 to 4.5 hours"),
     dict(file="kaggle_r2_qwen7b.ipynb", platform="kaggle", run="r2_qwen7b", models="qwen7b-4bit",
          jobs="behaviour,export", fallback="qwen7b-4bit:qwen7b", token=False,
          title="Round 2 / B: Qwen2.5-7B behaviour check",
@@ -26,12 +26,12 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
     dict(file="kaggle_r2_gemma.ipynb", platform="kaggle", run="r2_gemma", models="gemma2b",
          jobs="cache,controls,controls_hyp,feature,patch_same,export", fallback="", token=True,
          title="Round 2 / D: Gemma-2-2B interventions",
-         what="matched steering controls at both tokens, the adjacency causal test, label-preserving patching pairs", est="about 2.5 hours"),
+         what="matched steering controls at both tokens, the adjacency causal test, label-preserving patching pairs", est="2.5 to 4 hours"),
     dict(file="colab_r2_qwen1.5b.ipynb", platform="colab", run="r2_qwen15b", models="qwen1.5b",
          jobs="cache,controls_hyp,feature,patch_same,export", fallback="", token=False,
          title="Round 2 / C: Qwen2.5-1.5B interventions (Colab)",
          what="steering controls at the end-of-hypothesis token, the adjacency causal test, label-preserving patching pairs "
-              "(this model's final-token controls already ran on the laptop)", est="about 1.5 to 2 hours"),
+              "(this model's final-token controls already ran on the laptop)", est="1.5 to 3 hours"),
 ]
 
 

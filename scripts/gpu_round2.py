@@ -174,9 +174,9 @@ def main():
             if "feature" in jobs:
                 for pos, spec in SITES:
                     stage(f"r2.{M}.feature.{pos}.{spec}", "scripts/16_feature_causal.py", "--model", M, "--position", pos,
-                          "--layer-spec", spec, "--sub-batch", "16", "--max-minutes", "35",
+                          "--layer-spec", spec, "--sub-batch", "16", "--max-minutes", "45",
                           *(["--per-template", "4", "--n-shuf", "3", "--n-iso", "2", "--select-stride", "6"] if a.tiny
-                            else ["--per-template", "100", "--select-stride", "1"]), minutes=50)
+                            else ["--per-template", "100", "--select-stride", "1"]), minutes=70)   # fitting ~130 probes on CPU comes first
         pp = ["--n-pairs", "6", "--layer-stride", "6", "--batch", "4"] if a.tiny else ["--n-pairs", "60", "--layer-stride", "2", "--batch", "8"]
         if "patch_same" in jobs:
             stage(f"r2.{M}.patch_same", "scripts/08_patching.py", "--model", M, "--label-mode", "same", "--suffix", "_same",

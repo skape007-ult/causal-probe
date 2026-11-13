@@ -135,12 +135,12 @@ cost the others. All four are thin wrappers around `scripts/gpu_round2.py`.
 
 | Notebook | Where | Token | What it runs | Estimated GPU time |
 |---|---|---|---|---|
-| **A** `notebooks/kaggle_r2_qwen3b.ipynb` | Kaggle, T4 x2 | none | Qwen 3B: matched steering controls (final token and end of hypothesis), adjacency causal test at four sites, label-preserving and label-changing patching pairs | 3 – 3.5 h |
+| **A** `notebooks/kaggle_r2_qwen3b.ipynb` | Kaggle, T4 x2 | none | Qwen 3B: matched steering controls (final token and end of hypothesis), adjacency causal test at four sites, label-preserving and label-changing patching pairs | 3 – 4.5 h |
 | **B** `notebooks/kaggle_r2_qwen7b.ipynb` | Kaggle, T4 x2 | none | Qwen 7B behaviour only: answer logits on the debiased pool, the official test set, CLadder and the original pool (in that order) | 1.5 – 3 h |
-| **C** `notebooks/colab_r2_qwen1.5b.ipynb` | Colab, T4 | none | Qwen 1.5B: end-of-hypothesis steering controls, adjacency causal test, label-preserving patching pairs | 1.5 – 2 h |
-| **D** `notebooks/kaggle_r2_gemma.ipynb` | Kaggle, T4 x2 | `HF_TOKEN` secret | Gemma 2B: matched steering controls at both tokens, adjacency causal test, label-preserving patching pairs | 2.5 – 3 h |
+| **C** `notebooks/colab_r2_qwen1.5b.ipynb` | Colab, T4 | none | Qwen 1.5B: end-of-hypothesis steering controls, adjacency causal test, label-preserving patching pairs | 1.5 – 3 h |
+| **D** `notebooks/kaggle_r2_gemma.ipynb` | Kaggle, T4 x2 | `HF_TOKEN` secret | Gemma 2B: matched steering controls at both tokens, adjacency causal test, label-preserving patching pairs | 2.5 – 4 h |
 
-Kaggle total: about 7 – 9.5 hours of the weekly 30 (the first run used 2.4). Colab: about 2 hours.
+Kaggle total: about 7 – 11.5 hours of the weekly 30 (the first run used 2.4). Colab: 1.5 – 3 hours.
 Qwen 0.5B runs the same jobs on the laptop. The SAE tier already ran in the first notebook.
 
 **Where the estimates come from.** The first run's measured stage times on a T4: one steered
@@ -149,7 +149,7 @@ takes about 15 minutes. A matched-controls run is 150 items x 287 vectors; an ad
 is up to 500 items x 259 vectors. Steering at the end of the hypothesis re-runs the five or six
 template tokens that follow it, which I have assumed costs two to four times as much: that factor
 is the main uncertainty, and I could only measure it on the laptop. Each adjacency-test site
-measures its own speed on the first five items and shortens itself to fit 35 minutes (it keeps a
+measures its own speed on the first five items and shortens itself to fit 45 minutes (it keeps a
 prefix that is balanced over hypothesis templates, and records how many items it ran).
 
 **The 7B notebook is the least certain.** It first tries 4-bit loading (bitsandbytes), which has

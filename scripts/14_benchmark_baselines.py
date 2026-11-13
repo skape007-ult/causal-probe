@@ -22,8 +22,9 @@ Corr2Cause, official splits (fit on train, evaluate on dev and test):
                       named variables correlated / adjacent in the skeleton, how many separating sets,
                       shared neighbours, ...) plus the hypothesis-string prior
 Corr2Cause, label-balanced pools (premise-grouped 5-fold cross-validation, 3 seeds):
-  the same baselines on (a) the balanced probe pool and (b) the debiased pool, in which every
-  hypothesis string is exactly half valid, half invalid.
+  the same baselines on (a) the balanced probe pool, (b) the debiased pool, in which every
+  hypothesis string and every premise is exactly half valid in every fold, and (c) a first,
+  rejected debiasing design that balanced strings over the whole pool only (kept to document why).
 CLadder full v1.5 (story-grouped 5-fold cross-validation, 3 seeds):
   type_prior          P(yes | graph type x query type)
   question_only       TF-IDF (1-3 grams) logistic regression on the final question alone
@@ -226,7 +227,9 @@ def main():
     res["corr2cause_description"] = describe_c2c(splits)
     log("described Corr2Cause")
     res["corr2cause_official_splits"] = c2c_official(splits)
+    naive = data.c2c_string_balanced_pool(splits["train"])
     del splits
+    res["corr2cause_string_balanced_only_pool_rejected"] = cv_pool(naive, "c2c string-balanced-only pool (rejected design)")
     res["corr2cause_balanced_pool"] = cv_pool(data.get_dataset("c2c_probe"), "c2c balanced pool")
     res["corr2cause_debiased_pool"] = cv_pool(data.get_dataset("c2c_debiased"), "c2c debiased pool")
     res["cladder_full_v1.5"] = cladder_full()

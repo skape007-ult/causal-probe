@@ -10,14 +10,14 @@ must be checked before they are quoted to anyone. OpenReview reviews could not b
 ## Corr2Cause (Jin et al., ICLR 2024, arXiv:2306.05836)
 
 Construction (paper Sec. 3.3–3.7, App. D; code `data_gen.cpp`, `data_verbalize.py`):
-- (read) Graphs are generated with nodes in topological order: only edges X_i → X_j with i < j.
+- ✔ (read) Graphs are generated with nodes in topological order: only edges X_i → X_j with i < j.
   Isomorphic DAGs are removed. Table 1: 6,325 unique DAGs, 2,376 Markov equivalence classes for
   N = 2..6, of which 2,207 have N = 6.
 - (read, code) Node index i is verbalised as the i-th letter (`chr(i + 64)`), reversed alphabet in
   the "refactorization" perturbation. The paper does not state the index-to-letter mapping in words.
 - (read) Label = 1 iff the hypothesis holds in every DAG of the equivalence class. Six relations,
   3N(N−1) hypotheses per class.
-- (read) v2.0 de-duplication (Sec. 3.7 footnote, App. D): Is-Parent(i, j) and Is-Child(j, i) are the
+- ✔ (read) v2.0 de-duplication (Sec. 3.7 footnote, App. D): Is-Parent(i, j) and Is-Child(j, i) are the
   same string; one is kept by forcing i < j. v2.0 is half of v1.0; experiments were not rerun.
 - (read) Splits (Sec. 3.7, Table 3): N = 2, 3 go to dev/test only; for larger N up to 1K or 10% is
   sampled for dev and test. Sizes 205,734 / 1,076 / 1,162. In the public code the classes are
@@ -34,9 +34,9 @@ template ("j directly causes i") can never be valid. (not found) The paper never
 What the paper says about shortcuts:
 - (read) Imbalance: 18.57% positive overall (Table 3); always-majority baseline 84.77% accuracy
   (Table 4); F1 is the main metric.
-- (not found) No hypothesis-only or partial-input baseline; the words "shortcut", "artifact",
+- ✔ (not found) No hypothesis-only or partial-input baseline; the words "shortcut", "artifact",
   "hypothesis-only" do not occur.
-- (read) App. E, Table 11: PMI between labels and n-grams; some cues are tied to variable names.
+- ✔ (first sentence) (read) App. E, Table 11: PMI between labels and n-grams; some cues are tied to variable names.
   Paraphrase and variable-refactorization perturbations are designed to break these. Sec. 4.5 /
   Table 5(b): fine-tuned models lose up to 39.29 F1 under paraphrase and 62.30 under
   refactorization. The paper frames this as overfitting versus mastering the skill and recommends
@@ -72,7 +72,7 @@ note the label imbalance: Sgouritsa et al. 2024 (arXiv:2412.13952); Sun et al. 2
 - (not found) No changelog for v1 → v1.5 beyond App. A.4 / App. D (aggregate versus balanced set).
 
 Prior work on CLadder surface features:
-- (read) **Clarke, Karn, Murray, Hill, Jensen (2026), arXiv:2610.38100 (preprint, 28 Oct 2026).** A
+- ✔ (read) **Clarke, Karn, Murray, Hill, Jensen (2026), arXiv:2610.38100 (preprint, 28 Oct 2026).** A
   random forest on surface features (the quoted probabilities, comparisons between them, polarity
   flags) reaches 86.8% under 10-fold cross-validation on a freshly generated 9,866-item set, with
   per-type numbers (collider bias 100.0, backdoor adjustment 62.2 with n = 74). Their
@@ -103,3 +103,5 @@ Prior work on CLadder surface features:
 | CLadder is largely predictable from surface features; `collider_bias` deterministic | Documented by Clarke et al. 2026 (and App. A.2 of the paper for `collider_bias`). Cite; our contribution is only the story-grouped estimate on the released v1.5 file and the comparison with probes. |
 | CLadder `backadj` ≈ fully predictable | Clarke et al. report 62.2% (n = 74) for it; ours is higher with an explicit "which method is case-by-case" feature. Follows from the generator code. Report as ours, with their number next to it. |
 | A probing study that pairs probes with a text-only baseline on these benchmarks | None found. |
+
+Re-checked by me on 13 Nov against the arXiv HTML: the ✔ lines above; Table 3 sizes and 18.57% positive; Table 4 (best off-the-shelf F1 33.38, BART MNLI; always-majority F1 0.0, accuracy 84.77); Table 5a (RoBERTa-Large MNLI 94.74); Clarke et al. Table 3 (random forest 86.8 ± 0.7 overall, collider bias 100.0, backdoor adjustment 62.2 ± 10.8 with n = 74, ten-fold cross-validation, 9,866 freshly generated items).

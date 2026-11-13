@@ -134,6 +134,26 @@ def c2c_debiased_pool(train: list[dict], seed: int = SEED,
     return pool
 
 
+def c2c_string_balanced_pool(train: list[dict], seed: int = SEED, per_cell: int = 25) -> list[dict]:
+    """The FIRST, rejected debiasing design, kept only so its text-baseline numbers stay
+    reproducible (scripts/14_benchmark_baselines.py, decision D21): 25 valid + 25 invalid items
+    for each hypothesis string that occurs with both labels, balanced over the whole pool only,
+    premises unrestricted. No model was ever run on it."""
+    rng = np.random.default_rng(seed)
+    cells = defaultdict(list)
+    for it in train:
+        cells[(it["query"], it["label"])].append(it)
+    strings = sorted({q for q, _ in cells})
+    both = [q for q in strings if len(cells.get((q, 0), [])) >= per_cell and len(cells.get((q, 1), [])) >= per_cell]
+    pool = []
+    for q in both:
+        for lab in (0, 1):
+            cand = cells[(q, lab)]
+            idx = rng.choice(len(cand), size=per_cell, replace=False)
+            pool.extend(cand[j] for j in sorted(idx))
+    return pool
+
+
 def c2c_debiased_stats(items: list[dict], per_cell: int = C2C_DEBIASED_BLOCKS) -> dict:
     """How much of a split survives the debiasing rule (for the write-up)."""
     cells = Counter((i["query"], i["label"]) for i in items)

@@ -4,27 +4,31 @@ Repo root: this directory. Venv: `.venv` (uv, Python 3.12). Run things as `.venv
 
 **Compute rules (user instruction, Fri 13 Nov):** this 8 GB laptop does light work only: CPU analysis on existing caches, figures, writing, and Qwen 0.5B/1.5B GPU jobs one at a time. `OMP_NUM_THREADS=2`, background jobs under `nice`, stop any job that pushes memory into swap. **No Gemma model passes on this machine. Do not run `scripts/queue_night.sh`.** Gemma interventions, the SAE tier and the larger model run on Kaggle (`KAGGLE.md`), launched by the user.
 
-Last updated: Fri 2026-11-13 11:15 (Toronto).
+Last updated: Fri 2026-11-13 14:15 (Toronto).
 
 ## Where things stand
 
 | Piece | State |
 |---|---|
-| Tier 1, three local models, original item sets | Done, audited (Qwen) / reviewed (Gemma), in tables, figures and `report/report.md` |
-| Step 2: text baselines on the benchmarks | Done: `scripts/14_benchmark_baselines.py` → `results/benchmark_baselines.json`; note in `report/benchmark_text_baselines.md`; literature check in `notes/literature_check.md` |
-| Step 3: debiased pool `c2c_debiased` | Pool defined and tested (block design, D21). Text baselines done. Cached for qwen0.5b (trained + random-init). **qwen1.5b cache in progress** (see below). Probes not yet run for any model |
-| Step 3: answer bias | Done: `scripts/15_answer_bias.py` → `results/answer_bias.json`, table `answer_bias` |
-| Step 4: Kaggle notebook | Pushed and tested locally: `notebooks/kaggle_gpu.ipynb` pinned to code commit `406d994`. Waiting for the user to run it and bring back the zips |
-| Tier 2, Qwen models | Results exist. Independent audit launched 11:08 (subagent); write-up waits for it |
-| EXPLAINER | Start here rewritten; primer and decisions D20–D23 added; Tier 2/3 Q&A still to write |
+| Tier 1, three local models, original item sets | Done, audited (Qwen) / reviewed (Gemma); in tables, figures, `report/report.md` |
+| Step 2: text baselines on the benchmarks | Done: `scripts/14_benchmark_baselines.py`, `report/benchmark_text_baselines.md`, `notes/literature_check.md` |
+| Step 3: debiased pool | Done for Qwen 0.5B and 1.5B: caches (trained + random-init), probes, audited comparison, post-hoc analysis (`scripts/05b_probe_content.py`), report section 3.6. Gemma and the larger model: waiting for Kaggle |
+| Step 3: answer bias | Done (`scripts/15_answer_bias.py`, table `answer_bias`) |
+| Step 4: Kaggle | Notebook launched by the user Friday ~11:20 on code commit `406d994`. Ingest: `notes/kaggle_ingest.md`, `scripts/kaggle_ingest.py` |
+| Tier 2, Qwen models | Audited (report: `notes/audit_tier2_raw.md`); fixes applied; steering re-analysed with signed slopes and matched controls; report section 4 rewritten |
+| Third audit | Launched Friday 14:10 on the debiased-pool claim and the steering wording. Not back yet |
+| EXPLAINER | Story, primer, decisions D1–D26, figure guide, 36 questions. Tier 3 primer/questions still to write |
 
-## Running now / to restart if interrupted
+## Nothing is running locally
 
-1. `CAUSAL_PROBE_TOKEN_BUDGET=1500 nice .venv/bin/python scripts/01_build_cache.py --model qwen1.5b --tags c2c_debiased --no-gen` (resumable; log `logs/cache_qwen1.5b_debiased.log`). The first attempt at the default batch size stalled in swap next to other processes and was stopped.
-2. Then the same with `--random`.
-3. Then, one at a time: `nice ./scripts/run_debiased.sh qwen0.5b 2` and `nice ./scripts/run_debiased.sh qwen1.5b 2` (probes at three regularisation strengths + audited comparison on the debiased pool).
-4. Then steering on the debiased pool for both Qwen models: `scripts/07_steering.py --model <m> --tag c2c_debiased --sub-batch 8`.
-5. Then `scripts/12_tables.py`, `scripts/06_figures.py`, `scripts/13_build_docs.py`; fill `<!-- T1-DEBIASED-TEXT -->` in `report/report_template.md`; step 6 of "Start here" in EXPLAINER.md.
+All local queues finished Friday 14:08. Every local job goes through `scripts/guarded.sh` (see D26).
+
+## To do next, in order
+
+1. Act on the third audit's findings; log them; adjust section 3.6 / 4.1 wording.
+2. When the Kaggle zips arrive: section below.
+3. Tier 3 write-up (SAE) from the Kaggle results; Tier 3 primer entries and questions.
+4. Packaging (Sunday 10:00): README final pass, report summary (`<!-- SUMMARY -->` is still empty), `scripts/run_all.sh` dry check, final chat post.
 
 ## When the Kaggle zips come back
 

@@ -1,0 +1,163 @@
+{
+ "models": {
+  "qwen0.5b": {
+   "params_billion": 0.494,
+   "datasets": {
+    "c2c_probe": {
+     "n_layers": 24,
+     "selected_layer": 15,
+     "selected_C": 1.0,
+     "selected_layer_relative_depth": 0.625,
+     "first_layer_within_1pt_of_max": 15,
+     "first_layer_within_1pt_relative_depth": 0.625,
+     "model_accuracy": 0.5008333333333334,
+     "gold_probe_accuracy": {
+      "est": 0.8066666666666666,
+      "lo": 0.7841666666666667,
+      "hi": 0.8283333333333334,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "gold_probe_auroc": {
+      "est": 0.8837333333333334,
+      "lo": 0.862038125,
+      "hi": 0.9043797222222222,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "tfidf_accuracy": {
+      "est": 0.7875,
+      "lo": 0.7625,
+      "hi": 0.8125,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "type_prior_accuracy": {
+      "est": 0.6991666666666667,
+      "lo": 0.6716666666666666,
+      "hi": 0.7258541666666666,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_tfidf_accuracy": {
+      "est": 0.019166666666666665,
+      "lo": -0.007499999999999951,
+      "hi": 0.04583333333333328,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_tfidf_auroc": {
+      "est": 0.04665833333333336,
+      "lo": 0.023129652777777877,
+      "hi": 0.06967645833333347,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_type_prior_accuracy": {
+      "est": 0.10749999999999993,
+      "lo": 0.07583333333333331,
+      "hi": 0.13916666666666666,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "selectivity_at_selected_layer": 0.1168055555555555,
+     "max_selectivity": 0.125,
+     "represents_but_doesnt_say": false,
+     "represents_but_doesnt_say_calibrated": false,
+     "random_init_accuracy": {
+      "est": 0.6208333333333333,
+      "lo": 0.5949791666666666,
+      "hi": 0.6466666666666666,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_random_init_accuracy": {
+      "est": 0.1858333333333333,
+      "lo": 0.15583333333333338,
+      "hi": 0.21916666666666673,
+      "n": 1200,
+      "n_groups": 150
+     }
+    },
+    "cladder": {
+     "n_layers": 24,
+     "selected_layer": 16,
+     "selected_C": 0.1,
+     "selected_layer_relative_depth": 0.6666666666666666,
+     "first_layer_within_1pt_of_max": 16,
+     "first_layer_within_1pt_relative_depth": 0.6666666666666666,
+     "model_accuracy": 0.5057962172056132,
+     "gold_probe_accuracy": {
+      "est": 0.5607077486272117,
+      "lo": 0.5343449363105297,
+      "hi": 0.5864966629738713,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "gold_probe_auroc": {
+      "est": 0.5893745774876485,
+      "lo": 0.5541078064453964,
+      "hi": 0.6234280893892534,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "tfidf_accuracy": {
+      "est": 0.5265405735204393,
+      "lo": 0.4939636301135552,
+      "hi": 0.5620270672994538,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "type_prior_accuracy": {
+      "est": 0.4838316046369738,
+      "lo": 0.46222128851540617,
+      "hi": 0.5037438945788896,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_tfidf_accuracy": {
+      "est": 0.034167175106772474,
+      "lo": -0.008814082311807485,
+      "hi": 0.07355523698181043,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_tfidf_auroc": {
+      "est": 0.05570983564083398,
+      "lo": 0.003422283538531035,
+      "hi": 0.09918989426408603,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_type_prior_accuracy": {
+      "est": 0.07687614399023796,
+      "lo": 0.04847921683893321,
+      "hi": 0.10555106416742778,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "selectivity_at_selected_layer": -0.23411111111111127,
+     "max_selectivity": 0.024333333333333318,
+     "represents_but_doesnt_say": false,
+     "represents_but_doesnt_say_calibrated": false,
+     "random_init_accuracy": {
+      "est": 0.4978645515558267,
+      "lo": 0.47491163438098677,
+      "hi": 0.5218383528145998,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_random_init_accuracy": {
+      "est": 0.06284319707138503,
+      "lo": 0.024279246500322572,
+      "hi": 0.09943508124781383,
+      "n": 1639,
+      "n_groups": 24
+     }
+    }
+   }
+  }
+ },
+ "note": "selected layer = argmax of gold-probe accuracy on the selection half of premises/stories; all metrics are on the report half (see 05_confound.py).",
+ "pairwise": {}
+}

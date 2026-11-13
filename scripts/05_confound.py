@@ -18,7 +18,7 @@ import json
 import numpy as np
 
 from causal_probe import cache, probes, stats
-from causal_probe.config import MODELS, RESULTS, SEED
+from causal_probe.config import ALL_MODELS, MODELS, RESULTS, SEED
 
 
 def ci(fn, arrays, groups):
@@ -54,11 +54,18 @@ def block(y, scores: dict, groups, ref="gold_probe"):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, choices=list(MODELS))
+    ap.add_argument("--model", required=True, choices=ALL_MODELS)
     ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder"])
+    ap.add_argument("--fixed-c", action="store_true")
     a = ap.parse_args()
+    suffix = "_fixedC" if a.fixed_c else ""
     d = cache.cache_dir(a.model, a.tag)
-    oof = np.load(d / "probe_oof.npz")
+    # --fixed-c: the original pre-registered setting (probe C = 0.01, TF-IDF C = 1), kept as a sensitivity
+    # analysis. Default: (layer, C) chosen jointly on the selection half from the C grid (decision D17).
+    Cs = [probes.PROBE_C] if a.fixed_c else [c for c in probes.PROBE_CS if (d / f"probe_oof_C{c:g}.npz").exists()]
+    TCs = [1.0] if a.fixed_c else list(probes.TFIDF_CS)
+    oofs = {c: np.load(d / f"probe_oof_C{c:g}.npz") for c in Cs}
+    oof = oofs[Cs[0]]
     _, meta, items = cache.load_cache(a.model, a.tag)
     y, m = oof["y"], oof["model_pred"]
     ld = np.array(meta["logit_diff"], np.float32)
@@ -70,30 +77,51 @@ def main():
     sel_groups = set(rng.permutation(ug)[: len(ug) // 2])
     sel = np.array([g in sel_groups for g in groups]); rep = ~sel
 
-    def pick(name):
-        S = oof[name]                                           # [seeds, L, n]
-        tgt = m if name == "model_out" else y
-        acc = ((S[:, :, sel] > 0) == tgt[sel][None, None]).mean((0, 2))
-        return int(acc.argmax()), acc.tolist()
+    picked_C, picked_scores = {}, {}
 
-    res = {"model": MODELS[a.model], "tag": a.tag, "n": int(len(y)),
+    def pick(name):
+        """Choose (C, layer) for this probe target by accuracy on the selection half only.
+        Returns (layer, selection-half accuracy by layer at the chosen C)."""
+        tgt = {"model_out": m, "model_out_cal": oof["model_pred_cal"]}.get(name, y)
+        best = None
+        for c in Cs:
+            S = oofs[c][name]                                   # [seeds, L, n]
+            acc = ((S[:, :, sel] > 0) == tgt[sel][None, None]).mean((0, 2))
+            if best is None or acc.max() > best[0]:
+                best = (acc.max(), c, int(acc.argmax()), acc.tolist())
+        picked_C[name] = best[1]
+        picked_scores[name] = oofs[best[1]][name]
+        return best[2], best[3]
+
+    def pick_tfidf():
+        accs = {tc: float(((oof[f"tfidf_C{tc:g}"][:, sel] > 0) == y[sel][None]).mean()) for tc in TCs}
+        tc = max(accs, key=accs.get)
+        return tc, oof[f"tfidf_C{tc:g}"].mean(0), accs
+
+    res = {"model": a.model, "tag": a.tag, "n": int(len(y)),
            "n_select": int(sel.sum()), "n_report": int(rep.sum()),
            "model_accuracy_report_half": stats.accuracy(y[rep], m[rep]),
            "model_pred_yes_frac": float(m.mean())}
     L_gold, sel_curve = pick("gold")
     res["selected_layer_gold"] = L_gold
     res["selection_half_accuracy_by_layer"] = sel_curve
-    scores = {"gold_probe": oof["gold"][:, L_gold].mean(0),
-              "tfidf": oof["tfidf"].mean(0), "type_prior": oof["type_prior"].mean(0),
+    tfidf_C, tfidf_scores, tfidf_sel_acc = pick_tfidf()
+    res["C_grid"] = Cs
+    res["selected_C_gold"] = picked_C["gold"]
+    res["selected_C_tfidf"] = tfidf_C
+    res["tfidf_selection_half_accuracy_by_C"] = tfidf_sel_acc
+    scores = {"gold_probe": picked_scores["gold"][:, L_gold].mean(0),
+              "tfidf": tfidf_scores, "type_prior": oof["type_prior"].mean(0),
               "model_logit_diff": ld}
     if "random_init" in oof.files:
         L_r, _ = pick("random_init")
         res["selected_layer_random_init"] = L_r
-        scores["random_init_probe"] = oof["random_init"][:, L_r].mean(0)
+        res["selected_C_random_init"] = picked_C["random_init"]
+        scores["random_init_probe"] = picked_scores["random_init"][:, L_r].mean(0)
     if "model_out" in oof.files:
         L_m, _ = pick("model_out")
         res["selected_layer_model_out"] = L_m
-        mo = oof["model_out"][:, L_m].mean(0)
+        mo = picked_scores["model_out"][:, L_m].mean(0)
         res["model_out_probe"] = {
             "accuracy_predicting_model_answer": ci(acc_fn, (m[rep], mo[rep]), groups[rep]),
             "auroc_predicting_model_answer": ci(stats.auroc, (m[rep], mo[rep]), groups[rep]),
@@ -119,7 +147,7 @@ def main():
     # relative to its own median logit difference, i.e. with a constant Yes/No bias removed.
     mc = oof["model_pred_cal"]
     L_mc, _ = pick("model_out_cal")
-    moc = oof["model_out_cal"][:, L_mc].mean(0)
+    moc = picked_scores["model_out_cal"][:, L_mc].mean(0)
     res["calibrated"] = {
         "definition": "model answer := answer logit diff > its median over this item set",
         "model_accuracy_report_half": stats.accuracy(y[rep], mc[rep]),
@@ -183,12 +211,13 @@ def main():
         tres, tmeta, titems = cache.load_cache(a.model, "c2c_test")
         ty = np.array(tmeta["labels"]); tld = np.array(tmeta["logit_diff"], np.float32)
         tm = (tld > 0).astype(int); tg = np.array([i["group"] for i in titems])
-        s_probe = probes.fit_predict(probes.layer_features(pres, L_gold, 0), y, probes.layer_features(tres, L_gold, 0))
+        s_probe = probes.fit_predict(probes.layer_features(pres, L_gold, 0), y, probes.layer_features(tres, L_gold, 0),
+                                     C=picked_C["gold"])
         from sklearn.feature_extraction.text import TfidfVectorizer
         from sklearn.linear_model import LogisticRegression
         from causal_probe import prompts
         vec = TfidfVectorizer(ngram_range=(1, 2), lowercase=False, token_pattern=r"(?u)\b\w+\b", min_df=2, sublinear_tf=True)
-        clf = LogisticRegression(C=1.0, max_iter=1000).fit(vec.fit_transform([prompts.user_text(i) for i in items]), y)
+        clf = LogisticRegression(C=tfidf_C, max_iter=1000).fit(vec.fit_transform([prompts.user_text(i) for i in items]), y)
         s_tfidf = clf.decision_function(vec.transform([prompts.user_text(i) for i in titems]))
         tmpl = np.array([i["template"] for i in items]); ttmpl = np.array([i["template"] for i in titems])
         prior = {k: y[tmpl == k].mean() - 0.5 for k in np.unique(tmpl)}
@@ -203,7 +232,7 @@ def main():
             ext[name] = block(ty[mask], {k: s[mask] for k, s in tscores.items()}, tg[mask])
         res["external_c2c_test"] = ext
 
-    (RESULTS / f"confound_{a.model}_{a.tag}.json").write_text(json.dumps(res, indent=1))
+    (RESULTS / f"confound_{a.model}_{a.tag}{suffix}.json").write_text(json.dumps(res, indent=1))
     mw = res["model_wrong"]
     if "gold_probe" in mw:
         print(f"{a.model}/{a.tag} layer {L_gold}: on model-wrong items (n={mw['n']}): "

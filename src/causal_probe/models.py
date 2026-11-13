@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
-from .config import CACHE, MODELS, SEED
+from .config import CACHE, LORA, MODELS, SEED
 
 YES_VARIANTS = ["Yes", " Yes", "yes", " yes", "YES", " YES"]
 NO_VARIANTS = ["No", " No", "no", " no", "NO", " NO"]
@@ -18,6 +18,8 @@ def pick_device() -> str:
 
 
 def load_tokenizer(name: str):
+    if name in LORA:
+        name = LORA[name][0]
     tok = AutoTokenizer.from_pretrained(MODELS.get(name, name))
     tok.padding_side = "left"  # so position -1 is always the final prompt token
     if tok.pad_token_id is None:
@@ -66,6 +68,17 @@ def load_model(name: str, device: str | None = None, dtype=None, random_init: bo
                disk_embed: bool | None = None):
     """Load an instruct model. `random_init=True` gives an untrained copy with the same
     architecture and tokenizer (the 'random model' probing control)."""
+    if name in LORA:            # base model + trained LoRA adapter, merged into plain weights
+        from peft import PeftModel
+        base, adapter = LORA[name]
+        assert not random_init
+        device = device or pick_device()
+        model = load_model(base, device="cpu", dtype=torch.float32)
+        model = PeftModel.from_pretrained(model, str(adapter)).merge_and_unload()
+        model.to(dtype or (torch.float32 if device == "cpu" else torch.float16)).to(device).eval()
+        for p in model.parameters():
+            p.requires_grad_(False)
+        return model
     hf_id = MODELS.get(name, name)
     device = device or pick_device()
     if dtype is None:

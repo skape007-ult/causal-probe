@@ -21,13 +21,13 @@ import numpy as np
 from joblib import Parallel, delayed
 
 from causal_probe import cache, probes, stats
-from causal_probe.config import MODELS, POSITIONS, PROBE_SEEDS, RESULTS
+from causal_probe.config import ALL_MODELS, MODELS, POSITIONS, PROBE_SEEDS, RESULTS
 
 
-def run_layer(resid, layer, pos, jobs):
+def run_layer(resid, layer, pos, jobs, C, groups):
     """jobs: list of (name, y_eval, y_train, folds). Returns {name: oof scores}."""
     X = probes.layer_features(resid, layer, pos)
-    return {name: probes.oof_scores(X, y, folds, y_train=yt) for name, y, yt, folds in jobs}
+    return {name: probes.oof_scores(X, y, folds, C=C, y_train=yt, groups=groups) for name, y, yt, folds in jobs}
 
 
 def summarise(y, S, groups, ci=True):
@@ -43,10 +43,15 @@ def summarise(y, S, groups, ci=True):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, choices=list(MODELS))
+    ap.add_argument("--model", required=True, choices=ALL_MODELS)
     ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder"])
     ap.add_argument("--jobs", type=int, default=6)
+    ap.add_argument("--C", type=float, default=probes.PROBE_C,
+                    help="L2 strength of the probes. Run once per value in probes.PROBE_CS; 05_confound.py then "
+                         "chooses (layer, C) on the selection half and reports on the report half (decision D17).")
     a = ap.parse_args()
+    C = a.C
+    suffix = f"_C{C:g}"
     t0 = time.time()
     resid, meta, items = cache.load_cache(a.model, a.tag)
     resid = np.asarray(resid)                       # into RAM once (float16)
@@ -74,7 +79,7 @@ def main():
         jobs.append((f"model_out_cal/{s}", mcal, None, folds[s]))
         if do_model_out:
             jobs.append((f"model_out/{s}", m, None, folds[s]))
-    per_layer = Parallel(n_jobs=a.jobs)(delayed(run_layer)(resid, l, 0, jobs) for l in range(L))
+    per_layer = Parallel(n_jobs=a.jobs)(delayed(run_layer)(resid, l, 0, jobs, C, groups) for l in range(L))
     for name in ["gold", "shuffled", "control", "model_out_cal"] + (["model_out"] if do_model_out else []):
         oof[name] = np.stack([[per_layer[l][f"{name}/{s}"] for l in range(L)] for s in PROBE_SEEDS])
     print(f"final position done {time.time() - t0:.0f}s", flush=True)
@@ -82,7 +87,7 @@ def main():
     # ---- other positions: gold only
     gjobs = [(f"gold/{s}", y, None, folds[s]) for s in PROBE_SEEDS]
     for pi, pname in enumerate(POSITIONS[1:], start=1):
-        pl = Parallel(n_jobs=a.jobs)(delayed(run_layer)(resid, l, pi, gjobs) for l in range(L))
+        pl = Parallel(n_jobs=a.jobs)(delayed(run_layer)(resid, l, pi, gjobs, C, groups) for l in range(L))
         oof[f"gold@{pname}"] = np.stack([[pl[l][f"gold/{s}"] for l in range(L)] for s in PROBE_SEEDS])
     del resid
 
@@ -92,23 +97,25 @@ def main():
         rres, rmeta, _ = cache.load_cache(a.model, a.tag, random_init=True)
         assert rmeta["uids"] == meta["uids"]
         rres = np.asarray(rres)
-        pl = Parallel(n_jobs=a.jobs)(delayed(run_layer)(rres, l, 0, gjobs) for l in range(L))
+        pl = Parallel(n_jobs=a.jobs)(delayed(run_layer)(rres, l, 0, gjobs, C, groups) for l in range(L))
         oof["random_init"] = np.stack([[pl[l][f"gold/{s}"] for l in range(L)] for s in PROBE_SEEDS])
         del rres
 
     # ---- text baselines (no layers)
-    oof["tfidf"] = np.stack([probes.tfidf_oof(items, y, folds[s]) for s in PROBE_SEEDS])
+    for tc in probes.TFIDF_CS:
+        oof[f"tfidf_C{tc:g}"] = np.stack([probes.tfidf_oof(items, y, folds[s], C=tc) for s in PROBE_SEEDS])
+    oof["tfidf"] = oof["tfidf_C1"]          # C = 1 is the original pre-registered baseline setting
     oof["type_prior"] = np.stack([probes.query_only_oof(items, y, folds[s]) for s in PROBE_SEEDS])
-    oof["tfidf_model_out_cal"] = np.stack([probes.tfidf_oof(items, mcal, folds[s]) for s in PROBE_SEEDS])
+    oof["tfidf_model_out_cal"] = np.stack([probes.tfidf_oof(items, mcal, folds[s], C=1.0) for s in PROBE_SEEDS])
     if do_model_out:
-        oof["tfidf_model_out"] = np.stack([probes.tfidf_oof(items, m, folds[s]) for s in PROBE_SEEDS])
+        oof["tfidf_model_out"] = np.stack([probes.tfidf_oof(items, m, folds[s], C=1.0) for s in PROBE_SEEDS])
 
-    np.savez_compressed(cache.cache_dir(a.model, a.tag) / "probe_oof.npz", y=y, model_pred=m, model_pred_cal=mcal,
+    np.savez_compressed(cache.cache_dir(a.model, a.tag) / f"probe_oof{suffix}.npz", y=y, model_pred=m, model_pred_cal=mcal,
                         control_labels=ctrl, **{k.replace("@", "_at_"): v for k, v in oof.items()})
 
     # ---- summary
-    res = {"model": MODELS[a.model], "tag": a.tag, "n": len(y), "n_groups": len(set(groups)),
-           "n_layers_plus_embed": L, "probe_C": probes.PROBE_C, "seeds": list(PROBE_SEEDS),
+    res = {"model": a.model, "tag": a.tag, "n": len(y), "n_groups": len(set(groups)),
+           "n_layers_plus_embed": L, "probe_C": C, "seeds": list(PROBE_SEEDS),
            "model_pred_yes_frac": float(m.mean()), "model_out_probe_run": bool(do_model_out),
            "model_accuracy": stats.accuracy(y, m), "control_label_balance": float(ctrl.mean()),
            "layers": {}, "baselines": {}}
@@ -125,7 +132,7 @@ def main():
     res["best_layer_gold_final"] = int(g.argmax())
     res["note_best_layer"] = ("argmax over layers on the same held-out predictions is optimistically "
                               "biased; headline numbers use the split-half selection in 05_confound.py")
-    (RESULTS / f"probes_{a.model}_{a.tag}.json").write_text(json.dumps(res, indent=1))
+    (RESULTS / f"probes_{a.model}_{a.tag}{suffix}.json").write_text(json.dumps(res, indent=1))
     bl = res["best_layer_gold_final"]
     print(f"{a.model}/{a.tag}: best layer {bl} gold acc {g[bl]:.3f} control {c[bl]:.3f} "
           f"shuffled {res['layers']['shuffled'][bl]['accuracy']['est']:.3f} "

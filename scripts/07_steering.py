@@ -21,7 +21,7 @@ import numpy as np
 import torch
 
 from causal_probe import cache, models, probes, prompts, stats, steer
-from causal_probe.config import MODELS, RESULTS, SEED
+from causal_probe.config import ALL_MODELS, MODELS, RESULTS, SEED
 
 ALPHAS = [0.25, 0.5, 1.0, 2.0, 4.0, 8.0]
 N_RANDOM = 3
@@ -29,7 +29,7 @@ N_RANDOM = 3
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, choices=list(MODELS))
+    ap.add_argument("--model", required=True, choices=ALL_MODELS)
     ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder"])
     ap.add_argument("--n", type=int, default=300)
     ap.add_argument("--layer", type=int, default=None)
@@ -37,6 +37,7 @@ def main():
     t0 = time.time()
     conf = json.loads((RESULTS / f"confound_{a.model}_{a.tag}.json").read_text())
     layer = a.layer if a.layer is not None else conf["selected_layer_gold"]
+    probe_C = conf.get("selected_C_gold", probes.PROBE_C)
     resid, meta, items = cache.load_cache(a.model, a.tag)
     X = probes.layer_features(resid, layer, 0)
     y = np.array(meta["labels"]); ld0 = np.array(meta["logit_diff"])
@@ -50,9 +51,9 @@ def main():
     mcal = (ld0 > np.median(ld0)).astype(int)
     mu = X[sel].mean(0)
     s_unit = float(np.sqrt(((X[sel] - mu) ** 2).sum(1).mean()))
-    dirs = {"gold_probe": steer.probe_direction(X[sel], y[sel], probes.PROBE_C),
+    dirs = {"gold_probe": steer.probe_direction(X[sel], y[sel], probe_C),
             "gold_diffmeans": steer.diff_of_means(X[sel], y[sel]),
-            "model_out": steer.probe_direction(X[sel], mcal[sel], probes.PROBE_C)}
+            "model_out": steer.probe_direction(X[sel], mcal[sel], probe_C)}
     r2 = np.random.default_rng(SEED + 11)
     for k in range(N_RANDOM):
         dirs[f"random_{k}"] = steer.unit(r2.standard_normal(X.shape[1]))
@@ -115,8 +116,8 @@ def main():
                 "mean_delta_logit_diff_minus": float((minus - base).mean())})
         return res
 
-    res = {"model": MODELS[a.model], "tag": a.tag, "layer": int(layer), "n_items": int(len(idx)),
-           "alphas": ALPHAS, "s_unit_rms_deviation": s_unit,
+    res = {"model": a.model, "tag": a.tag, "layer": int(layer), "n_items": int(len(idx)),
+           "alphas": ALPHAS, "s_unit_rms_deviation": s_unit, "probe_C": probe_C,
            "mean_resid_norm": float(np.linalg.norm(X[sel], axis=1).mean()),
            "baseline": {"accuracy": ci(lambda t, b: stats.accuracy(t, (b > 0).astype(int)), yy, base),
                         "frac_yes": float(bpred.mean()), "mean_logit_diff": float(base.mean()),

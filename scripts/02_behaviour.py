@@ -9,7 +9,7 @@ import json
 import numpy as np
 
 from causal_probe import cache, data, stats
-from causal_probe.config import MODELS, RESULTS
+from causal_probe.config import ALL_MODELS, MODELS, RESULTS
 
 
 def metric_block(y, pred, score, groups):
@@ -78,9 +78,9 @@ def gen_block(model, tag, y_by_uid, pred_by_uid, group_by_uid):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, choices=list(MODELS))
+    ap.add_argument("--model", required=True, choices=ALL_MODELS)
     a = ap.parse_args()
-    res = {"model": MODELS[a.model], "zero_shot": {}, "few_shot": {}, "generation": {}}
+    res = {"model": a.model, "zero_shot": {}, "few_shot": {}, "generation": {}}
     cached = {}
     for tag in ["c2c_test", "c2c_probe", "cladder", "c2c_test_renamed"]:
         res["zero_shot"][tag], cached[tag] = eval_tag(a.model, tag)

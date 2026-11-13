@@ -476,16 +476,16 @@ def fig_adjacency(site="final_best", name="fig11_adjacency_final.png", where="fi
         ax.set_title(f"{MODEL_LAB[m]} · layer {r['layer']}/{r['n_layers']} · n = {r['n_items']}", fontsize=8.5)
         tc = r["translation"]["contrast"]; ec = r["erasure"]["contrast_reduction_of_dependence"]
         rows = (("translation", "moved to where the other class sits",
-                 f"contrast {tc['est']:+.3f} of {r['full_mediation_benchmark']:.3f}; above {100 * tc['vs_controls_norm_matched']['share_of_controls_below']:.0f}% of controls"),
+                 f"contrast {tc['est']:+.3f} of {r['full_mediation_benchmark']:.3f}; larger than {100 * tc['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}% of controls"),
                 ("erasure", f"adjacency erased (fresh probe {lv['before']['pooled']:.2f} → {lv['after_erasure']['pooled']:.2f})",
-                 f"reduction {ec['value']:+.3f} of {ec['benchmark_full_removal_on_evaluation_items']:+.3f}; above {100 * ec['vs_controls']['share_of_controls_below']:.0f}% of controls"))
+                 f"reduction {ec['value']:+.3f} of {ec['benchmark_full_removal_on_evaluation_items']:+.3f}; larger than {100 * ec['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}% of controls"))
         for i, (key, lab, note) in enumerate(rows):
             ax = axes[i + 1, j]
             for t_, k in enumerate(TEMPLATE_ORDER):
                 if key == "translation":
                     v = r["translation"]["by_template"][k]; c = v["vs_controls_norm_matched"]
                 else:
-                    v = r["erasure"]["by_template"][k]["change_in_gap"]; c = v["vs_controls"]
+                    v = r["erasure"]["by_template"][k]["change_in_gap"]; c = v["vs_controls_norm_matched"]
                 ax.plot([t_, t_], [c["control_min"], c["control_max"]], color=AXIS, lw=7, solid_capstyle="butt", zorder=1)
                 ax.plot([t_ - 0.16, t_ + 0.16], [c["control_mean"]] * 2, color=MUTED, lw=1.2, zorder=2)
                 ax.errorbar(t_, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], fmt="o", ms=5, color=col, ecolor=col,
@@ -500,7 +500,7 @@ def fig_adjacency(site="final_best", name="fig11_adjacency_final.png", where="fi
         axes[2, j].set_xlim(-0.6, len(x) - 0.4)
     fig.suptitle(f"Is the adjacency information used? Interventions at the {where}, debiased Corr2Cause pool.\n"
                  "Top: how the answer depends on adjacency of the queried pair, by hypothesis type (bars, 95% CI). Middle and bottom: what changing or erasing\n"
-                 "the encoded adjacency does (dot, 95% CI), against the same operation built from labels shuffled within hypothesis string (grey bar = range, tick = mean).\n"
+                 "the encoded adjacency does (dot, 95% CI), against the same operation built from labels shuffled within hypothesis string and scaled to the same size (grey bar = range, tick = mean).\n"
                  "If the answer read this encoding, middle-row dots would follow the top bars and bottom-row dots would mirror them.", fontsize=8.2, color=INK2)
     fig.tight_layout()
     save(fig, name)

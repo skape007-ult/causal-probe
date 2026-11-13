@@ -1488,6 +1488,17 @@
       "control_mean": -0.002155238163380635,
       "control_sd": 0.005331863929493673,
       "outside_control_range": true
+     },
+     "vs_controls_norm_matched": {
+      "value": -0.02591087094017297,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.95,
+      "share_of_controls_below": 0.05,
+      "control_min": -0.051557800023243505,
+      "control_max": 0.010184927943942101,
+      "control_mean": -0.005838402068205817,
+      "control_sd": 0.014239315270309338,
+      "outside_control_range": false
      }
     },
     "auroc_answer_for_adjacency_before": 0.5570228091236494,
@@ -1527,6 +1538,17 @@
       "control_mean": -0.001073583703043063,
       "control_sd": 0.002998424115607812,
       "outside_control_range": true
+     },
+     "vs_controls_norm_matched": {
+      "value": 0.013044372281046601,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.9,
+      "share_of_controls_below": 0.95,
+      "control_min": -0.02281959191262206,
+      "control_max": 0.013869396645293186,
+      "control_mean": -0.0026562843108199562,
+      "control_sd": 0.007702539156713975,
+      "outside_control_range": false
      }
     },
     "auroc_answer_for_adjacency_before": 0.4915254237288136,
@@ -1565,6 +1587,17 @@
       "control_max": 0.004791227976481238,
       "control_mean": 0.0003431510925292924,
       "control_sd": 0.0019385505471207279,
+      "outside_control_range": true
+     },
+     "vs_controls_norm_matched": {
+      "value": 0.019803333282470748,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 1.0,
+      "share_of_controls_below": 1.0,
+      "control_min": -0.007395104575354194,
+      "control_max": 0.014320806342719816,
+      "control_mean": 0.0009978334759756513,
+      "control_sd": 0.005130334604664678,
       "outside_control_range": true
      }
     },
@@ -1605,6 +1638,17 @@
       "control_mean": 0.0019832971868719573,
       "control_sd": 0.004310555192181821,
       "outside_control_range": true
+     },
+     "vs_controls_norm_matched": {
+      "value": 0.24654138764697697,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 1.0,
+      "share_of_controls_below": 1.0,
+      "control_min": -0.011986398070409687,
+      "control_max": 0.026077567847114125,
+      "control_mean": 0.0053726958081515615,
+      "control_sd": 0.0108764875115127,
+      "outside_control_range": true
      }
     },
     "auroc_answer_for_adjacency_before": 0.23455233291298866,
@@ -1643,6 +1687,17 @@
       "control_max": 0.03517601087495881,
       "control_mean": 0.0011237294642956086,
       "control_sd": 0.008999559254301738,
+      "outside_control_range": true
+     },
+     "vs_controls_norm_matched": {
+      "value": 0.13088982445853103,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 1.0,
+      "share_of_controls_below": 1.0,
+      "control_min": -0.03152186562643822,
+      "control_max": 0.07831775068888214,
+      "control_mean": 0.002546570720849195,
+      "control_sd": 0.02084399943854633,
       "outside_control_range": true
      }
     },
@@ -1696,6 +1751,21 @@
     "control_sd": 0.0027870408753004894,
     "outside_control_range": true
    },
+   "vs_controls_norm_matched": {
+    "value": 0.09588468744080256,
+    "n_controls": 20,
+    "share_of_controls_smaller_in_absolute_value": 1.0,
+    "share_of_controls_below": 1.0,
+    "control_min": -0.008515803792972648,
+    "control_max": 0.020642987259886975,
+    "control_mean": 0.0031899587803077304,
+    "control_sd": 0.006553629401489612,
+    "outside_control_range": true
+   },
+   "control_edit_norm_scale_factors_range": [
+    2.0398519071772556,
+    3.2372932192808976
+   ],
    "benchmark_full_removal_on_evaluation_items": 0.10520042955016437
   }
  },

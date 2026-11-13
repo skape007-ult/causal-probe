@@ -12,3 +12,16 @@ W1113 18:15:33.752000 34286 .venv/lib/python3.12/site-packages/torch/distributed
 [  118s] 50/500
 [  244s] 100/500
 [  361s] 150/500
+[  459s] 200/500
+[  567s] 250/500
+[  655s] 300/500
+[  758s] 350/500
+[  859s] 400/500
+[  960s] 450/500
+[ 1064s] 500/500
+qwen0.5b/c2c_debiased hyp_best: layer 13/24; fresh-probe adjacency AUROC 0.926 -> 0.535 after erasure; self-check 0.0077
+  observational gap : parent +0.050[+0.00,+0.10] non-parent -0.042[-0.10,+0.01] non-child  +0.055[+0.02,+0.08] has_collid -0.230[-0.28,-0.18] has_confou -0.113[-0.19,-0.03]
+  translation effect: parent -0.009 non-parent -0.002 non-child  -0.003 has_collid -0.037 has_confou -0.026 | contrast +0.0129 (benchmark 0.112; controls below: 1.00)
+  probe across gap  : parent +0.0024 non-parent +0.0020 non-child  +0.0002 has_collid +0.0033 has_confou +0.0022 | contrast -0.0007
+  erasure, gap change: parent +0.006 non-parent -0.001 non-child  +0.002 has_collid +0.042 has_confou +0.028 | reduction contrast +0.0156 (full removal +0.105)
+  positive control (model-answer direction): slope +0.2090 per unit norm, larger in absolute value than 100% of shuffled-label probe directions

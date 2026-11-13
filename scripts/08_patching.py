@@ -63,6 +63,11 @@ def main():
     ap.add_argument("--top-k", type=int, default=10)
     ap.add_argument("--skip-components", action="store_true")
     ap.add_argument("--batch", type=int, default=16)
+    ap.add_argument("--label-mode", default="change", choices=["change", "same"],
+                    help="'same': label-preserving pairs (same edit, same gold label): the control for 'patching "
+                         "localises a prompt difference'. Use with --suffix _same --skip-components")
+    ap.add_argument("--suffix", default="")
+    ap.add_argument("--no-donor-control", action="store_true")
     a = ap.parse_args()
     t0 = time.time()
     tok = models.load_tokenizer(a.model)
@@ -71,11 +76,11 @@ def main():
     L = len(models.get_layers(model))
     layers = sorted(set(range(0, L + 1, a.layer_stride)) | {L})
     pool = [i for i in data.load_c2c("train") if i["num_variables"] <= a.max_vars]
-    res = {"model": a.model, "layers": layers, "regions": REGIONS, "max_vars": a.max_vars, "kinds": {}}
+    res = {"model": a.model, "layers": layers, "regions": REGIONS, "max_vars": a.max_vars, "label_mode": a.label_mode, "kinds": {}}
     raw = {}
 
     for kind in ("hyp", "prem"):
-        pairs = patch.build_pairs(pool, kind, a.n_pairs * 2, seed=SEED)
+        pairs = patch.build_pairs(pool, kind, a.n_pairs * 2, seed=SEED, label_mode=a.label_mode)
         encs = [(p, patch.encode_pair(tok, p)) for p in pairs]
         encs = [(p, e) for p, e in encs if e is not None][: a.n_pairs]
         n = len(encs)
@@ -104,7 +109,8 @@ def main():
             grid[k] = patch.resid_patch_grid(model, e, ans, layers, cr, a.batch)
             del cr
             # random-donor control: clean run of a different premise with the same token count
-            cands = [j for j in range(n) if groups[j] != groups[k] and encs[j][1]["n_tokens"] == e["n_tokens"]]
+            cands = [] if a.no_donor_control or a.label_mode == "same" else \
+                [j for j in range(n) if groups[j] != groups[k] and encs[j][1]["n_tokens"] == e["n_tokens"]]
             if cands:
                 _, dr = clean_run(int(rng.choice(cands)))
                 ctrl[k] = patch.resid_patch_grid(model, e, ans, layers, dr, a.batch)
@@ -114,6 +120,7 @@ def main():
             if model.device.type == "mps":
                 torch.mps.empty_cache()
         delta = ld_clean - ld_cor
+        lab = np.array([p.get("label", -1) for p, _ in encs])
         eff, ceff = grid - ld_cor[:, None, None], ctrl - ld_cor[:, None, None]
         has_ctrl = ~np.isnan(ctrl[:, 0, -1])
         rec_pool = pooled(delta, eff)
@@ -133,12 +140,18 @@ def main():
                 "frac_both_correct": float(((ld_clean > 0) & (ld_cor <= 0)).mean())},
             "pooled_recovery": rec_pool.tolist(), "pooled_recovery_lo": lo.tolist(), "pooled_recovery_hi": hi.tolist(),
             "control_pooled_recovery": ctrl_pool.tolist(), "n_pairs_with_control": int(has_ctrl.sum()),
+            **({"by_common_label": {
+                str(c): {"n_pairs": int((lab == c).sum()), "mean_abs_delta": float(np.abs(delta[lab == c]).mean()),
+                         "mean_delta": float(delta[lab == c].mean()),
+                         "pooled_recovery_final_token_by_layer": pooled(delta[lab == c], eff[lab == c])[:, -1].tolist()}
+                for c in (0, 1) if (lab == c).sum() >= 5}} if a.label_mode == "same" else {}),
+            "abs_delta_quartiles": [float(v) for v in np.quantile(np.abs(delta), [0.25, 0.5, 0.75])],
             "note_regions": "premise_rest is empty for kind=hyp (premises are identical); positions before the "
                             "first differing token are identical in both runs and are not patched.",
         }
         res["kinds"][kind] = kres
         raw.update({f"{kind}_grid": grid, f"{kind}_ctrl": ctrl, f"{kind}_ld_clean": ld_clean, f"{kind}_ld_cor": ld_cor,
-                    f"{kind}_groups": groups})
+                    f"{kind}_groups": groups, f"{kind}_common_label": lab})
         print(f"[{kind}] n={n} mean delta {delta.mean():.3f} frac>0 {(delta > 0).mean():.2f}; "
               f"final-position recovery by layer: " + " ".join(f"{v:.2f}" for v in rec_pool[:, -1]), flush=True)
 
@@ -204,8 +217,8 @@ def main():
 
     res["minutes"] = (time.time() - t0) / 60
     (cache.CACHE / a.model).mkdir(parents=True, exist_ok=True)
-    np.savez(cache.CACHE / a.model / "patching.npz", **raw)
-    (RESULTS / f"patching_{a.model}.json").write_text(json.dumps(res, indent=1))
+    np.savez(cache.CACHE / a.model / f"patching{a.suffix}.npz", **raw)
+    (RESULTS / f"patching_{a.model}{a.suffix}.json").write_text(json.dumps(res, indent=1))
     print(f"done {res['minutes']:.1f} min")
 
 

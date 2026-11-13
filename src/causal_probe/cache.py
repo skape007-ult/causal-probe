@@ -217,9 +217,21 @@ def load_cache(model_name: str, tag: str, random_init: bool = False, mmap: bool 
     d = cache_dir(model_name, tag, random_init)
     meta = json.loads((d / "meta.json").read_text())
     resid = np.load(d / "resid.npy", mmap_mode="r" if mmap else None)
+    return resid, meta, items_for(tag, meta)
+
+
+def items_for(tag: str, meta: dict) -> list[dict]:
+    """The items a cache was built from, in cache order. Normally this machine's item list for the
+    tag. The one exception: CLadder caches from the first Kaggle run hold a different draw of the
+    stratified sample (decision D28); their items are looked up by id and `meta["other_sample"]`
+    is set so that callers can say so."""
     items = data.get_dataset(tag.removesuffix("_fewshot"))[: meta["n"]]
-    assert [i["uid"] for i in items] == meta["uids"], "cache/item order mismatch"
-    return resid, meta, items
+    if [i["uid"] for i in items] != meta["uids"]:
+        items = data.items_by_uid(tag, meta["uids"])
+        assert items is not None, "cache/item order mismatch"
+        assert [i["label"] for i in items] == list(meta["labels"]), "cache labels do not match the items"
+        meta["other_sample"] = True
+    return items
 
 
 @torch.no_grad()

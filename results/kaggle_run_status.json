@@ -1,0 +1,347 @@
+{
+ "stages": {
+  "data": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "ok  corr2cause/train.csv  causal-nlp/corr2cause@42ba12c7  md5 bee2c98caa50f69bee54318d35f0ace4",
+    "ok  corr2cause/dev.csv  causal-nlp/corr2cause@42ba12c7  md5 7a343e9d341b892a7a7b1b1bddd39aa9",
+    "ok  corr2cause/test.csv  causal-nlp/corr2cause@42ba12c7  md5 c318d19ddc585bb4310084e2ce2d241f",
+    "ok  cladder/full_v1.5_default.csv  causal-nlp/CLadder@18d684e4  md5 32815a3e44cbd32fa3db84972d750815"
+   ]
+  },
+  "environment": {
+   "ok": true,
+   "minutes": 0.3,
+   "detail": "ok",
+   "log_tail": [
+    " \"sae_lens\": \"6.55.4\",",
+    " \"peft\": \"0.21.2\",",
+    " \"bitsandbytes\": \"not available (ModuleNotFoundError)\",",
+    " \"accelerate\": \"1.15.0\",",
+    " \"git_commit\": \"406d99485f272f84fe5484cda86378dbd6ca6744\"",
+    "}"
+   ]
+  },
+  "gemma.gemma2b.cache_c2c": {
+   "ok": true,
+   "minutes": 12.9,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] gemma2b/c2c_debiased chunk 6/10 6.82 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 7/10 6.80 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 8/10 6.75 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 9/10 6.72 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 10/10 6.69 items/s",
+    "done in 12.8 min"
+   ]
+  },
+  "gemma.gemma2b.cache": {
+   "ok": true,
+   "minutes": 2.7,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] gemma2b/cladder chunk 8/12 20.97 items/s",
+    "[cache] gemma2b/cladder chunk 9/12 21.30 items/s",
+    "[cache] gemma2b/cladder chunk 10/12 21.13 items/s",
+    "[cache] gemma2b/cladder chunk 11/12 21.20 items/s",
+    "[cache] gemma2b/cladder chunk 12/12 20.68 items/s",
+    "done in 2.6 min"
+   ]
+  },
+  "gemma.gemma2b.cache_random": {
+   "ok": true,
+   "minutes": 7.1,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] gemma2b-rand/c2c_debiased chunk 6/10 6.88 items/s",
+    "[cache] gemma2b-rand/c2c_debiased chunk 7/10 6.86 items/s",
+    "[cache] gemma2b-rand/c2c_debiased chunk 8/10 6.81 items/s",
+    "[cache] gemma2b-rand/c2c_debiased chunk 9/10 6.77 items/s",
+    "[cache] gemma2b-rand/c2c_debiased chunk 10/10 6.74 items/s",
+    "done in 7.0 min"
+   ]
+  },
+  "gemma.gemma2b.cache_agreement": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "c2c_probe {'n_compared': 2400, 'n_reference': 2400, 'max_abs_diff': 0.05364972534179685, 'mean_abs_diff': 0.009663079442977906, 'pearson_r': 0.9999947557043617, 'same_answer_frac': 0.99875, 'device_here': 'cuda:0', 'dtype_here': 'torch.float16'}",
+    "cladder {'n_compared': 2271, 'n_reference': 3000, 'max_abs_diff': 0.05488016662597639, 'mean_abs_diff': 0.007758587174812425, 'pearson_r': 0.9999932511149541, 'same_answer_frac': 1.0, 'device_here': 'cuda:0', 'dtype_here': 'torch.float16'}"
+   ]
+  },
+  "gemma.gemma2b.steer.c2c_probe": {
+   "ok": true,
+   "minutes": 4.1,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 232s",
+    "gemma2b/c2c_probe layer 18 base acc 0.483  [241s]",
+    "  gold_probe      toward-gold acc by alpha: 0.49 0.49 0.49 0.51 0.54 0.90 | flip+ 0.01 0.01 0.01 0.01 0.04 0.47",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.52 0.55 0.60 0.72 0.89 0.94 | flip+ 0.03 0.06 0.10 0.20 0.47 0.55",
+    "  model_out       toward-gold acc by alpha: 0.54 0.59 0.67 0.78 1.00 1.00 | flip+ 0.04 0.09 0.17 0.24 0.72 0.72",
+    "  random_mean     toward-gold acc by alpha: 0.49 0.51 0.52 0.54 0.58 0.78 | flip+ 0.01 0.02 0.03 0.05 0.07 0.38"
+   ]
+  },
+  "gemma.gemma2b.steer.cladder": {
+   "ok": true,
+   "minutes": 3.5,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 199s",
+    "gemma2b/cladder layer 20 base acc 0.550  [204s]",
+    "  gold_probe      toward-gold acc by alpha: 0.52 0.49 0.42 0.36 0.41 0.61 | flip+ 0.03 0.06 0.09 0.13 0.04 0.30",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.59 0.62 0.69 0.80 0.96 1.00 | flip+ 0.03 0.07 0.18 0.25 0.36 0.39",
+    "  model_out       toward-gold acc by alpha: 0.70 0.77 0.92 1.00 1.00 1.00 | flip+ 0.15 0.22 0.31 0.39 0.39 0.39",
+    "  random_mean     toward-gold acc by alpha: 0.56 0.56 0.58 0.61 0.68 0.70 | flip+ 0.01 0.03 0.05 0.11 0.18 0.29"
+   ]
+  },
+  "gemma.gemma2b.steer.c2c_debiased": {
+   "ok": true,
+   "minutes": 4.7,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 262s",
+    "gemma2b/c2c_debiased layer 17 base acc 0.463  [276s]",
+    "  gold_probe      toward-gold acc by alpha: 0.49 0.50 0.54 0.59 0.70 0.68 | flip+ 0.02 0.03 0.10 0.14 0.24 0.23",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.41 0.36 0.29 0.21 0.04 0.02 | flip+ 0.04 0.08 0.17 0.23 0.24 0.23",
+    "  model_out       toward-gold acc by alpha: 0.53 0.58 0.68 0.79 1.00 1.00 | flip+ 0.09 0.13 0.21 0.37 0.76 0.76",
+    "  random_mean     toward-gold acc by alpha: 0.47 0.47 0.48 0.50 0.52 0.64 | flip+ 0.00 0.01 0.02 0.04 0.09 0.22"
+   ]
+  },
+  "gemma.gemma2b.steer.c2c_probe.d0.5": {
+   "ok": true,
+   "minutes": 4.1,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 228s",
+    "gemma2b/c2c_probe layer 13 base acc 0.483  [237s]",
+    "  gold_probe      toward-gold acc by alpha: 0.48 0.47 0.46 0.43 0.38 0.29 | flip+ 0.00 0.02 0.03 0.07 0.11 0.26",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.50 0.51 0.51 0.56 0.61 0.69 | flip+ 0.01 0.01 0.02 0.06 0.08 0.11",
+    "  model_out       toward-gold acc by alpha: 0.49 0.50 0.50 0.53 0.57 0.67 | flip+ 0.01 0.01 0.02 0.03 0.04 0.09",
+    "  random_mean     toward-gold acc by alpha: 0.49 0.49 0.48 0.49 0.48 0.45 | flip+ 0.01 0.01 0.03 0.05 0.09 0.17"
+   ]
+  },
+  "gemma.gemma2b.steer.c2c_probe.d0.85": {
+   "ok": true,
+   "minutes": 4.1,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 231s",
+    "gemma2b/c2c_probe layer 22 base acc 0.483  [241s]",
+    "  gold_probe      toward-gold acc by alpha: 0.48 0.48 0.48 0.47 0.46 0.39 | flip+ 0.00 0.00 0.01 0.02 0.02 0.02",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.54 0.59 0.69 0.78 1.00 1.00 | flip+ 0.04 0.09 0.16 0.25 0.72 0.72",
+    "  model_out       toward-gold acc by alpha: 0.54 0.59 0.68 0.78 1.00 1.00 | flip+ 0.04 0.09 0.16 0.24 0.72 0.72",
+    "  random_mean     toward-gold acc by alpha: 0.49 0.50 0.51 0.53 0.55 0.61 | flip+ 0.01 0.01 0.02 0.04 0.08 0.22"
+   ]
+  },
+  "gemma.gemma2b.steer.cladder.d0.5": {
+   "ok": true,
+   "minutes": 3.5,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 196s",
+    "gemma2b/cladder layer 13 base acc 0.550  [201s]",
+    "  gold_probe      toward-gold acc by alpha: 0.55 0.54 0.52 0.50 0.43 0.37 | flip+ 0.01 0.02 0.03 0.05 0.11 0.27",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.54 0.54 0.50 0.47 0.38 0.29 | flip+ 0.01 0.02 0.05 0.08 0.19 0.42",
+    "  model_out       toward-gold acc by alpha: 0.56 0.58 0.59 0.63 0.68 0.72 | flip+ 0.01 0.02 0.03 0.07 0.13 0.09",
+    "  random_mean     toward-gold acc by alpha: 0.55 0.55 0.55 0.55 0.54 0.55 | flip+ 0.00 0.01 0.01 0.03 0.08 0.14"
+   ]
+  },
+  "gemma.gemma2b.steer.cladder.d0.85": {
+   "ok": true,
+   "minutes": 3.5,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 197s",
+    "gemma2b/cladder layer 22 base acc 0.550  [202s]",
+    "  gold_probe      toward-gold acc by alpha: 0.55 0.56 0.56 0.58 0.62 0.71 | flip+ 0.00 0.01 0.02 0.05 0.21 0.37",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.59 0.63 0.70 0.82 0.97 1.00 | flip+ 0.04 0.09 0.20 0.29 0.39 0.39",
+    "  model_out       toward-gold acc by alpha: 0.71 0.80 0.93 1.00 1.00 1.00 | flip+ 0.17 0.24 0.33 0.39 0.39 0.39",
+    "  random_mean     toward-gold acc by alpha: 0.56 0.57 0.60 0.63 0.68 0.68 | flip+ 0.01 0.02 0.05 0.10 0.19 0.32"
+   ]
+  },
+  "large.qwen3b.cache": {
+   "ok": true,
+   "minutes": 35.9,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] qwen3b/cladder_sub_fewshot chunk 2/2 3.64 items/s",
+    "[gen] qwen3b/c2c_test_sub done",
+    "[gen] qwen3b/cladder_sub done",
+    "[gen] qwen3b/c2c_test_sub_fewshot done",
+    "[gen] qwen3b/cladder_sub_fewshot done",
+    "done in 35.8 min"
+   ]
+  },
+  "large.qwen3b.behaviour": {
+   "ok": true,
+   "minutes": 3.4,
+   "detail": "ok",
+   "log_tail": [
+    "qwen3b c2c_test: acc 0.812 [0.768,0.862] macroF1 0.489 pred_yes 0.05 auroc 0.534 maj_acc 0.845",
+    "qwen3b c2c_probe: acc 0.509 [0.500,0.519] macroF1 0.385 pred_yes 0.05 auroc 0.581 maj_acc 0.500",
+    "qwen3b cladder: acc 0.526 [0.502,0.548] macroF1 0.526 pred_yes 0.50 auroc 0.543 maj_acc 0.500",
+    "qwen3b c2c_test_renamed: acc 0.822 [0.783,0.868] macroF1 0.482 pred_yes 0.04 auroc 0.512 maj_acc 0.845"
+   ]
+  },
+  "large.qwen3b.lens": {
+   "ok": true,
+   "minutes": 0.2,
+   "detail": "ok",
+   "log_tail": [
+    "qwen3b/c2c_test: lens-vs-model max err 0.004, sign agree 1.000, best-layer lens AUROC 0.590 @ 24",
+    "qwen3b/c2c_probe: lens-vs-model max err 0.005, sign agree 1.000, best-layer lens AUROC 0.632 @ 25",
+    "qwen3b/cladder: lens-vs-model max err 0.004, sign agree 1.000, best-layer lens AUROC 0.544 @ 35"
+   ]
+  },
+  "large.qwen3b.steer.c2c_probe": {
+   "ok": true,
+   "minutes": 4.2,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 238s",
+    "qwen3b/c2c_probe layer 25 base acc 0.513  [248s]",
+    "  gold_probe      toward-gold acc by alpha: 0.51 0.51 0.51 0.51 0.50 0.49 | flip+ 0.00 0.00 0.00 0.02 0.03 0.03",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.53 0.54 0.55 0.62 0.94 1.00 | flip+ 0.03 0.04 0.07 0.17 0.76 0.96",
+    "  model_out       toward-gold acc by alpha: 0.53 0.55 0.57 0.67 0.82 0.52 | flip+ 0.03 0.06 0.09 0.25 0.49 0.05",
+    "  random_mean     toward-gold acc by alpha: 0.52 0.52 0.51 0.51 0.53 0.52 | flip+ 0.00 0.00 0.02 0.03 0.06 0.12"
+   ]
+  },
+  "large.qwen3b.steer.cladder": {
+   "ok": true,
+   "minutes": 3.6,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 203s",
+    "qwen3b/cladder layer 29 base acc 0.560  [208s]",
+    "  gold_probe      toward-gold acc by alpha: 0.57 0.58 0.61 0.62 0.71 0.95 | flip+ 0.01 0.02 0.02 0.03 0.09 0.47",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.73 0.83 1.00 1.00 1.00 1.00 | flip+ 0.16 0.29 0.48 0.49 0.49 0.49",
+    "  model_out       toward-gold acc by alpha: 0.71 0.81 0.98 1.00 1.00 1.00 | flip+ 0.14 0.26 0.45 0.49 0.49 0.49",
+    "  random_mean     toward-gold acc by alpha: 0.56 0.56 0.55 0.54 0.47 0.44 | flip+ 0.01 0.02 0.03 0.06 0.13 0.28"
+   ]
+  },
+  "large.qwen3b.steer.c2c_debiased": {
+   "ok": true,
+   "minutes": 4.4,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 242s",
+    "qwen3b/c2c_debiased layer 25 base acc 0.473  [256s]",
+    "  gold_probe      toward-gold acc by alpha: 0.47 0.48 0.50 0.52 0.52 0.50 | flip+ 0.00 0.01 0.01 0.03 0.03 0.03",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.49 0.51 0.54 0.65 0.91 1.00 | flip+ 0.01 0.03 0.07 0.25 0.81 0.97",
+    "  model_out       toward-gold acc by alpha: 0.50 0.52 0.56 0.68 0.91 1.00 | flip+ 0.01 0.04 0.09 0.33 0.81 0.96",
+    "  random_mean     toward-gold acc by alpha: 0.47 0.47 0.48 0.48 0.51 0.49 | flip+ 0.00 0.00 0.01 0.02 0.05 0.11"
+   ]
+  },
+  "large.qwen3b.steer.c2c_probe.d0.5": {
+   "ok": true,
+   "minutes": 3.8,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 213s",
+    "qwen3b/c2c_probe layer 18 base acc 0.513  [222s]",
+    "  gold_probe      toward-gold acc by alpha: 0.51 0.51 0.51 0.51 0.51 0.45 | flip+ 0.00 0.00 0.00 0.00 0.00 0.02",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.52 0.52 0.52 0.52 0.53 0.53 | flip+ 0.00 0.00 0.01 0.01 0.02 0.01",
+    "  model_out       toward-gold acc by alpha: 0.51 0.52 0.52 0.52 0.53 0.54 | flip+ 0.00 0.01 0.01 0.01 0.02 0.06",
+    "  random_mean     toward-gold acc by alpha: 0.51 0.51 0.52 0.52 0.52 0.52 | flip+ 0.00 0.00 0.00 0.01 0.01 0.01"
+   ]
+  },
+  "large.qwen3b.steer.c2c_probe.d0.85": {
+   "ok": true,
+   "minutes": 3.8,
+   "detail": "ok",
+   "log_tail": [
+    "300/300 213s",
+    "qwen3b/c2c_probe layer 31 base acc 0.513  [223s]",
+    "  gold_probe      toward-gold acc by alpha: 0.52 0.52 0.53 0.54 0.55 0.61 | flip+ 0.01 0.01 0.03 0.04 0.07 0.17",
+    "  gold_diffmeans  toward-gold acc by alpha: 0.53 0.54 0.55 0.57 0.62 1.00 | flip+ 0.02 0.04 0.07 0.10 0.20 0.97",
+    "  model_out       toward-gold acc by alpha: 0.54 0.54 0.55 0.60 0.88 1.00 | flip+ 0.03 0.04 0.07 0.17 0.68 0.97",
+    "  random_mean     toward-gold acc by alpha: 0.52 0.52 0.52 0.52 0.52 0.51 | flip+ 0.00 0.00 0.00 0.01 0.02 0.04"
+   ]
+  },
+  "large.qwen3b.cache_random": {
+   "ok": true,
+   "minutes": 18.8,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] qwen3b-rand/cladder chunk 8/12 15.95 items/s",
+    "[cache] qwen3b-rand/cladder chunk 9/12 16.18 items/s",
+    "[cache] qwen3b-rand/cladder chunk 10/12 16.06 items/s",
+    "[cache] qwen3b-rand/cladder chunk 11/12 16.08 items/s",
+    "[cache] qwen3b-rand/cladder chunk 12/12 15.70 items/s",
+    "done in 18.7 min"
+   ]
+  },
+  "gemma.gemma2b.patching": {
+   "ok": true,
+   "minutes": 9.9,
+   "detail": "ok",
+   "log_tail": [
+    "[prem] pair 10/40 356s",
+    "[prem] pair 20/40 429s",
+    "[prem] pair 30/40 495s",
+    "[prem] n=40 mean delta -0.062 frac>0 0.57; final-position recovery by layer: -0.00 -0.00 -0.00 -0.00 -0.00 0.00 -0.00 0.07 0.67 0.91 0.92 0.94 0.97 1.00",
+    "[prem] components: top ['L13H2', 'L15H2', 'MLP15', 'MLP17', 'L12H3', 'MLP14', 'MLP12', 'L8H1', 'MLP13', 'MLP11'] pearson 0.99",
+    "done 9.9 min"
+   ]
+  },
+  "gemma.gemma2b.sae_features": {
+   "ok": true,
+   "minutes": 0.9,
+   "detail": "ok",
+   "log_tail": [
+    "layer 6 premise_end: FVU 0.65 L0 51 | confounding:0.60 collision:0.64 chain:0.67 fork:0.60 mediation:0.57",
+    "layer 6 final: FVU 47.23 L0 43 | confounding:0.54 collision:0.60 chain:0.75 fork:0.69 mediation:0.60",
+    "layer 12 premise_end: FVU 0.67 L0 129 | confounding:0.64 collision:0.61 chain:0.70 fork:0.66 mediation:0.57",
+    "layer 12 final: FVU 28.61 L0 121 | confounding:0.58 collision:0.66 chain:0.80 fork:0.72 mediation:0.62",
+    "layer 18 premise_end: FVU 0.87 L0 74 | confounding:0.62 collision:0.67 chain:0.70 fork:0.65 mediation:0.60",
+    "layer 18 final: FVU 2.16 L0 67 | confounding:0.54 collision:0.73 chain:0.61 fork:0.54 mediation:0.55"
+   ]
+  },
+  "gemma.gemma2b.sae_ablate": {
+   "ok": true,
+   "minutes": 2.4,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 288/288 [00:04<00:00, 65.07it/s] ",
+    "confounding: target |dLD| top 0.318 vs random 0.171; other-structure items: top 0.336 random 0.189 [25s]",
+    "collision: target |dLD| top 0.223 vs random 0.125; other-structure items: top 0.137 random 0.112 [47s]",
+    "chain: target |dLD| top 0.442 vs random 0.242; other-structure items: top 0.360 random 0.214 [72s]",
+    "fork: target |dLD| top 0.439 vs random 0.121; other-structure items: top 0.415 random 0.111 [97s]",
+    "mediation: target |dLD| top 0.190 vs random 0.269; other-structure items: top 0.186 random 0.270 [123s]"
+   ]
+  }
+ },
+ "total_minutes": 142.6,
+ "export": {
+  "positions": [
+   "final"
+  ],
+  "bytes_per_cache_dir": {
+   "gemma2b/c2c_probe": 1198174,
+   "gemma2b/cladder": 1381543,
+   "gemma2b/c2c_debiased": 299597229,
+   "gemma2b-rand/c2c_debiased": 299523747,
+   "qwen3b/c2c_probe": 364878513,
+   "qwen3b-rand/c2c_probe": 364650199,
+   "qwen3b/cladder": 455790103,
+   "qwen3b-rand/cladder": 455766856,
+   "qwen3b/c2c_debiased": 364681013,
+   "qwen3b-rand/c2c_debiased": 364649549,
+   "qwen3b/c2c_test": 466919,
+   "qwen3b/c2c_test_renamed": 471252,
+   "qwen3b/c2c_test_sub_fewshot": 274613,
+   "qwen3b/cladder_sub_fewshot": 275032
+  },
+  "zip_megabytes": {
+   "cache_gemma2b.zip": 302.3,
+   "cache_gemma2b-rand.zip": 299.5,
+   "cache_qwen3b.zip": 1186.9,
+   "cache_qwen3b-rand.zip": 1185.1
+  }
+ },
+ "all_ok": true
+}

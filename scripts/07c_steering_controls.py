@@ -7,7 +7,13 @@ isotropic random directions are the wrong comparison for a difference of class m
 in the high-variance part of activation space) and for probe weights (which point into the
 low-variance part).
 
-Directions, all unit vectors at the same layer and final token as the main steering run, fitted on
+Round 2 additions. `--position content_end` steers at the last token of the hypothesis instead of
+the final prompt token (directions are then fitted on activations at that token, at the layer where
+the gold probe is best there on the selection half; the answer is still read at the final token).
+If the main steering run's JSON is not present (a fresh GPU session), the layer is chosen by the
+same rule the main run uses (steer.choose_site).
+
+Directions, all unit vectors at the same layer and token as the main steering run, fitted on
 the selection half:
   real       gold_probe, gold_diffmeans, model_out               (as in 07_steering.py)
   isotropic  N_ISO random Gaussian directions                    (control: arbitrary direction)
@@ -40,13 +46,22 @@ def main():
     ap.add_argument("--n", type=int, default=150)
     ap.add_argument("--sub-batch", type=int, default=16)
     ap.add_argument("--suffix", default="", help="read layer/C from steering_<model>_<tag><suffix>.json")
+    ap.add_argument("--position", default="final", choices=["final", "content_end"])
+    ap.add_argument("--select-stride", type=int, default=1)
     ap.add_argument("--max-minutes", type=float, default=85.0)
     a = ap.parse_args()
     t0 = time.time()
-    sj = json.loads((RESULTS / f"steering_{a.model}_{a.tag}{a.suffix}.json").read_text())
-    layer, C = sj["layer"], sj["probe_C"]
     resid, meta, items = cache.load_cache(a.model, a.tag)
-    X = probes.layer_features(resid, layer, 0)
+    pi = meta["positions"].index(a.position)
+    sj_path = RESULTS / f"steering_{a.model}_{a.tag}{a.suffix}.json"
+    out_suffix = a.suffix + ("" if a.position == "final" else "_hyp")
+    if a.position == "final" and sj_path.exists():
+        sj = json.loads(sj_path.read_text())
+        layer, C, how = sj["layer"], sj["probe_C"], "main steering run"
+    else:
+        layer, C, how = steer.choose_site(a.model, a.tag, resid, meta, items, a.position, a.select_stride)
+    print(f"site: {a.position}, layer {layer}, C {C:g} ({how})", flush=True)
+    X = probes.layer_features(resid, layer, pi)
     y = np.array(meta["labels"]); ld0 = np.array(meta["logit_diff"])
     groups = np.array([i["group"] for i in items])
     sel = data.selection_mask(items); rep = ~sel
@@ -83,8 +98,9 @@ def main():
     out = np.zeros((len(idx), len(vecs)), np.float32)
     t_loop = time.time()
     for n, i in enumerate(idx):
-        ids = prompts.encode_with_positions(tok, items[i])["input_ids"]
-        out[n] = steer.steered_logit_diffs(model, ids, layer, vecs, ans, sub_batch=a.sub_batch)
+        enc = prompts.encode_with_positions(tok, items[i])
+        out[n] = steer.steered_logit_diffs(model, enc["input_ids"], layer, vecs, ans, sub_batch=a.sub_batch,
+                                           pos=enc["pos"][a.position])
         if n == 4:
             proj = (time.time() - t_loop) / 5 * (len(idx) - 5) / 60
             print(f"[timing] projected {proj:.1f} min for the remaining {len(idx) - 5} items", flush=True)
@@ -95,7 +111,7 @@ def main():
     k = len(D)
     slope_items = (out[:, 1:1 + k] - out[:, 1 + k:]) / (2 * ALPHA)        # [items, directions], logits per s
     slope = slope_items.mean(0)
-    np.savez(cache.cache_dir(a.model, a.tag) / f"steering_controls{a.suffix}.npz", idx=idx, out=out, families=fam,
+    np.savez(cache.cache_dir(a.model, a.tag) / f"steering_controls{out_suffix}.npz", idx=idx, out=out, families=fam,
              layer=layer, s_unit=s_unit, alpha=ALPHA, own_sd_over_s=own_sd)
 
     def dist(v):
@@ -103,7 +119,8 @@ def main():
         return {"n": int(len(v)), "median": float(np.median(v)), "p90": float(np.quantile(v, 0.9)), "max": float(v.max()),
                 "rms": float(np.sqrt((v ** 2).mean()))}
 
-    res = {"model": a.model, "tag": a.tag, "layer": int(layer), "probe_C": C, "alpha": ALPHA, "s_unit": s_unit,
+    res = {"model": a.model, "tag": a.tag, "position": a.position, "layer": int(layer), "layer_selection": how,
+           "n_layers": int(resid.shape[1] - 1), "probe_C": C, "alpha": ALPHA, "s_unit": s_unit,
            "n_items": int(len(idx)), "baseline_max_abs_diff_vs_cache": float(np.abs(out[:, 0] - ld0[idx]).max()),
            "families": {}, "real": {}}
     for f in ("isotropic", "shuffled_probe", "shuffled_diffmeans"):
@@ -127,7 +144,7 @@ def main():
         r["matched_control_family"] = match[name]
         res["real"][name] = r
     res["minutes"] = round((time.time() - t0) / 60, 1)
-    (RESULTS / f"steering_controls_{a.model}_{a.tag}{a.suffix}.json").write_text(json.dumps(res, indent=1))
+    (RESULTS / f"steering_controls_{a.model}_{a.tag}{out_suffix}.json").write_text(json.dumps(res, indent=1))
     for name, r in res["real"].items():
         mf = r["matched_control_family"]
         print(f"{name:15s} slope {r['slope_per_s']['est']:+.3f}/s | vs isotropic: percentile {r['versus']['isotropic']['percentile_of_abs_slope_per_s']:.2f}"

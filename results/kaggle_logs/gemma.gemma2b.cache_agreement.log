@@ -1,0 +1,2 @@
+c2c_probe {'n_compared': 2400, 'n_reference': 2400, 'max_abs_diff': 0.05364972534179685, 'mean_abs_diff': 0.009663079442977906, 'pearson_r': 0.9999947557043617, 'same_answer_frac': 0.99875, 'device_here': 'cuda:0', 'dtype_here': 'torch.float16'}
+cladder {'n_compared': 2271, 'n_reference': 3000, 'max_abs_diff': 0.05488016662597639, 'mean_abs_diff': 0.007758587174812425, 'pearson_r': 0.9999932511149541, 'same_answer_frac': 1.0, 'device_here': 'cuda:0', 'dtype_here': 'torch.float16'}

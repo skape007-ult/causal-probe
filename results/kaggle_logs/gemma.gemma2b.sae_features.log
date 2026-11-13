@@ -1,0 +1,6 @@
+layer 6 premise_end: FVU 0.65 L0 51 | confounding:0.60 collision:0.64 chain:0.67 fork:0.60 mediation:0.57
+layer 6 final: FVU 47.23 L0 43 | confounding:0.54 collision:0.60 chain:0.75 fork:0.69 mediation:0.60
+layer 12 premise_end: FVU 0.67 L0 129 | confounding:0.64 collision:0.61 chain:0.70 fork:0.66 mediation:0.57
+layer 12 final: FVU 28.61 L0 121 | confounding:0.58 collision:0.66 chain:0.80 fork:0.72 mediation:0.62
+layer 18 premise_end: FVU 0.87 L0 74 | confounding:0.62 collision:0.67 chain:0.70 fork:0.65 mediation:0.60
+layer 18 final: FVU 2.16 L0 67 | confounding:0.54 collision:0.73 chain:0.61 fork:0.54 mediation:0.55

@@ -70,6 +70,45 @@ def layer_features(resid, layer: int, pos: int) -> np.ndarray:
     return np.asarray(resid[:, layer, pos, :], dtype=np.float32)
 
 
+def quick_select(resid, y, items, sel, stride: int = 1, log=print, pos: int = 0, metric: str = "accuracy"):
+    """Choose (layer, C) for a linear probe of labels `y` on the selection half only (the report
+    half is never touched): best grouped 3-fold cross-validated score over the (layer, C) grid, one
+    seed, optionally every `stride`-th layer. `pos` is the index of the token position in the cache;
+    `metric` is "accuracy" (decision D22, used for the gold label) or "auroc" (used for properties
+    whose classes are unbalanced). Moved here from scripts/07_steering.py, behaviour unchanged for
+    the defaults."""
+    import os
+
+    from joblib import Parallel, delayed
+
+    from . import data, stats
+    from .config import SEED as _SEED
+    idx = np.where(sel)[0]
+    folds = data.grouped_folds([items[j] for j in idx], 3, _SEED)      # indices into idx
+    layers = sorted(set(range(1, resid.shape[1], stride)) | {resid.shape[1] - 1})
+    yi = np.asarray(y)[idx]
+
+    def one(l):
+        X = layer_features(resid, l, pos)[idx]
+        out = {}
+        for c in PROBE_CS:
+            if metric == "accuracy":
+                out[c] = sum(int(((fit_predict(X[tr], yi[tr], X[te], C=c) > 0) == yi[te]).sum()) for tr, te in folds) / len(idx)
+            else:
+                s = np.zeros(len(idx), np.float32)
+                for tr, te in folds:
+                    s[te] = fit_predict(X[tr], yi[tr], X[te], C=c)
+                out[c] = float(stats.auroc(yi, s))
+        return out
+
+    rows = Parallel(n_jobs=int(os.environ.get("CAUSAL_PROBE_JOBS", "2")))(delayed(one)(l) for l in layers)
+    acc = {(l, c): v for l, r in zip(layers, rows) for c, v in r.items()}
+    for l in layers:
+        log(f"[select] layer {l}: " + " ".join(f"C={c:g} {acc[(l, c)]:.3f}" for c in PROBE_CS))
+    (l, c) = max(acc, key=acc.get)
+    return int(l), float(c), {f"{k[0]}|{k[1]:g}": v for k, v in acc.items()}
+
+
 def control_task_labels(items: list[dict], seed: int = SEED) -> np.ndarray:
     """Hewitt & Liang (2019) control task, adapted from word types to item 'types'.
 

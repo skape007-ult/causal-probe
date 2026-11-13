@@ -1,0 +1,28 @@
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]Loading weights:   0%|          | 1/288 [00:01<08:41,  1.82s/it]Loading weights:  77%|███████▋  | 223/288 [00:01<00:00, 161.44it/s]Loading weights: 100%|██████████| 288/288 [00:02<00:00, 125.59it/s]
+[timing] 0.70 s/item over 5 items -> projected 3.4 min for the remaining 295 items
+25/300 28s
+50/300 43s
+75/300 58s
+100/300 74s
+125/300 89s
+150/300 105s
+175/300 120s
+200/300 135s
+225/300 151s
+250/300 166s
+275/300 181s
+300/300 197s
+gemma2b/cladder layer 22 base acc 0.550  [202s]
+  gold_probe      toward-gold acc by alpha: 0.55 0.56 0.56 0.58 0.62 0.71 | flip+ 0.00 0.01 0.02 0.05 0.21 0.37
+  gold_diffmeans  toward-gold acc by alpha: 0.59 0.63 0.70 0.82 0.97 1.00 | flip+ 0.04 0.09 0.20 0.29 0.39 0.39
+  model_out       toward-gold acc by alpha: 0.71 0.80 0.93 1.00 1.00 1.00 | flip+ 0.17 0.24 0.33 0.39 0.39 0.39
+  random_mean     toward-gold acc by alpha: 0.56 0.57 0.60 0.63 0.68 0.68 | flip+ 0.01 0.02 0.05 0.10 0.19 0.32

@@ -82,8 +82,10 @@ Gemma only runs at usable speed if its 256k × 2304 embedding matrix is kept on 
 | Qwen2.5-1.5B | CLadder | 3000 | 47 | 0.497 [0.474, 0.519] | 0.486 [0.464, 0.509] | 0.509 [0.478, 0.542] | 0.64 | 0.500 | 0.333 | 0.500 |
 | Gemma-2-2B | Corr2Cause test | 1162 | 21 | 0.615 [0.573, 0.658] | 0.481 [0.444, 0.510] | 0.536 [0.495, 0.566] | 0.34 | 0.845 | 0.458 | 0.433 |
 | Gemma-2-2B | CLadder | 3000 | 47 | 0.508 [0.482, 0.535] | 0.500 [0.474, 0.526] | 0.519 [0.482, 0.557] | 0.63 | 0.500 | 0.333 | 0.500 |
+| Qwen2.5-3B | Corr2Cause test | 1162 | 21 | 0.812 [0.768, 0.862] | 0.489 [0.467, 0.517] | 0.534 [0.493, 0.573] | 0.05 | 0.845 | 0.458 | 0.433 |
+| Qwen2.5-3B | CLadder | 3000 | 47 | 0.526 [0.502, 0.548] | 0.526 [0.502, 0.548] | 0.543 [0.518, 0.568] | 0.50 | 0.500 | 0.333 | 0.500 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub>
 
 ![behaviour](../figures/fig1_behaviour.png)
 
@@ -109,10 +111,18 @@ Accuracy alone cannot tell "no information" from "information hidden by a bias t
 | Qwen2.5-1.5B | CLadder (500 items) | 4-shot | 500 | 0.72 | 0.528 [0.487, 0.565] | 0.500 | 0.559 [0.511, 0.601] | 0.496 [0.460, 0.533] | informative (AUROC CI above 0.5) |
 | Gemma-2-2B | Corr2Cause test | zero-shot | 1162 | 0.34 | 0.615 [0.573, 0.658] | 0.845 | 0.536 [0.495, 0.566] | 0.843 [0.800, 0.897] | at chance (AUROC CI includes 0.5) |
 | Gemma-2-2B | Corr2Cause pool | zero-shot | 2400 | 0.25 | 0.505 [0.487, 0.525] | 0.500 | 0.559 [0.537, 0.582] | 0.565 [0.553, 0.576] | informative (AUROC CI above 0.5) |
+| Gemma-2-2B | Corr2Cause debiased pool | zero-shot | 2400 | 0.31 | 0.496 [0.477, 0.515] | 0.500 | 0.492 [0.468, 0.515] | 0.497 [0.481, 0.513] | at chance (AUROC CI includes 0.5) |
 | Gemma-2-2B | CLadder | zero-shot | 3000 | 0.63 | 0.508 [0.482, 0.535] | 0.500 | 0.519 [0.482, 0.557] | 0.500 [0.483, 0.520] | at chance (AUROC CI includes 0.5) |
 | Gemma-2-2B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.32 | 0.602 [0.562, 0.641] | 0.845 | 0.504 [0.464, 0.531] | 0.844 [0.801, 0.897] | at chance (AUROC CI includes 0.5) |
 | Gemma-2-2B | Corr2Cause test (500 items) | 4-shot | 500 | 0.54 | 0.486 [0.445, 0.526] | 0.840 | 0.569 [0.523, 0.613] | 0.834 [0.793, 0.886] | informative (AUROC CI above 0.5) |
 | Gemma-2-2B | CLadder (500 items) | 4-shot | 500 | 0.83 | 0.504 [0.458, 0.546] | 0.500 | 0.543 [0.498, 0.585] | 0.504 [0.465, 0.543] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-3B | Corr2Cause test | zero-shot | 1162 | 0.05 | 0.812 [0.768, 0.862] | 0.845 | 0.534 [0.493, 0.573] | 0.838 [0.794, 0.892] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-3B | Corr2Cause pool | zero-shot | 2400 | 0.05 | 0.509 [0.500, 0.519] | 0.500 | 0.581 [0.559, 0.603] | 0.593 [0.573, 0.613] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | Corr2Cause debiased pool | zero-shot | 2400 | 0.04 | 0.495 [0.487, 0.503] | 0.500 | 0.507 [0.484, 0.530] | 0.506 [0.490, 0.524] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-3B | CLadder | zero-shot | 3000 | 0.50 | 0.526 [0.503, 0.547] | 0.500 | 0.543 [0.521, 0.567] | 0.501 [0.482, 0.522] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.04 | 0.822 [0.783, 0.868] | 0.845 | 0.512 [0.463, 0.553] | 0.844 [0.802, 0.896] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-3B | Corr2Cause test (500 items) | 4-shot | 500 | 0.46 | 0.556 [0.517, 0.596] | 0.840 | 0.538 [0.507, 0.569] | 0.838 [0.797, 0.890] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | CLadder (500 items) | 4-shot | 500 | 0.56 | 0.560 [0.514, 0.609] | 0.500 | 0.564 [0.518, 0.610] | 0.494 [0.457, 0.533] | informative (AUROC CI above 0.5) |
 
 <sub>Source: `results/answer_bias.json`</sub>
 
@@ -130,8 +140,10 @@ Few-shot (500-item subsets, paired with zero-shot on the same items):
 | Qwen2.5-1.5B | CLadder | 500 | 0.510 [0.475, 0.543] | 0.528 [0.487, 0.565] | +0.018 [-0.020, +0.055] | 0.500 [0.464, 0.535] | 0.504 [0.464, 0.540] | 0.72 |
 | Gemma-2-2B | Corr2Cause test | 500 | 0.604 [0.555, 0.656] | 0.486 [0.445, 0.526] | -0.118 [-0.186, -0.054] | 0.480 [0.434, 0.515] | 0.436 [0.391, 0.474] | 0.54 |
 | Gemma-2-2B | CLadder | 500 | 0.502 [0.465, 0.536] | 0.504 [0.458, 0.546] | +0.002 [-0.035, +0.042] | 0.490 [0.453, 0.525] | 0.443 [0.397, 0.486] | 0.83 |
+| Qwen2.5-3B | Corr2Cause test | 500 | 0.808 [0.767, 0.859] | 0.556 [0.517, 0.596] | -0.252 [-0.315, -0.200] | 0.502 [0.466, 0.542] | 0.479 [0.436, 0.517] | 0.46 |
+| Qwen2.5-3B | CLadder | 500 | 0.532 [0.496, 0.567] | 0.560 [0.518, 0.602] | +0.028 [-0.009, +0.065] | 0.532 [0.496, 0.567] | 0.559 [0.515, 0.600] | 0.56 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub>
 
 Logit scoring vs generated text:
 
@@ -149,8 +161,12 @@ Logit scoring vs generated text:
 | Gemma-2-2B | c2c_test_sub_fewshot | 100 | 0.510 [0.403, 0.608] | 0.510 [0.403, 0.608] | 0.000 | 0.000 |
 | Gemma-2-2B | cladder_sub | 100 | 0.480 [0.385, 0.576] | 0.400 [0.318, 0.495] | 0.130 | 0.130 |
 | Gemma-2-2B | cladder_sub_fewshot | 100 | 0.420 [0.325, 0.515] | 0.420 [0.325, 0.515] | 0.000 | 0.000 |
+| Qwen2.5-3B | c2c_test_sub | 500 | 0.808 [0.767, 0.859] | 0.808 [0.767, 0.859] | 0.000 | 0.000 |
+| Qwen2.5-3B | c2c_test_sub_fewshot | 500 | 0.556 [0.517, 0.596] | 0.556 [0.517, 0.596] | 0.000 | 0.000 |
+| Qwen2.5-3B | cladder_sub | 500 | 0.532 [0.496, 0.567] | 0.530 [0.494, 0.564] | 0.002 | 0.000 |
+| Qwen2.5-3B | cladder_sub_fewshot | 500 | 0.560 [0.518, 0.602] | 0.560 [0.518, 0.602] | 0.000 | 0.000 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub>
 
 Robustness to variable renaming (paired on the test set):
 
@@ -159,8 +175,9 @@ Robustness to variable renaming (paired on the test set):
 | Qwen2.5-0.5B | 0.458 [0.445, 0.473] | 0.473 [0.449, 0.506] | +0.015 [-0.002, +0.044] | -0.003 [-0.009, +0.001] | 0.009 [0.002, 0.018] | 0.77 |
 | Qwen2.5-1.5B | 0.489 [0.453, 0.525] | 0.501 [0.457, 0.546] | +0.012 [-0.012, +0.040] | -0.044 [-0.058, -0.030] | 0.085 [0.062, 0.106] | 0.97 |
 | Gemma-2-2B | 0.481 [0.444, 0.510] | 0.448 [0.420, 0.472] | -0.033 [-0.060, -0.008] | -0.014 [-0.038, +0.012] | 0.091 [0.074, 0.109] | 0.98 |
+| Qwen2.5-3B | 0.489 [0.467, 0.517] | 0.482 [0.460, 0.510] | -0.007 [-0.026, +0.013] | +0.010 [+0.002, +0.019] | 0.031 [0.022, 0.040] | 0.98 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub>
 
 By rung and query type (CLadder) and by template (Corr2Cause test):
 
@@ -169,27 +186,30 @@ By rung and query type (CLadder) and by template (Corr2Cause test):
 | Qwen2.5-0.5B | 0.50 [0.47, 0.53] | 0.49 [0.46, 0.52] | 0.50 [0.47, 0.53] |
 | Qwen2.5-1.5B | 0.49 [0.45, 0.52] | 0.49 [0.45, 0.54] | 0.51 [0.48, 0.54] |
 | Gemma-2-2B | 0.48 [0.44, 0.52] | 0.51 [0.47, 0.57] | 0.53 [0.49, 0.56] |
+| Qwen2.5-3B | 0.51 [0.46, 0.54] | 0.54 [0.51, 0.58] | 0.53 [0.49, 0.56] |
 | *n / frac. gold Yes* | 938 / 0.50 | 936 / 0.50 | 1126 / 0.50 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub>
 
 | Model | query_type=ate | query_type=backadj | query_type=collider_bias | query_type=correlation | query_type=det-counterfactual | query_type=ett | query_type=exp_away | query_type=marginal | query_type=nde | query_type=nie |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | 0.50 [0.45, 0.56] | 0.50 [0.46, 0.55] | 0.33 [0.14, 0.42] | 0.50 [0.45, 0.54] | 0.51 [0.46, 0.55] | 0.50 [0.45, 0.55] | 0.50 [0.40, 0.56] | 0.50 [0.46, 0.54] | 0.50 [0.41, 0.58] | 0.50 [0.42, 0.60] |
 | Qwen2.5-1.5B | 0.54 [0.47, 0.60] | 0.49 [0.45, 0.52] | 0.13 [0.02, 0.26] | 0.50 [0.46, 0.55] | 0.55 [0.50, 0.59] | 0.47 [0.42, 0.52] | 0.33 [0.16, 0.55] | 0.48 [0.44, 0.53] | 0.51 [0.43, 0.61] | 0.50 [0.45, 0.56] |
 | Gemma-2-2B | 0.51 [0.44, 0.59] | 0.52 [0.45, 0.59] | 0.43 [0.34, 0.54] | 0.50 [0.45, 0.55] | 0.58 [0.54, 0.62] | 0.48 [0.41, 0.53] | 0.19 [0.06, 0.42] | 0.49 [0.44, 0.55] | 0.52 [0.43, 0.61] | 0.51 [0.44, 0.59] |
+| Qwen2.5-3B | 0.60 [0.54, 0.66] | 0.50 [0.46, 0.54] | 0.50 [0.45, 0.63] | 0.51 [0.46, 0.56] | 0.59 [0.54, 0.63] | 0.45 [0.38, 0.51] | 0.37 [0.22, 0.53] | 0.51 [0.46, 0.57] | 0.62 [0.52, 0.71] | 0.51 [0.45, 0.57] |
 | *n / frac. gold Yes* | 422 / 0.50 | 468 / 0.50 | 46 / 0.50 | 422 / 0.50 | 422 / 0.50 | 376 / 0.50 | 48 / 0.50 | 468 / 0.50 | 94 / 0.50 | 234 / 0.50 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub>
 
 | Model | template=child | template=has_collider | template=has_confounder | template=non-child descendant | template=non-parent ancestor | template=parent |
 |---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | 1.00 [1.00, 1.00] | 0.67 [0.56, 0.79] | 0.91 [0.86, 0.96] | 0.94 [0.89, 0.98] | 0.89 [0.84, 0.94] | 0.66 [0.57, 0.78] |
 | Qwen2.5-1.5B | 1.00 [1.00, 1.00] | 0.66 [0.55, 0.79] | 0.66 [0.53, 0.81] | 0.76 [0.68, 0.84] | 0.88 [0.83, 0.94] | 0.67 [0.58, 0.78] |
 | Gemma-2-2B | 1.00 [1.00, 1.00] | 0.58 [0.47, 0.69] | 0.27 [0.18, 0.36] | 0.30 [0.17, 0.44] | 0.88 [0.82, 0.93] | 0.66 [0.57, 0.78] |
+| Qwen2.5-3B | 1.00 [1.00, 1.00] | 0.65 [0.55, 0.78] | 0.72 [0.64, 0.80] | 0.94 [0.89, 0.98] | 0.89 [0.84, 0.94] | 0.66 [0.57, 0.78] |
 | *n / frac. gold Yes* | 194 / 0.00 | 193 / 0.33 | 193 / 0.09 | 193 / 0.06 | 195 / 0.11 | 194 / 0.34 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub>
 
 ### 3.2 Logit lens
 
@@ -758,8 +778,10 @@ Flip rates and the earlier "accuracy when pushed towards gold" (now called contr
 | Qwen2.5-0.5B | prem | 60 | +0.023 [-0.042, +0.090] | 0.58 [0.45, 0.71] | 0.00 | 15 | 0.62 | 1.00 | 0.45 | 16 |
 | Qwen2.5-1.5B | hyp | 40 | -0.088 [-0.420, +0.267] | 0.55 [0.43, 0.68] | 0.00 | 18 | 0.64 | 0.91 | 0.65 | 6 |
 | Qwen2.5-1.5B | prem | 40 | -0.087 [-0.424, +0.269] | 0.47 [0.33, 0.61] | 0.03 | 18 | 0.64 | 0.19 | 1.00 | 6 |
+| Gemma-2-2B | hyp | 40 | -0.054 [-0.433, +0.392] | 0.47 [0.32, 0.62] | 0.05 | 16 | 0.62 | 0.69 | 2.42 | 10 |
+| Gemma-2-2B | prem | 40 | -0.062 [-0.346, +0.262] | 0.57 [0.42, 0.72] | 0.03 | 16 | 0.62 | 0.80 | 0.45 | 10 |
 
-<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`</sub>
+<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b.json`</sub>
 
 ![patching prem](../figures/fig7_patching_prem.png)
 ![patching hyp](../figures/fig7_patching_hyp.png)
@@ -774,8 +796,10 @@ Flip rates and the earlier "accuracy when pushed towards gold" (now called contr
 | Qwen2.5-0.5B | prem | 30 | 1.00 | 0.98 | 0.495 | 0.039 | L14H5 (+0.87), MLP9 (+0.72), MLP23 (-0.69), MLP12 (+0.65), L12H2 (+0.43) |
 | Qwen2.5-1.5B | hyp | 20 | 1.00 | 0.98 | 0.412 | 0.043 | L17H0 (+0.71), MLP18 (+0.50), MLP12 (+0.47), L15H10 (+0.43), MLP27 (-0.40) |
 | Qwen2.5-1.5B | prem | 20 | 0.99 | 0.93 | 0.368 | 0.052 | L17H0 (+0.60), L15H10 (+0.47), MLP18 (+0.42), MLP27 (-0.39), MLP11 (+0.33) |
+| Gemma-2-2B | hyp | 20 | 0.98 | 0.99 | 0.410 | 0.032 | L15H2 (+0.62), MLP15 (+0.53), L12H3 (+0.47), MLP17 (+0.43), L13H2 (+0.41) |
+| Gemma-2-2B | prem | 20 | 0.99 | 1.00 | 0.391 | 0.040 | L13H2 (+0.59), L15H2 (+0.50), MLP15 (+0.48), MLP17 (+0.46), L12H3 (+0.40) |
 
-<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`</sub>
+<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b.json`</sub>
 
 ![attribution](../figures/fig8_attribution_validation.png)
 

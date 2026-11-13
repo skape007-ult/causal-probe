@@ -1,0 +1,22 @@
+{
+ "python": "3.12.3",
+ "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "sklearn": "1.9.1",
+ "numpy": "2.5.4",
+ "cuda": true,
+ "gpus": [
+  "Tesla T4",
+  "Tesla T4"
+ ],
+ "gpu_memory_gb": [
+  15.6,
+  15.6
+ ],
+ "sae_lens": "6.55.4",
+ "peft": "0.21.2",
+ "bitsandbytes": "not available (ModuleNotFoundError)",
+ "accelerate": "1.15.0",
+ "git_commit": "406d99485f272f84fe5484cda86378dbd6ca6744"
+}

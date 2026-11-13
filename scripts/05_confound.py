@@ -121,6 +121,8 @@ def main():
         from causal_probe.config import PROBE_SEEDS
         scores["structural"] = np.mean([probes.structural_oof(items, y, probes.folds_for(items, sd))
                                         for sd in PROBE_SEEDS], 0)
+        res["structural_accuracy_all_items"] = stats.accuracy(y, (scores["structural"] > 0).astype(int))
+        res["structural_auroc_all_items"] = stats.auroc(y, scores["structural"])
     if "random_init" in oof.files:
         L_r, _ = pick("random_init")
         res["selected_layer_random_init"] = L_r

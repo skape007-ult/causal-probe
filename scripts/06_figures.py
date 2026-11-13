@@ -152,15 +152,23 @@ def fig_probes():
                     lo = [l["accuracy"]["lo"] for l in r["layers"][key]]
                     hi = [l["accuracy"]["hi"] for l in r["layers"][key]]
                     ax.fill_between(x, lo, hi, color=col, alpha=0.18, lw=0)
-            for bname, col, lab in (("tfidf", INK, "TF-IDF text baseline"), ("type_prior", "#6250d6", "type-prior baseline")):
+            c = load(f"confound_{m}_{tag}.json")
+            tf = f"tfidf_C{c['selected_C_tfidf']:g}"
+            for bname, col, lab in ((tf, INK, "TF-IDF text baseline"), ("type_prior", "#6250d6", "type-prior baseline")):
                 ax.axhline(r["baselines"][bname]["accuracy"]["est"], color=col, ls="-.", lw=1, label=lab)
+            if "structural_accuracy_all_items" in c:
+                ax.axhline(c["structural_accuracy_all_items"], color="#1baf7a", ls="-.", lw=1.4,
+                           label="structural text features (post-hoc)")
             ax.axhline(0.5, color=AXIS, lw=1)
             ax.set_title(f"{MODEL_LAB[m]} (model acc. {r['model_accuracy']:.2f}; probe C = {r['probe_C']:g})", fontsize=9)
             ax.set_xlabel("layer (0 = embeddings)")
             ax.set_ylim(0.3, 1.0)
         axes[0, 0].set_ylabel("held-out probe accuracy")
-        h, l = axes[0, 0].get_legend_handles_labels()
-        fig.legend(h, l, loc="lower center", ncol=4, fontsize=8, bbox_to_anchor=(0.5, -0.12))
+        seen = {}
+        for ax in axes[0]:
+            for hh, ll in zip(*ax.get_legend_handles_labels()):
+                seen.setdefault(ll, hh)
+        fig.legend(seen.values(), seen.keys(), loc="lower center", ncol=4, fontsize=8, bbox_to_anchor=(0.5, -0.12))
         fig.suptitle(f"Linear probes at the final position · {DATASET_LAB[tag]} · grouped 5-fold × 3 seeds; bands: 95% CI",
                      fontsize=9, color=INK2)
         fig.tight_layout()
@@ -204,7 +212,7 @@ def fig_confound():
         ms = [m for m in MODELS if (RESULTS / f"confound_{m}_{tag}.json").exists()]
         if not ms:
             continue
-        scorers = [("gold_probe", "#2a78d6", "gold probe"), ("structural", "#eda100", "structural text features (post-hoc)"),
+        scorers = [("gold_probe", "#2a78d6", "gold probe"), ("structural", "#1baf7a", "structural text features (post-hoc)"),
                    ("tfidf", INK, "TF-IDF"),
                    ("type_prior", "#6250d6", "type prior"), ("random_init_probe", "#e87ba4", "random-init probe"),
                    ("model_logit_diff", "#eb6834", "model's own logit diff")]

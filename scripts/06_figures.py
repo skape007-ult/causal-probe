@@ -283,7 +283,7 @@ def fig_patching():
     from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
     cmap = LinearSegmentedColormap.from_list("div", ["#eb6834", "#f0efec", "#2a78d6"])   # two hues + neutral midpoint
     for kind, ktitle in (("hyp", "hypothesis differs by one variable"), ("prem", "premise relabelled (different causal structure)")):
-        fig, axes = plt.subplots(2, len(ms), figsize=(4.4 * len(ms), 5.2), squeeze=False)
+        fig, axes = plt.subplots(2, len(ms), figsize=(4.6 * len(ms), 5.8), squeeze=False, constrained_layout=True)
         for j, m in enumerate(ms):
             r = load(f"patching_{m}.json")
             k = r["kinds"][kind]

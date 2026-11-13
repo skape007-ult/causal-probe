@@ -25,8 +25,22 @@ print(sum(prem(r) in tr for r in dev), len({prem(r) for r in dev} & tr))   # 42 
 - `perturbation_by_refactorization_test.csv` and `perturbation_by_paraphrasing_test.csv` have 2,246 rows vs 1,162 in `test.csv`; the paraphrasing file's `label` column is 3-class (0/1/2) while the default config is binary; the refactorization file has no `template`/`num_variables` columns. So a paired original-vs-perturbed comparison on the released test set is not possible from these files. (We therefore apply our own A,B,C→Z,Y,X renaming to `test.csv`.)
 - Repro: `wc -l test.csv perturbation_by_*_test.csv`; `Counter(r["label"] ...)`.
 
-## U5. TransformerLens 4: `HookedTransformer` import fails with an ImportError that points at a doc path
-- `from transformer_lens import HookedTransformer` raises `ImportError: 'HookedTransformer' was removed in TransformerLens 4.0 ... See docs/source/content/migrating_to_v4.md` — a repo-relative path that does not exist in the installed wheel, with no URL. Minor doc gap. (transformer-lens 4.4.0.)
+## U5. TransformerLens 4: `HookedTransformer` was removed; the ImportError points at a file that is not shipped
+- **What.** In transformer-lens 4.x the long-standing entry point `HookedTransformer` no longer exists; the replacement is `TransformerBridge.boot_transformers(name)` (plus `enable_compatibility_mode()` for the old numerics). Importing the old name raises an ImportError whose only pointer is `docs/source/content/migrating_to_v4.md`, a repository-relative path. That file is not in the installed wheel and no URL is given, so a user who hits the error from a tutorial has nothing to open.
+- **Where.** transformer-lens 4.4.0 (PyPI wheel), Python 3.12.
+- **Minimal reproduction.**
+```python
+import glob, os, transformer_lens
+try:
+    from transformer_lens import HookedTransformer
+except ImportError as e:
+    print(e)        # "... was removed in TransformerLens 4.0. Use TransformerBridge.boot_transformers(name) ... See docs/source/content/migrating_to_v4.md."
+site = os.path.dirname(os.path.dirname(transformer_lens.__file__))
+print(glob.glob(os.path.join(site, "**", "migrating_to_v4*"), recursive=True))   # [] : the file the message points to is not installed
+```
+- **Status: verified** on this machine on 13 Nov 2026 (output as in the comments above; `transformer_lens.TransformerBridge` exists). Not checked: whether a later 4.x release changed the message, and whether the removal is announced elsewhere in the package metadata.
+- **Suggested change.** Put the documentation URL in the error message.
+- **What we did.** Used plain Hugging Face modules with forward hooks (decision D1). `scripts/00_verify_env.py` checks that `TransformerBridge` gives the same logits as Hugging Face on five prompts for Qwen2.5-0.5B (maximum difference 7e-5, `results/env_check_qwen0.5b.json`); that check was not repeated for the larger models.
 
 ## U6. transformers 5.22: `output_hidden_states` last entry is post-final-norm for Qwen2 (silent trap for logit lens)
 - With `Qwen/Qwen2.5-0.5B-Instruct`, `out.hidden_states[-1]` equals `model.model.norm(last_block_output)`, while `hidden_states[:-1]` are raw (pre-norm) block outputs. Anyone doing a logit lens via `hidden_states` and applying `model.model.norm` themselves double-normalises the last layer only. The docstring ("hidden-states of the model at the output of each layer") does not say the final norm is included. I have not checked whether this differs from transformers 4.x or across architectures.

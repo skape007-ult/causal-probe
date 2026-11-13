@@ -5,11 +5,16 @@ number in the write-up traces to a JSON file. Nothing here is typed by hand.
 """
 import json
 
-from causal_probe.config import ALL_MODELS, MODELS, RESULTS, ROOT
+from causal_probe.config import ALL_MODELS, MODELS, REMOTE_MODELS, RESULTS, ROOT
+
+MODELS = {**MODELS, **REMOTE_MODELS}     # remote (Kaggle) models appear in a table once their results exist
 
 OUT = ROOT / "report" / "tables"
-LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B", "qwen0.5b-lora": "Qwen2.5-0.5B + LoRA"}
-DS = {"c2c_test": "Corr2Cause test", "c2c_probe": "Corr2Cause pool", "cladder": "CLadder"}
+LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B", "qwen0.5b-lora": "Qwen2.5-0.5B + LoRA",
+       "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)"}
+DS = {"c2c_test": "Corr2Cause test", "c2c_probe": "Corr2Cause pool", "cladder": "CLadder",
+      "c2c_debiased": "Corr2Cause debiased pool", "c2c_test_renamed": "Corr2Cause test, variables renamed",
+      "c2c_test_sub_fewshot": "Corr2Cause test (500 items)", "cladder_sub_fewshot": "CLadder (500 items)"}
 
 
 def load(name):
@@ -181,7 +186,7 @@ def t_confound(models=MODELS, suffix="", name="confound"):
 def t_audited(models=MODELS):
     rows, rows2, src = [], [], []
     for m in models:
-        for tag in ("c2c_probe", "cladder"):
+        for tag in ("c2c_probe", "cladder", "c2c_debiased"):
             c = load(f"confound_{m}_{tag}.json")
             if not c or "audited" not in c.get("verdict", {}):
                 continue
@@ -206,9 +211,9 @@ def t_audited(models=MODELS):
          "Hypothesis-string prior", "Parsed features + prior (GBM)", "Random-init probe", "Model's own answer"], rows2, src))
     rows = []
     for m in models:
-        for tag in ("c2c_probe", "cladder"):
+        for tag in ("c2c_probe", "cladder", "c2c_debiased"):
             c = load(f"confound_{m}_{tag}.json")
-            if not c or "positions" not in c:
+            if not c or "content_end" not in c.get("positions", {}):
                 continue
             a = c["all_items"]; ps = c["positions"]
             rows.append([LAB[m], DS[tag], ci(a["gold_probe"]["accuracy"]), ci(ps["content_end"]["accuracy"]),
@@ -312,6 +317,76 @@ def t_cross_model():
     write("cross_model", txt)
 
 
+def t_benchmarks():
+    r = load("benchmark_baselines.json")
+    if not r:
+        return
+    src = ["benchmark_baselines.json"]
+    names = {"majority": "Majority class", "template_prior": "Template prior (6 templates)",
+             "hypothesis_only": "Hypothesis only (string prior)", "hypothesis_only_f1_threshold": "Hypothesis only, F1-tuned threshold",
+             "premise_only": "Premise only (TF-IDF)", "parsed_features": "Parsed features + hypothesis prior (GBM)",
+             "parsed_features_excluding_premises_seen_in_train": "Parsed features, dev premises also in train removed",
+             "hypothesis_only_tfidf": "Hypothesis only (TF-IDF)", "full_text_tfidf": "Whole prompt (TF-IDF)",
+             "type_prior": "Graph x query-type prior", "question_only": "Question only (TF-IDF)", "full_text": "Whole prompt (TF-IDF)",
+             "numeric_polarity": "Quoted numbers + question polarity (GBM)"}
+    rows = []
+    for split in ("test", "dev"):
+        for k, v in r["corr2cause_official_splits"][split].items():
+            rows.append([split, names[k], v["n"], v["n_clusters"], ci(v["accuracy"]), ci(v["macro_f1"]), ci(v["positive_f1"]),
+                         ci(v["auroc"]), num(v["frac_predicted_positive"], 2)])
+    write("benchmark_c2c_official", table(
+        ["Split", "Text-only baseline (fit on train)", "Items", "Premises", "Accuracy", "Macro-F1", "F1 (valid class)", "AUROC",
+         "Predicted valid"], rows, src))
+    rows = []
+    for key, lab in (("corr2cause_balanced_pool", "Balanced pool"), ("corr2cause_debiased_pool", "Debiased pool"),
+                     ("corr2cause_string_balanced_only_pool_rejected", "Rejected first design (strings balanced over the whole pool only)")):
+        for k, v in r[key]["baselines"].items():
+            rows.append([lab, names[k], v["n"], v["n_clusters"], ci(v["accuracy"]), ci(v["macro_f1"]), ci(v["auroc"])])
+    write("benchmark_c2c_pools", table(
+        ["Corr2Cause item set", "Text-only baseline (premise-held-out cross-validation)", "Items", "Premises", "Accuracy", "Macro-F1", "AUROC"],
+        rows, src))
+    d = r["corr2cause_description"]
+    rows = [[sp, d[sp]["n_items"], d[sp]["n_distinct_premises"], num(d[sp]["items_per_premise_median"], 0), num(d[sp]["frac_valid"]),
+             d[sp]["debiasing"]["n_hypothesis_strings"], d[sp]["debiasing"]["n_strings_single_label"],
+             d[sp]["debiasing"]["max_items_balanced_within_string"]] for sp in ("train", "dev", "test")]
+    txt = table(["Split", "Items", "Distinct premises", "Median items per premise", "Fraction valid", "Distinct hypothesis strings",
+                 "Strings with a single label in this split", "Items left if labels are balanced within each string"], rows, src)
+    o = d["train_validity_by_variable_name_order"]
+    rows = [[t, v["example_hypothesis"], v["first_named_variable_earlier_in_alphabet"]["n"], num(v["first_named_variable_earlier_in_alphabet"]["frac_valid"]),
+             v["first_named_variable_later_in_alphabet"]["n"], num(v["first_named_variable_later_in_alphabet"]["frac_valid"])] for t, v in o.items()]
+    txt += "\n" + table(["Template (train)", "Example hypothesis", "Items, first-named variable earlier in alphabet", "Fraction valid",
+                          "Items, first-named variable later in alphabet", "Fraction valid "], rows, src)
+    hs = d["train_hypothesis_strings"]; po = d["premise_overlap"]
+    rows = [["Distinct hypothesis strings in train", hs["n"]], ["...never valid", hs["n_never_valid"]], ["...always valid", hs["n_always_valid"]],
+            ["...with both labels", hs["n_both"]],
+            ["Share of train items whose hypothesis string is never valid", num(hs["frac_of_train_items_whose_string_is_never_valid"])],
+            ["Premises shared by train and dev", po["train&dev"]], ["Premises shared by train and test", po["train&test"]],
+            ["Premises shared by dev and test", po["dev&test"]], ["Dev items whose premise is in train", d["n_dev_items_with_premise_in_train"]]]
+    txt += "\n" + table(["Quantity (Corr2Cause)", "Value"], rows, src)
+    write("benchmark_c2c_description", txt)
+    c = r["cladder_full_v1.5"]
+    rows = [[names[k], v["n"], v["n_clusters"], ci(v["accuracy"]), ci(v["macro_f1"]), ci(v["auroc"])] for k, v in c["baselines"].items()]
+    txt = table(["Text-only baseline (story-held-out cross-validation)", "Items", "Stories", "Accuracy", "Macro-F1", "AUROC"], rows, src)
+    rows = [[k, v["n"], num(v["frac_yes"], 2), ci(v["accuracy"]), num(v["auroc"])] for k, v in c["numeric_polarity_by"]["query_type"].items()]
+    rows += [[f"rung {k}", v["n"], num(v["frac_yes"], 2), ci(v["accuracy"]), num(v["auroc"])] for k, v in c["numeric_polarity_by"]["rung"].items()]
+    txt += "\n" + table(["Query type / rung", "Items", "Fraction yes", "Accuracy of numbers + polarity baseline", "AUROC"], rows, src)
+    write("benchmark_cladder", txt)
+
+
+def t_answer_bias():
+    r = load("answer_bias.json")
+    if not r:
+        return
+    rows = []
+    for m, tags in r.items():
+        for tag, v in tags.items():
+            rows.append([LAB[m], DS[tag], v["mode"], v["n"], num(v["yes_rate"], 2), ci(v["accuracy"]), num(v["majority"]),
+                         ci(v["auroc"]), ci(v["best_threshold_acc"]), v["reading"]])
+    write("answer_bias", table(
+        ["Model", "Item set", "Prompt", "Items", "Yes-rate", "Accuracy", "Majority-class accuracy", "AUROC of Yes−No logit difference",
+         "Accuracy at best threshold (cross-fitted)", "Reading"], rows, ["answer_bias.json"]))
+
+
 if __name__ == "__main__":
     t_behaviour(); t_probes(); t_confound(); t_confound(suffix="_fixedC", name="confound_fixedC"); t_audited(); t_external()
-    t_steering(); t_patching(); t_cross_model()
+    t_steering(); t_patching(); t_cross_model(); t_benchmarks(); t_answer_bias()

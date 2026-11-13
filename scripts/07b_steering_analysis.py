@@ -108,6 +108,8 @@ def main():
                             "minus": ci(lambda b, x: float(np.mean((x > 0) != (b > 0))), base, minus[:, ai]),
                             "best_sign": max(flips(plus[:, ai]), flips(minus[:, ai])),
                             "frac_yes_plus": float((plus[:, ai] > 0).mean()), "frac_yes_minus": float((minus[:, ai] > 0).mean()),
+                            "mean_delta_logit_diff_plus": float((plus[:, ai] - base).mean()),
+                            "mean_delta_logit_diff_minus": float((minus[:, ai] - base).mean()),
                             "controllability_toward_gold": ci(lambda t, p, m: stats.accuracy(t, (np.where(t == 1, p, m) > 0).astype(int)), yy, plus[:, ai], minus[:, ai]),
                             "controllability_away_from_gold": ci(lambda t, p, m: stats.accuracy(t, (np.where(t == 1, m, p) > 0).astype(int)), yy, plus[:, ai], minus[:, ai])}
                            for ai, al in enumerate(alphas)]}

@@ -382,6 +382,7 @@ def fig_cross_model():
     for ax in axes:
         ax.set_xscale("log"); ax.set_xlabel("parameters (billions)")
         ax.set_xticks([0.5, 1.5, 2.6], ["0.5", "1.5", "2.6"])
+        ax.xaxis.set_minor_formatter(plt.NullFormatter()); ax.set_xlim(0.42, 3.1)
     from matplotlib.lines import Line2D
     axes[0].legend(handles=[Line2D([], [], marker="o", color=INK2, ls="", label="Corr2Cause pool"),
                             Line2D([], [], marker="s", color=INK2, ls="", mfc=SURF, label="CLadder")], fontsize=8)

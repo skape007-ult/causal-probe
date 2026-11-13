@@ -185,6 +185,31 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 
 ---
 
+### D20. Heavy GPU work moves to Kaggle; the laptop does CPU analysis only (Fri 13 Nov, 09:40)
+*Decision:* Gemma-2-2B steering, patching and the SAE tier, and one larger model, run in a Kaggle GPU notebook (`notebooks/kaggle_gpu.ipynb`, `scripts/kaggle_run.py`, `KAGGLE.md`). The laptop runs probes, baselines, figures and the two small Qwen models, one job at a time, threads capped. No further Gemma forward passes locally. The LoRA tier is dropped unless time remains.
+*Alternatives:* keep everything local with smaller batches; drop Gemma's Tier 2.
+*Why:* Gemma steering stalled overnight (item 0 of 300 after 52 minutes, process swapped out). Gemma's weights alone are about 5.2 GB of the 8 GB shared by CPU and GPU, so any intervention that keeps a key-value cache per steering vector does not fit. A free Kaggle GPU has 16 GB and also makes a model large enough to possibly answer above chance affordable. Decided before any Gemma Tier 2 number existed.
+*Would change it:* a 16 GB machine.
+*Consequence to state in the write-up:* Gemma's probes come from activations cached on the Mac (float16, MPS, embedding matrix on disk); Gemma's steering, patching and SAE results come from activations recomputed on Kaggle (float16, CUDA). `results/cache_agreement_gemma2b.json` reports how closely the two agree per item.
+
+### D21. A debiased Corr2Cause pool decides "represents but doesn't say" (Fri 13 Nov, 09:45)
+*Decision:* new item set `c2c_debiased` (`data.c2c_debiased_pool`): from the train split, keep only the hypothesis strings that occur with both labels (48 of 120) and sample 25 valid and 25 invalid items for each, 2,400 items over 1,498 premises. Every hypothesis string, and therefore every template and every variable pair, is exactly half valid. Evaluation holds out premises as before. The probe-versus-text-baseline comparison on this pool, not on the original pool, decides the headline claim.
+*Alternatives:* (a) subset the existing balanced pool: only 648 of its 2,400 items survive, too few; (b) keep the original pool and only add the hypothesis-string prior as a baseline (done in D18/D19, but a probe can still score by decoding hypothesis identity); (c) reweight instead of subsample.
+*Why:* in the original pool the hypothesis string alone predicts the label with 0.86 accuracy, so a probe that reads "which hypothesis is this" looks like a probe that reads "is this valid". Balancing within string removes that route by construction (a hypothesis-only classifier is at exactly 0.50). It needs new forward passes for every model, which is why the pool was fixed before the Kaggle notebook was written.
+*Would change it:* if a text baseline still beats the probe on the debiased pool through another route (premise-only or parsed features), the next step is matching on those features too, and saying so.
+*Post-hoc status:* this pool was designed after seeing the Tier 1 results and the audit. It is not pre-registered. The criterion applied to it is the audited one (D19), unchanged.
+
+### D22. Steering layer for models without a full probe analysis (Fri 13 Nov, 09:50)
+*Decision:* `07_steering.py` takes the layer and probe regularisation from `05_confound.py` when its output exists (the three local models on the original item sets). Otherwise (the larger model on Kaggle; every model on the debiased pool) it picks them itself with the same rule, best selection-half accuracy over the (layer, C) grid, using a cheaper 3-fold grouped cross-validation inside the selection half (`quick_select`). The choice and its source are stored in the result (`layer_selection`). Two extra runs at fixed relative depths 0.5 and 0.85 are added as a layer-choice sensitivity check.
+*Alternatives:* run the full probe pipeline on Kaggle first (hours of CPU on the GPU session); steer at one arbitrary depth.
+*Why:* the probe analysis for the larger model runs on the laptop after the cache comes back, but steering needs the model on a GPU now. The report half is never used for selection in either route.
+*Would change it:* if the layer later chosen by `05_confound.py` differs by more than a few layers from the quick choice, rerun steering at that layer in a second Kaggle session.
+
+### D23. Only final-token activations leave Kaggle (Fri 13 Nov, 09:55)
+*Decision:* the Kaggle export keeps the residual stream at the final prompt token only (float16, all layers), for the three probe sets, trained and random-init. Qwen2.5-3B: 37 layers × 2,048 dims × 2 bytes ≈ 152 KB per item, × 7,800 items ≈ 1.2 GB per archive. Per-item logits and generated answers for the other item sets are exported without activations.
+*Alternatives:* all three positions (3.5 GB per archive).
+*Why:* download size. *Cost:* the position comparison (final token versus end of hypothesis versus end of premise) is not available for the larger model, nor for Gemma on the debiased pool. `--export-positions final,content_end,premise_end` restores it.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.

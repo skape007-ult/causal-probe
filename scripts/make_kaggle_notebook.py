@@ -47,8 +47,8 @@ SKIP_STAGES  = ""            # comma-separated stage-name prefixes to skip, e.g.
         code("""
 import os, subprocess, sys, json, shutil, time
 t_start = time.time()
-print(subprocess.run(["nvidia-smi", "--query-gpu=name,memory.total", "--format=csv"], capture_output=True, text=True).stdout
-      or "NO GPU FOUND: set Accelerator to a GPU in the notebook settings")
+gpu = subprocess.run(["nvidia-smi", "--query-gpu=name,memory.total", "--format=csv"], capture_output=True, text=True).stdout if shutil.which("nvidia-smi") else ""
+print(gpu or "NO GPU FOUND: set Accelerator to a GPU in the notebook settings (the run would be far too slow on CPU)")
 
 # Hugging Face token from Kaggle Secrets. It is never printed or written to disk by this notebook.
 try:

@@ -68,8 +68,10 @@ Gemma only runs at usable speed if its 256k × 2304 embedding matrix is kept on 
 | Qwen2.5-0.5B | CLadder | 3000 | 47 | 0.500 [0.483, 0.515] | 0.366 [0.352, 0.380] | 0.499 [0.468, 0.527] | 0.04 | 0.500 | 0.333 | 0.500 |
 | Qwen2.5-1.5B | Corr2Cause test | 1162 | 21 | 0.773 [0.711, 0.846] | 0.489 [0.453, 0.525] | 0.561 [0.503, 0.614] | 0.10 | 0.845 | 0.458 | 0.433 |
 | Qwen2.5-1.5B | CLadder | 3000 | 47 | 0.497 [0.474, 0.519] | 0.486 [0.464, 0.509] | 0.509 [0.478, 0.542] | 0.64 | 0.500 | 0.333 | 0.500 |
+| Gemma-2-2B | Corr2Cause test | 1162 | 21 | 0.615 [0.573, 0.658] | 0.481 [0.444, 0.510] | 0.536 [0.495, 0.566] | 0.34 | 0.845 | 0.458 | 0.433 |
+| Gemma-2-2B | CLadder | 3000 | 47 | 0.508 [0.482, 0.535] | 0.500 [0.474, 0.526] | 0.519 [0.482, 0.557] | 0.63 | 0.500 | 0.333 | 0.500 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
 
 ![behaviour](../figures/fig1_behaviour.png)
 
@@ -83,8 +85,10 @@ Few-shot (500-item subsets, paired with zero-shot on the same items):
 | Qwen2.5-0.5B | CLadder | 500 | 0.510 [0.478, 0.539] | 0.516 [0.481, 0.552] | +0.006 [-0.030, +0.045] | 0.380 [0.356, 0.404] | 0.468 [0.425, 0.510] | 0.20 |
 | Qwen2.5-1.5B | Corr2Cause test | 500 | 0.756 [0.690, 0.832] | 0.800 [0.752, 0.856] | +0.044 [+0.005, +0.080] | 0.481 [0.445, 0.515] | 0.463 [0.436, 0.498] | 0.05 |
 | Qwen2.5-1.5B | CLadder | 500 | 0.510 [0.475, 0.543] | 0.528 [0.487, 0.565] | +0.018 [-0.020, +0.055] | 0.500 [0.464, 0.535] | 0.504 [0.464, 0.540] | 0.72 |
+| Gemma-2-2B | Corr2Cause test | 500 | 0.604 [0.555, 0.656] | 0.486 [0.445, 0.526] | -0.118 [-0.186, -0.054] | 0.480 [0.434, 0.515] | 0.436 [0.391, 0.474] | 0.54 |
+| Gemma-2-2B | CLadder | 500 | 0.502 [0.465, 0.536] | 0.504 [0.458, 0.546] | +0.002 [-0.035, +0.042] | 0.490 [0.453, 0.525] | 0.443 [0.397, 0.486] | 0.83 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
 
 Logit scoring vs generated text:
 
@@ -98,8 +102,12 @@ Logit scoring vs generated text:
 | Qwen2.5-1.5B | c2c_test_sub_fewshot | 500 | 0.800 [0.752, 0.856] | 0.804 [0.756, 0.859] | 0.004 | 0.000 |
 | Qwen2.5-1.5B | cladder_sub | 500 | 0.510 [0.475, 0.543] | 0.510 [0.475, 0.543] | 0.000 | 0.000 |
 | Qwen2.5-1.5B | cladder_sub_fewshot | 500 | 0.528 [0.487, 0.565] | 0.530 [0.490, 0.566] | 0.006 | 0.000 |
+| Gemma-2-2B | c2c_test_sub | 100 | 0.580 [0.489, 0.653] | 0.580 [0.489, 0.653] | 0.000 | 0.000 |
+| Gemma-2-2B | c2c_test_sub_fewshot | 100 | 0.510 [0.403, 0.608] | 0.510 [0.403, 0.608] | 0.000 | 0.000 |
+| Gemma-2-2B | cladder_sub | 100 | 0.480 [0.385, 0.576] | 0.400 [0.318, 0.495] | 0.130 | 0.130 |
+| Gemma-2-2B | cladder_sub_fewshot | 100 | 0.420 [0.325, 0.515] | 0.420 [0.325, 0.515] | 0.000 | 0.000 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
 
 Robustness to variable renaming (paired on the test set):
 
@@ -107,8 +115,9 @@ Robustness to variable renaming (paired on the test set):
 |---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | 0.458 [0.445, 0.473] | 0.473 [0.449, 0.506] | +0.015 [-0.002, +0.044] | -0.003 [-0.009, +0.001] | 0.009 [0.002, 0.018] | 0.77 |
 | Qwen2.5-1.5B | 0.489 [0.453, 0.525] | 0.501 [0.457, 0.546] | +0.012 [-0.012, +0.040] | -0.044 [-0.058, -0.030] | 0.085 [0.062, 0.106] | 0.97 |
+| Gemma-2-2B | 0.481 [0.444, 0.510] | 0.448 [0.420, 0.472] | -0.033 [-0.060, -0.008] | -0.014 [-0.038, +0.012] | 0.091 [0.074, 0.109] | 0.98 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
 
 By rung and query type (CLadder) and by template (Corr2Cause test):
 
@@ -116,25 +125,28 @@ By rung and query type (CLadder) and by template (Corr2Cause test):
 |---|---|---|---|
 | Qwen2.5-0.5B | 0.50 [0.47, 0.53] | 0.49 [0.46, 0.52] | 0.50 [0.47, 0.53] |
 | Qwen2.5-1.5B | 0.49 [0.45, 0.52] | 0.49 [0.45, 0.54] | 0.51 [0.48, 0.54] |
+| Gemma-2-2B | 0.48 [0.44, 0.52] | 0.51 [0.47, 0.57] | 0.53 [0.49, 0.56] |
 | *n / frac. gold Yes* | 938 / 0.50 | 936 / 0.50 | 1126 / 0.50 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
 
 | Model | query_type=ate | query_type=backadj | query_type=collider_bias | query_type=correlation | query_type=det-counterfactual | query_type=ett | query_type=exp_away | query_type=marginal | query_type=nde | query_type=nie |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | 0.50 [0.45, 0.56] | 0.50 [0.46, 0.55] | 0.33 [0.14, 0.42] | 0.50 [0.45, 0.54] | 0.51 [0.46, 0.55] | 0.50 [0.45, 0.55] | 0.50 [0.40, 0.56] | 0.50 [0.46, 0.54] | 0.50 [0.41, 0.58] | 0.50 [0.42, 0.60] |
 | Qwen2.5-1.5B | 0.54 [0.47, 0.60] | 0.49 [0.45, 0.52] | 0.13 [0.02, 0.26] | 0.50 [0.46, 0.55] | 0.55 [0.50, 0.59] | 0.47 [0.42, 0.52] | 0.33 [0.16, 0.55] | 0.48 [0.44, 0.53] | 0.51 [0.43, 0.61] | 0.50 [0.45, 0.56] |
+| Gemma-2-2B | 0.51 [0.44, 0.59] | 0.52 [0.45, 0.59] | 0.43 [0.34, 0.54] | 0.50 [0.45, 0.55] | 0.58 [0.54, 0.62] | 0.48 [0.41, 0.53] | 0.19 [0.06, 0.42] | 0.49 [0.44, 0.55] | 0.52 [0.43, 0.61] | 0.51 [0.44, 0.59] |
 | *n / frac. gold Yes* | 422 / 0.50 | 468 / 0.50 | 46 / 0.50 | 422 / 0.50 | 422 / 0.50 | 376 / 0.50 | 48 / 0.50 | 468 / 0.50 | 94 / 0.50 | 234 / 0.50 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
 
 | Model | template=child | template=has_collider | template=has_confounder | template=non-child descendant | template=non-parent ancestor | template=parent |
 |---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | 1.00 [1.00, 1.00] | 0.67 [0.56, 0.79] | 0.91 [0.86, 0.96] | 0.94 [0.89, 0.98] | 0.89 [0.84, 0.94] | 0.66 [0.57, 0.78] |
 | Qwen2.5-1.5B | 1.00 [1.00, 1.00] | 0.66 [0.55, 0.79] | 0.66 [0.53, 0.81] | 0.76 [0.68, 0.84] | 0.88 [0.83, 0.94] | 0.67 [0.58, 0.78] |
+| Gemma-2-2B | 1.00 [1.00, 1.00] | 0.58 [0.47, 0.69] | 0.27 [0.18, 0.36] | 0.30 [0.17, 0.44] | 0.88 [0.82, 0.93] | 0.66 [0.57, 0.78] |
 | *n / frac. gold Yes* | 194 / 0.00 | 193 / 0.33 | 193 / 0.09 | 193 / 0.06 | 195 / 0.11 | 194 / 0.34 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>
 
 ### 3.2 Logit lens
 
@@ -151,8 +163,10 @@ By rung and query type (CLadder) and by template (Corr2Cause test):
 | Qwen2.5-0.5B | CLadder | 16/24 | 0.1 | 0.561 [0.534, 0.586] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.498 [0.475, 0.522] | 0.510 | 0.791 | -0.234 | +0.034 [-0.014, +0.074] |
 | Qwen2.5-1.5B | Corr2Cause pool | 21/28 | 0.1 | 0.870 [0.850, 0.890] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.594 [0.566, 0.624] | 0.498 | 0.777 | +0.088 | +0.068 [+0.042, +0.091] |
 | Qwen2.5-1.5B | CLadder | 24/28 | 0.1 | 0.605 [0.580, 0.631] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.508 [0.484, 0.535] | 0.500 | 0.807 | -0.221 | +0.077 [+0.034, +0.115] |
+| Gemma-2-2B | Corr2Cause pool | 18/26 | 1 | 0.863 [0.841, 0.886] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.596 [0.568, 0.623] | 0.499 | 0.790 | +0.071 | +0.061 [+0.035, +0.088] |
+| Gemma-2-2B | CLadder | 20/26 | 1 | 0.626 [0.590, 0.664] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.519 [0.494, 0.548] | 0.499 | 0.812 | -0.194 | +0.099 [+0.038, +0.150] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/probes_qwen0.5b_c2c_probe_C1.json`, `results/probes_qwen0.5b_cladder_C0.1.json`, `results/probes_qwen1.5b_c2c_probe_C0.1.json`, `results/probes_qwen1.5b_cladder_C0.1.json`</sub>
+<sub>Source: `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/probes_gemma2b_c2c_probe_C1.json`, `results/probes_gemma2b_cladder_C1.json`, `results/probes_qwen0.5b_c2c_probe_C1.json`, `results/probes_qwen0.5b_cladder_C0.1.json`, `results/probes_qwen1.5b_c2c_probe_C0.1.json`, `results/probes_qwen1.5b_cladder_C0.1.json`</sub>
 
 <sub>Layer index counts the embeddings as 0, so layer l is the output of block l−1. Probe/TF-IDF/prior/random-init columns: report half, scores averaged over 3 seeds. Shuffled/control/selectivity: all items, mean of per-seed accuracies at the selected layer and C.</sub>
 
@@ -168,8 +182,10 @@ Probe accuracy by token position:
 | Qwen2.5-0.5B | CLadder | 0.561 [0.534, 0.586] | 0.542 [0.512, 0.576] | 0.561 [0.536, 0.586] | +0.000 [-0.038, +0.036] | +0.018 [-0.015, +0.050] |
 | Qwen2.5-1.5B | Corr2Cause pool | 0.870 [0.850, 0.890] | 0.898 [0.879, 0.916] | 0.534 [0.517, 0.552] | +0.336 [+0.311, +0.361] | -0.028 [-0.046, -0.011] |
 | Qwen2.5-1.5B | CLadder | 0.605 [0.580, 0.631] | 0.588 [0.549, 0.625] | 0.569 [0.548, 0.589] | +0.035 [+0.008, +0.068] | +0.016 [-0.024, +0.060] |
+| Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | 0.905 [0.887, 0.922] | 0.499 [0.497, 0.500] | +0.364 [+0.341, +0.387] | -0.042 [-0.061, -0.022] |
+| Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | 0.623 [0.598, 0.647] | 0.556 [0.528, 0.580] | +0.070 [+0.021, +0.120] | +0.003 [-0.032, +0.038] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
 
 <!-- T1-PROBES-TEXT -->
 
@@ -183,8 +199,10 @@ All scorers on the report half:
 | Qwen2.5-0.5B | CLadder | 0.561 [0.534, 0.586] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.510 [0.482, 0.541] | – | 0.800 [0.767, 0.839] | 0.498 [0.475, 0.522] | 0.506 [0.483, 0.525] |
 | Qwen2.5-1.5B | Corr2Cause pool | 0.870 [0.850, 0.890] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.848 [0.827, 0.868] | 0.859 [0.839, 0.879] | 0.919 [0.902, 0.935] | 0.594 [0.566, 0.624] | 0.505 [0.489, 0.520] |
 | Qwen2.5-1.5B | CLadder | 0.605 [0.580, 0.631] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.510 [0.482, 0.541] | – | 0.800 [0.767, 0.839] | 0.508 [0.484, 0.535] | 0.506 [0.468, 0.545] |
+| Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.848 [0.827, 0.868] | 0.859 [0.839, 0.879] | 0.919 [0.902, 0.935] | 0.596 [0.568, 0.623] | 0.507 [0.483, 0.532] |
+| Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.510 [0.482, 0.541] | – | 0.800 [0.767, 0.839] | 0.519 [0.494, 0.548] | 0.506 [0.464, 0.549] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
 
 Audited criterion (and, for comparison, the pre-registered one as coded):
 
@@ -194,8 +212,10 @@ Audited criterion (and, for comparison, the pre-registered one as coded):
 | Qwen2.5-0.5B | CLadder | 0.561 [0.534, 0.586] | structural | 0.800 [0.767, 0.839] | -0.240 [-0.285, -0.203] | -0.316 [-0.363, -0.271] | -0.252 [-0.320, -0.194] | no | no | no (97% gold-Yes) |
 | Qwen2.5-1.5B | Corr2Cause pool | 0.870 [0.850, 0.890] | structural | 0.919 [0.902, 0.935] | -0.049 [-0.068, -0.032] | -0.030 [-0.052, -0.009] | -0.027 [-0.044, -0.011] | no | no | no (90% gold-Yes) |
 | Qwen2.5-1.5B | CLadder | 0.605 [0.580, 0.631] | structural | 0.800 [0.767, 0.839] | -0.196 [-0.234, -0.162] | -0.174 [-0.214, -0.129] | -0.267 [-0.327, -0.216] | no | yes | yes |
+| Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | structural | 0.919 [0.902, 0.935] | -0.056 [-0.078, -0.033] | -0.020 [-0.039, -0.001] | -0.030 [-0.051, -0.008] | no | no | yes |
+| Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | structural | 0.800 [0.767, 0.839] | -0.174 [-0.220, -0.133] | -0.159 [-0.215, -0.100] | -0.237 [-0.297, -0.185] | no | yes | yes |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
 
 ![confound c2c](../figures/fig5_confound_c2c_probe.png)
 ![confound cladder](../figures/fig5_confound_cladder.png)
@@ -212,8 +232,12 @@ Pre-registered analysis in full (items the model gets wrong):
 | Qwen2.5-1.5B | Corr2Cause pool | calibrated | 542 | 0.52 | 0.869 [0.839, 0.898] | 0.871 [0.841, 0.900] | 0.810 [0.775, 0.844] | 0.821 [0.790, 0.851] | +0.061 [+0.022, +0.101] | +0.050 [+0.012, +0.088] | **yes** | 0.921 [0.898, 0.942] | -0.050 [-0.077, -0.023] |
 | Qwen2.5-1.5B | CLadder | raw | 810 | 0.36 | 0.603 [0.552, 0.653] | 0.604 [0.545, 0.660] | 0.510 [0.453, 0.572] | 0.473 [0.408, 0.534] | +0.094 [+0.031, +0.160] | +0.131 [+0.053, +0.212] | **yes** | 0.796 [0.760, 0.838] | -0.193 [-0.252, -0.132] |
 | Qwen2.5-1.5B | CLadder | calibrated | 800 | 0.50 | 0.596 [0.544, 0.653] | 0.596 [0.544, 0.653] | 0.562 [0.519, 0.610] | 0.486 [0.420, 0.547] | +0.034 [-0.025, +0.087] | +0.110 [+0.039, +0.197] | no | 0.812 [0.779, 0.851] | -0.216 [-0.275, -0.154] |
+| Gemma-2-2B | Corr2Cause pool | raw | 591 | 0.76 | 0.853 [0.815, 0.890] | 0.865 [0.830, 0.897] | 0.876 [0.849, 0.903] | 0.805 [0.772, 0.836] | -0.012 [-0.052, +0.027] | +0.059 [+0.014, +0.103] | no | 0.934 [0.916, 0.952] | -0.069 [-0.105, -0.036] |
+| Gemma-2-2B | Corr2Cause pool | calibrated | 541 | 0.51 | 0.870 [0.833, 0.905] | 0.871 [0.832, 0.906] | 0.795 [0.757, 0.828] | 0.771 [0.737, 0.805] | +0.076 [+0.034, +0.115] | +0.100 [+0.053, +0.147] | **yes** | 0.921 [0.894, 0.946] | -0.050 [-0.086, -0.016] |
+| Gemma-2-2B | CLadder | raw | 810 | 0.39 | 0.619 [0.554, 0.680] | 0.617 [0.549, 0.681] | 0.521 [0.468, 0.576] | 0.472 [0.403, 0.532] | +0.096 [+0.012, +0.166] | +0.146 [+0.077, +0.208] | **yes** | 0.793 [0.753, 0.841] | -0.175 [-0.251, -0.110] |
+| Gemma-2-2B | CLadder | calibrated | 810 | 0.50 | 0.606 [0.538, 0.669] | 0.606 [0.536, 0.669] | 0.548 [0.501, 0.602] | 0.479 [0.417, 0.535] | +0.058 [-0.030, +0.129] | +0.127 [+0.061, +0.184] | no | 0.811 [0.770, 0.858] | -0.205 [-0.289, -0.134] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
 
 Within model-answer strata:
 
@@ -234,8 +258,16 @@ Within model-answer strata:
 | Qwen2.5-1.5B | CLadder | raw | said no | 589 | 0.628 [0.578, 0.673] | 0.507 [0.455, 0.558] | 0.467 [0.424, 0.505] | 0.528 [0.472, 0.585] | +0.121 [+0.051, +0.190] | 0.896 [0.851, 0.941] | -0.269 [-0.340, -0.203] |
 | Qwen2.5-1.5B | CLadder | calibrated | said yes | 820 | 0.701 [0.658, 0.753] | 0.542 [0.488, 0.613] | 0.490 [0.443, 0.533] | 0.511 [0.458, 0.562] | +0.159 [+0.082, +0.226] | 0.875 [0.835, 0.909] | -0.174 [-0.214, -0.129] |
 | Qwen2.5-1.5B | CLadder | calibrated | said no | 819 | 0.615 [0.576, 0.648] | 0.524 [0.485, 0.565] | 0.454 [0.418, 0.488] | 0.517 [0.463, 0.566] | +0.091 [+0.040, +0.138] | 0.882 [0.842, 0.924] | -0.267 [-0.327, -0.216] |
+| Gemma-2-2B | Corr2Cause pool | raw | said yes | 291 | 0.930 [0.892, 0.959] | 0.778 [0.715, 0.836] | 0.528 [0.450, 0.599] | 0.561 [0.492, 0.634] | +0.152 [+0.092, +0.215] | 0.960 [0.937, 0.980] | -0.030 [-0.061, -0.001] |
+| Gemma-2-2B | Corr2Cause pool | raw | said no | 909 | 0.937 [0.920, 0.955] | 0.855 [0.830, 0.880] | 0.790 [0.759, 0.819] | 0.594 [0.558, 0.630] | +0.082 [+0.057, +0.107] | 0.962 [0.947, 0.975] | -0.025 [-0.041, -0.008] |
+| Gemma-2-2B | Corr2Cause pool | calibrated | said yes | 589 | 0.941 [0.918, 0.960] | 0.792 [0.747, 0.836] | 0.654 [0.601, 0.704] | 0.452 [0.403, 0.501] | +0.149 [+0.106, +0.190] | 0.961 [0.942, 0.977] | -0.020 [-0.039, -0.001] |
+| Gemma-2-2B | Corr2Cause pool | calibrated | said no | 611 | 0.931 [0.909, 0.952] | 0.877 [0.849, 0.903] | 0.789 [0.750, 0.826] | 0.605 [0.563, 0.646] | +0.054 [+0.026, +0.082] | 0.961 [0.943, 0.977] | -0.030 [-0.051, -0.008] |
+| Gemma-2-2B | CLadder | raw | said yes | 1002 | 0.696 [0.634, 0.754] | 0.532 [0.474, 0.596] | 0.466 [0.420, 0.515] | 0.538 [0.475, 0.598] | +0.164 [+0.062, +0.246] | 0.866 [0.830, 0.900] | -0.170 [-0.221, -0.115] |
+| Gemma-2-2B | CLadder | raw | said no | 637 | 0.650 [0.587, 0.709] | 0.530 [0.471, 0.594] | 0.481 [0.427, 0.525] | 0.496 [0.445, 0.542] | +0.120 [+0.047, +0.193] | 0.897 [0.862, 0.935] | -0.246 [-0.313, -0.194] |
+| Gemma-2-2B | CLadder | calibrated | said yes | 812 | 0.697 [0.631, 0.756] | 0.534 [0.474, 0.600] | 0.471 [0.422, 0.522] | 0.555 [0.479, 0.624] | +0.163 [+0.057, +0.248] | 0.856 [0.816, 0.895] | -0.159 [-0.215, -0.100] |
+| Gemma-2-2B | CLadder | calibrated | said no | 827 | 0.661 [0.603, 0.717] | 0.530 [0.475, 0.595] | 0.473 [0.427, 0.511] | 0.501 [0.446, 0.550] | +0.131 [+0.059, +0.196] | 0.898 [0.866, 0.934] | -0.237 [-0.297, -0.185] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
 
 The same under the original fixed regularisation (probe C = 0.01, TF-IDF C = 1):
 
@@ -249,8 +281,12 @@ The same under the original fixed regularisation (probe C = 0.01, TF-IDF C = 1):
 | Qwen2.5-1.5B | Corr2Cause pool | calibrated | 542 | 0.52 | 0.809 [0.774, 0.844] | 0.812 [0.776, 0.846] | 0.788 [0.756, 0.817] | 0.821 [0.790, 0.851] | +0.024 [-0.011, +0.058] | -0.009 [-0.051, +0.030] | no | 0.921 [0.898, 0.942] | -0.109 [-0.144, -0.075] |
 | Qwen2.5-1.5B | CLadder | raw | 810 | 0.36 | 0.634 [0.573, 0.693] | 0.638 [0.581, 0.694] | 0.483 [0.414, 0.552] | 0.473 [0.408, 0.534] | +0.156 [+0.103, +0.201] | +0.165 [+0.084, +0.253] | **yes** | 0.796 [0.760, 0.838] | -0.158 [-0.216, -0.101] |
 | Qwen2.5-1.5B | CLadder | calibrated | 800 | 0.50 | 0.650 [0.597, 0.704] | 0.650 [0.598, 0.705] | 0.524 [0.474, 0.578] | 0.486 [0.420, 0.547] | +0.126 [+0.082, +0.168] | +0.164 [+0.084, +0.251] | **yes** | 0.812 [0.779, 0.851] | -0.162 [-0.219, -0.106] |
+| Gemma-2-2B | Corr2Cause pool | raw | 591 | 0.76 | 0.861 [0.824, 0.897] | 0.892 [0.861, 0.919] | 0.839 [0.812, 0.866] | 0.805 [0.772, 0.836] | +0.052 [+0.018, +0.085] | +0.086 [+0.048, +0.124] | **yes** | 0.934 [0.916, 0.952] | -0.042 [-0.074, -0.013] |
+| Gemma-2-2B | Corr2Cause pool | calibrated | 541 | 0.51 | 0.853 [0.818, 0.886] | 0.854 [0.819, 0.887] | 0.771 [0.737, 0.801] | 0.771 [0.737, 0.805] | +0.083 [+0.044, +0.122] | +0.083 [+0.039, +0.127] | **yes** | 0.921 [0.894, 0.946] | -0.067 [-0.102, -0.035] |
+| Gemma-2-2B | CLadder | raw | 810 | 0.39 | 0.623 [0.569, 0.675] | 0.631 [0.577, 0.683] | 0.498 [0.424, 0.573] | 0.472 [0.403, 0.532] | +0.133 [+0.051, +0.205] | +0.159 [+0.093, +0.233] | **yes** | 0.793 [0.753, 0.841] | -0.162 [-0.227, -0.109] |
+| Gemma-2-2B | CLadder | calibrated | 810 | 0.50 | 0.617 [0.564, 0.669] | 0.617 [0.566, 0.668] | 0.506 [0.443, 0.566] | 0.479 [0.417, 0.535] | +0.111 [+0.032, +0.180] | +0.138 [+0.063, +0.217] | **yes** | 0.811 [0.770, 0.858] | -0.194 [-0.261, -0.140] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe_fixedC.json`, `results/confound_qwen0.5b_cladder_fixedC.json`, `results/confound_qwen1.5b_c2c_probe_fixedC.json`, `results/confound_qwen1.5b_cladder_fixedC.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe_fixedC.json`, `results/confound_qwen0.5b_cladder_fixedC.json`, `results/confound_qwen1.5b_c2c_probe_fixedC.json`, `results/confound_qwen1.5b_cladder_fixedC.json`, `results/confound_gemma2b_c2c_probe_fixedC.json`, `results/confound_gemma2b_cladder_fixedC.json`</sub>
 
 External check: probe trained on the pool, evaluated on the Corr2Cause test set (15.5% positive; AUROC):
 
@@ -258,8 +294,9 @@ External check: probe trained on the pool, evaluated on the Corr2Cause test set 
 |---|---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | 1162 | 0.887 [0.849, 0.925] | 0.844 [0.803, 0.877] | 0.762 [0.729, 0.801] | 0.589 [0.531, 0.660] | +0.043 [+0.000, +0.097] | 0.885 [0.856, 0.910] | +0.002 [-0.038, +0.054] | 0.956 [0.938, 0.971] | -0.069 [-0.107, -0.028] |
 | Qwen2.5-1.5B | 1162 | 0.919 [0.898, 0.939] | 0.844 [0.803, 0.877] | 0.762 [0.729, 0.801] | 0.561 [0.503, 0.614] | +0.074 [+0.046, +0.111] | 0.885 [0.856, 0.910] | +0.033 [+0.016, +0.056] | 0.956 [0.938, 0.971] | -0.038 [-0.059, -0.013] |
+| Gemma-2-2B | 1162 | 0.933 [0.907, 0.954] | 0.844 [0.803, 0.877] | 0.762 [0.729, 0.801] | 0.536 [0.495, 0.566] | +0.089 [+0.047, +0.137] | 0.885 [0.856, 0.910] | +0.048 [+0.021, +0.083] | 0.956 [0.938, 0.971] | -0.023 [-0.049, +0.004] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen1.5b_c2c_probe.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_gemma2b_c2c_probe.json`</sub>
 
 <!-- T1-CONFOUND-TEXT -->
 
@@ -328,13 +365,19 @@ External check: probe trained on the pool, evaluated on the Corr2Cause test set 
 | Qwen2.5-0.5B | 0.494 | CLadder | 0.506 | 0.561 [0.534, 0.586] | -0.240 [-0.285, -0.203] | +0.063 [+0.024, +0.099] | 16/24 (0.67) | 0.67 | -0.234 |
 | Qwen2.5-1.5B | 1.54 | Corr2Cause pool | 0.505 | 0.870 [0.850, 0.890] | -0.049 [-0.068, -0.032] | +0.276 [+0.244, +0.307] | 21/28 (0.75) | 0.64 | +0.088 |
 | Qwen2.5-1.5B | 1.54 | CLadder | 0.506 | 0.605 [0.580, 0.631] | -0.196 [-0.234, -0.162] | +0.096 [+0.061, +0.134] | 24/28 (0.86) | 0.79 | -0.221 |
+| Gemma-2-2B | 2.61 | Corr2Cause pool | 0.507 | 0.863 [0.841, 0.886] | -0.056 [-0.078, -0.033] | +0.267 [+0.236, +0.302] | 18/26 (0.69) | 0.62 | +0.071 |
+| Gemma-2-2B | 2.61 | CLadder | 0.506 | 0.626 [0.590, 0.664] | -0.174 [-0.220, -0.133] | +0.107 [+0.064, +0.150] | 20/26 (0.77) | 0.65 | -0.194 |
 
 <sub>Source: `results/cross_model.json`</sub>
 
 | Comparison (gold-probe accuracy, paired) | Difference |
 |---|---|
 | c2c_probe:qwen1.5b_minus_qwen0.5b | +0.063 [+0.040, +0.087] |
+| c2c_probe:gemma2b_minus_qwen0.5b | +0.057 [+0.033, +0.081] |
+| c2c_probe:gemma2b_minus_qwen1.5b | -0.007 [-0.029, +0.017] |
 | cladder:qwen1.5b_minus_qwen0.5b | +0.044 [+0.014, +0.076] |
+| cladder:gemma2b_minus_qwen0.5b | +0.065 [+0.029, +0.103] |
+| cladder:gemma2b_minus_qwen1.5b | +0.021 [-0.013, +0.056] |
 
 <sub>Source: `results/cross_model.json`</sub>
 

@@ -1,16 +1,16 @@
-| Model | Item set | Layer | Direction | Slope per unit s | Percentile among 100 isotropic directions (|slope|) | Isotropic median |slope| | Isotropic max |slope| | Matched control family (20 directions) | Percentile among matched controls | Matched median |slope| | Matched max |slope| | Ratio to matched median |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold-label probe weights | -0.049 [-0.056, -0.042] | 22 | 0.125 | 0.685 | shuffled-label probe | 20 | 0.130 | 0.294 | 0.4 |
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold difference of class means | +0.865 [+0.855, +0.875] | 100 | 0.125 | 0.685 | shuffled-label difference of means | 100 | 0.189 | 0.628 | 4.6 |
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | model-answer probe weights (positive control) | +1.700 [+1.685, +1.714] | 100 | 0.125 | 0.685 | shuffled-label probe | 100 | 0.130 | 0.294 | 13.1 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold-label probe weights | -0.229 [-0.235, -0.222] | 88 | 0.104 | 0.373 | shuffled-label probe | 85 | 0.075 | 0.360 | 3.0 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold difference of class means | +0.150 [+0.144, +0.157] | 63 | 0.104 | 0.373 | shuffled-label difference of means | 90 | 0.063 | 0.191 | 2.4 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | model-answer probe weights (positive control) | +0.525 [+0.516, +0.532] | 100 | 0.104 | 0.373 | shuffled-label probe | 100 | 0.075 | 0.360 | 7.0 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold-label probe weights | -0.201 [-0.226, -0.178] | 55 | 0.184 | 0.850 | shuffled-label probe | 65 | 0.113 | 0.449 | 1.8 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 |
+| Model | Item set | Layer | Direction | Slope per unit s | Percentile among 100 isotropic directions (|slope|) | Isotropic median |slope| | Isotropic max |slope| | Matched control family (20 directions) | Percentile among matched controls | Matched median |slope| | Matched max |slope| | Ratio to matched median | Natural SD along this direction (units of s) | Natural SD, matched controls (median) | Percentile among matched controls, per natural SD | Ratio to matched median, per natural SD |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold-label probe weights | -0.049 [-0.056, -0.042] | 22 | 0.125 | 0.685 | shuffled-label probe | 20 | 0.130 | 0.294 | 0.4 | 0.0083 | 0.0031 | 50 | 1.0 |
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold difference of class means | +0.865 [+0.855, +0.875] | 100 | 0.125 | 0.685 | shuffled-label difference of means | 100 | 0.189 | 0.628 | 4.6 | 0.3410 | 0.3316 | 100 | 4.0 |
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | model-answer probe weights (positive control) | +1.700 [+1.685, +1.714] | 100 | 0.125 | 0.685 | shuffled-label probe | 100 | 0.130 | 0.294 | 13.1 | 0.0652 | 0.0031 | 100 | 267.8 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold-label probe weights | -0.229 [-0.235, -0.222] | 88 | 0.104 | 0.373 | shuffled-label probe | 85 | 0.075 | 0.360 | 3.0 | 0.0031 | 0.0032 | 80 | 2.9 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold difference of class means | +0.150 [+0.144, +0.157] | 63 | 0.104 | 0.373 | shuffled-label difference of means | 90 | 0.063 | 0.191 | 2.4 | 0.1132 | 0.3692 | 30 | 0.8 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | model-answer probe weights (positive control) | +0.525 [+0.516, +0.532] | 100 | 0.104 | 0.373 | shuffled-label probe | 100 | 0.075 | 0.360 | 7.0 | 0.0234 | 0.0032 | 100 | 50.4 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 | 0.0159 | 0.0052 | 100 | 5.6 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 | 0.5324 | 0.3511 | 85 | 2.3 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 | 0.3503 | 0.0052 | 100 | 800.8 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold-label probe weights | -0.201 [-0.226, -0.178] | 55 | 0.184 | 0.850 | shuffled-label probe | 65 | 0.113 | 0.449 | 1.8 | 0.0035 | 0.0026 | 75 | 2.4 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 | 0.3543 | 0.4113 | 60 | 1.4 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 | 0.3029 | 0.0026 | 100 | 1798.5 |
 
 <sub>Source: `results/steering_controls_qwen0.5b_c2c_probe.json`, `results/steering_controls_qwen0.5b_c2c_debiased.json`, `results/steering_controls_qwen1.5b_c2c_probe.json`, `results/steering_controls_qwen1.5b_c2c_debiased.json`</sub>

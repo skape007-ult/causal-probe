@@ -94,7 +94,10 @@ def c2c_debiased_pool(train: list[dict], seed: int = SEED,
     then mirrors its rate in the test fold, and a hypothesis-only classifier scored 0.32 - below
     chance; and a premise-only classifier scored 0.72. See decision D21 in EXPLAINER.md.)
 
-    Items carry `block` (int). Order: by block, then hypothesis string, then label."""
+    Items carry `block` (int). Order: by block, then hypothesis string, then label.
+    HAZARD: because of that order, even positions hold invalid and odd positions valid items. Never
+    subsample this pool by index (every k-th item, first n items); use blocks. The order is fixed
+    because every activation cache is aligned to it."""
     rng = np.random.default_rng(seed)
     lab = defaultdict(dict)                 # premise -> {hypothesis string: item}
     for it in train:

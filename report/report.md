@@ -12,8 +12,8 @@ Technical report. Every number in a table comes from `results/*.json` via `scrip
 1. *Behaviour.* Qwen2.5-0.5B, Qwen2.5-1.5B and Gemma-2-2B are at chance on Corr2Cause and CLadder. Part of the picture is answer bias; the bias-free ranking score is at or near 0.5 as well, and the small signal on the original Corr2Cause items disappears when surface cues are removed (Section 3.1).
 2. *First probing result and its retraction.* Linear probes decode the gold label at 0.807 to 0.870 on a balanced Corr2Cause pool, and the pre-registered criterion for "represents but doesn't say" passed as coded in some cells. An independent audit showed the criterion's baselines were too weak: the hypothesis string alone predicts the label at 0.859 on that pool. Against the strongest text-only baseline the probes lose in all six model × benchmark cells. The positive verdict was retracted (Section 3.4).
 3. *Text-only baselines on the benchmarks.* On the official Corr2Cause test split a hypothesis-only classifier reaches AUROC 0.895 [0.863, 0.919] and a parsed-feature classifier accuracy 0.938 [0.921, 0.957]; on CLadder, quoted numbers plus question polarity reach 0.835 [0.818, 0.853] on held-out stories. The Corr2Cause effect follows from the benchmark's published construction; the CLadder one is largely documented by prior work (Section 3.5 and `report/benchmark_text_baselines.md`).
-4. *A fairer test.* On a debiased Corr2Cause pool, in which the hypothesis alone and the premise alone carry no label information in any fold, the gold probe scores 0.633 [0.609, 0.658] for Qwen2.5-0.5B and 0.752 [0.729, 0.776] for Qwen2.5-1.5B, with both models answering at chance. For the 1.5B model this is well above every shallow confound control (strongest: a probe on a randomly initialised copy, 0.579), below a parsed-feature classifier (0.816), and adds nothing measurable to it. Properties that require binding premise statements to the queried variables are readable from the trained model and not from a random one. The supported statement is that this model encodes part of the premise's structure that its answers do not express; the audited criterion for the stronger claim is not met (Section 3.6; post hoc).
-5. *Steering.* At the probed layer, adding the gold probe's weight direction changes the answer no more than adding a probe direction fitted to shuffled labels, and a movement of natural size along it changes nothing. The difference-of-class-means direction does move the answer, but about as much as differences of means for shuffled labels. This does not establish that the decoded information is unused (Section 4.1; rewritten after the second audit).
+4. *A fairer test.* On a debiased Corr2Cause pool, in which the hypothesis alone and the premise alone carry no label information in any fold, the gold probe scores 0.633 [0.609, 0.658] for Qwen2.5-0.5B and 0.752 [0.729, 0.776] for Qwen2.5-1.5B. For the 1.5B model this is above every interaction control that binds nothing to the queried variables (strongest: 0.659), level with a per-template lookup of the statements naming the queried pair (0.765), and below a hand-written parse (0.816); it adds about two points to that parse and nothing to a stronger text-only model. For the 0.5B model the final-token probe is not above the no-binding controls. Pooled, both models answer at chance; within "X directly causes Y" hypotheses the 1.5B model's answers partly track validity. The audited criterion for "represents but doesn't say" is not met (Section 3.6; post hoc, audited).
+5. *Steering.* At the probed layer and final token, adding the gold probe's weight direction shifts the answer by an amount within the range of probe directions fitted to shuffled labels, and a movement of natural size along it changes nothing measurable. With twenty controls and one site this neither shows nor excludes a causal role. The difference-of-class-means direction moves the answer, about as much as differences of means for shuffled labels (Section 4.1; rewritten after the second audit, wording tightened after the third).
 6. *Patching.* A change of one variable in the prompt reaches the answer position at about 0.6 of the network's depth in both Qwen models. This locates the arrival of a prompt difference, not a causal judgement (Section 4.2).
 7. *Remote runs.* Gemma-2-2B interventions and SAE features, and all analyses for Qwen2.5-3B, are pending the Kaggle run (Sections 3.6, 4, 5).
 
@@ -431,112 +431,168 @@ Gold-label probes on the debiased pool (report half; layer and regularisation ch
 
 **Verdicts under the two criteria, unchanged.** The audited criterion (probe beats the strongest text-only baseline; D19) is **not met** for either model: the parsed-feature classifier beats the probe by -0.183 [-0.214, -0.149] (Qwen2.5-0.5B) and -0.063 [-0.094, -0.034] (Qwen2.5-1.5B). The original pre-registered criterion as coded (D11: against TF-IDF and the template prior, on wrongly answered items) is met for both models on this pool; as explained in Section 3.4 it does not test the claim, and it is reported, not relied on.
 
-#### 3.6.1 Post-hoc reading: two kinds of baseline
+#### 3.6.1 Post-hoc reading: a ladder of baselines in two groups
 
-*Everything in 3.6.1 to 3.6.4 was designed after the debiased-pool probe results were seen (13 November; `scripts/05b_probe_content.py`, `notes/log.md`). It is a labelled post-hoc analysis and changes neither criterion above.*
+*Everything in 3.6.1 to 3.6.6 was designed after the debiased-pool probe results were seen (13 November; `scripts/05b_probe_content.py`) and revised after the third independent audit (`notes/audit_debiased_raw.md`). It is a labelled post-hoc analysis and changes neither criterion above.*
 
-The text baselines are of two different kinds, and comparing a probe with them answers two different questions.
+In this pool a classifier that sees only the hypothesis, or only the premise, is at 0.50 by construction, and so is any model that is additive in premise and hypothesis features, such as a linear bag-of-words of the whole prompt. Label information can only come from an *interaction* between hypothesis and premise. Listing the single-input controls as things the probe "beats" would therefore say nothing; they are shown as group (a0) to confirm the construction. The informative baselines form a ladder, ordered by how much they bind the premise to the hypothesis:
 
-- **(a) Shallow confound controls**: bag-of-words of the prompt, the hypothesis-string prior, the premise alone, a probe on a randomly initialised copy of the model, and the probe trained on shuffled labels. Beating these shows that the probe is not exploiting surface statistics of the prompt, the architecture alone, or a leak.
-- **(b) Structure-aware reference**: the parsed-feature classifier. It binds the premise's statements to the two queried variables, which approximates solving the task from the text. It is not a confound; it marks how far explicit structure extraction gets.
+- **(a) Shallow confound controls**: interaction models that bind nothing to the queried variables. One model per hypothesis template on premise-level counts or on a bag-of-words of the premise; and a probe on a randomly initialised copy of the network.
+- **(b) Structure-aware text references**: models that bind premise statements to the queried variables. Per template, counts of statements mentioning each queried variable separately; per template, a lookup of the statements naming the queried pair; per hypothesis string, a bag of premise n-grams (no parser; a separate model for each of the 48 strings can learn which statements matter for that string); the hand-written parse with all features; and the hand parse stacked with the per-string n-gram model, the strongest text-only model used here.
 
 | Model | Group | Scorer | Accuracy | AUROC | Gold probe − this (accuracy, paired) |
 |---|---|---|---|---|---|
-| Qwen2.5-0.5B | — | **Gold-label probe** | 0.633 [0.611, 0.657] | 0.676 [0.650, 0.704] | — |
-| Qwen2.5-0.5B | (a) shallow confound control | Bag-of-words, whole prompt | 0.518 [0.495, 0.541] | 0.526 [0.501, 0.552] | +0.115 [+0.085, +0.147] |
-| Qwen2.5-0.5B | (a) shallow confound control | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.133 [+0.111, +0.157] |
-| Qwen2.5-0.5B | (a) shallow confound control | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.133 [+0.111, +0.157] |
-| Qwen2.5-0.5B | (a) shallow confound control | Probe trained on shuffled labels | 0.526 [0.503, 0.551] | 0.534 [0.508, 0.560] | +0.107 [+0.071, +0.139] |
-| Qwen2.5-0.5B | (a) shallow confound control | Probe on a randomly initialised copy of the model | 0.604 [0.580, 0.628] | 0.627 [0.599, 0.653] | +0.029 [+0.002, +0.060] |
-| Qwen2.5-0.5B | (b) structure-aware reference | Parsed features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.183 [-0.216, -0.151] |
-| Qwen2.5-1.5B | — | **Gold-label probe** | 0.752 [0.728, 0.774] | 0.829 [0.807, 0.850] | — |
-| Qwen2.5-1.5B | (a) shallow confound control | Bag-of-words, whole prompt | 0.518 [0.495, 0.541] | 0.526 [0.501, 0.552] | +0.235 [+0.201, +0.265] |
-| Qwen2.5-1.5B | (a) shallow confound control | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.252 [+0.228, +0.274] |
-| Qwen2.5-1.5B | (a) shallow confound control | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.252 [+0.228, +0.274] |
-| Qwen2.5-1.5B | (a) shallow confound control | Probe trained on shuffled labels | 0.497 [0.471, 0.524] | 0.498 [0.471, 0.528] | +0.256 [+0.221, +0.287] |
-| Qwen2.5-1.5B | (a) shallow confound control | Probe on a randomly initialised copy of the model | 0.579 [0.554, 0.604] | 0.617 [0.589, 0.646] | +0.174 [+0.142, +0.205] |
-| Qwen2.5-1.5B | (b) structure-aware reference | Parsed features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.063 [-0.095, -0.036] |
+| Qwen2.5-0.5B | — | **Gold-label probe, final token, layer 14** | 0.633 [0.611, 0.657] | 0.676 [0.650, 0.704] | — |
+| Qwen2.5-0.5B | (a0) single-input control: 0.50 by construction | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.133 [+0.111, +0.157] |
+| Qwen2.5-0.5B | (a0) single-input control: 0.50 by construction | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.133 [+0.111, +0.157] |
+| Qwen2.5-0.5B | (a0) single-input control: 0.50 by construction | Bag-of-words, whole prompt (linear) | 0.489 [0.460, 0.516] | 0.514 [0.481, 0.545] | +0.144 [+0.110, +0.180] |
+| Qwen2.5-0.5B | (a0) single-input control: 0.50 by construction | Probe trained on shuffled labels (20 shuffles) | 0.497 ± 0.013 (max 0.517) | – | – |
+| Qwen2.5-0.5B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: premise-level counts | 0.593 [0.565, 0.619] | 0.619 [0.588, 0.650] | +0.040 [+0.006, +0.071] |
+| Qwen2.5-0.5B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: bag-of-words of the premise | 0.659 [0.630, 0.688] | 0.706 [0.676, 0.736] | -0.026 [-0.062, +0.006] |
+| Qwen2.5-0.5B | (a) shallow confound control: interaction, nothing bound to the queried variables | Probe on a randomly initialised copy of the model | 0.604 [0.580, 0.628] | 0.627 [0.599, 0.653] | +0.029 [+0.002, +0.060] |
+| Qwen2.5-0.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statement counts for each queried variable separately | 0.743 [0.717, 0.768] | 0.819 [0.795, 0.843] | -0.110 [-0.141, -0.076] |
+| Qwen2.5-0.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statements naming the queried pair (lookup) | 0.765 [0.741, 0.786] | 0.834 [0.811, 0.855] | -0.132 [-0.167, -0.098] |
+| Qwen2.5-0.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–2-grams (no parser) | 0.742 [0.717, 0.767] | 0.821 [0.797, 0.844] | -0.109 [-0.141, -0.079] |
+| Qwen2.5-0.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.172 [-0.201, -0.141] |
+| Qwen2.5-0.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.183 [-0.216, -0.151] |
+| Qwen2.5-0.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.232 [-0.260, -0.202] |
+| Qwen2.5-1.5B | — | **Gold-label probe, final token, layer 22** | 0.752 [0.728, 0.774] | 0.829 [0.807, 0.850] | — |
+| Qwen2.5-1.5B | (a0) single-input control: 0.50 by construction | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.252 [+0.228, +0.274] |
+| Qwen2.5-1.5B | (a0) single-input control: 0.50 by construction | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.252 [+0.228, +0.274] |
+| Qwen2.5-1.5B | (a0) single-input control: 0.50 by construction | Bag-of-words, whole prompt (linear) | 0.489 [0.460, 0.516] | 0.514 [0.481, 0.545] | +0.264 [+0.226, +0.300] |
+| Qwen2.5-1.5B | (a0) single-input control: 0.50 by construction | Probe trained on shuffled labels (20 shuffles) | 0.498 ± 0.013 (max 0.519) | – | – |
+| Qwen2.5-1.5B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: premise-level counts | 0.593 [0.565, 0.619] | 0.619 [0.588, 0.650] | +0.159 [+0.126, +0.192] |
+| Qwen2.5-1.5B | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: bag-of-words of the premise | 0.659 [0.630, 0.688] | 0.706 [0.676, 0.736] | +0.093 [+0.060, +0.125] |
+| Qwen2.5-1.5B | (a) shallow confound control: interaction, nothing bound to the queried variables | Probe on a randomly initialised copy of the model | 0.579 [0.554, 0.604] | 0.617 [0.589, 0.646] | +0.174 [+0.142, +0.205] |
+| Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statement counts for each queried variable separately | 0.743 [0.717, 0.768] | 0.819 [0.795, 0.843] | +0.010 [-0.022, +0.038] |
+| Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statements naming the queried pair (lookup) | 0.765 [0.741, 0.786] | 0.834 [0.811, 0.855] | -0.013 [-0.045, +0.016] |
+| Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–2-grams (no parser) | 0.742 [0.717, 0.767] | 0.821 [0.797, 0.844] | +0.010 [-0.020, +0.038] |
+| Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.053 [-0.080, -0.026] |
+| Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.063 [-0.095, -0.036] |
+| Qwen2.5-1.5B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.113 [-0.139, -0.088] |
 
 <sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
 
-For Qwen2.5-1.5B the probe (0.752 [0.728, 0.774]) is above every shallow control, the strongest being the random-init probe (0.579 [0.554, 0.604]; probe minus control +0.174 [+0.142, +0.205]), and below the structure-aware reference (0.816 [0.792, 0.837]). For Qwen2.5-0.5B the probe (0.633 [0.611, 0.657]) exceeds the random-init probe by only +0.029 [+0.002, +0.060]. Both models' own answers on this pool are at chance (AUROC 0.505 [0.485, 0.526] and 0.510 [0.488, 0.533]). For Qwen2.5-1.5B, probe accuracy stays at the random-init level through the first half of the network and rises between layers 14 and 22 (`results/probes_qwen1.5b_c2c_debiased_C1.json`).
+For Qwen2.5-1.5B the final-token probe (0.752 [0.728, 0.774] accuracy, AUROC 0.829 [0.807, 0.850]) is above every control in group (a): the strongest is the per-template bag-of-words of the premise (0.659 [0.630, 0.688]; probe minus control +0.093 [+0.060, +0.125]). Within group (b) it is indistinguishable from the per-template lookup of statements naming the pair (0.765 [0.741, 0.786]; difference -0.013 [-0.045, +0.016]) and from per-variable statement counts (0.743 [0.717, 0.768]), and below the per-string 4-gram model (0.805 [0.784, 0.827]), the hand parse (0.816 [0.792, 0.837]) and their stack (0.865 [0.845, 0.884]). "Shallow" and "structure-aware" are ends of a continuum, and the probe sits where the binding starts: at the level of looking up what the premise says about the two queried variables.
 
-#### 3.6.2 Does the probe add predictive power beyond the parsed features?
+For Qwen2.5-0.5B the final-token probe (0.633 [0.611, 0.657]) is **not** above group (a): it is level with the random-init probe (0.604 [0.580, 0.628]; difference +0.029 [+0.002, +0.060], one random initialisation) and no better than the per-template bag-of-words (0.659 [0.630, 0.688]; difference -0.026 [-0.062, +0.006]). At the final token there is no evidence of binding for this model. Evidence for it exists elsewhere: at the end of the hypothesis its probe scores 0.737 [0.713, 0.760], and the adjacency probe below is well above its controls.
 
-Gradient boosting on the parsed features alone, against the same model with the probe's score added as one column. The probe score is produced by nested cross-validation, so that no label from a test fold reaches any feature.
+Robustness of the headline number:
 
-| Model | Parsed features only | Parsed features + probe score | Gain in accuracy | Gain in AUROC | Probe right when parsed features wrong | Parsed features right when probe wrong | Correlation of the two scores |
-|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | 0.816 [0.792, 0.837] | 0.814 [0.792, 0.836] | -0.002 [-0.019, +0.016] | -0.001 [-0.009, +0.008] | 0.57 (n = 230) | 0.78 (n = 458) | 0.36 |
-| Qwen2.5-1.5B | 0.816 [0.792, 0.837] | 0.822 [0.799, 0.843] | +0.006 [-0.015, +0.026] | +0.005 [-0.005, +0.015] | 0.63 (n = 230) | 0.73 (n = 309) | 0.59 |
+| Model | Probe accuracy, 3-seed ensemble (report half) | Single seeds | Shuffled-label null (20 shuffles) | Probe trained on the selection half only |
+|---|---|---|---|---|
+| Qwen2.5-0.5B | 0.633 | 0.624 / 0.634 / 0.624 | 0.497 ± 0.013 | 0.620 [0.596, 0.646] |
+| Qwen2.5-1.5B | 0.752 | 0.736 / 0.741 / 0.754 | 0.498 ± 0.013 | 0.708 [0.684, 0.730] |
 
 <sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
 
-No measurable gain: +0.006 [-0.015, +0.026] accuracy for Qwen2.5-1.5B and -0.002 [-0.019, +0.016] for Qwen2.5-0.5B. What the probe reads is, as far as this test can tell, contained in what the parser extracts. (A cruder version of this test, a logistic regression on the two out-of-fold scores, had suggested a two-point gain; it was not nested and is withdrawn, see `notes/log.md`.)
+The reported accuracy is an ensemble over three fold assignments; single assignments are one to two points lower for Qwen2.5-1.5B. A probe trained on the selection half only (half the data) scores lower still. The shuffled-label null is centred on 0.50 with a standard deviation of about 0.013.
+
+#### 3.6.2 Does the probe add predictive power beyond the text models?
+
+Nested logistic stacking: for every outer fold, the text model's score and the probe's score for the training rows come from an inner cross-validation, a two- or three-parameter logistic regression is fitted on them, and it is applied to the test rows.
+
+| Model | Probe added to | Base accuracy | Base + probe | Gain in accuracy (report half) | Gain in AUROC (report half) | Gain in accuracy (all items) |
+|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | hand-written parse | 0.817 [0.794, 0.840] | 0.826 [0.803, 0.847] | +0.009 [-0.002, +0.018] | +0.003 [-0.000, +0.006] | +0.006 [-0.001, +0.013] |
+| Qwen2.5-0.5B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.868 [0.849, 0.886] | +0.002 [-0.003, +0.008] | +0.000 [-0.000, +0.001] | -0.000 [-0.004, +0.003] |
+| Qwen2.5-1.5B | hand-written parse | 0.817 [0.794, 0.840] | 0.839 [0.818, 0.858] | +0.022 [+0.005, +0.038] | +0.017 [+0.010, +0.024] | +0.019 [+0.008, +0.029] |
+| Qwen2.5-1.5B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.865 [0.844, 0.884] | -0.001 [-0.010, +0.008] | +0.003 [+0.001, +0.005] | -0.001 [-0.008, +0.005] |
+
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+
+For Qwen2.5-1.5B the probe adds +0.022 [+0.005, +0.038] accuracy (AUROC +0.017 [+0.010, +0.024]) to the hand-written parse, and -0.001 [-0.010, +0.008] to the strongest text-only model. For Qwen2.5-0.5B: +0.009 [-0.002, +0.018] and +0.002 [-0.003, +0.008]. So the activations hold about two points' worth of validity information that this particular hand parse lacks, and nothing measurable that a stronger text-only model lacks.
+
+*History of this number, for the record.* A first, non-nested stacking gave +0.023; I withdrew it for not being nested and replaced it with "add the probe score as one column to gradient boosting", which gave +0.006 [−0.015, +0.026] and which I reported as "no measurable gain". The third audit showed with a synthetic column of known value that this second test cannot detect a two-point gain, and that proper nesting reproduces the first number. The insensitive test's result is kept in the result file (`gbm_plus_one_column_insensitive`).
 
 #### 3.6.3 Which parsed properties can be read from the activations?
 
-A probe for each binary property a parser reads off the item, at the layer the gold probe uses, with a shuffled-label control and the same probe on the random-init model.
+A probe for each binary property a parser reads off the item, at the layer the gold probe uses, with a shuffled-label null (10 shuffles), the same probe on the random-init model, two text baselines for the same property, and the same probe at the end of the premise, before the hypothesis has been read.
 
-| Model | Layer | Property of the item (read off the prompt by a parser) | Majority rate | Probe AUROC, trained model | Shuffled-label control | Random-init model | Trained − random-init | Probe accuracy, trained | Gold accuracy from this property alone |
-|---|---|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | 14 | queried pair correlates | 0.92 | 0.969 [0.955, 0.982] | 0.484 [0.418, 0.552] | 0.895 [0.867, 0.919] | +0.075 [+0.048, +0.104] | 0.956 [0.944, 0.967] | 0.525 |
-| Qwen2.5-0.5B | 14 | queried pair is marginally independent | 0.92 | 0.969 [0.955, 0.982] | 0.484 [0.418, 0.552] | 0.895 [0.867, 0.919] | +0.075 [+0.048, +0.104] | 0.956 [0.944, 0.967] | 0.525 |
-| Qwen2.5-0.5B | 14 | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.892 [0.874, 0.909] | 0.505 [0.469, 0.537] | 0.656 [0.625, 0.687] | +0.237 [+0.206, +0.269] | 0.814 [0.792, 0.835] | 0.539 |
-| Qwen2.5-0.5B | 14 | some conditioning set separates the pair | 0.60 | 0.891 [0.873, 0.908] | 0.501 [0.465, 0.534] | 0.665 [0.634, 0.696] | +0.227 [+0.196, +0.259] | 0.817 [0.796, 0.838] | 0.544 |
-| Qwen2.5-0.5B | 14 | pair has a common neighbour | 0.83 | 0.765 [0.728, 0.806] | 0.483 [0.436, 0.532] | 0.723 [0.688, 0.759] | +0.042 [+0.005, +0.079] | 0.817 [0.793, 0.841] | 0.553 |
-| Qwen2.5-0.5B | 14 | a common neighbour lies in a separating set | 0.70 | 0.851 [0.829, 0.874] | 0.500 [0.466, 0.532] | 0.676 [0.642, 0.707] | +0.175 [+0.143, +0.209] | 0.788 [0.764, 0.810] | 0.506 |
-| Qwen2.5-0.5B | 14 | a common neighbour lies in no separating set | 0.84 | 0.848 [0.820, 0.874] | 0.504 [0.457, 0.549] | 0.742 [0.697, 0.781] | +0.106 [+0.069, +0.146] | 0.855 [0.834, 0.874] | 0.510 |
-| Qwen2.5-0.5B | 14 | premise has six variables | 0.97 | 1.000 [0.999, 1.000] | 0.323 [0.216, 0.433] | 1.000 [1.000, 1.000] | -0.000 [-0.001, +0.000] | 0.998 [0.994, 1.000] | 0.500 |
-| Qwen2.5-0.5B | 14 | many correlation statements (≥ median) | 0.59 | 1.000 [0.999, 1.000] | 0.468 [0.429, 0.506] | 1.000 [1.000, 1.000] | -0.000 [-0.001, -0.000] | 0.994 [0.989, 0.999] | 0.500 |
-| Qwen2.5-0.5B | 14 | premise states a marginal independence | 0.74 | 0.999 [0.997, 1.000] | 0.523 [0.481, 0.561] | 1.000 [1.000, 1.000] | -0.001 [-0.003, -0.000] | 0.991 [0.985, 0.996] | 0.500 |
-| Qwen2.5-0.5B | 14 | many conditional-independence statements (≥ median) | 0.53 | 1.000 [0.999, 1.000] | 0.486 [0.448, 0.525] | 1.000 [1.000, 1.000] | -0.000 [-0.001, -0.000] | 0.993 [0.986, 0.998] | 0.500 |
-| Qwen2.5-1.5B | 22 | queried pair correlates | 0.92 | 0.995 [0.990, 0.999] | 0.447 [0.386, 0.511] | 0.882 [0.851, 0.908] | +0.113 [+0.086, +0.145] | 0.990 [0.982, 0.995] | 0.525 |
-| Qwen2.5-1.5B | 22 | queried pair is marginally independent | 0.92 | 0.995 [0.990, 0.999] | 0.447 [0.386, 0.511] | 0.882 [0.851, 0.908] | +0.113 [+0.086, +0.145] | 0.990 [0.982, 0.995] | 0.525 |
-| Qwen2.5-1.5B | 22 | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.980 [0.974, 0.986] | 0.516 [0.484, 0.546] | 0.619 [0.589, 0.649] | +0.361 [+0.332, +0.391] | 0.927 [0.912, 0.942] | 0.539 |
-| Qwen2.5-1.5B | 22 | some conditioning set separates the pair | 0.60 | 0.980 [0.973, 0.986] | 0.516 [0.482, 0.547] | 0.622 [0.591, 0.653] | +0.357 [+0.325, +0.387] | 0.928 [0.913, 0.942] | 0.544 |
-| Qwen2.5-1.5B | 22 | pair has a common neighbour | 0.83 | 0.842 [0.813, 0.871] | 0.469 [0.427, 0.512] | 0.695 [0.658, 0.730] | +0.147 [+0.111, +0.186] | 0.846 [0.825, 0.865] | 0.553 |
-| Qwen2.5-1.5B | 22 | a common neighbour lies in a separating set | 0.70 | 0.945 [0.929, 0.958] | 0.498 [0.461, 0.533] | 0.644 [0.612, 0.675] | +0.301 [+0.270, +0.335] | 0.891 [0.873, 0.908] | 0.506 |
-| Qwen2.5-1.5B | 22 | a common neighbour lies in no separating set | 0.84 | 0.944 [0.929, 0.959] | 0.551 [0.510, 0.595] | 0.698 [0.657, 0.740] | +0.246 [+0.204, +0.288] | 0.916 [0.901, 0.932] | 0.510 |
-| Qwen2.5-1.5B | 22 | premise has six variables | 0.97 | 1.000 [0.999, 1.000] | 0.405 [0.288, 0.516] | 1.000 [1.000, 1.000] | -0.000 [-0.001, +0.000] | 0.998 [0.994, 1.000] | 0.500 |
-| Qwen2.5-1.5B | 22 | many correlation statements (≥ median) | 0.59 | 1.000 [0.999, 1.000] | 0.489 [0.453, 0.526] | 1.000 [1.000, 1.000] | -0.000 [-0.001, -0.000] | 0.993 [0.986, 0.998] | 0.500 |
-| Qwen2.5-1.5B | 22 | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.493 [0.453, 0.531] | 1.000 [1.000, 1.000] | -0.000 [-0.000, +0.000] | 0.998 [0.994, 1.000] | 0.500 |
-| Qwen2.5-1.5B | 22 | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.997, 0.999] | 0.493 [0.458, 0.529] | 1.000 [1.000, 1.000] | -0.001 [-0.003, -0.001] | 0.976 [0.964, 0.986] | 0.500 |
+| Model | Property of the item | Majority rate | Probe AUROC, trained model | Shuffled-label null (mean ± SD, 10 shuffles) | Random-init model, same layer | Random-init, its best layer | Text, no binding (per template: premise counts + string id) | Text, per-variable statement counts | Trained model at end of premise (hypothesis not yet read) | Gold accuracy from this property alone |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.892 [0.874, 0.909] | 0.484 ± 0.020 | 0.656 [0.625, 0.687] | 0.660 | 0.682 [0.653, 0.712] | 0.899 [0.883, 0.916] | 0.563 [0.528, 0.597] | 0.539 |
+| Qwen2.5-0.5B | queried pair correlates | 0.92 | 0.969 [0.955, 0.982] | 0.401 ± 0.046 | 0.895 [0.867, 0.919] | 0.916 | 0.946 [0.927, 0.961] | 0.988 [0.974, 0.996] | 0.834 [0.794, 0.868] | 0.525 |
+| Qwen2.5-0.5B | pair has a common neighbour | 0.83 | 0.765 [0.728, 0.806] | 0.466 ± 0.028 | 0.723 [0.688, 0.759] | 0.735 | 0.749 [0.713, 0.786] | 0.828 [0.800, 0.857] | 0.683 [0.648, 0.719] | 0.553 |
+| Qwen2.5-0.5B | a common neighbour lies in a separating set | 0.70 | 0.851 [0.829, 0.874] | 0.493 ± 0.027 | 0.676 [0.642, 0.707] | 0.690 | 0.718 [0.686, 0.748] | 0.871 [0.848, 0.892] | 0.595 [0.560, 0.630] | 0.506 |
+| Qwen2.5-0.5B | a common neighbour lies in no separating set | 0.84 | 0.848 [0.820, 0.874] | 0.489 ± 0.030 | 0.742 [0.697, 0.781] | 0.778 | 0.799 [0.770, 0.826] | 0.864 [0.839, 0.890] | 0.634 [0.585, 0.677] | 0.510 |
+| Qwen2.5-0.5B | premise has six variables | 0.97 | 1.000 [0.999, 1.000] | 0.445 ± 0.078 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [0.999, 1.000] | 1.000 [0.999, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Qwen2.5-0.5B | many correlation statements (≥ median) | 0.59 | 1.000 [0.999, 1.000] | 0.495 ± 0.040 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Qwen2.5-0.5B | premise states a marginal independence | 0.74 | 0.999 [0.997, 1.000] | 0.508 ± 0.029 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Qwen2.5-0.5B | many conditional-independence statements (≥ median) | 0.53 | 1.000 [0.999, 1.000] | 0.502 ± 0.032 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Qwen2.5-1.5B | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.980 [0.974, 0.986] | 0.494 ± 0.027 | 0.619 [0.589, 0.649] | 0.647 | 0.682 [0.653, 0.712] | 0.899 [0.883, 0.916] | 0.562 [0.528, 0.592] | 0.539 |
+| Qwen2.5-1.5B | queried pair correlates | 0.92 | 0.995 [0.990, 0.999] | 0.412 ± 0.058 | 0.882 [0.851, 0.908] | 0.896 | 0.946 [0.927, 0.961] | 0.988 [0.974, 0.996] | 0.823 [0.785, 0.858] | 0.525 |
+| Qwen2.5-1.5B | pair has a common neighbour | 0.83 | 0.842 [0.813, 0.871] | 0.467 ± 0.025 | 0.695 [0.658, 0.730] | 0.715 | 0.749 [0.713, 0.786] | 0.828 [0.800, 0.857] | 0.710 [0.671, 0.746] | 0.553 |
+| Qwen2.5-1.5B | a common neighbour lies in a separating set | 0.70 | 0.945 [0.929, 0.958] | 0.494 ± 0.021 | 0.644 [0.612, 0.675] | 0.665 | 0.718 [0.686, 0.748] | 0.871 [0.848, 0.892] | 0.606 [0.569, 0.638] | 0.506 |
+| Qwen2.5-1.5B | a common neighbour lies in no separating set | 0.84 | 0.944 [0.929, 0.959] | 0.507 ± 0.032 | 0.698 [0.657, 0.740] | 0.768 | 0.799 [0.770, 0.826] | 0.864 [0.839, 0.890] | 0.621 [0.576, 0.663] | 0.510 |
+| Qwen2.5-1.5B | premise has six variables | 0.97 | 1.000 [0.999, 1.000] | 0.481 ± 0.070 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [0.999, 1.000] | 1.000 [0.999, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Qwen2.5-1.5B | many correlation statements (≥ median) | 0.59 | 1.000 [0.999, 1.000] | 0.508 ± 0.029 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Qwen2.5-1.5B | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.503 ± 0.023 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Qwen2.5-1.5B | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.997, 0.999] | 0.506 ± 0.030 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
 
 <sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
 
-Properties of the *queried pair* that require binding premise statements to the two hypothesis variables are decodable from the trained models far better than from random-init copies. For Qwen2.5-1.5B, "the pair is adjacent in the skeleton" has AUROC 0.980 [0.974, 0.986] against 0.619 [0.589, 0.649] at random init, and "a common neighbour lies in a separating set" 0.945 [0.929, 0.958] against 0.644 [0.612, 0.675]. Premise-level counts (how many statements, six variables) are perfectly decodable from the random-init model as well, so they reflect prompt length and say nothing about computation. Shuffled-label controls are at 0.5 except where the property is rare (a small-sample effect of shuffling an imbalanced label).
+"The queried pair is adjacent in the skeleton" is decodable from Qwen2.5-1.5B at AUROC 0.980 [0.974, 0.986], against 0.619 [0.589, 0.649] from the random-init copy at the same layer (0.647 at its best layer), 0.682 [0.653, 0.712] from text without binding, and 0.562 [0.528, 0.592] at the end of the premise, where the model cannot yet know which pair is asked about. A text model with per-variable statement counts and no pair lookup already reaches 0.899 [0.883, 0.916] for this property, so most of what the probe reads requires binding statements to each queried variable; the excess over that (+0.081 [+0.066, +0.097]) is what points to the pair being bound. For Qwen2.5-0.5B the same property is decodable at 0.892 [0.874, 0.909] (random-init 0.656 [0.625, 0.687]; per-variable text 0.899 [0.883, 0.916]). Premise-level counts are perfectly decodable from every source, including the random-init model and the end of the premise, and say nothing about computation. "The pair correlates" is nearly as decodable without any binding (it is true for 92% of items). Shuffled-label nulls for rare properties sit a little below 0.5; that is a property of shuffling an imbalanced label, confirmed over repeated shuffles.
 
-#### 3.6.4 Is the probe's signal carried by one or two properties?
+#### 3.6.4 Is the probe's signal carried by one property, and how much is shared with text?
 
-The gold probe's AUROC inside strata of each strong property, weighted over strata, next to its unstratified AUROC. If one property carried the signal, the AUROC inside its strata would fall towards 0.5.
+The gold probe's AUROC computed only over valid/invalid pairs that fall in the same stratum.
 
-| Model | Stratified by | Strata used | Gold accuracy from the strata alone | Gold-probe AUROC, unstratified | Gold-probe AUROC within strata (pair-weighted) | Lowest single stratum |
-|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | hypothesis template (5) | 5 | 0.500 | 0.676 [0.650, 0.704] | 0.691 [0.663, 0.719] | 0.535 (n = 156) |
-| Qwen2.5-0.5B | pair adjacent in skeleton | 2 | 0.539 | 0.676 [0.650, 0.704] | 0.671 [0.645, 0.698] | 0.656 (n = 727) |
-| Qwen2.5-0.5B | pair has a separating set | 2 | 0.544 | 0.676 [0.650, 0.704] | 0.671 [0.644, 0.698] | 0.657 (n = 733) |
-| Qwen2.5-0.5B | pair correlated | 2 | 0.525 | 0.676 [0.650, 0.704] | 0.665 [0.637, 0.694] | 0.664 (n = 1143) |
-| Qwen2.5-0.5B | pair has a common neighbour | 2 | 0.553 | 0.676 [0.650, 0.704] | 0.667 [0.637, 0.697] | 0.664 (n = 1038) |
-| Qwen2.5-0.5B | common neighbour in no separating set | 2 | 0.510 | 0.676 [0.650, 0.704] | 0.668 [0.641, 0.699] | 0.665 (n = 1039) |
-| Qwen2.5-0.5B | parsed-feature classifier's prediction | 2 | 0.816 | 0.676 [0.650, 0.704] | 0.631 [0.594, 0.670] | 0.621 (n = 624) |
-| Qwen2.5-0.5B | template × adjacent × common neighbour | 11 | 0.760 | 0.676 [0.650, 0.704] | 0.623 [0.581, 0.663] | 0.402 (n = 55) |
-| Qwen2.5-1.5B | hypothesis template (5) | 5 | 0.500 | 0.829 [0.807, 0.850] | 0.835 [0.813, 0.856] | 0.772 (n = 260) |
-| Qwen2.5-1.5B | pair adjacent in skeleton | 2 | 0.539 | 0.829 [0.807, 0.850] | 0.824 [0.801, 0.845] | 0.809 (n = 727) |
-| Qwen2.5-1.5B | pair has a separating set | 2 | 0.544 | 0.829 [0.807, 0.850] | 0.823 [0.800, 0.844] | 0.808 (n = 733) |
-| Qwen2.5-1.5B | pair correlated | 2 | 0.525 | 0.829 [0.807, 0.850] | 0.819 [0.794, 0.841] | 0.818 (n = 1143) |
-| Qwen2.5-1.5B | pair has a common neighbour | 2 | 0.553 | 0.829 [0.807, 0.850] | 0.821 [0.796, 0.843] | 0.818 (n = 1038) |
-| Qwen2.5-1.5B | common neighbour in no separating set | 2 | 0.510 | 0.829 [0.807, 0.850] | 0.821 [0.797, 0.843] | 0.818 (n = 1039) |
-| Qwen2.5-1.5B | parsed-feature classifier's prediction | 2 | 0.816 | 0.829 [0.807, 0.850] | 0.776 [0.746, 0.807] | 0.769 (n = 624) |
-| Qwen2.5-1.5B | template × adjacent × common neighbour | 11 | 0.760 | 0.829 [0.807, 0.850] | 0.766 [0.730, 0.798] | 0.698 (n = 55) |
+| Model | Stratified by | Strata | Gold accuracy from the strata alone | Gold-probe AUROC, unstratified | Gold-probe AUROC within strata (pair-weighted) |
+|---|---|---|---|---|---|
+| Qwen2.5-0.5B | hypothesis template | 5 | 0.500 | 0.676 [0.650, 0.704] | 0.691 [0.663, 0.719] |
+| Qwen2.5-0.5B | pair adjacent in skeleton | 2 | 0.539 | 0.676 [0.650, 0.704] | 0.671 [0.645, 0.698] |
+| Qwen2.5-0.5B | pair correlated | 2 | 0.525 | 0.676 [0.650, 0.704] | 0.665 [0.637, 0.694] |
+| Qwen2.5-0.5B | pair has a common neighbour | 2 | 0.553 | 0.676 [0.650, 0.704] | 0.667 [0.637, 0.697] |
+| Qwen2.5-0.5B | template × adjacent × common neighbour | 20 | 0.760 | 0.676 [0.650, 0.704] | 0.623 [0.581, 0.663] |
+| Qwen2.5-0.5B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.676 [0.650, 0.704] | 0.631 [0.592, 0.670] |
+| Qwen2.5-0.5B | quintiles of the hand-parse score | 5 | 0.818 | 0.676 [0.650, 0.704] | 0.586 [0.543, 0.633] |
+| Qwen2.5-0.5B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.676 [0.650, 0.704] | 0.500 [0.446, 0.566] |
+| Qwen2.5-1.5B | hypothesis template | 5 | 0.500 | 0.829 [0.807, 0.850] | 0.835 [0.813, 0.856] |
+| Qwen2.5-1.5B | pair adjacent in skeleton | 2 | 0.539 | 0.829 [0.807, 0.850] | 0.824 [0.801, 0.845] |
+| Qwen2.5-1.5B | pair correlated | 2 | 0.525 | 0.829 [0.807, 0.850] | 0.819 [0.794, 0.841] |
+| Qwen2.5-1.5B | pair has a common neighbour | 2 | 0.553 | 0.829 [0.807, 0.850] | 0.821 [0.796, 0.843] |
+| Qwen2.5-1.5B | template × adjacent × common neighbour | 20 | 0.760 | 0.829 [0.807, 0.850] | 0.766 [0.730, 0.798] |
+| Qwen2.5-1.5B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.829 [0.807, 0.850] | 0.775 [0.745, 0.806] |
+| Qwen2.5-1.5B | quintiles of the hand-parse score | 5 | 0.818 | 0.829 [0.807, 0.850] | 0.723 [0.683, 0.761] |
+| Qwen2.5-1.5B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.829 [0.807, 0.850] | 0.607 [0.550, 0.664] |
 
 <sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
 
-It does not fall for any single property: for Qwen2.5-1.5B 0.824 [0.801, 0.845] inside adjacency strata against 0.829 [0.807, 0.850] overall. This matches the structure of the pool, in which no single property predicts the label (last column of the previous table: 0.51 to 0.55) and validity depends on their combination with the hypothesis template. Inside the joint strata of template × adjacency × common neighbour, which together predict the label at 0.760, the probe's AUROC is 0.766 [0.730, 0.798]; inside the parsed classifier's two prediction strata it is 0.776 [0.746, 0.807]. The probe is reading a combination of structural properties, not one of them.
+It does not fall inside strata of any single parsed property, which is expected because no single property predicts the label in this pool. It does fall inside strata of text-derived *scores*: for Qwen2.5-1.5B from 0.829 [0.807, 0.850] overall to 0.723 [0.683, 0.761] within quintiles of the hand-parse score and to 0.607 [0.550, 0.664] within 25 cells of two text scores; for Qwen2.5-0.5B to 0.500 [0.446, 0.566]. Most of the probe's signal is shared with what text models extract.
 
-#### 3.6.5 What this supports
+#### 3.6.5 Do the model's answers express it?
 
-For Qwen2.5-1.5B on the debiased pool: the activations encode part of the premise's structure as it bears on the queried pair, beyond every shallow control, built up between layers 14 and 22; less than a hand-written parse of the prompt, and nothing measurable beyond that parse; not reducible to one or two parsed properties; and not expressed in the model's answers, which are at chance. For Qwen2.5-0.5B the same pattern is much weaker and, at the final token, barely distinguishable from a random network. Whether the encoded information is *used* by the model is a causal question; the steering evidence on it is in Section 4.1. Gemma-2-2B and Qwen2.5-3B are added when their activations arrive from the Kaggle run. All of 3.6.1 to 3.6.4 is post hoc and is the subject of the third independent audit.
+Pooled over all items the answers are at chance (AUROC 0.510 [0.488, 0.532] for Qwen2.5-1.5B). The pooling hides structure: the hypothesis string alone explains 83% of the variance of that model's answer logit, so the fair comparison is between a valid and an invalid item with the *same* hypothesis string.
+
+| Model | Hypothesis template | Items | Answer logit: AUROC for gold within hypothesis string | …selection half | …report half | Answer logit: AUROC for pair adjacency | Correlation of answer logit with probe score (string means removed) | Gold probe: AUROC within hypothesis string |
+|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | all templates | 2400 | 0.506 [0.487, 0.525] | – | – | – | +0.025 [-0.022, +0.073] | – |
+| Qwen2.5-0.5B | has_collider | 500 | 0.586 [0.536, 0.636] | 0.588 | 0.588 | 0.261 [0.220, 0.302] | +0.167 [+0.056, +0.270] | 0.645 [0.598, 0.692] |
+| Qwen2.5-0.5B | has_confounder | 300 | 0.465 [0.396, 0.530] | 0.515 | 0.422 | 0.375 [0.305, 0.441] | +0.018 [-0.098, +0.127] | 0.563 [0.499, 0.633] |
+| Qwen2.5-0.5B | non-child descendant | 450 | 0.449 [0.392, 0.504] | 0.453 | 0.450 | 0.570 [0.513, 0.632] | -0.170 [-0.251, -0.089] | 0.711 [0.663, 0.762] |
+| Qwen2.5-0.5B | non-parent ancestor | 450 | 0.445 [0.388, 0.498] | 0.455 | 0.441 | 0.452 [0.394, 0.515] | -0.182 [-0.291, -0.068] | 0.630 [0.576, 0.686] |
+| Qwen2.5-0.5B | parent: "X directly causes Y" | 700 | 0.541 [0.502, 0.586] | 0.557 | 0.530 | 0.531 [0.489, 0.573] | +0.132 [+0.055, +0.212] | 0.781 [0.744, 0.816] |
+| Qwen2.5-1.5B | all templates | 2400 | 0.507 [0.486, 0.529] | – | – | – | +0.126 [+0.079, +0.174] | – |
+| Qwen2.5-1.5B | has_collider | 500 | 0.500 [0.445, 0.559] | 0.535 | 0.475 | 0.381 [0.318, 0.446] | +0.050 [-0.039, +0.137] | 0.759 [0.717, 0.800] |
+| Qwen2.5-1.5B | has_confounder | 300 | 0.442 [0.371, 0.513] | 0.477 | 0.419 | 0.427 [0.356, 0.496] | -0.202 [-0.308, -0.089] | 0.782 [0.725, 0.842] |
+| Qwen2.5-1.5B | non-child descendant | 450 | 0.430 [0.375, 0.485] | 0.394 | 0.460 | 0.469 [0.409, 0.532] | -0.127 [-0.224, -0.028] | 0.817 [0.778, 0.859] |
+| Qwen2.5-1.5B | non-parent ancestor | 450 | 0.449 [0.393, 0.508] | 0.448 | 0.446 | 0.434 [0.374, 0.496] | -0.133 [-0.229, -0.046] | 0.776 [0.730, 0.819] |
+| Qwen2.5-1.5B | parent: "X directly causes Y" | 700 | 0.628 [0.581, 0.673] | 0.644 | 0.613 | 0.649 [0.603, 0.693] | +0.359 [+0.283, +0.425] | 0.886 [0.859, 0.912] |
+
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+
+For "X directly causes Y" hypotheses, Qwen2.5-1.5B's answer logit does track validity (0.628 [0.581, 0.673]; similar in both halves of the data) and correlates with the probe's score (+0.359 [+0.283, +0.425]). For the two indirect-causation templates and for confounders it is weakly *anti*-correlated with validity, and for colliders flat. Summed over templates these cancel. So it is not accurate to say the model's answers ignore what the probe reads: for the simplest relation they use it in the right direction, and for others in the wrong one. This breakdown is post hoc over five templates and two models; the direct-causation effect for Qwen2.5-1.5B is about five standard errors.
+
+#### 3.6.6 What this supports
+
+On a Corr2Cause pool built so that the hypothesis alone and the premise alone are exactly uninformative:
+
+- **Qwen2.5-1.5B.** A linear probe on the final-token activations predicts validity above every interaction control that binds nothing to the queried variables, at the level of a per-template lookup of the statements naming the queried pair, and below a parser-free per-hypothesis n-gram model and a hand-written parse. It adds about two points to the hand parse and nothing measurable to a stronger text-only model. Whether the queried pair is adjacent in the premise's skeleton is linearly readable, far better than from a random-init copy or from text without binding, and not before the hypothesis is read. The answers are at chance when pooled but track validity for direct-causation hypotheses and run against it for others.
+- **Qwen2.5-0.5B.** At the final token nothing beyond no-binding controls; some binding is visible at the end of the hypothesis and in the adjacency probe.
+- **Not supported:** that either model holds a "correct answer" it fails to give; that the activations contain validity information unavailable to a text-only classifier; that the information is unused.
+
+Gemma-2-2B and Qwen2.5-3B are added when their activations arrive from the Kaggle run. The steering evidence is in Section 4.1.
 
 ## 4. Tier 2 results
 
@@ -601,38 +657,40 @@ This section was rewritten after the second independent audit (Section 6), which
 
 ![steering c2c](../figures/fig6_steering_c2c_probe.png)
 ![steering debiased](../figures/fig6_steering_c2c_debiased.png)
+![steering cladder](../figures/fig6_steering_cladder.png)
 
 **Matched controls** (150 report-half items for Qwen2.5-0.5B, 100 for Qwen2.5-1.5B): 100 isotropic random directions; 20 probe weight vectors fitted to shuffled labels, the control of the same kind as a probe direction; 20 differences of class means for shuffled labels, the control of the same kind as a difference of means.
 
-| Model | Item set | Layer | Direction | Slope per unit s | Percentile among 100 isotropic directions (|slope|) | Isotropic median |slope| | Isotropic max |slope| | Matched control family (20 directions) | Percentile among matched controls | Matched median |slope| | Matched max |slope| | Ratio to matched median |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold-label probe weights | -0.049 [-0.056, -0.042] | 22 | 0.125 | 0.685 | shuffled-label probe | 20 | 0.130 | 0.294 | 0.4 |
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold difference of class means | +0.865 [+0.855, +0.875] | 100 | 0.125 | 0.685 | shuffled-label difference of means | 100 | 0.189 | 0.628 | 4.6 |
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | model-answer probe weights (positive control) | +1.700 [+1.685, +1.714] | 100 | 0.125 | 0.685 | shuffled-label probe | 100 | 0.130 | 0.294 | 13.1 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold-label probe weights | -0.229 [-0.235, -0.222] | 88 | 0.104 | 0.373 | shuffled-label probe | 85 | 0.075 | 0.360 | 3.0 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold difference of class means | +0.150 [+0.144, +0.157] | 63 | 0.104 | 0.373 | shuffled-label difference of means | 90 | 0.063 | 0.191 | 2.4 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | model-answer probe weights (positive control) | +0.525 [+0.516, +0.532] | 100 | 0.104 | 0.373 | shuffled-label probe | 100 | 0.075 | 0.360 | 7.0 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold-label probe weights | -0.201 [-0.226, -0.178] | 55 | 0.184 | 0.850 | shuffled-label probe | 65 | 0.113 | 0.449 | 1.8 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 |
+| Model | Item set | Layer | Direction | Slope per unit s | Percentile among 100 isotropic directions (|slope|) | Isotropic median |slope| | Isotropic max |slope| | Matched control family (20 directions) | Percentile among matched controls | Matched median |slope| | Matched max |slope| | Ratio to matched median | Natural SD along this direction (units of s) | Natural SD, matched controls (median) | Percentile among matched controls, per natural SD | Ratio to matched median, per natural SD |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold-label probe weights | -0.049 [-0.056, -0.042] | 22 | 0.125 | 0.685 | shuffled-label probe | 20 | 0.130 | 0.294 | 0.4 | 0.0083 | 0.0031 | 50 | 1.0 |
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold difference of class means | +0.865 [+0.855, +0.875] | 100 | 0.125 | 0.685 | shuffled-label difference of means | 100 | 0.189 | 0.628 | 4.6 | 0.3410 | 0.3316 | 100 | 4.0 |
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | model-answer probe weights (positive control) | +1.700 [+1.685, +1.714] | 100 | 0.125 | 0.685 | shuffled-label probe | 100 | 0.130 | 0.294 | 13.1 | 0.0652 | 0.0031 | 100 | 267.8 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold-label probe weights | -0.229 [-0.235, -0.222] | 88 | 0.104 | 0.373 | shuffled-label probe | 85 | 0.075 | 0.360 | 3.0 | 0.0031 | 0.0032 | 80 | 2.9 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold difference of class means | +0.150 [+0.144, +0.157] | 63 | 0.104 | 0.373 | shuffled-label difference of means | 90 | 0.063 | 0.191 | 2.4 | 0.1132 | 0.3692 | 30 | 0.8 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | model-answer probe weights (positive control) | +0.525 [+0.516, +0.532] | 100 | 0.104 | 0.373 | shuffled-label probe | 100 | 0.075 | 0.360 | 7.0 | 0.0234 | 0.0032 | 100 | 50.4 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 | 0.0159 | 0.0052 | 100 | 5.6 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 | 0.5324 | 0.3511 | 85 | 2.3 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 | 0.3503 | 0.0052 | 100 | 800.8 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold-label probe weights | -0.201 [-0.226, -0.178] | 55 | 0.184 | 0.850 | shuffled-label probe | 65 | 0.113 | 0.449 | 1.8 | 0.0035 | 0.0026 | 75 | 2.4 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 | 0.3543 | 0.4113 | 60 | 1.4 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 | 0.3029 | 0.0026 | 100 | 1798.5 |
 
 <sub>Source: `results/steering_controls_qwen0.5b_c2c_probe.json`, `results/steering_controls_qwen0.5b_c2c_debiased.json`, `results/steering_controls_qwen1.5b_c2c_probe.json`, `results/steering_controls_qwen1.5b_c2c_debiased.json`</sub>
 
 **What the data show.**
 
-1. *The gold-probe weight direction does no more than label-free directions of the same kind.* On the original pool its slope is -0.049 [-0.056, -0.042] (percentile 20% among 20 shuffled-label probe directions; their median |slope| 0.130, maximum 0.294) for Qwen2.5-0.5B and -0.367 [-0.382, -0.351] (percentile 85% among 20 shuffled-label probe directions; their median |slope| 0.206, maximum 0.533) for Qwen2.5-1.5B. On the debiased pool: -0.229 [-0.235, -0.222] (percentile 85% among 20 shuffled-label probe directions; their median |slope| 0.075, maximum 0.360) and -0.201 [-0.226, -0.178] (percentile 65% among 20 shuffled-label probe directions; their median |slope| 0.113, maximum 0.449). In no case is it beyond the 95th percentile of its matched controls. For Qwen2.5-1.5B on the original pool the effect is consistent in sign across items and *opposite* to the gold label (pushing "towards valid" lowers the Yes logit); my first table showed one sign only and hid this. It is within what shuffled-label probe directions do, so it is not evidence of a gold-specific mechanism in either direction.
-2. *At natural scale the probe direction does essentially nothing.* A probe's weight vector points into low-variance directions: one unit of s is 119.00 (Qwen2.5-0.5B) and 63.08 (Qwen2.5-1.5B) natural standard deviations along it. Moving an item across the whole natural gap between valid and invalid items along that direction would change LD by -0.001 and -0.009 logits, against a standard deviation of LD across items of 0.41 and 2.28.
-3. *The difference-of-means direction moves the answer, but not specifically because it separates valid from invalid items.* Its slope is +0.865 [+0.855, +0.875] (percentile 100% among 20 shuffled-label differences of means; their median |slope| 0.189, maximum 0.628) for Qwen2.5-0.5B and +1.981 [+1.925, +2.042] (percentile 85% among 20 shuffled-label differences of means; their median |slope| 1.131, maximum 2.685) for Qwen2.5-1.5B on the original pool; on the debiased pool +0.150 [+0.144, +0.157] (percentile 90% among 20 shuffled-label differences of means; their median |slope| 0.063, maximum 0.191) and +1.897 [+1.865, +1.930] (percentile 80% among 20 shuffled-label differences of means; their median |slope| 1.330, maximum 2.674). A difference of class means lies in the high-variance part of activation space, and so does a difference of means for random labels. On the original pool this direction also separates the model's own answer at least as well as the gold label (AUROC 0.942 against 0.650 for Qwen2.5-1.5B). Only for Qwen2.5-0.5B on the original pool does it exceed all 20 shuffled controls, and that pool is the one in which the gold label is confounded with the hypothesis string.
-4. *The positive control works.* The model-answer direction has the largest slope everywhere and exceeds every control, as it must.
+1. *The gold-probe weight direction shifts the answer by an amount within the range of label-free directions of the same kind.* Slope, with its place among 20 probe directions fitted to shuffled labels: original pool -0.049 [-0.056, -0.042] (20% percentile of 20; 0.38 times their median, 0.17 of their maximum) for Qwen2.5-0.5B and -0.367 [-0.382, -0.351] (85% percentile of 20; 1.78 times their median, 0.69 of their maximum) for Qwen2.5-1.5B; debiased pool -0.229 [-0.235, -0.222] (85% percentile of 20; 3.03 times their median, 0.64 of their maximum) and -0.201 [-0.226, -0.178] (65% percentile of 20; 1.77 times their median, 0.45 of their maximum). The slope is small but not zero: it is negative in all four cases and has the same sign for nearly every item (pushing "towards valid" lowers the Yes logit; my first table showed one sign only and hid this). Twenty controls cannot exclude an effect two or three times the control median, so the statement is "within the range of", not "no more than".
+2. *The comparison depends on the unit.* The shuffled-label directions have the same natural spread as the gold direction on the debiased pool, but on the original pool the gold direction is about three times wider. Per natural standard deviation, the gold direction for Qwen2.5-1.5B on the original pool exceeds all 20 shuffled controls (5.63 times their median); in the other three cases it is at the 50%, 80% and 75% percentile. The original pool is the one in which the gold label is confounded with the hypothesis string.
+3. *At natural scale the effect is negligible either way.* One unit of s is 119.00 (Qwen2.5-0.5B) and 63.08 (Qwen2.5-1.5B) natural standard deviations along the gold-probe direction on the original pool, and 322.89 and 280.42 on the debiased pool. Moving an item across the whole natural gap between valid and invalid items along that direction would change LD by -0.001 and -0.009 logits (original pool), against a standard deviation of LD across items of 0.41 and 2.28.
+4. *The difference-of-means direction moves the answer, mostly not because it separates valid from invalid items.* Original pool: +0.865 [+0.855, +0.875] (100% percentile of 20; 4.59 times their median, 1.38 of their maximum) for Qwen2.5-0.5B and +1.981 [+1.925, +2.042] (85% percentile of 20; 1.75 times their median, 0.74 of their maximum) for Qwen2.5-1.5B; debiased pool: +0.150 [+0.144, +0.157] (90% percentile of 20; 2.38 times their median, 0.79 of their maximum) and +1.897 [+1.865, +1.930] (80% percentile of 20; 1.43 times their median, 0.71 of their maximum). A difference of class means lies in the high-variance part of activation space, and so does a difference of means for random labels. On the original pool it separates the model's own answer at least as well as the gold label (AUROC 0.942 against 0.650 for Qwen2.5-1.5B).
+5. *The positive control works.* The model-answer direction has the largest slope everywhere and exceeds every control.
 
 **What may and may not be concluded.**
 
-- May: at the probed layer and the final token, later layers do not read the gold probe's weight direction more than they read a label-free direction of the same kind, and a movement of natural size along it leaves the answer unchanged.
-- May not: "the decoded information is unused". The probe's weights and the difference of class means are two views of one discriminant (the covariance times the probe weights has cosine 0.98 with the difference of means for Qwen2.5-1.5B); one site and one position were tested; and the activation pattern that does move the answer was not gold-specific.
-- The most direct evidence that the information of Section 3.6 is not used is behavioural: on the debiased pool the answers are at chance while the probe decodes validity at 0.63 and 0.75.
+- May: adding the gold-probe direction at the probe's layer and the final token, in steps of one RMS activation radius (60 to 320 natural standard deviations along that direction), shifts the Yes−No logit by an amount inside the range of 20 shuffled-label probe directions. A movement of natural size changes the answer by less than 0.01 logits.
+- May not: that the direction "is not read", or that the decoded information "is unused". With twenty controls and one site the experiment neither shows nor excludes a causal role. The probe's weights and the difference of class means are two views of one discriminant (the covariance times the probe weights has cosine 0.98 with the difference of means for Qwen2.5-1.5B). On the debiased pool the fitted direction is itself noisy (cosine 0.43 between the two halves of the data). And the probe is stronger at the end of the hypothesis, which was not steered.
+- What the behavioural data add (Section 3.6.5): the answers are at chance when pooled, but for direct-causation hypotheses they track validity and the probe's score. "Not expressed" holds only on average.
 - CLadder: the steered gold directions barely decode the gold label there (AUROC 0.547 and 0.622), so those rows are shown for completeness and no conclusion is drawn from them.
 
 Flip rates and the earlier "accuracy when pushed towards gold" (now called controllability) are in the next table. They are poor measures for models that answer No to most items: a flip is a threshold on slope × α against the margin, and controllability uses the gold label to choose the sign of the push, so any direction with a consistent slope reaches 0 or 1. Ablating the component along the probe or random directions changes LD by amounts at the float16 noise floor; no ablation comparison is claimed.

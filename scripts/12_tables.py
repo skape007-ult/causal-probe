@@ -9,7 +9,10 @@ from causal_probe.config import ALL_MODELS, MODELS, REMOTE_MODELS, RESULTS, ROOT
 
 MODELS = {**MODELS, **REMOTE_MODELS}     # remote (Kaggle) models appear in a table once their results exist
 
-OUT = ROOT / "report" / "tables"
+import os
+from pathlib import Path
+
+OUT = Path(os.environ.get("CAUSAL_PROBE_TABLES", ROOT / "report" / "tables"))
 LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B", "qwen0.5b-lora": "Qwen2.5-0.5B + LoRA",
        "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)"}
 DS = {"c2c_test": "Corr2Cause test", "c2c_probe": "Corr2Cause pool", "cladder": "CLadder",

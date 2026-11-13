@@ -10,7 +10,7 @@ DATA_RAW = ROOT / "data" / "raw"
 # that a test never overwrites the real cache or the committed results.
 CACHE = Path(os.environ.get("CAUSAL_PROBE_CACHE", ROOT / "cache"))
 RESULTS = Path(os.environ.get("CAUSAL_PROBE_RESULTS", ROOT / "results"))
-FIGURES = ROOT / "figures"
+FIGURES = Path(os.environ.get("CAUSAL_PROBE_FIGURES", ROOT / "figures"))
 
 SEED = 0
 PROBE_SEEDS = (0, 1, 2)

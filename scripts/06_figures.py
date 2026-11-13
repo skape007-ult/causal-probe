@@ -11,11 +11,15 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from causal_probe.config import FIGURES, MODELS, RESULTS
+from causal_probe.config import FIGURES, MODELS, REMOTE_MODELS, RESULTS
+
+MODELS = {**MODELS, **REMOTE_MODELS}     # models run on Kaggle appear once their results exist
 
 INK, INK2, MUTED, GRID, AXIS, SURF = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#fcfcfb"
-MODEL_COL = {"qwen0.5b": "#2a78d6", "qwen1.5b": "#eb6834", "gemma2b": "#1baf7a", "qwen0.5b-lora": "#6250d6"}
-MODEL_LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B"}
+MODEL_COL = {"qwen0.5b": "#2a78d6", "qwen1.5b": "#eb6834", "gemma2b": "#1baf7a", "qwen0.5b-lora": "#6250d6",
+             "qwen3b": "#8a5a00", "qwen7b-4bit": "#7a3fb0"}
+MODEL_LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B",
+             "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)"}
 SERIES = {  # probe targets and controls: fixed hue + line style
     "gold": ("#2a78d6", "-", "gold-label probe"),
     "model_out": ("#eb6834", "-", "model-output probe"),
@@ -44,6 +48,11 @@ def probes_file(m, tag):
     """Per-layer probe curves at the C selected (on the selection half) in the confound analysis."""
     c = load(f"confound_{m}_{tag}.json")
     return f"probes_{m}_{tag}_C{c['selected_C_gold']:g}.json" if c else None
+
+
+def tick_labs(ms):
+    """Model names for bar-group ticks; broken over two lines when four or more models share an axis."""
+    return [MODEL_LAB[m].replace("-", "\n", 1) if len(ms) > 3 else MODEL_LAB[m] for m in ms]
 
 
 def models_with(prefix):
@@ -78,11 +87,12 @@ def fig_behaviour():
             ax.errorbar(i, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], color=INK, lw=1, capsize=3)
             ax.text(i, v["hi"] + 0.015, f"{v['est']:.2f}", ha="center", color=INK2, fontsize=8)
         base = r["baselines"]
-        ax.axhline(base["majority"][metric], color=INK2, ls="--", lw=1)
-        ax.text(len(ms) - 0.45, base["majority"][metric], " majority", va="bottom", ha="right", color=INK2, fontsize=8)
-        ax.axhline(base["random"][metric], color=MUTED, ls=":", lw=1)
-        ax.text(len(ms) - 0.45, base["random"][metric], " random", va="top", ha="right", color=MUTED, fontsize=8)
-        ax.set_xticks(range(len(ms)), [MODEL_LAB[m] for m in ms])
+        # baseline lines are named in a legend above the bars, where they cannot collide with value labels
+        ax.axhline(base["majority"][metric], color=INK2, ls="--", lw=1, label=f"always majority ({base['majority'][metric]:.2f})")
+        ax.axhline(base["random"][metric], color=MUTED, ls=":", lw=1.2, label=f"coin flip ({base['random'][metric]:.2f})")
+        ax.legend(loc="upper left" if metric == "macro_f1" or tag == "cladder" else "lower left", fontsize=7, frameon=True,
+                  facecolor=SURF, edgecolor=GRID, framealpha=0.9)
+        ax.set_xticks(range(len(ms)), tick_labs(ms))
         ax.set_ylim(0, 1); ax.set_title(title); ax.grid(axis="x", visible=False)
     fig.suptitle("Zero-shot behaviour (answer-token logits). Bars: estimate; whiskers: 95% cluster-bootstrap CI", fontsize=9, color=INK2)
     fig.tight_layout()
@@ -248,7 +258,7 @@ def fig_confound():
                     ax.errorbar(x, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], color=INK, lw=0.8, capsize=2)
                 ax.text(i, 0.965, f"n={b['n']}", ha="center", color=INK2, fontsize=7)
             ax.axhline(0.5, color=INK2, ls="--", lw=1)
-            ax.set_xticks(range(len(ms)), [MODEL_LAB[m] for m in ms]); ax.set_ylim(0, 1)
+            ax.set_xticks(range(len(ms)), tick_labs(ms)); ax.set_ylim(0, 1)
             ax.set_xlim(-0.5, len(ms) - 0.5)
             ax.set_title(title, fontsize=9); ax.grid(axis="x", visible=False)
         h, l = axes[0].get_legend_handles_labels()
@@ -381,8 +391,9 @@ def fig_cross_model():
     axes[2].set_ylim(0, 1.05)
     for ax in axes:
         ax.set_xscale("log"); ax.set_xlabel("parameters (billions)")
-        ax.set_xticks([0.5, 1.5, 2.6], ["0.5", "1.5", "2.6"])
-        ax.xaxis.set_minor_formatter(plt.NullFormatter()); ax.set_xlim(0.42, 3.1)
+        xs = sorted({round(v["params_billion"], 1) for v in r["models"].values()})
+        ax.set_xticks(xs, [f"{x:g}" for x in xs])
+        ax.xaxis.set_minor_formatter(plt.NullFormatter()); ax.set_xlim(0.42, max(xs) * 1.2)
     from matplotlib.lines import Line2D
     axes[0].legend(handles=[Line2D([], [], marker="o", color=INK2, ls="", label="Corr2Cause pool"),
                             Line2D([], [], marker="s", color=INK2, ls="", mfc=SURF, label="CLadder")], fontsize=8)

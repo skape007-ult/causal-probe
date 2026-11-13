@@ -77,7 +77,48 @@ An accuracy from 1,000 items is an estimate; a **95% confidence interval** is a 
 ### Accuracy, macro-F1 and AUROC
 **Accuracy** is the share answered correctly; with 85% "No" labels, always saying "No" scores 85%, so accuracy alone misleads. **F1** for a class balances precision and recall; **macro-F1** averages F1 over both classes, so ignoring the rare class is punished. **AUROC** asks whether a score ranks positives above negatives (0.5 = no better than chance, 1 = perfect), independent of any threshold. *Code:* `stats.macro_f1`, `stats.auroc`, `stats.baselines`.
 
-*(Tier 2 and 3 concepts: steering vector, activation patching, attribution patching, sparse autoencoder, LoRA are added below when those tiers run.)*
+### Decodable is not the same as used
+A probe finding information in a layer shows the information is *present*. It does not show the model *uses* it: the information could be a by-product that no later layer reads. To claim use, you must intervene (change the activation and watch the output) rather than just observe. The next four entries are interventions. *Example:* a thermometer on a car's exhaust lets you decode engine speed, but warming the exhaust does not make the car go faster. *Code:* observational = `04_probes.py`; interventional = `07_steering.py`, `08_patching.py`.
+
+### Steering vector
+Pick a direction in activation space (a vector), add a multiple of it to the residual stream at some layer and position during the forward pass, and see whether the output changes. If adding "the Yes direction" flips answers to Yes far more than adding a random direction of the same length, the model reads that direction. *Example:* at layer 15, final token, add 2 × (typical activation spread) × direction; the Yes−No logit difference moves from −1.1 to +3.0. We test three directions: the gold-label probe's weight vector, the difference between the mean activation of gold-Yes and gold-No items, and a probe for the model's own answer; plus random directions as the control. *Code:* `steer.AddAtLast`, `steer.steered_logit_diffs`, `scripts/07_steering.py`.
+
+```mermaid
+flowchart LR
+    P[prompt] --> L1[layers 0 .. L*-1]
+    L1 --> R((residual stream<br/>final token))
+    V[alpha x direction] -->|add| R
+    R --> L2[layers L* .. end] --> O[Yes - No logit difference]
+```
+
+### Directional ablation
+The opposite of steering: instead of adding a direction, remove the activation's own component along it (set it to the dataset average). If the model relied on that component, its answer should move. *Example:* an item sits 3 units along the direction and the average is 1; ablation subtracts 2 units of the direction. *Code:* the `ablate` block in `scripts/07_steering.py`.
+
+### Minimal pair
+Two prompts that differ in as little as possible but have different correct answers. Any difference in the model's behaviour between them must come from that small difference. We use two kinds, both with identical token counts: **hyp** (same premise, hypothesis asks about a different variable) and **prem** (same hypothesis, two variable letters swapped throughout the premise, i.e. a relabelled causal graph). *Example:* "…Hypothesis: A directly causes B." (Yes) vs "…Hypothesis: A directly causes C." (No). *Code:* `patch.build_pairs`, `patch.encode_pair`.
+
+### Activation patching
+Run the model on the clean prompt and save its activations. Run it on the corrupt prompt, but at one chosen place (a layer and a token region) overwrite the activation with the clean one. If the answer moves towards the clean answer, that place carries the information that distinguishes the two prompts. Sweeping over layers and regions maps where the answer-relevant information lives and when it moves. *Example:* overwriting the final token's residual stream at layer 15 restores 80% of the clean-vs-corrupt logit difference, at layer 14 only 11%: the information arrives at the final token around layer 15. *Code:* `patch.ResidPatcher`, `patch.resid_patch_grid`, `scripts/08_patching.py`.
+
+```mermaid
+flowchart LR
+    C[clean prompt] --> CA[(clean activations)]
+    K[corrupt prompt] --> F[forward pass]
+    CA -->|overwrite layer l, region r| F
+    F --> O[LD patched]
+    O --> M["recovery = (LD patched - LD corrupt) / (LD clean - LD corrupt)"]
+```
+
+### Random-donor control for patching
+Overwriting an activation with *anything* might disturb the answer. As a control we patch in activations from the clean run of an unrelated premise of the same token length. If that "recovers" as much as the true clean run, the effect is not specific to the pair's causal content. *Code:* the `ctrl` grid in `scripts/08_patching.py`.
+
+### Attention heads and MLPs
+Each layer has two kinds of component that write into the residual stream: several **attention heads** (each moves information between token positions) and one **MLP** (which transforms information at a position). Patching one head or MLP at a time asks which specific components matter. *Code:* `patch.ComponentIO`.
+
+### Attribution patching
+Patching every head and MLP separately needs one forward pass each (hundreds). **Attribution patching** approximates all of them at once with one backward pass: effect ≈ (clean activation − corrupt activation) × gradient of the output with respect to that activation. It is a first-order (straight-line) approximation, so it can be wrong; we therefore re-check the top-ranked components and some random ones with real patching and report the correlation. *Example:* head L14H5: attribution 0.21, real patching 0.20. *Code:* `patch.record_components`, Part B of `scripts/08_patching.py`.
+
+*(Tier 3 concepts: sparse autoencoder, LoRA are added below when that tier runs.)*
 
 ---
 
@@ -120,6 +161,18 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 
 **D12. Gemma's embedding matrix lives on disk; Gemma runs one item at a time and stores answer-token logits only.** (Thu 19:00)
 *Alternatives:* drop Gemma; run the full model anyway; a 4-bit quantised Gemma. *Why:* the full float16 model (5.3 GB) thrashes 8 GB of unified memory (0.07–0.2 items/s; ~20 hours for the cache). Gemma's embedding matrix is 256k × 2304 = 1.18 GB and is used for exactly two things: looking up the input tokens' rows, and producing logits. Keeping it as a memory-mapped file and computing only the Yes/No rows per item brings the GPU footprint to 4.4 GB and the speed to ~1.1 items/s. The arithmetic is unchanged (answer logit differences agree with the full model to 0.012 on the check prompts). Dropping Gemma would lose the SAE tier; quantisation would change the model being studied. *Cost:* no full-vocabulary top-1 token in Gemma's cache, and its generated-text check is first-token-only on 100 items per set. *Would change it:* 16 GB of RAM.
+
+**D13. A "calibrated" model answer (median split of the logit difference) is analysed next to the raw answer.** (Thu 19:10, after seeing data)
+*Alternatives:* raw answer only. *Why:* Qwen-0.5B answers "No" to essentially everything, so its raw answer is a constant; "model-wrong items" is then just "gold-Yes items" and a model-output probe has nothing to predict. The median split removes the constant bias and asks about the model's *relative* preference. This was added after seeing results, so the pre-registered verdict (D11) stays on the raw answer and the calibrated one is labelled secondary. *Would change it:* n/a.
+
+**D14. Steering: three meaningful directions + random; scale in units of typical activation spread; final position only; KV-cache shortcut.** (Thu 19:35)
+*Alternatives:* steer at all positions; scale in units of the residual norm; probe direction only. *Why:* the probes were trained at the final position, so that is where the direction is defined. The unit s = RMS distance of an activation from the layer mean makes "alpha = 1" comparable across models of different width. Difference-of-means is included because probe weights are discriminative (they include an inverse-covariance factor) and are known to steer worse than mean differences; reporting only the probe direction could wrongly suggest "no causal role". Directions are fitted on the selection half and tested on the report half. Because a final-position edit cannot affect earlier positions, the prefix is computed once and only the last token is re-run per vector (tested equal to the full computation). *Would change it:* a need to steer earlier positions.
+
+**D15. Minimal pairs on Corr2Cause only, two kinds (hyp, prem), premises with at most 5 variables; effect = pooled recovery.** (Thu 19:40)
+*Alternatives:* CLadder pairs; per-pair normalised recovery; only pairs the model answers correctly. *Why:* Corr2Cause has exact token-aligned pairs for free (same premise, sibling hypotheses), and relabelling variables gives a second kind that changes the causal structure rather than the question. CLadder stories do not align token-for-token. Five-variable premises keep prompts ~350 tokens so the sweep is affordable. The models are near chance, so "pairs answered correctly" would leave almost nothing; pooled recovery (sum of signed effects over sum of |clean−corrupt| differences) uses all pairs and weights them by how much the model distinguishes them, in whichever direction. *Would change it:* a model that solved the pairs (then the standard per-pair normalisation on correct pairs would be reported too).
+
+**D16. Patch token regions, not single tokens; attribution patching for components, validated on top-10 + 10 random.** (Thu 19:40)
+*Alternatives:* per-token patching; exhaustive head patching. *Why:* (layers × ~350 tokens) forward passes per pair is out of reach; five regions (differing tokens, rest of premise, rest of hypothesis, chat-template tail, final token) answer "where" at the granularity we can interpret. Exhaustive component patching is 300–450 passes per pair; one backward pass approximates it, and the 20-component validation tells us whether to trust it. *Would change it:* validation correlation below ~0.7 (then only really-patched components would be reported).
 
 ---
 

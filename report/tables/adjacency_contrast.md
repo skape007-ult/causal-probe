@@ -1,0 +1,5 @@
+| Model | Site (layer) | Templates in the contrast | Full-mediation benchmark (mean |observed gap|) | Translation: contrast | …as a share of the benchmark | …controls, same norm (range) | Share of controls below (%) | …controls as fitted (range) | Probe direction across the gap: contrast | …controls (range) | Erasure: reduction of the dependence (contrast) | …what full removal would give on these items | …control erasures (range) | Share of controls below (%) | Positive control: model-answer direction, slope per unit norm (share of controls it exceeds) | Linearity check: small-step / large-step slope, class-mean difference |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | final token, best layer (15/24) | parent, descendant, collider, confounder | 0.112 | +0.110 [+0.109, +0.111] | 0.99 | -0.069 to +0.091 | 100 | -0.025 to +0.039 | -0.0002 [-0.0003, -0.0002] | -0.0007 to +0.0006 | +0.096 | +0.105 | -0.004 to +0.009 | 100 | +1.258 (100%) | 1.00 |
+
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`</sub>

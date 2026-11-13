@@ -11,3 +11,4 @@ W1113 18:15:33.752000 34286 .venv/lib/python3.12/site-packages/torch/distributed
 [   26s] [timing] 2.02 s/item (219 vectors) -> 16.6 min for the remaining 494 items; 54.6 min left of 55
 [  118s] 50/500
 [  244s] 100/500
+[  361s] 150/500

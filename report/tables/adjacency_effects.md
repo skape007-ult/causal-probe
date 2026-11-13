@@ -1,0 +1,9 @@
+| Model | Site (layer) | Template | Observed gap in the answer logit, adjacent − not adjacent | Predicted sign | Translation by the class-mean difference: effect towards Yes per move towards adjacent | …20 controls, same norm (range) | Share of controls below (%) | Moving across the class gap along the probe direction | …20 controls, same distance (range) | Gap on evaluated items: before | …after erasure | Change in gap | …20 control erasures (range of change) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | final token, best layer (15/24) | parent | +0.050 [+0.005, +0.096] | + | +0.040 [+0.038, +0.042] | -0.084 to +0.110 | 55 | +0.0009 [+0.0008, +0.0010] | -0.0029 to +0.0028 | +0.097 | +0.071 | -0.026 [-0.034, -0.018] | -0.019 to +0.005 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | ancestor | -0.042 [-0.098, +0.015] | none | -0.044 [-0.046, -0.043] | -0.101 to +0.094 | 10 | +0.0009 [+0.0008, +0.0009] | -0.0025 to +0.0025 | -0.029 | -0.016 | +0.013 [+0.006, +0.021] | -0.008 to +0.006 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | descendant | +0.055 [+0.024, +0.084] | + | -0.037 [-0.039, -0.035] | -0.069 to +0.178 | 20 | +0.0005 [+0.0005, +0.0006] | -0.0018 to +0.0019 | +0.041 | +0.061 | +0.020 [+0.013, +0.028] | -0.003 to +0.005 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | collider | -0.230 [-0.281, -0.177] | − | -0.255 [-0.258, -0.252] | -0.124 to +0.224 | 0 | +0.0011 [+0.0010, +0.0012] | -0.0035 to +0.0043 | -0.312 | -0.065 | +0.247 [+0.207, +0.287] | -0.004 to +0.010 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | confounder | -0.113 [-0.190, -0.033] | − | -0.183 [-0.185, -0.181] | -0.187 to +0.165 | 5 | +0.0012 [+0.0012, +0.0013] | -0.0032 to +0.0032 | +0.029 | +0.160 | +0.131 [+0.109, +0.153] | -0.012 to +0.035 |
+
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`</sub>

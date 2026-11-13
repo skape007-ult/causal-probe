@@ -16,5 +16,21 @@
 | Qwen2.5-1.5B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.829 [0.807, 0.850] | 0.775 [0.745, 0.806] |
 | Qwen2.5-1.5B | quintiles of the hand-parse score | 5 | 0.818 | 0.829 [0.807, 0.850] | 0.723 [0.683, 0.761] |
 | Qwen2.5-1.5B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.829 [0.807, 0.850] | 0.607 [0.550, 0.664] |
+| Gemma-2-2B | hypothesis template | 5 | 0.500 | 0.840 [0.820, 0.859] | 0.848 [0.827, 0.867] |
+| Gemma-2-2B | pair adjacent in skeleton | 2 | 0.539 | 0.840 [0.820, 0.859] | 0.835 [0.814, 0.856] |
+| Gemma-2-2B | pair correlated | 2 | 0.525 | 0.840 [0.820, 0.859] | 0.839 [0.818, 0.860] |
+| Gemma-2-2B | pair has a common neighbour | 2 | 0.553 | 0.840 [0.820, 0.859] | 0.838 [0.817, 0.860] |
+| Gemma-2-2B | template × adjacent × common neighbour | 20 | 0.760 | 0.840 [0.820, 0.859] | 0.778 [0.747, 0.810] |
+| Gemma-2-2B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.840 [0.820, 0.859] | 0.778 [0.747, 0.808] |
+| Gemma-2-2B | quintiles of the hand-parse score | 5 | 0.818 | 0.840 [0.820, 0.859] | 0.739 [0.700, 0.776] |
+| Gemma-2-2B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.840 [0.820, 0.859] | 0.661 [0.603, 0.715] |
+| Qwen2.5-3B | hypothesis template | 5 | 0.500 | 0.845 [0.826, 0.866] | 0.851 [0.831, 0.873] |
+| Qwen2.5-3B | pair adjacent in skeleton | 2 | 0.539 | 0.845 [0.826, 0.866] | 0.839 [0.819, 0.859] |
+| Qwen2.5-3B | pair correlated | 2 | 0.525 | 0.845 [0.826, 0.866] | 0.843 [0.824, 0.864] |
+| Qwen2.5-3B | pair has a common neighbour | 2 | 0.553 | 0.845 [0.826, 0.866] | 0.847 [0.827, 0.869] |
+| Qwen2.5-3B | template × adjacent × common neighbour | 20 | 0.760 | 0.845 [0.826, 0.866] | 0.790 [0.759, 0.822] |
+| Qwen2.5-3B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.845 [0.826, 0.866] | 0.798 [0.771, 0.826] |
+| Qwen2.5-3B | quintiles of the hand-parse score | 5 | 0.818 | 0.845 [0.826, 0.866] | 0.756 [0.720, 0.791] |
+| Qwen2.5-3B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.845 [0.826, 0.866] | 0.656 [0.605, 0.708] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>

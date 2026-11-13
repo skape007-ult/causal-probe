@@ -90,6 +90,7 @@ Accuracy alone cannot tell "no information" from "information hidden by a bias t
 | Qwen2.5-0.5B | CLadder (500 items) | 4-shot | 500 | 0.20 | 0.516 [0.481, 0.552] | 0.500 | 0.495 [0.451, 0.542] | 0.486 [0.452, 0.521] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-1.5B | Corr2Cause test | zero-shot | 1162 | 0.10 | 0.773 [0.711, 0.846] | 0.845 | 0.561 [0.503, 0.614] | 0.843 [0.801, 0.895] | informative (AUROC CI above 0.5) |
 | Qwen2.5-1.5B | Corr2Cause pool | zero-shot | 2400 | 0.10 | 0.500 [0.488, 0.512] | 0.500 | 0.568 [0.545, 0.590] | 0.565 [0.551, 0.580] | informative (AUROC CI above 0.5) |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | zero-shot | 2400 | 0.16 | 0.492 [0.478, 0.507] | 0.500 | 0.510 [0.488, 0.533] | 0.511 [0.495, 0.526] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-1.5B | CLadder | zero-shot | 3000 | 0.64 | 0.497 [0.474, 0.519] | 0.500 | 0.509 [0.478, 0.542] | 0.499 [0.480, 0.519] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-1.5B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.17 | 0.729 [0.667, 0.803] | 0.845 | 0.579 [0.523, 0.630] | 0.843 [0.800, 0.897] | informative (AUROC CI above 0.5) |
 | Qwen2.5-1.5B | Corr2Cause test (500 items) | 4-shot | 500 | 0.05 | 0.800 [0.752, 0.856] | 0.840 | 0.556 [0.502, 0.606] | 0.818 [0.770, 0.877] | informative (AUROC CI above 0.5) |
@@ -210,7 +211,7 @@ Probe accuracy by token position:
 |---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | Corr2Cause pool | 0.807 [0.784, 0.828] | 0.868 [0.848, 0.888] | 0.517 [0.504, 0.532] | +0.289 [+0.263, +0.314] | -0.062 [-0.083, -0.039] | 0.621 [0.595, 0.647] | – | – |
 | Qwen2.5-0.5B | CLadder | 0.561 [0.534, 0.586] | 0.542 [0.512, 0.576] | 0.561 [0.536, 0.586] | +0.000 [-0.038, +0.036] | +0.018 [-0.015, +0.050] | 0.498 [0.475, 0.522] | – | – |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 0.633 [0.609, 0.658] | 0.737 [0.713, 0.760] | 0.486 [0.470, 0.502] | +0.147 [+0.119, +0.175] | -0.104 [-0.131, -0.075] | 0.604 [0.580, 0.628] | – | – |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 0.633 [0.609, 0.658] | 0.737 [0.713, 0.760] | 0.486 [0.470, 0.502] | +0.147 [+0.119, +0.175] | -0.104 [-0.131, -0.075] | 0.604 [0.580, 0.628] | 0.601 [0.578, 0.625] | +0.136 [+0.105, +0.167] |
 | Qwen2.5-1.5B | Corr2Cause pool | 0.870 [0.850, 0.890] | 0.898 [0.879, 0.916] | 0.534 [0.517, 0.552] | +0.336 [+0.311, +0.361] | -0.028 [-0.046, -0.011] | 0.594 [0.566, 0.624] | – | – |
 | Qwen2.5-1.5B | CLadder | 0.605 [0.580, 0.631] | 0.588 [0.549, 0.625] | 0.569 [0.548, 0.589] | +0.035 [+0.008, +0.068] | +0.016 [-0.024, +0.060] | 0.508 [0.484, 0.535] | – | – |
 | Qwen2.5-1.5B | Corr2Cause debiased pool | 0.752 [0.729, 0.776] | 0.788 [0.766, 0.809] | 0.502 [0.490, 0.513] | +0.251 [+0.225, +0.276] | -0.036 [-0.062, -0.010] | 0.579 [0.554, 0.604] | 0.585 [0.560, 0.610] | +0.204 [+0.171, +0.234] |
@@ -409,46 +410,121 @@ Gold-label probes on the debiased pool (report half; layer and regularisation ch
 
 | Model | Gold probe, final token | Random-init model's probe, final token | Whole-prompt TF-IDF | Parsed features | Probe − random-init | Probe − parsed features | Gold probe, end of hypothesis | Random-init, end of hypothesis |
 |---|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | 0.633 [0.609, 0.658] | 0.604 [0.580, 0.628] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.029 [+0.000, +0.059] | -0.183 [-0.214, -0.149] | 0.737 [0.713, 0.760] | (pending: confound_qwen0.5b_c2c_debiased.json positions/content_end/random_init_accuracy) |
+| Qwen2.5-0.5B | 0.633 [0.609, 0.658] | 0.604 [0.580, 0.628] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.029 [+0.000, +0.059] | -0.183 [-0.214, -0.149] | 0.737 [0.713, 0.760] | 0.601 [0.578, 0.625] |
 | Qwen2.5-1.5B | 0.752 [0.729, 0.776] | 0.579 [0.554, 0.604] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.174 [+0.142, +0.207] | -0.063 [-0.094, -0.034] | 0.788 [0.766, 0.809] | 0.585 [0.560, 0.610] |
 | Gemma-2-2B (activations from Kaggle) | (pending: confound_gemma2b_c2c_debiased.json all_items/gold_probe/accuracy) | (pending: confound_gemma2b_c2c_debiased.json all_items/random_init_probe/accuracy) | (pending: confound_gemma2b_c2c_debiased.json all_items/tfidf/accuracy) | (pending: confound_gemma2b_c2c_debiased.json all_items/structural/accuracy) | (pending: confound_gemma2b_c2c_debiased.json all_items/gold_probe_minus_random_init_probe/accuracy) | (pending: confound_gemma2b_c2c_debiased.json verdict/audited/all_items_probe_minus_best_text_accuracy) | (pending: confound_gemma2b_c2c_debiased.json positions/content_end/accuracy) | (pending: confound_gemma2b_c2c_debiased.json positions/content_end/random_init_accuracy) |
 | Qwen2.5-3B (activations from Kaggle) | (pending: confound_qwen3b_c2c_debiased.json all_items/gold_probe/accuracy) | (pending: confound_qwen3b_c2c_debiased.json all_items/random_init_probe/accuracy) | (pending: confound_qwen3b_c2c_debiased.json all_items/tfidf/accuracy) | (pending: confound_qwen3b_c2c_debiased.json all_items/structural/accuracy) | (pending: confound_qwen3b_c2c_debiased.json all_items/gold_probe_minus_random_init_probe/accuracy) | (pending: confound_qwen3b_c2c_debiased.json verdict/audited/all_items_probe_minus_best_text_accuracy) | (pending: confound_qwen3b_c2c_debiased.json positions/content_end/accuracy) | (pending: confound_qwen3b_c2c_debiased.json positions/content_end/random_init_accuracy) |
 
 <sub>Source: `results/confound_<model>_c2c_debiased.json`. "(pending: …)" marks runs that have not finished.</sub>
 
-**Reading (two local Qwen models; Gemma and the larger model are added when the Kaggle activations arrive).**
+**Verdicts under the two criteria, unchanged.** The audited criterion (probe beats the strongest text-only baseline; D19) is **not met** for either model: the parsed-feature classifier beats the probe by -0.183 [-0.214, -0.149] (Qwen2.5-0.5B) and -0.063 [-0.094, -0.034] (Qwen2.5-1.5B). The original pre-registered criterion as coded (D11: against TF-IDF and the template prior, on wrongly answered items) is met for both models on this pool; as explained in Section 3.4 it does not test the claim, and it is reported, not relied on.
 
-- *The audited criterion is still not met.* The parsed-feature classifier beats the probe for both models: by -0.183 [-0.214, -0.149] (Qwen2.5-0.5B) and -0.063 [-0.094, -0.034] (Qwen2.5-1.5B).
-- *For Qwen2.5-0.5B little is left.* Its probe scores 0.633 [0.609, 0.658], +0.029 [+0.000, +0.059] above a probe on a randomly initialised copy of the same network. Most of what is decodable at the final token is what an untrained network already exposes about the prompt.
-- *For Qwen2.5-1.5B a real effect remains.* Its probe scores 0.752 [0.729, 0.776] (AUROC 0.829 [0.807, 0.850]) on a pool where hypothesis-only and premise-only classifiers are at exactly 0.500, whole-prompt TF-IDF at 0.518 and the random-init control at 0.579 (trained minus random-init +0.174 [+0.142, +0.207]). Probe accuracy stays at the random-init level through the first half of the network and rises between layers 14 and 22 (`results/probes_qwen1.5b_c2c_debiased_C1.json`). The model's own answers on these items are at chance (AUROC (pending: answer_bias.json qwen1.5b/c2c_debiased/auroc)). So this model's activations carry linearly decodable information about the validity of the premise–hypothesis combination that its answers do not use.
-- *What that information is.* The same probes, pointed at properties a parser reads off the prompt, decode them well:
+#### 3.6.1 Post-hoc reading: two kinds of baseline
 
-| Model | Item set | Layer | Property read off the prompt by a parser | Majority rate | Probe accuracy, final token | Probe accuracy, end of hypothesis | Gold-label accuracy from this property alone |
+*Everything in 3.6.1 to 3.6.4 was designed after the debiased-pool probe results were seen (13 November; `scripts/05b_probe_content.py`, `notes/log.md`). It is a labelled post-hoc analysis and changes neither criterion above.*
+
+The text baselines are of two different kinds, and comparing a probe with them answers two different questions.
+
+- **(a) Shallow confound controls**: bag-of-words of the prompt, the hypothesis-string prior, the premise alone, a probe on a randomly initialised copy of the model, and the probe trained on shuffled labels. Beating these shows that the probe is not exploiting surface statistics of the prompt, the architecture alone, or a leak.
+- **(b) Structure-aware reference**: the parsed-feature classifier. It binds the premise's statements to the two queried variables, which approximates solving the task from the text. It is not a confound; it marks how far explicit structure extraction gets.
+
+| Model | Group | Scorer | Accuracy | AUROC | Gold probe − this (accuracy, paired) |
+|---|---|---|---|---|---|
+| Qwen2.5-0.5B | — | **Gold-label probe** | 0.633 [0.611, 0.657] | 0.676 [0.650, 0.704] | — |
+| Qwen2.5-0.5B | (a) shallow confound control | Bag-of-words, whole prompt | 0.518 [0.495, 0.541] | 0.526 [0.501, 0.552] | +0.115 [+0.085, +0.147] |
+| Qwen2.5-0.5B | (a) shallow confound control | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.133 [+0.111, +0.157] |
+| Qwen2.5-0.5B | (a) shallow confound control | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.133 [+0.111, +0.157] |
+| Qwen2.5-0.5B | (a) shallow confound control | Probe trained on shuffled labels | 0.526 [0.503, 0.551] | 0.534 [0.508, 0.560] | +0.107 [+0.071, +0.139] |
+| Qwen2.5-0.5B | (a) shallow confound control | Probe on a randomly initialised copy of the model | 0.604 [0.580, 0.628] | 0.627 [0.599, 0.653] | +0.029 [+0.002, +0.060] |
+| Qwen2.5-0.5B | (b) structure-aware reference | Parsed features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.183 [-0.216, -0.151] |
+| Qwen2.5-1.5B | — | **Gold-label probe** | 0.752 [0.728, 0.774] | 0.829 [0.807, 0.850] | — |
+| Qwen2.5-1.5B | (a) shallow confound control | Bag-of-words, whole prompt | 0.518 [0.495, 0.541] | 0.526 [0.501, 0.552] | +0.235 [+0.201, +0.265] |
+| Qwen2.5-1.5B | (a) shallow confound control | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.252 [+0.228, +0.274] |
+| Qwen2.5-1.5B | (a) shallow confound control | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.252 [+0.228, +0.274] |
+| Qwen2.5-1.5B | (a) shallow confound control | Probe trained on shuffled labels | 0.497 [0.471, 0.524] | 0.498 [0.471, 0.528] | +0.256 [+0.221, +0.287] |
+| Qwen2.5-1.5B | (a) shallow confound control | Probe on a randomly initialised copy of the model | 0.579 [0.554, 0.604] | 0.617 [0.589, 0.646] | +0.174 [+0.142, +0.205] |
+| Qwen2.5-1.5B | (b) structure-aware reference | Parsed features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.063 [-0.095, -0.036] |
+
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+
+For Qwen2.5-1.5B the probe (0.752 [0.728, 0.774]) is above every shallow control, the strongest being the random-init probe (0.579 [0.554, 0.604]; probe minus control +0.174 [+0.142, +0.205]), and below the structure-aware reference (0.816 [0.792, 0.837]). For Qwen2.5-0.5B the probe (0.633 [0.611, 0.657]) exceeds the random-init probe by only +0.029 [+0.002, +0.060]. Both models' own answers on this pool are at chance (AUROC 0.505 [0.485, 0.526] and 0.510 [0.488, 0.533]). For Qwen2.5-1.5B, probe accuracy stays at the random-init level through the first half of the network and rises between layers 14 and 22 (`results/probes_qwen1.5b_c2c_debiased_C1.json`).
+
+#### 3.6.2 Does the probe add predictive power beyond the parsed features?
+
+Gradient boosting on the parsed features alone, against the same model with the probe's score added as one column. The probe score is produced by nested cross-validation, so that no label from a test fold reaches any feature.
+
+| Model | Parsed features only | Parsed features + probe score | Gain in accuracy | Gain in AUROC | Probe right when parsed features wrong | Parsed features right when probe wrong | Correlation of the two scores |
 |---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | the two named variables correlate | 0.923 | 0.959 [0.948, 0.970] | 0.983 [0.975, 0.990] | 0.525 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | they are adjacent in the skeleton (never separated) | 0.597 | 0.825 [0.803, 0.845] | 0.872 [0.854, 0.889] | 0.539 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | some conditioning set separates them | 0.600 | 0.821 [0.799, 0.842] | 0.872 [0.854, 0.889] | 0.544 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | first-named variable is earlier in the alphabet | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | the two named variables correlate | 0.923 | 0.987 [0.980, 0.994] | 0.986 [0.978, 0.992] | 0.525 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | they are adjacent in the skeleton (never separated) | 0.597 | 0.928 [0.913, 0.942] | 0.931 [0.916, 0.944] | 0.539 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | some conditioning set separates them | 0.600 | 0.933 [0.917, 0.946] | 0.932 [0.917, 0.945] | 0.544 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | first-named variable is earlier in the alphabet | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | 0.500 |
+| Qwen2.5-0.5B | 0.816 [0.792, 0.837] | 0.814 [0.792, 0.836] | -0.002 [-0.019, +0.016] | -0.001 [-0.009, +0.008] | 0.57 (n = 230) | 0.78 (n = 458) | 0.36 |
+| Qwen2.5-1.5B | 0.816 [0.792, 0.837] | 0.822 [0.799, 0.843] | +0.006 [-0.015, +0.026] | +0.005 [-0.005, +0.015] | 0.63 (n = 230) | 0.73 (n = 309) | 0.59 |
 
 <sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
 
-  For Qwen2.5-1.5B, whether the two variables named in the hypothesis are adjacent in the premise's skeleton is readable at 0.928 [0.913, 0.942] (majority rate 0.597). That is the first step of the standard algorithm for this task, and it is what the parsed-feature baseline computes explicitly.
+No measurable gain: +0.006 [-0.015, +0.026] accuracy for Qwen2.5-1.5B and -0.002 [-0.019, +0.016] for Qwen2.5-0.5B. What the probe reads is, as far as this test can tell, contained in what the parser extracts. (A cruder version of this test, a logistic regression on the two out-of-fold scores, had suggested a two-point gain; it was not nested and is withdrawn, see `notes/log.md`.)
 
-| Model | Item set | Gold probe | Parsed features | Probe + parsed features (stacked) | Stacked − parsed alone | Correlation of the two scores | Probe right when parsed features are wrong | Probe AUROC where parsed says valid | Probe AUROC where parsed says invalid |
+#### 3.6.3 Which parsed properties can be read from the activations?
+
+A probe for each binary property a parser reads off the item, at the layer the gold probe uses, with a shuffled-label control and the same probe on the random-init model.
+
+| Model | Layer | Property of the item (read off the prompt by a parser) | Majority rate | Probe AUROC, trained model | Shuffled-label control | Random-init model | Trained − random-init | Probe accuracy, trained | Gold accuracy from this property alone |
 |---|---|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 0.633 [0.611, 0.657] | 0.816 [0.792, 0.837] | 0.830 [0.808, 0.851] | +0.014 [+0.002, +0.026] | 0.36 | 0.57 (n = 230) | 0.621 [0.559, 0.677] | 0.642 [0.588, 0.692] |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 0.752 [0.728, 0.774] | 0.816 [0.792, 0.837] | 0.839 [0.817, 0.858] | +0.023 [+0.006, +0.040] | 0.59 | 0.63 (n = 230) | 0.769 [0.723, 0.810] | 0.784 [0.742, 0.825] |
+| Qwen2.5-0.5B | 14 | queried pair correlates | 0.92 | 0.969 [0.955, 0.982] | 0.484 [0.418, 0.552] | 0.895 [0.867, 0.919] | +0.075 [+0.048, +0.104] | 0.956 [0.944, 0.967] | 0.525 |
+| Qwen2.5-0.5B | 14 | queried pair is marginally independent | 0.92 | 0.969 [0.955, 0.982] | 0.484 [0.418, 0.552] | 0.895 [0.867, 0.919] | +0.075 [+0.048, +0.104] | 0.956 [0.944, 0.967] | 0.525 |
+| Qwen2.5-0.5B | 14 | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.892 [0.874, 0.909] | 0.505 [0.469, 0.537] | 0.656 [0.625, 0.687] | +0.237 [+0.206, +0.269] | 0.814 [0.792, 0.835] | 0.539 |
+| Qwen2.5-0.5B | 14 | some conditioning set separates the pair | 0.60 | 0.891 [0.873, 0.908] | 0.501 [0.465, 0.534] | 0.665 [0.634, 0.696] | +0.227 [+0.196, +0.259] | 0.817 [0.796, 0.838] | 0.544 |
+| Qwen2.5-0.5B | 14 | pair has a common neighbour | 0.83 | 0.765 [0.728, 0.806] | 0.483 [0.436, 0.532] | 0.723 [0.688, 0.759] | +0.042 [+0.005, +0.079] | 0.817 [0.793, 0.841] | 0.553 |
+| Qwen2.5-0.5B | 14 | a common neighbour lies in a separating set | 0.70 | 0.851 [0.829, 0.874] | 0.500 [0.466, 0.532] | 0.676 [0.642, 0.707] | +0.175 [+0.143, +0.209] | 0.788 [0.764, 0.810] | 0.506 |
+| Qwen2.5-0.5B | 14 | a common neighbour lies in no separating set | 0.84 | 0.848 [0.820, 0.874] | 0.504 [0.457, 0.549] | 0.742 [0.697, 0.781] | +0.106 [+0.069, +0.146] | 0.855 [0.834, 0.874] | 0.510 |
+| Qwen2.5-0.5B | 14 | premise has six variables | 0.97 | 1.000 [0.999, 1.000] | 0.323 [0.216, 0.433] | 1.000 [1.000, 1.000] | -0.000 [-0.001, +0.000] | 0.998 [0.994, 1.000] | 0.500 |
+| Qwen2.5-0.5B | 14 | many correlation statements (≥ median) | 0.59 | 1.000 [0.999, 1.000] | 0.468 [0.429, 0.506] | 1.000 [1.000, 1.000] | -0.000 [-0.001, -0.000] | 0.994 [0.989, 0.999] | 0.500 |
+| Qwen2.5-0.5B | 14 | premise states a marginal independence | 0.74 | 0.999 [0.997, 1.000] | 0.523 [0.481, 0.561] | 1.000 [1.000, 1.000] | -0.001 [-0.003, -0.000] | 0.991 [0.985, 0.996] | 0.500 |
+| Qwen2.5-0.5B | 14 | many conditional-independence statements (≥ median) | 0.53 | 1.000 [0.999, 1.000] | 0.486 [0.448, 0.525] | 1.000 [1.000, 1.000] | -0.000 [-0.001, -0.000] | 0.993 [0.986, 0.998] | 0.500 |
+| Qwen2.5-1.5B | 22 | queried pair correlates | 0.92 | 0.995 [0.990, 0.999] | 0.447 [0.386, 0.511] | 0.882 [0.851, 0.908] | +0.113 [+0.086, +0.145] | 0.990 [0.982, 0.995] | 0.525 |
+| Qwen2.5-1.5B | 22 | queried pair is marginally independent | 0.92 | 0.995 [0.990, 0.999] | 0.447 [0.386, 0.511] | 0.882 [0.851, 0.908] | +0.113 [+0.086, +0.145] | 0.990 [0.982, 0.995] | 0.525 |
+| Qwen2.5-1.5B | 22 | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.980 [0.974, 0.986] | 0.516 [0.484, 0.546] | 0.619 [0.589, 0.649] | +0.361 [+0.332, +0.391] | 0.927 [0.912, 0.942] | 0.539 |
+| Qwen2.5-1.5B | 22 | some conditioning set separates the pair | 0.60 | 0.980 [0.973, 0.986] | 0.516 [0.482, 0.547] | 0.622 [0.591, 0.653] | +0.357 [+0.325, +0.387] | 0.928 [0.913, 0.942] | 0.544 |
+| Qwen2.5-1.5B | 22 | pair has a common neighbour | 0.83 | 0.842 [0.813, 0.871] | 0.469 [0.427, 0.512] | 0.695 [0.658, 0.730] | +0.147 [+0.111, +0.186] | 0.846 [0.825, 0.865] | 0.553 |
+| Qwen2.5-1.5B | 22 | a common neighbour lies in a separating set | 0.70 | 0.945 [0.929, 0.958] | 0.498 [0.461, 0.533] | 0.644 [0.612, 0.675] | +0.301 [+0.270, +0.335] | 0.891 [0.873, 0.908] | 0.506 |
+| Qwen2.5-1.5B | 22 | a common neighbour lies in no separating set | 0.84 | 0.944 [0.929, 0.959] | 0.551 [0.510, 0.595] | 0.698 [0.657, 0.740] | +0.246 [+0.204, +0.288] | 0.916 [0.901, 0.932] | 0.510 |
+| Qwen2.5-1.5B | 22 | premise has six variables | 0.97 | 1.000 [0.999, 1.000] | 0.405 [0.288, 0.516] | 1.000 [1.000, 1.000] | -0.000 [-0.001, +0.000] | 0.998 [0.994, 1.000] | 0.500 |
+| Qwen2.5-1.5B | 22 | many correlation statements (≥ median) | 0.59 | 1.000 [0.999, 1.000] | 0.489 [0.453, 0.526] | 1.000 [1.000, 1.000] | -0.000 [-0.001, -0.000] | 0.993 [0.986, 0.998] | 0.500 |
+| Qwen2.5-1.5B | 22 | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.493 [0.453, 0.531] | 1.000 [1.000, 1.000] | -0.000 [-0.000, +0.000] | 0.998 [0.994, 1.000] | 0.500 |
+| Qwen2.5-1.5B | 22 | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.997, 0.999] | 0.493 [0.458, 0.529] | 1.000 [1.000, 1.000] | -0.001 [-0.003, -0.001] | 0.976 [0.964, 0.986] | 0.500 |
 
 <sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
 
-  Combining the probe's score with the parsed-feature classifier's score improves on the parsed features alone by +0.023 [+0.006, +0.040] (Qwen2.5-1.5B) and +0.014 [+0.002, +0.026] (Qwen2.5-0.5B): the activations hold a little validity information that this particular parser lacks, about two points.
-- *Status of these analyses.* The debiased pool, the random-init comparison at this pool and the property probes are post hoc. The pre-registered criterion as coded passes for both models on this pool; as before, it compares against TF-IDF and the template prior only and is not the test applied here.
+Properties of the *queried pair* that require binding premise statements to the two hypothesis variables are decodable from the trained models far better than from random-init copies. For Qwen2.5-1.5B, "the pair is adjacent in the skeleton" has AUROC 0.980 [0.974, 0.986] against 0.619 [0.589, 0.649] at random init, and "a common neighbour lies in a separating set" 0.945 [0.929, 0.958] against 0.644 [0.612, 0.675]. Premise-level counts (how many statements, six variables) are perfectly decodable from the random-init model as well, so they reflect prompt length and say nothing about computation. Shuffled-label controls are at 0.5 except where the property is rare (a small-sample effect of shuffling an imbalanced label).
 
-In short: on a pool with single-input shortcuts removed, the smallest model shows almost nothing beyond a random network, and the 1.5B model shows partial computation (binding premise statements to the queried variables) that is readable from its activations and not expressed in its answers. Neither shows more than a shallow parser extracts from the text.
+#### 3.6.4 Is the probe's signal carried by one or two properties?
+
+The gold probe's AUROC inside strata of each strong property, weighted over strata, next to its unstratified AUROC. If one property carried the signal, the AUROC inside its strata would fall towards 0.5.
+
+| Model | Stratified by | Strata used | Gold accuracy from the strata alone | Gold-probe AUROC, unstratified | Gold-probe AUROC within strata (pair-weighted) | Lowest single stratum |
+|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | hypothesis template (5) | 5 | 0.500 | 0.676 [0.650, 0.704] | 0.691 [0.663, 0.719] | 0.535 (n = 156) |
+| Qwen2.5-0.5B | pair adjacent in skeleton | 2 | 0.539 | 0.676 [0.650, 0.704] | 0.671 [0.645, 0.698] | 0.656 (n = 727) |
+| Qwen2.5-0.5B | pair has a separating set | 2 | 0.544 | 0.676 [0.650, 0.704] | 0.671 [0.644, 0.698] | 0.657 (n = 733) |
+| Qwen2.5-0.5B | pair correlated | 2 | 0.525 | 0.676 [0.650, 0.704] | 0.665 [0.637, 0.694] | 0.664 (n = 1143) |
+| Qwen2.5-0.5B | pair has a common neighbour | 2 | 0.553 | 0.676 [0.650, 0.704] | 0.667 [0.637, 0.697] | 0.664 (n = 1038) |
+| Qwen2.5-0.5B | common neighbour in no separating set | 2 | 0.510 | 0.676 [0.650, 0.704] | 0.668 [0.641, 0.699] | 0.665 (n = 1039) |
+| Qwen2.5-0.5B | parsed-feature classifier's prediction | 2 | 0.816 | 0.676 [0.650, 0.704] | 0.631 [0.594, 0.670] | 0.621 (n = 624) |
+| Qwen2.5-0.5B | template × adjacent × common neighbour | 11 | 0.760 | 0.676 [0.650, 0.704] | 0.623 [0.581, 0.663] | 0.402 (n = 55) |
+| Qwen2.5-1.5B | hypothesis template (5) | 5 | 0.500 | 0.829 [0.807, 0.850] | 0.835 [0.813, 0.856] | 0.772 (n = 260) |
+| Qwen2.5-1.5B | pair adjacent in skeleton | 2 | 0.539 | 0.829 [0.807, 0.850] | 0.824 [0.801, 0.845] | 0.809 (n = 727) |
+| Qwen2.5-1.5B | pair has a separating set | 2 | 0.544 | 0.829 [0.807, 0.850] | 0.823 [0.800, 0.844] | 0.808 (n = 733) |
+| Qwen2.5-1.5B | pair correlated | 2 | 0.525 | 0.829 [0.807, 0.850] | 0.819 [0.794, 0.841] | 0.818 (n = 1143) |
+| Qwen2.5-1.5B | pair has a common neighbour | 2 | 0.553 | 0.829 [0.807, 0.850] | 0.821 [0.796, 0.843] | 0.818 (n = 1038) |
+| Qwen2.5-1.5B | common neighbour in no separating set | 2 | 0.510 | 0.829 [0.807, 0.850] | 0.821 [0.797, 0.843] | 0.818 (n = 1039) |
+| Qwen2.5-1.5B | parsed-feature classifier's prediction | 2 | 0.816 | 0.829 [0.807, 0.850] | 0.776 [0.746, 0.807] | 0.769 (n = 624) |
+| Qwen2.5-1.5B | template × adjacent × common neighbour | 11 | 0.760 | 0.829 [0.807, 0.850] | 0.766 [0.730, 0.798] | 0.698 (n = 55) |
+
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`</sub>
+
+It does not fall for any single property: for Qwen2.5-1.5B 0.824 [0.801, 0.845] inside adjacency strata against 0.829 [0.807, 0.850] overall. This matches the structure of the pool, in which no single property predicts the label (last column of the previous table: 0.51 to 0.55) and validity depends on their combination with the hypothesis template. Inside the joint strata of template × adjacency × common neighbour, which together predict the label at 0.760, the probe's AUROC is 0.766 [0.730, 0.798]; inside the parsed classifier's two prediction strata it is 0.776 [0.746, 0.807]. The probe is reading a combination of structural properties, not one of them.
+
+#### 3.6.5 What this supports
+
+For Qwen2.5-1.5B on the debiased pool: the activations encode part of the premise's structure as it bears on the queried pair, beyond every shallow control, built up between layers 14 and 22; less than a hand-written parse of the prompt, and nothing measurable beyond that parse; not reducible to one or two parsed properties; and not expressed in the model's answers, which are at chance. For Qwen2.5-0.5B the same pattern is much weaker and, at the final token, barely distinguishable from a random network. Whether the encoded information is *used* by the model is a causal question; the steering evidence on it is in Section 4.1. Gemma-2-2B and Qwen2.5-3B are added when their activations arrive from the Kaggle run. All of 3.6.1 to 3.6.4 is post hoc and is the subject of the third independent audit.
 
 ## 4. Tier 2 results
 
@@ -462,12 +538,42 @@ In short: on a pool with single-input shortcuts removed, the smallest model show
 | Qwen2.5-0.5B | Corr2Cause pool | 15/24 | random direction 0 | +0.028 [+0.023, +0.034] | 0.77 | 22.3 | +0.0013 | -0.0003 | 0.403 | 0.349 |
 | Qwen2.5-0.5B | Corr2Cause pool | 15/24 | random direction 1 | +0.485 [+0.481, +0.489] | 1.00 | 45.6 | +0.0106 | +0.0023 | 0.560 | 0.620 |
 | Qwen2.5-0.5B | Corr2Cause pool | 15/24 | random direction 2 | -0.271 [-0.276, -0.265] | 0.00 | 34.5 | -0.0079 | +0.0019 | 0.438 | 0.254 |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | gold-label probe weights | +0.159 [+0.154, +0.164] | 1.00 | 188.1 | +0.0008 | +0.0012 | 0.800 | 0.579 |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | gold difference of class means | -0.082 [-0.088, -0.077] | 0.01 | 3.2 | -0.0259 | -0.0077 | 0.600 | 0.560 |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | model-answer probe weights (positive control) | -0.013 [-0.018, -0.009] | 0.31 | 83.2 | -0.0002 | -0.0000 | 0.593 | 0.926 |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | random direction 0 | -0.081 [-0.084, -0.077] | 0.00 | 28.8 | -0.0028 | +0.0004 | 0.445 | 0.481 |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | random direction 1 | +0.105 [+0.101, +0.109] | 1.00 | 37.0 | +0.0028 | +0.0003 | 0.525 | 0.627 |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | random direction 2 | +0.238 [+0.234, +0.241] | 1.00 | 29.4 | +0.0081 | +0.0003 | 0.526 | 0.566 |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | gold-label probe weights | +0.108 [+0.106, +0.110] | 1.00 | 146.2 | +0.0007 | +0.0011 | 0.840 | 0.606 |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | gold difference of class means | +0.822 [+0.818, +0.826] | 1.00 | 2.7 | +0.2989 | +0.1272 | 0.619 | 0.842 |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | model-answer probe weights (positive control) | +1.363 [+1.357, +1.368] | 1.00 | 6.7 | +0.2033 | +0.0646 | 0.585 | 0.998 |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | random direction 0 | +0.080 [+0.078, +0.082] | 1.00 | 27.1 | +0.0030 | +0.0001 | 0.511 | 0.570 |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | random direction 1 | +0.170 [+0.168, +0.172] | 1.00 | 32.0 | +0.0053 | -0.0001 | 0.487 | 0.615 |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | random direction 2 | -0.075 [-0.077, -0.074] | 0.00 | 17.9 | -0.0042 | +0.0010 | 0.418 | 0.269 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | gold-label probe weights | -0.228 [-0.232, -0.224] | 0.00 | 322.9 | -0.0007 | -0.0009 | 0.672 | 0.502 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | gold difference of class means | +0.153 [+0.149, +0.158] | 1.00 | 8.8 | +0.0174 | +0.0027 | 0.525 | 0.458 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | model-answer probe weights (positive control) | +0.525 [+0.520, +0.531] | 1.00 | 42.8 | +0.0123 | -0.0001 | 0.486 | 0.960 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | random direction 0 | -0.048 [-0.053, -0.043] | 0.11 | 36.4 | -0.0013 | -0.0000 | 0.508 | 0.469 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | random direction 1 | +0.127 [+0.123, +0.130] | 1.00 | 38.5 | +0.0033 | -0.0000 | 0.508 | 0.513 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | random direction 2 | -0.072 [-0.076, -0.069] | 0.00 | 39.8 | -0.0018 | +0.0000 | 0.496 | 0.515 |
+| Qwen2.5-0.5B | CLadder | 16/24 | gold-label probe weights | +0.232 [+0.227, +0.240] | 1.00 | 135.1 | +0.0017 | +0.0018 | 0.547 | 0.448 |
+| Qwen2.5-0.5B | CLadder | 16/24 | gold difference of class means | -0.814 [-0.829, -0.797] | 0.00 | 2.5 | -0.3274 | -0.0430 | 0.487 | 0.172 |
+| Qwen2.5-0.5B | CLadder | 16/24 | model-answer probe weights (positive control) | +1.447 [+1.431, +1.461] | 1.00 | 12.0 | +0.1211 | -0.0105 | 0.505 | 0.956 |
+| Qwen2.5-0.5B | CLadder | 16/24 | random direction 0 | +0.095 [+0.083, +0.104] | 0.99 | 20.4 | +0.0046 | -0.0001 | 0.488 | 0.474 |
+| Qwen2.5-0.5B | CLadder | 16/24 | random direction 1 | +0.240 [+0.226, +0.253] | 1.00 | 36.7 | +0.0065 | -0.0003 | 0.498 | 0.636 |
+| Qwen2.5-0.5B | CLadder | 16/24 | random direction 2 | -0.074 [-0.083, -0.063] | 0.08 | 30.3 | -0.0024 | -0.0002 | 0.481 | 0.345 |
 | Qwen2.5-1.5B | Corr2Cause pool | 21/28 | gold-label probe weights | -0.366 [-0.376, -0.357] | 0.00 | 63.1 | -0.0058 | -0.0087 | 0.915 | 0.539 |
 | Qwen2.5-1.5B | Corr2Cause pool | 21/28 | gold difference of class means | +1.989 [+1.952, +2.029] | 1.00 | 1.9 | +1.0589 | +0.4599 | 0.650 | 0.942 |
 | Qwen2.5-1.5B | Corr2Cause pool | 21/28 | model-answer probe weights (positive control) | +2.353 [+2.319, +2.390] | 1.00 | 2.9 | +0.8227 | +0.2218 | 0.581 | 0.999 |
 | Qwen2.5-1.5B | Corr2Cause pool | 21/28 | random direction 0 | -0.135 [-0.145, -0.124] | 0.06 | 30.9 | -0.0044 | -0.0001 | 0.530 | 0.792 |
 | Qwen2.5-1.5B | Corr2Cause pool | 21/28 | random direction 1 | -0.351 [-0.366, -0.338] | 0.00 | 64.4 | -0.0055 | +0.0005 | 0.477 | 0.237 |
 | Qwen2.5-1.5B | Corr2Cause pool | 21/28 | random direction 2 | -0.089 [-0.099, -0.078] | 0.12 | 58.8 | -0.0015 | -0.0003 | 0.538 | 0.318 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | gold-label probe weights | -0.211 [-0.224, -0.198] | 0.03 | 280.4 | -0.0008 | -0.0011 | 0.779 | 0.490 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | gold difference of class means | +1.874 [+1.850, +1.897] | 1.00 | 2.8 | +0.6639 | +0.0757 | 0.526 | 0.950 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | model-answer probe weights (positive control) | +1.705 [+1.688, +1.723] | 1.00 | 3.3 | +0.5142 | +0.0232 | 0.507 | 0.999 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | random direction 0 | +0.022 [+0.017, +0.027] | 0.67 | 32.9 | +0.0007 | +0.0000 | 0.507 | 0.896 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | random direction 1 | -0.376 [-0.383, -0.369] | 0.00 | 38.5 | -0.0098 | +0.0002 | 0.502 | 0.174 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | random direction 2 | +0.216 [+0.211, +0.222] | 1.00 | 51.2 | +0.0042 | -0.0002 | 0.492 | 0.268 |
 | Qwen2.5-1.5B | CLadder | 24/28 | gold-label probe weights | -0.058 [-0.068, -0.050] | 0.17 | 149.6 | -0.0004 | -0.0005 | 0.622 | 0.525 |
 | Qwen2.5-1.5B | CLadder | 24/28 | gold difference of class means | +0.720 [+0.695, +0.742] | 1.00 | 2.5 | +0.2851 | +0.0337 | 0.497 | 0.496 |
 | Qwen2.5-1.5B | CLadder | 24/28 | model-answer probe weights (positive control) | +3.550 [+3.517, +3.582] | 1.00 | 5.2 | +0.6865 | +0.0017 | 0.518 | 0.997 |
@@ -475,7 +581,7 @@ In short: on a pool with single-input shortcuts removed, the smallest model show
 | Qwen2.5-1.5B | CLadder | 24/28 | random direction 1 | -0.257 [-0.268, -0.246] | 0.00 | 68.3 | -0.0038 | -0.0002 | 0.473 | 0.393 |
 | Qwen2.5-1.5B | CLadder | 24/28 | random direction 2 | +0.198 [+0.186, +0.210] | 0.97 | 32.9 | +0.0060 | +0.0004 | 0.525 | 0.654 |
 
-<sub>Source: `results/steering_analysis_qwen0.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_cladder.json`</sub>
+<sub>Source: `results/steering_analysis_qwen0.5b_c2c_probe.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen0.5b_c2c_debiased.json`, `results/steering_analysis_qwen0.5b_cladder.json`, `results/steering_analysis_qwen1.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_c2c_debiased.json`, `results/steering_analysis_qwen1.5b_cladder.json`</sub>
 
 ![steering c2c](../figures/fig6_steering_c2c_probe.png)
 ![steering cladder](../figures/fig6_steering_cladder.png)

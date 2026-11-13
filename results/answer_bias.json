@@ -362,6 +362,46 @@
    "best_threshold_in_sample": -5.355517387390137,
    "reading": "informative (AUROC CI above 0.5)"
   },
+  "c2c_debiased": {
+   "mode": "zero-shot",
+   "n": 2400,
+   "n_clusters": 1200,
+   "frac_gold_yes": 0.5,
+   "majority": 0.5,
+   "yes_rate": 0.1625,
+   "mean_logit_diff": -2.1350652750333152,
+   "accuracy": {
+    "est": 0.4925,
+    "lo": 0.47833333333333333,
+    "hi": 0.5066666666666667,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "macro_f1": {
+    "est": 0.42726150590724743,
+    "lo": 0.4103035025342363,
+    "hi": 0.4442115425910722,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "auroc": {
+    "est": 0.5102916666666667,
+    "lo": 0.4883086979166667,
+    "hi": 0.5329852777777777,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "best_threshold_acc": {
+    "est": 0.5108333333333334,
+    "lo": 0.495,
+    "hi": 0.52625,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "best_threshold_acc_in_sample": 0.51875,
+   "best_threshold_in_sample": -4.224793434143066,
+   "reading": "at chance (AUROC CI includes 0.5)"
+  },
   "cladder": {
    "mode": "zero-shot",
    "n": 3000,

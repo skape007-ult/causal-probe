@@ -110,6 +110,8 @@
      "best_sign": 0.0033333333333333335,
      "frac_yes_plus": 0.6266666666666667,
      "frac_yes_minus": 0.63,
+     "mean_delta_logit_diff_plus": -0.017388604482014975,
+     "mean_delta_logit_diff_minus": 0.01690953572591146,
      "controllability_toward_gold": {
       "est": 0.5033333333333333,
       "lo": 0.43576362596776436,
@@ -144,6 +146,8 @@
      "best_sign": 0.0033333333333333335,
      "frac_yes_plus": 0.6266666666666667,
      "frac_yes_minus": 0.6333333333333333,
+     "mean_delta_logit_diff_plus": -0.03472236633300781,
+     "mean_delta_logit_diff_minus": 0.03131403605143229,
      "controllability_toward_gold": {
       "est": 0.5033333333333333,
       "lo": 0.43576362596776436,
@@ -178,6 +182,8 @@
      "best_sign": 0.01,
      "frac_yes_plus": 0.6266666666666667,
      "frac_yes_minus": 0.64,
+     "mean_delta_logit_diff_plus": -0.065216064453125,
+     "mean_delta_logit_diff_minus": 0.0511738395690918,
      "controllability_toward_gold": {
       "est": 0.5,
       "lo": 0.4341629019540989,
@@ -212,6 +218,8 @@
      "best_sign": 0.02666666666666667,
      "frac_yes_plus": 0.63,
      "frac_yes_minus": 0.6166666666666667,
+     "mean_delta_logit_diff_plus": -0.0971332613627116,
+     "mean_delta_logit_diff_minus": 0.0346901003519694,
      "controllability_toward_gold": {
       "est": 0.5166666666666667,
       "lo": 0.4474077580765479,
@@ -246,6 +254,8 @@
      "best_sign": 0.07666666666666666,
      "frac_yes_plus": 0.6466666666666666,
      "frac_yes_minus": 0.56,
+     "mean_delta_logit_diff_plus": -0.03167486826578776,
+     "mean_delta_logit_diff_minus": -0.2508721415201823,
      "controllability_toward_gold": {
       "est": 0.54,
       "lo": 0.47578209277238404,
@@ -280,6 +290,8 @@
      "best_sign": 0.48,
      "frac_yes_plus": 0.79,
      "frac_yes_minus": 0.15,
+     "mean_delta_logit_diff_plus": 0.5101202265421549,
+     "mean_delta_logit_diff_minus": -2.3203095118204753,
      "controllability_toward_gold": {
       "est": 0.84,
       "lo": 0.7966729877396218,
@@ -392,6 +404,8 @@
      "best_sign": 0.04,
      "frac_yes_plus": 0.6566666666666666,
      "frac_yes_minus": 0.59,
+     "mean_delta_logit_diff_plus": 0.18732167561848959,
+     "mean_delta_logit_diff_minus": -0.17797239303588866,
      "controllability_toward_gold": {
       "est": 0.5433333333333333,
       "lo": 0.47036002778493563,
@@ -426,6 +440,8 @@
      "best_sign": 0.09,
      "frac_yes_plus": 0.72,
      "frac_yes_minus": 0.5666666666666667,
+     "mean_delta_logit_diff_plus": 0.38206026713053387,
+     "mean_delta_logit_diff_minus": -0.34516998926798503,
      "controllability_toward_gold": {
       "est": 0.5866666666666667,
       "lo": 0.5156598738476468,
@@ -460,6 +476,8 @@
      "best_sign": 0.18666666666666668,
      "frac_yes_plus": 0.8166666666666667,
      "frac_yes_minus": 0.5066666666666667,
+     "mean_delta_logit_diff_plus": 0.7904896227518717,
+     "mean_delta_logit_diff_minus": -0.649671999613444,
      "controllability_toward_gold": {
       "est": 0.6733333333333333,
       "lo": 0.5992723259800351,
@@ -494,6 +512,8 @@
      "best_sign": 0.29333333333333333,
      "frac_yes_plus": 0.9233333333333333,
      "frac_yes_minus": 0.42,
+     "mean_delta_logit_diff_plus": 1.6207650883992513,
+     "mean_delta_logit_diff_minus": -1.1354021326700847,
      "controllability_toward_gold": {
       "est": 0.7833333333333333,
       "lo": 0.7207435118918528,
@@ -528,6 +548,8 @@
      "best_sign": 0.3933333333333333,
      "frac_yes_plus": 0.9966666666666667,
      "frac_yes_minus": 0.23666666666666666,
+     "mean_delta_logit_diff_plus": 2.986229527791341,
+     "mean_delta_logit_diff_minus": -1.9627945963541666,
      "controllability_toward_gold": {
       "est": 0.89,
       "lo": 0.8533750370550032,
@@ -562,6 +584,8 @@
      "best_sign": 0.63,
      "frac_yes_plus": 1.0,
      "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 4.570038878122966,
+     "mean_delta_logit_diff_minus": -7.80648597240448,
      "controllability_toward_gold": {
       "est": 1.0,
       "lo": 1.0,
@@ -674,6 +698,8 @@
      "best_sign": 0.21,
      "frac_yes_plus": 0.8066666666666666,
      "frac_yes_minus": 0.42,
+     "mean_delta_logit_diff_plus": 0.8943536567687989,
+     "mean_delta_logit_diff_minus": -0.9036024792989095,
      "controllability_toward_gold": {
       "est": 0.7133333333333334,
       "lo": 0.6489311203878265,
@@ -708,6 +734,8 @@
      "best_sign": 0.36666666666666664,
      "frac_yes_plus": 0.91,
      "frac_yes_minus": 0.2633333333333333,
+     "mean_delta_logit_diff_plus": 1.7752008565266928,
+     "mean_delta_logit_diff_minus": -1.8105695215861002,
      "controllability_toward_gold": {
       "est": 0.84,
       "lo": 0.7847631545324845,
@@ -742,6 +770,8 @@
      "best_sign": 0.5466666666666666,
      "frac_yes_plus": 0.9866666666666667,
      "frac_yes_minus": 0.08333333333333333,
+     "mean_delta_logit_diff_plus": 3.4792618878682453,
+     "mean_delta_logit_diff_minus": -3.621690680185954,
      "controllability_toward_gold": {
       "est": 0.9633333333333334,
       "lo": 0.9343041682673837,
@@ -776,6 +806,8 @@
      "best_sign": 0.63,
      "frac_yes_plus": 1.0,
      "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 6.543957080841064,
+     "mean_delta_logit_diff_minus": -7.159379342397054,
      "controllability_toward_gold": {
       "est": 1.0,
       "lo": 1.0,
@@ -810,6 +842,8 @@
      "best_sign": 0.63,
      "frac_yes_plus": 1.0,
      "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 11.03560728708903,
+     "mean_delta_logit_diff_minus": -13.974395771026611,
      "controllability_toward_gold": {
       "est": 1.0,
       "lo": 1.0,
@@ -844,6 +878,8 @@
      "best_sign": 0.63,
      "frac_yes_plus": 1.0,
      "frac_yes_minus": 0.0,
+     "mean_delta_logit_diff_plus": 15.710408805211385,
+     "mean_delta_logit_diff_minus": -23.85270523071289,
      "controllability_toward_gold": {
       "est": 1.0,
       "lo": 1.0,
@@ -956,6 +992,8 @@
      "best_sign": 0.0033333333333333335,
      "frac_yes_plus": 0.6333333333333333,
      "frac_yes_minus": 0.6266666666666667,
+     "mean_delta_logit_diff_plus": 0.03420155207316081,
+     "mean_delta_logit_diff_minus": -0.028115145365397134,
      "controllability_toward_gold": {
       "est": 0.51,
       "lo": 0.441269261453786,
@@ -990,6 +1028,8 @@
      "best_sign": 0.0033333333333333335,
      "frac_yes_plus": 0.6333333333333333,
      "frac_yes_minus": 0.6266666666666667,
+     "mean_delta_logit_diff_plus": 0.07409886678059896,
+     "mean_delta_logit_diff_minus": -0.05064549128214518,
      "controllability_toward_gold": {
       "est": 0.51,
       "lo": 0.441269261453786,
@@ -1024,6 +1064,8 @@
      "best_sign": 0.02,
      "frac_yes_plus": 0.6466666666666666,
      "frac_yes_minus": 0.6166666666666667,
+     "mean_delta_logit_diff_plus": 0.18549208323160807,
+     "mean_delta_logit_diff_minus": -0.09492758433024089,
      "controllability_toward_gold": {
       "est": 0.5233333333333333,
       "lo": 0.4542016806722689,
@@ -1058,6 +1100,8 @@
      "best_sign": 0.056666666666666664,
      "frac_yes_plus": 0.6866666666666666,
      "frac_yes_minus": 0.6033333333333334,
+     "mean_delta_logit_diff_plus": 0.4997983996073405,
+     "mean_delta_logit_diff_minus": -0.20916210810343425,
      "controllability_toward_gold": {
       "est": 0.54,
       "lo": 0.4681410597951127,
@@ -1092,6 +1136,8 @@
      "best_sign": 0.16666666666666666,
      "frac_yes_plus": 0.7966666666666666,
      "frac_yes_minus": 0.49333333333333335,
+     "mean_delta_logit_diff_plus": 1.117505448659261,
+     "mean_delta_logit_diff_minus": -0.5652752494812012,
      "controllability_toward_gold": {
       "est": 0.6533333333333333,
       "lo": 0.5836224792408067,
@@ -1126,6 +1172,8 @@
      "best_sign": 0.27666666666666667,
      "frac_yes_plus": 0.7633333333333333,
      "frac_yes_minus": 0.35333333333333333,
+     "mean_delta_logit_diff_plus": 0.5183326466878255,
+     "mean_delta_logit_diff_minus": -1.0362735907236735,
      "controllability_toward_gold": {
       "est": 0.7366666666666667,
       "lo": 0.6690583867311295,
@@ -1237,6 +1285,8 @@
      "best_sign": 0.013333333333333334,
      "frac_yes_plus": 0.6166666666666667,
      "frac_yes_minus": 0.6333333333333333,
+     "mean_delta_logit_diff_plus": -0.06582677205403646,
+     "mean_delta_logit_diff_minus": 0.060941575368245446,
      "controllability_toward_gold": {
       "est": 0.49333333333333335,
       "lo": 0.4280896931263211,
@@ -1271,6 +1321,8 @@
      "best_sign": 0.03,
      "frac_yes_plus": 0.6,
      "frac_yes_minus": 0.6433333333333333,
+     "mean_delta_logit_diff_plus": -0.13636475880940754,
+     "mean_delta_logit_diff_minus": 0.11691835403442383,
      "controllability_toward_gold": {
       "est": 0.48333333333333334,
       "lo": 0.41797923082153854,
@@ -1305,6 +1357,8 @@
      "best_sign": 0.06333333333333334,
      "frac_yes_plus": 0.5666666666666667,
      "frac_yes_minus": 0.6566666666666666,
+     "mean_delta_logit_diff_plus": -0.29421960830688476,
+     "mean_delta_logit_diff_minus": 0.21958176294962564,
      "controllability_toward_gold": {
       "est": 0.4633333333333333,
       "lo": 0.400791231126597,
@@ -1339,6 +1393,8 @@
      "best_sign": 0.15,
      "frac_yes_plus": 0.48,
      "frac_yes_minus": 0.69,
+     "mean_delta_logit_diff_plus": -0.6667708778381347,
+     "mean_delta_logit_diff_minus": 0.4180292765299479,
      "controllability_toward_gold": {
       "est": 0.38333333333333336,
       "lo": 0.3160345834793784,
@@ -1373,6 +1429,8 @@
      "best_sign": 0.32666666666666666,
      "frac_yes_plus": 0.30333333333333334,
      "frac_yes_minus": 0.81,
+     "mean_delta_logit_diff_plus": -1.5165359369913738,
+     "mean_delta_logit_diff_minus": 0.950613816579183,
      "controllability_toward_gold": {
       "est": 0.25666666666666665,
       "lo": 0.19610435433592696,
@@ -1407,6 +1465,8 @@
      "best_sign": 0.5666666666666667,
      "frac_yes_plus": 0.06333333333333334,
      "frac_yes_minus": 0.9866666666666667,
+     "mean_delta_logit_diff_plus": -3.370928243001302,
+     "mean_delta_logit_diff_minus": 2.740428676605225,
      "controllability_toward_gold": {
       "est": 0.05333333333333334,
       "lo": 0.017903863037752415,
@@ -1518,6 +1578,8 @@
      "best_sign": 0.01,
      "frac_yes_plus": 0.64,
      "frac_yes_minus": 0.62,
+     "mean_delta_logit_diff_plus": 0.04998900731404622,
+     "mean_delta_logit_diff_minus": -0.04704519271850586,
      "controllability_toward_gold": {
       "est": 0.5133333333333333,
       "lo": 0.4448299723210755,
@@ -1552,6 +1614,8 @@
      "best_sign": 0.02666666666666667,
      "frac_yes_plus": 0.65,
      "frac_yes_minus": 0.6033333333333334,
+     "mean_delta_logit_diff_plus": 0.10307320276896159,
+     "mean_delta_logit_diff_minus": -0.09271987279256184,
      "controllability_toward_gold": {
       "est": 0.53,
       "lo": 0.45956719107353244,
@@ -1586,6 +1650,8 @@
      "best_sign": 0.05333333333333334,
      "frac_yes_plus": 0.6833333333333333,
      "frac_yes_minus": 0.5866666666666667,
+     "mean_delta_logit_diff_plus": 0.22059972127278646,
+     "mean_delta_logit_diff_minus": -0.175988286336263,
      "controllability_toward_gold": {
       "est": 0.56,
       "lo": 0.48465402620722087,
@@ -1620,6 +1686,8 @@
      "best_sign": 0.11333333333333333,
      "frac_yes_plus": 0.7433333333333333,
      "frac_yes_minus": 0.5566666666666666,
+     "mean_delta_logit_diff_plus": 0.530011469523112,
+     "mean_delta_logit_diff_minus": -0.3225626627604167,
      "controllability_toward_gold": {
       "est": 0.6,
       "lo": 0.528272782015255,
@@ -1654,6 +1722,8 @@
      "best_sign": 0.26666666666666666,
      "frac_yes_plus": 0.8966666666666666,
      "frac_yes_minus": 0.5066666666666667,
+     "mean_delta_logit_diff_plus": 1.533572260538737,
+     "mean_delta_logit_diff_minus": -0.6485896873474121,
      "controllability_toward_gold": {
       "est": 0.7133333333333334,
       "lo": 0.6463319951522497,
@@ -1688,6 +1758,8 @@
      "best_sign": 0.3566666666666667,
      "frac_yes_plus": 0.9866666666666667,
      "frac_yes_minus": 0.38333333333333336,
+     "mean_delta_logit_diff_plus": 2.9078522141774497,
+     "mean_delta_logit_diff_minus": -1.2962461853027343,
      "controllability_toward_gold": {
       "est": 0.8166666666666667,
       "lo": 0.7568330408694668,

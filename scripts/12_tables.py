@@ -425,32 +425,63 @@ def t_answer_bias():
 
 
 def t_probe_content():
-    rows, rows2, src = [], [], []
-    labs = {"correlated": "the two named variables correlate", "adjacent": "they are adjacent in the skeleton (never separated)",
-            "separable": "some conditioning set separates them", "name_order": "first-named variable is earlier in the alphabet"}
+    """Post-hoc analysis on the debiased pool (05b): two baseline groups, incremental value, property probes, strata."""
+    blab = {"bag_of_words_whole_prompt": "Bag-of-words, whole prompt", "hypothesis_string_prior": "Hypothesis-string prior",
+            "bag_of_words_premise_only": "Bag-of-words, premise only", "probe_on_shuffled_labels": "Probe trained on shuffled labels",
+            "probe_on_random_init_model": "Probe on a randomly initialised copy of the model"}
+    plab = {"pair_correlated": "queried pair correlates", "pair_marginally_independent": "queried pair is marginally independent",
+            "pair_adjacent_in_skeleton": "queried pair adjacent in the skeleton (never separated)",
+            "pair_has_separating_set": "some conditioning set separates the pair", "pair_has_common_neighbour": "pair has a common neighbour",
+            "common_neighbour_in_a_separating_set": "a common neighbour lies in a separating set",
+            "common_neighbour_in_no_separating_set": "a common neighbour lies in no separating set",
+            "six_variables": "premise has six variables", "many_correlation_statements": "many correlation statements (≥ median)",
+            "any_marginal_independence_statement": "premise states a marginal independence",
+            "many_conditional_independence_statements": "many conditional-independence statements (≥ median)"}
+    slab = {"template": "hypothesis template (5)", "pair_adjacent_in_skeleton": "pair adjacent in skeleton", "pair_has_separating_set": "pair has a separating set",
+            "pair_correlated": "pair correlated", "pair_has_common_neighbour": "pair has a common neighbour",
+            "common_neighbour_in_no_separating_set": "common neighbour in no separating set",
+            "parsed_classifier_prediction": "parsed-feature classifier's prediction", "template_x_adjacent_x_common_neighbour": "template × adjacent × common neighbour"}
+    rA, rB, rC, rD, src = [], [], [], [], []
     for m in MODELS:
-        for tag in ("c2c_debiased", "c2c_probe"):
-            r = load(f"probe_content_{m}_{tag}.json")
-            if not r:
-                continue
-            src.append(f"probe_content_{m}_{tag}.json")
-            for k, v in r["properties"].items():
-                rows.append([LAB[m], DS[tag], r["layer"], labs[k], num(v["majority_rate"]), ci(v["probe"]["final"]["accuracy"]),
-                             ci(v["probe"]["content_end"]["accuracy"]) if "content_end" in v["probe"] else "–",
-                             num(v["gold_accuracy_from_property_alone"])])
-            c = r["complementarity"]; k = c["stacked_probe_plus_parsed"]
-            rows2.append([LAB[m], DS[tag], ci(c["probe_accuracy"]), ci(c["parsed_accuracy"]), ci(k["accuracy"]),
-                          ci(k["minus_parsed_alone_accuracy"], signed=True), num(c["pearson_r_scores"], 2),
-                          f"{c['probe_right_when_parsed_wrong']:.2f} (n = {c['n_parsed_wrong']})",
-                          ci(c["probe_auroc_where_parsed_says_valid"]), ci(c["probe_auroc_where_parsed_says_invalid"])])
-    if rows:
-        write("probe_content", table(
-            ["Model", "Item set", "Layer", "Property read off the prompt by a parser", "Majority rate", "Probe accuracy, final token",
-             "Probe accuracy, end of hypothesis", "Gold-label accuracy from this property alone"], rows, src))
-        write("probe_complementarity", table(
-            ["Model", "Item set", "Gold probe", "Parsed features", "Probe + parsed features (stacked)", "Stacked − parsed alone",
-             "Correlation of the two scores", "Probe right when parsed features are wrong",
-             "Probe AUROC where parsed says valid", "Probe AUROC where parsed says invalid"], rows2, src))
+        r = load(f"probe_content_{m}_c2c_debiased.json")
+        if not r:
+            continue
+        src.append(f"probe_content_{m}_c2c_debiased.json")
+        b = r["baselines"]
+        rA.append([LAB[m], "—", "**Gold-label probe**", ci(b["gold_probe"]["accuracy"]), ci(b["gold_probe"]["auroc"]), "—"])
+        for k, v in b["shallow_confound_controls"].items():
+            rA.append([LAB[m], "(a) shallow confound control", blab[k], ci(v["accuracy"]), ci(v["auroc"]), ci(v["probe_minus_this_accuracy"], signed=True)])
+        v = b["structure_aware_reference"]["parsed_features"]
+        rA.append([LAB[m], "(b) structure-aware reference", "Parsed features (gradient boosting)", ci(v["accuracy"]), ci(v["auroc"]),
+                   ci(v["probe_minus_this_accuracy"], signed=True)])
+        g = r["incremental_value"]
+        rB.append([LAB[m], ci(g["parsed_features_only"]["accuracy"]), ci(g["parsed_features_plus_probe"]["accuracy"]), ci(g["gain_accuracy"], signed=True),
+                   ci(g["gain_auroc"], signed=True), f"{g['probe_right_when_parsed_wrong']:.2f} (n = {g['n_parsed_wrong']})",
+                   f"{g['parsed_right_when_probe_wrong']:.2f} (n = {g['n_probe_wrong']})", num(g["pearson_r_probe_vs_parsed_score"], 2)])
+        for k, v in r["properties"]["by_property"].items():
+            x = v["at_gold_probe_layer"]
+            rC.append([LAB[m], r["layer"], plab[k], num(v["majority_rate"], 2), ci(x["trained"]["auroc"]), ci(x["shuffled"]["auroc"]),
+                       ci(x["random_init"]["auroc"]) if x["random_init"] else "–",
+                       ci(x["trained_minus_random_init_auroc"], signed=True) if x["trained_minus_random_init_auroc"] else "–",
+                       ci(x["trained"]["accuracy"]), num(v["gold_accuracy_from_property_alone"])])
+        s_ = r["stratified"]
+        for k, v in s_["by_stratifier"].items():
+            lo = min(v["strata"].values(), key=lambda t: t["probe_auroc"]["est"]) if v["strata"] else None
+            rD.append([LAB[m], slab[k], len(v["strata"]), num(v["gold_accuracy_from_stratifier_alone"]), ci(s_["overall_probe_auroc"]),
+                       ci(v["pair_weighted_within_stratum_probe_auroc"]),
+                       f"{lo['probe_auroc']['est']:.3f} (n = {lo['n']})" if lo else "–"])
+    if not rA:
+        return
+    write("debiased_two_groups", table(["Model", "Group", "Scorer", "Accuracy", "AUROC", "Gold probe − this (accuracy, paired)"], rA, src))
+    write("debiased_incremental", table(
+        ["Model", "Parsed features only", "Parsed features + probe score", "Gain in accuracy", "Gain in AUROC",
+         "Probe right when parsed features wrong", "Parsed features right when probe wrong", "Correlation of the two scores"], rB, src))
+    write("debiased_properties", table(
+        ["Model", "Layer", "Property of the item (read off the prompt by a parser)", "Majority rate", "Probe AUROC, trained model",
+         "Shuffled-label control", "Random-init model", "Trained − random-init", "Probe accuracy, trained", "Gold accuracy from this property alone"], rC, src))
+    write("debiased_strata", table(
+        ["Model", "Stratified by", "Strata used", "Gold accuracy from the strata alone", "Gold-probe AUROC, unstratified",
+         "Gold-probe AUROC within strata (pair-weighted)", "Lowest single stratum"], rD, src))
 
 
 if __name__ == "__main__":

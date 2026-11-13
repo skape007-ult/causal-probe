@@ -329,7 +329,7 @@ def fig_patching():
         for j, m in enumerate(ms):
             r = load(f"patching_{m}.json")
             k = r["kinds"][kind]
-            for i, (key, lab) in enumerate((("pooled_recovery", "clean → corrupt"), ("control_pooled_recovery", "random donor, not a control"))):
+            for i, (key, lab) in enumerate((("pooled_recovery", "clean → corrupt"), ("control_pooled_recovery", "random donor"))):
                 ax = axes[i, j]
                 g = np.array(k[key], float).T                    # [regions, layers]
                 im = ax.imshow(g, aspect="auto", cmap=cmap, norm=TwoSlopeNorm(0, -1, 1), interpolation="nearest")

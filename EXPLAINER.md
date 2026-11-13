@@ -33,19 +33,23 @@ Contents: [Start here](#start-here) · [Pipeline](#pipeline) · [Concept primer]
 
 ```mermaid
 flowchart TD
-    A[Raw benchmarks<br/>Corr2Cause, CLadder] --> B[Loaders + stratified subsample<br/>data.py]
+    A[Raw benchmarks, pinned revisions<br/>download_data.py] --> B[Loaders, item sets<br/>original pool, debiased pool, CLadder sample<br/>data.py]
+    A --> T[Text-only baselines on the benchmarks<br/>14_benchmark_baselines.py, no model]
     B --> C[Prompt + chat template<br/>prompts.py]
-    C --> D[One forward pass per item on MPS<br/>cache.py]
-    D --> E[(Cache on disk, float16<br/>residual stream at 3 positions x all layers<br/>+ answer logits)]
-    E --> F[Behaviour<br/>02_behaviour.py]
-    E --> G[Logit lens<br/>03_logit_lens.py]
-    E --> H[Probes + controls<br/>04_probes.py]
-    H --> I[Gold vs model-output confound<br/>05_confound.py]
-    I --> J[Steering along probe direction<br/>Tier 2, needs the model again]
-    C --> K[Minimal pairs + activation patching<br/>Tier 2, needs the model again]
-    E --> L[SAE features, Tier 3]
-    B --> M[LoRA fine-tune, Tier 3] --> D
+    C --> D[One forward pass per item<br/>laptop GPU: Qwen 0.5B, 1.5B, Gemma<br/>Kaggle GPU: Gemma debiased pool, Qwen 3B<br/>cache.py]
+    D --> E[(Activation cache, float16<br/>residual stream, all layers<br/>+ answer logits)]
+    E --> F[Behaviour and answer bias<br/>02, 15]
+    E --> G[Logit lens<br/>03]
+    E --> H[Probes + controls<br/>04]
+    H --> I[Probe versus text baselines<br/>05: pre-registered and audited criteria]
+    I --> I2[Post-hoc on the debiased pool<br/>05b: two baseline groups, incremental value,<br/>property probes, strata]
+    I --> J[Steering, needs the model<br/>07 raw runs, 07b slopes, 07c matched controls]
+    C --> K[Minimal pairs + activation patching<br/>08, needs the model]
+    E --> L[SAE features and ablation<br/>11, Gemma only, Kaggle]
+    F & G & I & I2 & J & K & L & T --> R[results/*.json] --> U[12 tables, 06 figures, 13 documents]
 ```
+
+Independent audits sit between each tier's results and its write-up (`notes/audit_*_raw.md`).
 
 The expensive step (D) runs once per model. Steps F–I never touch the model again.
 
@@ -152,7 +156,24 @@ Each layer has two kinds of component that write into the residual stream: sever
 ### Attribution patching
 Patching every head and MLP separately needs one forward pass each (hundreds). **Attribution patching** approximates all of them at once with one backward pass: effect ≈ (clean activation − corrupt activation) × gradient of the output with respect to that activation. It is a first-order (straight-line) approximation, so it can be wrong; we therefore re-check the top-ranked components and some random ones with real patching and report the correlation. *Example:* head L14H5: attribution 0.21, real patching 0.20. *Code:* `patch.record_components`, Part B of `scripts/08_patching.py`.
 
-*(Tier 3 concepts: sparse autoencoder, LoRA are added below when that tier runs.)*
+### Sparse autoencoder (SAE) and features
+A residual-stream vector has a few thousand numbers, and each number means nothing by itself: concepts are spread across many of them. A **sparse autoencoder** is a separately trained network that rewrites an activation vector as a sum of a few "features" out of a very large dictionary (here 16,384 per layer), each feature being a fixed direction with a non-negative strength. "Sparse" means only a few dozen features are active for any one input. The hope is that single features correspond to recognisable things. *Example:* an activation might be rewritten as 3.1 × feature 2041 + 0.8 × feature 977 + … + a small leftover (the reconstruction error); if feature 2041 fires on exactly the prompts that describe a collider, it is a candidate "collider feature". We use Gemma Scope, public SAEs trained by Google DeepMind on Gemma-2-2B (the base model; we apply them to the instruction-tuned variant, and report how well they reconstruct our activations). *Code:* `scripts/11_sae.py`, `load_sae`, `encode`.
+
+**How features are selected and tested here.** CLadder stories about real topics each use one causal graph type, so a feature that fires on "smoking" would look like a "confounding" feature. Only the ten made-up-word stories are used, because each occurs with every graph type. Features are *chosen* on five of those stories (which features best separate one graph type from the rest) and *evaluated* on the other five, against the best features found for shuffled graph labels. Reconstruction quality is reported relative to the activation's own size; a measure relative to the variation between prompts is meaningless at the final token, where every prompt has the same token.
+
+### Feature ablation
+To test whether a feature matters for the answer, subtract its contribution from the residual stream during the forward pass (at every token position, at the SAE's layer) and see whether the Yes−No logit difference changes. The control is to ablate the same number of *other* features that are equally active on these prompts; removing anything perturbs the model a little. *Code:* `FeatureAblator` in `scripts/11_sae.py`.
+
+```mermaid
+flowchart LR
+    P[prompt] --> L1[layers up to the SAE layer]
+    L1 --> R((residual stream<br/>every token))
+    R --> S[SAE encode] --> F[strengths of the chosen features]
+    F -->|"subtract strength x feature direction"| R
+    R --> L2[remaining layers] --> O[Yes - No logit difference]
+```
+
+*(A LoRA fine-tuning tier was planned and dropped for compute reasons; see decision D20.)*
 
 ---
 

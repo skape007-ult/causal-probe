@@ -98,9 +98,9 @@ def fig_lens():
                 c = res[tag]["gold_signed"][key]
                 if c is None:
                     continue
-                x = depth(len(c["mean"]))
-                ax.plot(x, c["mean"], color=col, label=f"{lab} (n={c['n']})")
-                ax.fill_between(x, c["lo"], c["hi"], color=col, alpha=0.18, lw=0)
+                x = depth(len(c["mean"]))[1:]      # layer 0 (raw embeddings) is off-scale noise under the lens
+                ax.plot(x, c["mean"][1:], color=col, label=f"{lab} (n={c['n']})")
+                ax.fill_between(x, c["lo"][1:], c["hi"][1:], color=col, alpha=0.18, lw=0)
             ax.axhline(0, color=AXIS, lw=1)
             ax.set_title(f"{MODEL_LAB[m]} · {DATASET_LAB[tag]}", fontsize=9)
             ax.legend(fontsize=7, loc="upper left")
@@ -108,9 +108,23 @@ def fig_lens():
                 ax.set_xlabel("layer (0 = embeddings)")
             if j == 0:
                 ax.set_ylabel("gold-signed answer logit diff\n(>0 leans to correct answer)")
-    fig.suptitle("Logit lens at the final prompt position, split by whether the model's final answer is correct", fontsize=9, color=INK2)
+    fig.suptitle("Logit lens at the final prompt position, split by whether the model's final answer is correct (layer 0 omitted)", fontsize=9, color=INK2)
     fig.tight_layout()
     save(fig, "fig2_logit_lens.png")
+
+    # 2b: threshold-free view - does the lens logit diff rank gold-Yes items above gold-No items?
+    fig, axes = plt.subplots(1, len(tags), figsize=(4.6 * len(tags), 3.3), sharey=True)
+    for ax, tag in zip(axes, tags):
+        for m in ms:
+            au = load(f"lens_{m}.json")[tag]["auroc_gold_by_layer"]
+            ax.plot(np.linspace(0, 1, len(au)), au, color=MODEL_COL[m], label=MODEL_LAB[m])
+        ax.axhline(0.5, color=INK2, ls="--", lw=1)
+        ax.set_title(DATASET_LAB[tag]); ax.set_xlabel("relative depth (0 = embeddings, 1 = last layer)")
+        ax.set_ylim(0.3, 1.0)
+    axes[0].set_ylabel("AUROC of lens logit diff for the gold label"); axes[0].legend(fontsize=8)
+    fig.suptitle("Logit lens: how well does 'what the model would say at this layer' track the gold answer? (dashed = chance)", fontsize=9, color=INK2)
+    fig.tight_layout()
+    save(fig, "fig2b_lens_auroc.png")
 
 
 # ------------------------------------------------------------------ fig 3: probes by layer with controls
@@ -195,16 +209,20 @@ def fig_confound():
         for ax, (sub, metric, title) in zip(axes, panels):
             for i, m in enumerate(ms):
                 b = load(f"confound_{m}_{tag}.json")[sub]
+                if "gold_probe" not in b:
+                    ax.text(i, 0.55, f"n={b['n']}\n(too few)", ha="center", color=MUTED, fontsize=8)
+                    continue
                 for k, (sc, col, lab) in enumerate(scorers):
-                    if sc not in b:
+                    if sc not in b or np.isnan(b[sc][metric]["est"]):
                         continue
                     v = b[sc][metric]
                     x = i + (k - 2) * w
                     ax.bar(x, v["est"], width=w * 0.88, color=col, label=lab if i == 0 else None)
                     ax.errorbar(x, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], color=INK, lw=0.8, capsize=2)
-                ax.text(i, 0.03, f"n={b['n']}", ha="center", color=MUTED, fontsize=7)
+                ax.text(i, 0.965, f"n={b['n']}", ha="center", color=INK2, fontsize=7)
             ax.axhline(0.5, color=INK2, ls="--", lw=1)
             ax.set_xticks(range(len(ms)), [MODEL_LAB[m] for m in ms]); ax.set_ylim(0, 1)
+            ax.set_xlim(-0.5, len(ms) - 0.5)
             ax.set_title(title, fontsize=9); ax.grid(axis="x", visible=False)
         h, l = axes[0].get_legend_handles_labels()
         fig.legend(h, l, loc="lower center", ncol=5, fontsize=8, bbox_to_anchor=(0.5, -0.08))

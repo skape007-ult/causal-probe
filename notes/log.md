@@ -260,3 +260,14 @@ Asked to attack, sentence by sentence, the claim I was about to make from the de
 12 *(minor)*: broken value marker in README fixed; the bag-of-words setting is now the same (C = 1) in both tables.
 
 **What I take from this.** Twice today I asked "does the probe hold more than the text?" with a baseline list that could not answer it, once too weak (TF-IDF on the original pool) and once vacuous by my own construction. The answer the data support is narrower than either of my drafts: Qwen 1.5B's final-token activations hold about what a per-template lookup of the statements naming the queried pair holds.
+
+### 15:05 Revised debiased-pool analysis (after the third audit): my own numbers
+`scripts/05b_probe_content.py`, rewritten; all baselines implemented in the repository and run under the probes' folds. Report half, accuracy unless stated.
+- **Ladder, Qwen 1.5B (probe 0.752):** per-template premise counts 0.593; per-template premise bag-of-words 0.659; random-init probe 0.579 | per-template per-variable statement counts 0.743; per-template statements naming the pair 0.765; per-string premise bigrams 0.742; per-string 4-grams 0.805; hand parse 0.816; parse + 4-grams 0.865. My implementations differ in detail from the reviewer's (their bigram and 4-gram models score 0.781 and 0.838), and give the same ordering.
+- **Ladder, Qwen 0.5B (probe 0.633):** not above per-template bag-of-words (0.659) or clearly above random-init (0.604).
+- **Incremental value (nested logistic stacking):** Qwen 1.5B +0.022 [+0.005, +0.038] over the hand parse, −0.001 [−0.010, +0.008] over parse + 4-grams. Qwen 0.5B +0.009 [−0.002, +0.018] and +0.002 [−0.003, +0.008]. The reviewer's independent numbers: +0.022 [+0.004, +0.037], +0.001, +0.010.
+- **Adjacency probe, Qwen 1.5B:** 0.980 trained; shuffled null 0.494 ± 0.027; random-init 0.619; text without binding 0.682; per-variable counts 0.899 (reviewer's version 0.946); end of premise 0.562.
+- **Strata, Qwen 1.5B:** probe AUROC 0.829 overall; 0.723 within parse-score quintiles; 0.607 within 25 cells of two text scores.
+- **Answers by template, Qwen 1.5B (within hypothesis string, all items):** parent 0.628 [0.581, 0.673] with r(answer, probe) = +0.359; has_collider 0.500; has_confounder 0.442; non-child descendant 0.430; non-parent ancestor 0.449. Identical to the reviewer's.
+- **Robustness:** single-seed accuracies 0.736 / 0.741 / 0.754; shuffled-label null 0.498 ± 0.013; trained on the selection half only 0.708.
+- Against my own expectations of 13:58: the property-probe expectation held; the stratification and incremental-value expectations were wrong in the ways logged above.

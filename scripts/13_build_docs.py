@@ -52,7 +52,19 @@ def build(src, dst):
     print("built", dst.relative_to(ROOT), f"({n} pending values)" if n else "")
 
 
+def stale_tables():
+    """Tables are inlined as files; warn if any result file is newer than the oldest table."""
+    tabs = list(TABLES.glob("*.md")); ress = list(RESULTS.glob("*.json"))
+    if tabs and ress:
+        oldest = min(t.stat().st_mtime for t in tabs)
+        newer = sorted(r.name for r in ress if r.stat().st_mtime > oldest + 1)
+        if newer:
+            print(f"WARNING: {len(newer)} result file(s) are newer than the oldest table (e.g. {newer[0]}); "
+                  "run scripts/12_tables.py before building the documents.")
+
+
 if __name__ == "__main__":
+    stale_tables()
     for src, dst in (("report/report_template.md", "report/report.md"),
                      ("report/benchmark_text_baselines_template.md", "report/benchmark_text_baselines.md"),
                      ("report/README_template.md", "README.md")):

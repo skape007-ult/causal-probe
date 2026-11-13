@@ -123,3 +123,7 @@ Scope: qwen0.5b + qwen1.5b (Gemma not cached yet; it will run through the same, 
 14. Not verifiable without a model: production cache (float16/MPS/batched) vs unbatched float32. Covered by `tests/test_cache.py` on CPU (passes); the MPS path rests on `results/env_check_*.json`.
 
 **What this does to my logged expectations:** the headline prediction ("criterion fails in most cells because text baselines match the probe") was right in substance, but I reached it last night for the wrong reason on Corr2Cause (TF-IDF ≈ probe for 0.5B) and then briefly *reversed* it for 1.5B on the strength of baselines that were too weak. The audit, not my own checks, caught the hypothesis-string shortcut. The control task had been hinting at it: probes decode hypothesis identity well enough to score 0.69–0.78 on random per-hypothesis labels.
+
+## Fri 2026-11-13 09:25 — shutdown for laptop restart
+
+Stopped the overnight queue by hand at the user's request. Finished overnight: qwen1.5b Tier 2, the Gemma cache (trained and random-init), Gemma Tier 1 (results written, not yet inspected or tabulated). Not finished: Gemma steering stalled at item 0 of 300 for 52 minutes (swapped out; no output, nothing lost); Gemma patching never started. No Gemma Tier 2 number exists, so the planned change to the steering batch size for Gemma is made blind to results. Restart instructions are in `notes/progress.md`.

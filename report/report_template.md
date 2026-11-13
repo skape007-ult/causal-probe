@@ -364,6 +364,17 @@ Each tier was reviewed by a fresh reviewer agent that received the code, the res
 | Patching localises where a prompt difference reaches the final token, not where the answer is determined; the random-donor control is invalid as run | Section retitled and reworded; control removed from the argument |
 | Attribution patching is validated for the largest components only | Wording |
 
+**Third audit (Friday 14:45; the debiased-pool analysis and the steering wording).** Raw report: `notes/audit_debiased_raw.md`. Confirmed with its own code: the pool is exactly balanced for every hypothesis string and premise in all 30 training and test folds; the headline probe accuracy reproduces (0.752 [0.730, 0.775]); no selection contamination; the parser is correct; steering numbers reproduce. Four of the seven sentences I had proposed did not survive:
+
+| Finding | Consequence |
+|---|---|
+| My test of what the probe adds to the parser (one extra column in gradient boosting) could not detect a two-point gain; I had concluded "nothing measurable" | Nested logistic stacking: about two points over the hand parse, nothing over a stronger text-only model (Section 3.6.2) |
+| The "shallow confound controls" I listed are at 0.50 by construction in this pool and prove nothing | A ladder of interaction baselines; the probe is placed on it (Section 3.6.1) |
+| "The answers do not express this information" is false below the pooled level | Per-template analysis of the answers (Section 3.6.5) |
+| Twenty control directions support "within the range of", not "no more than"; the effect is not zero; per natural SD one case exceeds all controls | Section 4.1 reworded; per-natural-SD percentiles added to the table |
+| For Qwen2.5-0.5B the final-token signal is absent, not "weaker" | Wording |
+| Adjacency is largely decodable from per-variable statement counts; single shuffles are not a null distribution; near-duplicate properties; uninformative strata | Text baselines per property, end-of-premise check, repeated shuffles, merged properties, score strata (Sections 3.6.3, 3.6.4) |
+
 **What the audits did not cover.** Gemma-2-2B's Tier 1 results were produced after the Tier 1 audit by the same, already-audited code and were reviewed by the author only. Results from the Kaggle run (Gemma steering, patching and SAEs; the larger model) are covered by a third audit after they arrive. *(Pending.)*
 
 ## 7. Limitations

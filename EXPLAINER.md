@@ -177,6 +177,9 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 **D17. (Revises D7.) Probe regularisation is chosen from a small grid on the selection half; the fixed-C result is kept as a sensitivity analysis.** (Thu 19:57–20:20, after seeing the pre-planned sensitivity check)
 *What happened:* D7 fixed C = 0.01 and said a sensitivity check showing the conclusion depends on C would change it. The check showed Corr2Cause probe accuracy rising from 0.76 (C = 0.01) to 0.80 (C = 1), while the TF-IDF baseline had been run at C = 1: the probe was handicapped. *Decision:* run every probe (all targets, controls and the random-init model) at C ∈ {0.01, 0.1, 1} and TF-IDF at C ∈ {0.1, 1, 10}. D11 already splits premises/stories into a selection half and a report half to choose the layer; now the pair (layer, C) is chosen there too, and the TF-IDF C likewise. Every reported number is on the report half, which plays no part in any choice. *Alternatives tried:* true nested cross-validation inside every training fold (statistically equivalent in spirit, but 10× the fits; it ran 20 minutes without finishing one model and was abandoned); keep C = 0.01 (biased against the probe); choose C by test accuracy (tuning on the test set). *Safeguard:* the original setting (probe C = 0.01, TF-IDF C = 1) is reported next to the selected one (`results/confound_*_fixedC.json`), because this change was made after seeing results and it moves towards the more exciting hypothesis. *Would change it:* nothing further; the probe has no other hyperparameters.
 
+**D18. A stronger, parsed-feature text baseline is added as a secondary check; the pre-registered verdict is left as it is.** (Thu 23:00, after the criterion was first met)
+*What happened:* for Qwen-1.5B on Corr2Cause the D11 criterion came out positive: on items the model gets wrong, the gold probe beats TF-IDF and the type prior. *Decision:* before believing it, test it against a text baseline that can do what bag-of-words cannot, namely tie premise statements to the two variables in the hypothesis (Corr2Cause), or compare the quoted probabilities and read the question's polarity (CLadder), using gradient boosting on those parsed features. *Alternatives:* accept the TF-IDF comparison as specified (it is what was pre-registered, but TF-IDF is a weak model of "what is in the text" for a task whose label is a function of the text); swap the baseline silently (would hide a post-hoc choice). *Why:* the claim "the model represents the answer beyond what the text gives away" is only as strong as the text baseline. This check can only weaken the claim, so adding it after the fact does not risk a false positive. Both verdicts are reported side by side. *Would change it:* nothing.
+
 ---
 
 ## How to read each figure
@@ -209,4 +212,57 @@ All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded b
 
 ## Questions a professor would ask
 
-*(Filled in per tier.)*
+Short model answers. Numbers are quoted from `report/tables/*.md` (generated from `results/*.json`); where a number is not given here, the table is named.
+
+<!-- QA-TIER1 -->
+### Tier 1 — behaviour, logit lens, probes
+
+**1. Why score with answer-token logits rather than just reading the generated text?**
+Logits give a graded score for every item (so AUROC and calibration are available), cost one forward pass, and cannot be "unparseable". The risk is that the first-token logits might not match what the model would actually write, so both were computed on 500 items per set; they disagree on under 1% of items for the Qwen models (`behaviour_generation.md`).
+
+**2. Corr2Cause is 85% "No". How do you stop that from flattering the models?**
+Three ways: macro-F1 and AUROC are reported next to accuracy; the majority-class baseline is shown on the same items; and probing uses a pool built to be exactly 50/50, so chance is 50%.
+
+**3. The test set has 1,162 items. Why are your confidence intervals so wide?**
+Because those items come from only 21 distinct premises, and hypotheses about one premise share their fate. The bootstrap resamples premises, not items. Treating items as independent would shrink the intervals several-fold and be wrong.
+
+**4. What exactly is a "held-out" item for a probe here?**
+One whose whole premise (Corr2Cause) or story (CLadder) was absent from the probe's training fold. `tests/test_data.py::test_grouped_folds_have_no_group_leakage` enforces it.
+
+**5. Your probe gets ~80% on Corr2Cause. Doesn't that show the model knows the answer?**
+No. A bag-of-words classifier on the prompt text gets about the same (`probes_summary.md`). Corr2Cause labels are a deterministic function of the text, and simple surface statistics (which template, how many independence statements) predict them well. A probe on activations can be re-reading those statistics.
+
+**6. Then what would count as evidence that the model "represents but doesn't say"?**
+The criterion fixed before any probe was run (decision D11): on items the model gets wrong, on premises not used to choose the layer or C, the gold probe's accuracy must exceed 50% and exceed both text baselines, with 95% intervals excluding zero. The outcome per model and dataset is in `confound_wrong_items.md`.
+
+**7. Why isn't "probe beats chance on the items the model gets wrong" enough by itself?**
+If a model answers "No" to everything, the items it gets wrong are exactly the gold-Yes items. Any classifier with some skill at spotting Yes items "beats chance on wrong items", including TF-IDF. The comparison with the text baselines is what carries the claim.
+
+**8. What does the "within stratum" analysis add?**
+It holds the model's own answer fixed (all items where it said No, say) and asks whether the probe can still rank gold-Yes above gold-No. Inside a stratum a probe that only reads the model's yes/no decision is useless (AUROC 0.5), so any skill there is information beyond the binary answer. It is also compared with the model's own graded confidence.
+
+**9. What is the control task and why is your selectivity sometimes negative?**
+Each question *type* gets a fixed random label; only memorisation can predict it. On CLadder the probe predicts those random labels better (≈0.79) than the real ones (≈0.56): the residual stream identifies the graph and query type very clearly, while the gold answer is barely decodable. Negative selectivity says "this probe is expressive enough to memorise types, and still cannot find the answer".
+
+**10. Why include a randomly initialised model?**
+To measure what a probe can read from the architecture and the input alone. A random transformer still mixes token embeddings into the final position, so some text statistics survive. The trained model must beat it for the result to be about learned computation.
+
+**11. You changed the regularisation after seeing results. Isn't that p-hacking?**
+It is the reason the change is documented so heavily (decision D17). The sensitivity check was planned in advance, with its trigger written down. The new procedure chooses C on the selection half only, is applied to the text baseline and every control as well, and the original fixed-C result is reported next to it (`confound_fixedC_*.md`). The verdicts are shown under both settings.
+
+**12. Why choose the layer on half the data?**
+Taking the best of ~25 noisy layer scores and reporting it inflates the number (winner's curse). Selection on one half of the premises/stories and reporting on the other removes that bias at the cost of wider intervals.
+
+**13. What does the logit lens show that probes do not?**
+The lens uses the model's *own* readout, so it shows what the model is on course to say at each depth. A probe uses a readout we trained, so it shows what is *available*. A gap between them (probe AUROC far above lens AUROC at the same layer) is exactly "available but not on the path to the output".
+
+**14. Why is few-shot prompting not simply "better"?**
+Four demonstrations changed the answer bias more than the skill: see `behaviour_few_shot.md` (for the smallest model the fraction of "Yes" answers on Corr2Cause moved from 0% to 81%, and accuracy fell because the labels are mostly "No"). Macro-F1 and AUROC are the fairer readings.
+
+**15. What does the variable-renaming check tell you?**
+Renaming A,B,C to Z,Y,X leaves the logic untouched. A model that reasons should not care. Prediction flips and the change in macro-F1 are in `robustness_renaming.md`; the original paper used the same idea to show that fine-tuned models had learned surface patterns.
+<!-- /QA-TIER1 -->
+
+<!-- QA-TIER2 -->
+*(Tier 2 and 3 questions follow when those tiers are written up.)*
+<!-- /QA-TIER2 -->

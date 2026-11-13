@@ -124,3 +124,114 @@ def query_only_oof(items: list[dict], y: np.ndarray, folds) -> np.ndarray:
 
 def folds_for(items, seed: int):
     return data.grouped_folds(items, N_FOLDS, seed)
+
+
+# ----------------------------------------------------------------------------- structural text baseline
+import re as _re
+
+_ST_CORR = _re.compile(r"\b([A-Z]) correlates with ([A-Z])\.")
+_ST_IND = _re.compile(r"\b([A-Z]) is independent of ([A-Z])\.")
+_ST_CIND = _re.compile(r"\b([A-Z]) and ([A-Z]) are independent given ([^.]*)\.")
+_VAR = _re.compile(r"\b([A-Z])\b")
+C2C_TEMPLATES = ["parent", "child", "non-parent ancestor", "non-child descendant", "has_collider", "has_confounder"]
+
+
+def parse_premise(context: str) -> dict:
+    """Parse a Corr2Cause premise into its statements: marginal correlations, marginal
+    independences and conditional independences {pair: [conditioning sets]}."""
+    corr = {frozenset(m) for m in _ST_CORR.findall(context)}
+    ind = {frozenset(m) for m in _ST_IND.findall(context)}
+    cind = {}
+    for a, b, rest in _ST_CIND.findall(context):
+        cind.setdefault(frozenset((a, b)), []).append(frozenset(_VAR.findall(rest)))
+    return {"corr": corr, "ind": ind, "cind": cind}
+
+
+_PCT = _re.compile(r"(\d+)%")
+_CORRNUM = _re.compile(r"correlation between .*? is (-?\d+\.\d+)")
+CL_QTYPES = ["ate", "backadj", "collider_bias", "correlation", "det-counterfactual", "ett", "exp_away", "marginal", "nde", "nie"]
+CL_GRAPHS = ["IV", "arrowhead", "chain", "collision", "confounding", "diamond", "diamondcut", "fork", "frontdoor", "mediation"]
+_POS_WORDS = ("increase", "more likely", "larger", "positively")
+_NEG_WORDS = ("decrease", "less likely", "smaller", "negatively")
+
+
+def cladder_features(items: list[dict]) -> np.ndarray:
+    """Stronger text-only baseline for CLadder: the numbers quoted in the prompt, simple
+    differences between them, the polarity of the question's wording, and the query / graph
+    type. A gradient-boosted model on these can learn heuristics such as "the second
+    probability is larger and the question says 'increase' -> yes" without any causal
+    inference (no adjustment formulas are evaluated)."""
+    rows = []
+    for it in items:
+        pct = [float(x) for x in _PCT.findall(it["context"])]
+        q = it["query"].lower()
+        cm = _CORRNUM.search(it["context"])
+        ctx = it["context"]
+        f = (pct + [-1.0] * 9)[:9]
+        f += [float(len(pct)),
+              pct[-1] - pct[-2] if len(pct) >= 2 else 0.0,
+              pct[1] - pct[0] if len(pct) >= 2 else 0.0,
+              pct[-1] - 50.0 if pct else 0.0,
+              float(cm.group(1)) if cm else 0.0, float(cm is not None),
+              float(any(w in q for w in _POS_WORDS)), float(any(w in q for w in _NEG_WORDS)),
+              float(q.count(" not ")), float("instead" in q), float("overall" in q),
+              # backdoor-adjustment questions: which method is the 'case by case' (adjusted) one?
+              float(0 <= ctx.find("case by case") < ctx.find("Method 2")) if "Method 2" in ctx else -1.0,
+              float("method 1 than method 2" in q), float("method 2 than method 1" in q)]
+        f += [float(it["query_type"] == t) for t in CL_QTYPES] + [float(it["graph_id"] == g) for g in CL_GRAPHS]
+        rows.append(f)
+    return np.array(rows, np.float32)
+
+
+def structural_features(items: list[dict]) -> np.ndarray:
+    """A stronger text-only baseline than bag-of-words (dispatches to `cladder_features` for
+    CLadder items). For Corr2Cause: features a shallow parser
+    could compute by binding the premise's statements to the two variables named in the
+    hypothesis. No causal inference is performed (no orientation rules, no equivalence classes);
+    'adjacent' = correlated and never rendered independent by any conditioning set, i.e. the
+    skeleton edge, which is step 1 of the PC algorithm.
+    """
+    if items[0]["dataset"] == "cladder":
+        return cladder_features(items)
+    rows = []
+    for it in items:
+        p = parse_premise(it["context"])
+        allv = sorted(set(_VAR.findall(it["context"].split("variables,")[1].split(".")[0]))) if "variables," in it["context"] else []
+        hv = _VAR.findall(it["query"])
+        a, b = (hv + ["?", "?"])[:2]
+        pair = frozenset((a, b))
+
+        def adj(x, y):
+            q = frozenset((x, y))
+            return q in p["corr"] and q not in p["cind"]
+
+        sets = p["cind"].get(pair, [])
+        nb_a = {v for v in allv if v != a and adj(a, v)}
+        nb_b = {v for v in allv if v != b and adj(b, v)}
+        common = nb_a & nb_b
+        # unshielded triples a - c - b (a, b not adjacent): is c in some separating set of (a, b)?
+        c_in_sep = [any(c in s for s in sets) for c in common] if not adj(a, b) else []
+        f = [
+            float(pair in p["corr"]), float(pair in p["ind"]), float(adj(a, b)),
+            float(len(sets)), float(min((len(s) for s in sets), default=-1)), float(max((len(s) for s in sets), default=-1)),
+            float(len(nb_a)), float(len(nb_b)), float(len(common)),
+            float(sum(c_in_sep)), float(len(c_in_sep) - sum(c_in_sep)),          # non-colliders / colliders at a-c-b
+            float(len(allv)), float(len(p["corr"])), float(len(p["ind"])), float(sum(len(v) for v in p["cind"].values())),
+            float(a < b),
+        ]
+        f += [float(it.get("template") == t) for t in C2C_TEMPLATES]
+        rows.append(f)
+    return np.array(rows, np.float32)
+
+
+def structural_oof(items: list[dict], y: np.ndarray, folds) -> np.ndarray:
+    """Out-of-fold scores of a gradient-boosted classifier on `structural_features` (non-linear,
+    so template x structure interactions are available to it). Returns logit-like scores."""
+    from sklearn.ensemble import HistGradientBoostingClassifier
+    X = structural_features(items)
+    s = np.zeros(len(y), np.float32)
+    for tr, te in folds:
+        clf = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.1, random_state=0).fit(X[tr], y[tr])
+        pr = np.clip(clf.predict_proba(X[te])[:, 1], 1e-4, 1 - 1e-4)
+        s[te] = np.log(pr / (1 - pr))
+    return s

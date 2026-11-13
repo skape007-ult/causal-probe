@@ -204,14 +204,15 @@ def fig_confound():
         ms = [m for m in MODELS if (RESULTS / f"confound_{m}_{tag}.json").exists()]
         if not ms:
             continue
-        scorers = [("gold_probe", "#2a78d6", "gold probe"), ("tfidf", INK, "TF-IDF"),
+        scorers = [("gold_probe", "#2a78d6", "gold probe"), ("structural", "#eda100", "structural text features (post-hoc)"),
+                   ("tfidf", INK, "TF-IDF"),
                    ("type_prior", "#6250d6", "type prior"), ("random_init_probe", "#e87ba4", "random-init probe"),
                    ("model_logit_diff", "#eb6834", "model's own logit diff")]
         panels = [("model_wrong", "accuracy", "Accuracy on items the model gets WRONG"),
                   ("model_said_yes", "auroc", "AUROC within 'model said Yes'"),
                   ("model_said_no", "auroc", "AUROC within 'model said No'")]
         fig, axes = plt.subplots(1, 3, figsize=(12, 3.5), sharey=True)
-        w = 0.15
+        w = 0.13
         for ax, (sub, metric, title) in zip(axes, panels):
             for i, m in enumerate(ms):
                 b = load(f"confound_{m}_{tag}.json")[sub]
@@ -222,7 +223,7 @@ def fig_confound():
                     if sc not in b or np.isnan(b[sc][metric]["est"]):
                         continue
                     v = b[sc][metric]
-                    x = i + (k - 2) * w
+                    x = i + (k - 2.5) * w
                     ax.bar(x, v["est"], width=w * 0.88, color=col, label=lab if i == 0 else None)
                     ax.errorbar(x, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], color=INK, lw=0.8, capsize=2)
                 ax.text(i, 0.965, f"n={b['n']}", ha="center", color=INK2, fontsize=7)
@@ -231,7 +232,7 @@ def fig_confound():
             ax.set_xlim(-0.5, len(ms) - 0.5)
             ax.set_title(title, fontsize=9); ax.grid(axis="x", visible=False)
         h, l = axes[0].get_legend_handles_labels()
-        fig.legend(h, l, loc="lower center", ncol=5, fontsize=8, bbox_to_anchor=(0.5, -0.08))
+        fig.legend(h, l, loc="lower center", ncol=6, fontsize=8, bbox_to_anchor=(0.5, -0.08))
         fig.suptitle(f"Does the gold probe know more than the model says? · {DATASET_LAB[tag]} · report half only; dashed = chance",
                      fontsize=9, color=INK2)
         fig.tight_layout()

@@ -1,6 +1,7 @@
 | Model | query_type=ate | query_type=backadj | query_type=collider_bias | query_type=correlation | query_type=det-counterfactual | query_type=ett | query_type=exp_away | query_type=marginal | query_type=nde | query_type=nie |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | 0.50 [0.45, 0.56] | 0.50 [0.46, 0.55] | 0.33 [0.14, 0.42] | 0.50 [0.45, 0.54] | 0.51 [0.46, 0.55] | 0.50 [0.45, 0.55] | 0.50 [0.40, 0.56] | 0.50 [0.46, 0.54] | 0.50 [0.41, 0.58] | 0.50 [0.42, 0.60] |
+| Qwen2.5-1.5B | 0.54 [0.47, 0.60] | 0.49 [0.45, 0.52] | 0.13 [0.02, 0.26] | 0.50 [0.46, 0.55] | 0.55 [0.50, 0.59] | 0.47 [0.42, 0.52] | 0.33 [0.16, 0.55] | 0.48 [0.44, 0.53] | 0.51 [0.43, 0.61] | 0.50 [0.45, 0.56] |
 | *n / frac. gold Yes* | 422 / 0.50 | 468 / 0.50 | 46 / 0.50 | 422 / 0.50 | 422 / 0.50 | 376 / 0.50 | 48 / 0.50 | 468 / 0.50 | 94 / 0.50 | 234 / 0.50 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>

@@ -64,6 +64,23 @@ class DiskEmbedding:
         return torch.cat(out, 1)
 
 
+def reinit_(model) -> None:
+    """Re-initialise every weight in place the way from_config() would: Linear / Embedding
+    ~ N(0, initializer_range), biases 0, RMSNorm gains at their constructor default
+    (zeros for Gemma's (1 + w) parametrisation, ones otherwise).
+    Needed because model._init_weights() silently skips modules of a loaded checkpoint
+    (they are flagged as already initialised) - see notes/upstream_issues.md U8."""
+    std = model.config.initializer_range
+    with torch.no_grad():
+        for mod in model.modules():
+            if isinstance(mod, (torch.nn.Linear, torch.nn.Embedding)):
+                mod.weight.normal_(0.0, std)
+                if getattr(mod, "bias", None) is not None:
+                    mod.bias.zero_()
+            elif "RMSNorm" in type(mod).__name__ or isinstance(mod, torch.nn.LayerNorm):
+                mod.weight.fill_(0.0 if "gemma" in type(mod).__name__.lower() else 1.0)
+
+
 def load_model(name: str, device: str | None = None, dtype=None, random_init: bool = False,
                disk_embed: bool | None = None):
     """Load an instruct model. `random_init=True` gives an untrained copy with the same
@@ -96,7 +113,7 @@ def load_model(name: str, device: str | None = None, dtype=None, random_init: bo
             # re-initialise the loaded half-precision weights in place with the model's own
             # initialiser - the same function from_config() applies.
             torch.manual_seed(SEED)
-            model.apply(model._init_weights)
+            reinit_(model)
     if disk_embed:
         emb = model.model.embed_tokens
         path = CACHE / f"embed_{name}{'-rand' if random_init else ''}.npy"

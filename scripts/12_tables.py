@@ -148,26 +148,30 @@ def t_confound(models=MODELS, suffix="", name="confound"):
             for label, root in (("raw", c), ("calibrated", c["calibrated"])):
                 w = root["model_wrong"]
                 if "gold_probe" not in w:
-                    rows.append([LAB[m], DS[tag], label, w["n"]] + ["–"] * 6)
+                    rows.append([LAB[m], DS[tag], label, w["n"]] + ["–"] * 8)
                     continue
                 v = c["verdict"] if label == "raw" else c["verdict"]["calibrated"]
                 rows.append([LAB[m], DS[tag], label, w["n"], ci(w["gold_probe"]["accuracy"]), ci(w["tfidf"]["accuracy"]),
                              ci(w["type_prior"]["accuracy"]), ci(w["gold_probe_minus_tfidf"]["accuracy"], signed=True),
                              ci(w["gold_probe_minus_type_prior"]["accuracy"], signed=True),
-                             "**yes**" if v["represents_but_doesnt_say"] else "no"])
+                             "**yes**" if v["represents_but_doesnt_say"] else "no",
+                             ci(w.get("structural", {}).get("accuracy")),
+                             ci(w.get("gold_probe_minus_structural", {}).get("accuracy"), signed=True)])
                 for sname in ("model_said_yes", "model_said_no"):
                     b = root[sname]
                     if "gold_probe" not in b:
                         continue
                     rows2.append([LAB[m], DS[tag], label, sname.replace("model_said_", "said "), b["n"], ci(b["gold_probe"]["auroc"]),
                                   ci(b["tfidf"]["auroc"]), ci(b["type_prior"]["auroc"]), ci(b["model_logit_diff"]["auroc"]),
-                                  ci(b["gold_probe_minus_tfidf"]["auroc"], signed=True)])
+                                  ci(b["gold_probe_minus_tfidf"]["auroc"], signed=True),
+                                  ci(b.get("structural", {}).get("auroc")),
+                                  ci(b.get("gold_probe_minus_structural", {}).get("auroc"), signed=True)])
     write(f"{name}_wrong_items", table(
         ["Model", "Dataset", "Model answer", "n wrong", "Gold probe acc.", "TF-IDF acc.", "Type prior acc.", "Probe − TF-IDF",
-         "Probe − type prior", "Criterion met"], rows, src))
+         "Probe − type prior", "Pre-registered criterion met", "Structural baseline acc. (post-hoc)", "Probe − structural (post-hoc)"], rows, src))
     write(f"{name}_within_strata", table(
         ["Model", "Dataset", "Model answer", "Stratum", "n", "Gold probe AUROC", "TF-IDF AUROC", "Type prior AUROC",
-         "Model logit-diff AUROC", "Probe − TF-IDF"], rows2, src))
+         "Model logit-diff AUROC", "Probe − TF-IDF", "Structural AUROC (post-hoc)", "Probe − structural (post-hoc)"], rows2, src))
 
 
 def t_external(models=MODELS):
@@ -179,9 +183,11 @@ def t_external(models=MODELS):
         src.append(f"confound_{m}_c2c_probe.json")
         e = c["external_c2c_test"]["all_items"]
         rows.append([LAB[m], e["n"], ci(e["gold_probe"]["auroc"]), ci(e["tfidf"]["auroc"]), ci(e["type_prior"]["auroc"]),
-                     ci(e["model_logit_diff"]["auroc"]), ci(e["gold_probe_minus_tfidf"]["auroc"], signed=True)])
+                     ci(e["model_logit_diff"]["auroc"]), ci(e["gold_probe_minus_tfidf"]["auroc"], signed=True),
+                     ci(e.get("structural", {}).get("auroc")), ci(e.get("gold_probe_minus_structural", {}).get("auroc"), signed=True)])
     write("external_c2c_test", table(
-        ["Model", "n", "Gold probe AUROC", "TF-IDF AUROC", "Type prior AUROC", "Model logit-diff AUROC", "Probe − TF-IDF"], rows, src))
+        ["Model", "n", "Gold probe AUROC", "TF-IDF AUROC", "Type prior AUROC", "Model logit-diff AUROC", "Probe − TF-IDF",
+         "Structural AUROC (post-hoc)", "Probe − structural (post-hoc)"], rows, src))
 
 
 def t_steering():

@@ -113,6 +113,14 @@ def main():
     scores = {"gold_probe": picked_scores["gold"][:, L_gold].mean(0),
               "tfidf": tfidf_scores, "type_prior": oof["type_prior"].mean(0),
               "model_logit_diff": ld}
+    if True:
+        # Post-hoc, stronger text baseline (added after the TF-IDF criterion was first met; see
+        # notes/log.md): gradient boosting on parsed text features (Corr2Cause: premise statements
+        # bound to the hypothesis variables; CLadder: quoted probabilities, their differences and
+        # the question's polarity). Same grouped folds as the probes. Not part of the pre-registered verdict.
+        from causal_probe.config import PROBE_SEEDS
+        scores["structural"] = np.mean([probes.structural_oof(items, y, probes.folds_for(items, sd))
+                                        for sd in PROBE_SEEDS], 0)
     if "random_init" in oof.files:
         L_r, _ = pick("random_init")
         res["selected_layer_random_init"] = L_r
@@ -204,6 +212,17 @@ def main():
     res["verdict"]["calibrated"] = {"ci_lower_bounds_wrong_items": cal_checks, "passed": cal_passed,
                                     "represents_but_doesnt_say": bool(all(cal_passed.values()))}
     res["verdict"]["degenerate_raw_answer"] = bool(min(m.mean(), 1 - m.mean()) < 0.05)
+    if "structural" in scores:
+        sl = lo(["model_wrong", "gold_probe_minus_structural", "accuracy"])
+        scl = lo(["model_wrong", "gold_probe_minus_structural", "accuracy"], cw)
+        res["verdict"]["post_hoc_structural_baseline"] = {
+            "note": "secondary check added after seeing results; a stronger text-only baseline than TF-IDF",
+            "probe_minus_structural_accuracy_wrong_items_ci_lo": sl,
+            "probe_beats_structural_on_wrong_items": bool(sl is not None and sl > 0),
+            "calibrated_probe_minus_structural_ci_lo": scl,
+            "calibrated_probe_beats_structural_on_wrong_items": bool(scl is not None and scl > 0),
+            "survives": bool(res["verdict"]["represents_but_doesnt_say"] and sl is not None and sl > 0),
+        }
 
     # ---- external check for Corr2Cause: train on the whole pool, test on the natural-distribution test set
     if a.tag == "c2c_probe":
@@ -222,7 +241,11 @@ def main():
         tmpl = np.array([i["template"] for i in items]); ttmpl = np.array([i["template"] for i in titems])
         prior = {k: y[tmpl == k].mean() - 0.5 for k in np.unique(tmpl)}
         s_prior = np.array([prior.get(k, 0.0) for k in ttmpl], np.float32)
-        tscores = {"gold_probe": s_probe, "tfidf": s_tfidf, "type_prior": s_prior, "model_logit_diff": tld}
+        from sklearn.ensemble import HistGradientBoostingClassifier
+        hgb = HistGradientBoostingClassifier(max_iter=200, learning_rate=0.1, random_state=0).fit(probes.structural_features(items), y)
+        pr = np.clip(hgb.predict_proba(probes.structural_features(titems))[:, 1], 1e-4, 1 - 1e-4)
+        tscores = {"gold_probe": s_probe, "tfidf": s_tfidf, "type_prior": s_prior, "model_logit_diff": tld,
+                   "structural": np.log(pr / (1 - pr))}
         ext = {"note": "probe/TF-IDF trained on the balanced train pool at the selected layer; evaluated on test.csv "
                        "(15.5% positive, 21 premises, 2-6 variables vs 4-6 in the pool: a distribution shift). "
                        "Use AUROC; accuracy at threshold 0 reflects the balanced training prior.",
@@ -243,6 +266,10 @@ def main():
     print(f"   calibrated answer: wrong items (n={cmw['n']}): probe acc {cmw['gold_probe']['accuracy']['est']:.3f} "
           f"[{cmw['gold_probe']['accuracy']['lo']:.3f},{cmw['gold_probe']['accuracy']['hi']:.3f}] tfidf {cmw['tfidf']['accuracy']['est']:.3f} "
           f"prior {cmw['type_prior']['accuracy']['est']:.3f} -> {res['verdict']['calibrated']['represents_but_doesnt_say']}")
+    if "structural" in mw:
+        print(f"   post-hoc structural baseline on wrong items: {mw['structural']['accuracy']['est']:.3f}; probe - structural "
+              f"{mw['gold_probe_minus_structural']['accuracy']['est']:+.3f} [{mw['gold_probe_minus_structural']['accuracy']['lo']:+.3f},"
+              f"{mw['gold_probe_minus_structural']['accuracy']['hi']:+.3f}] -> survives={res['verdict']['post_hoc_structural_baseline']['survives']}")
     for sname in ("model_said_yes", "model_said_no"):
         b = res[sname]
         if "gold_probe" in b:

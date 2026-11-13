@@ -1,0 +1,17 @@
+W1113 17:28:52.915000 30376 .venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+{
+ "python": "3.12.6",
+ "platform": "macOS-26.6.2-arm64-arm-64bit",
+ "torch": "2.15.0",
+ "transformers": "5.22.2",
+ "sklearn": "1.9.1",
+ "numpy": "2.5.4",
+ "cuda": false,
+ "gpus": [],
+ "gpu_memory_gb": [],
+ "sae_lens": "6.55.4",
+ "peft": "0.21.2",
+ "bitsandbytes": "not available (ModuleNotFoundError)",
+ "accelerate": "1.15.0",
+ "git_commit": "2ff9e0f6cfb71136ec3c2c9ed993cbc02ccbbdab"
+}

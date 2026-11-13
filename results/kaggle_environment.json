@@ -1,22 +1,16 @@
 {
- "python": "3.12.3",
- "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
- "torch": "2.15.0+cu132",
+ "python": "3.12.6",
+ "platform": "macOS-26.6.2-arm64-arm-64bit",
+ "torch": "2.15.0",
  "transformers": "5.22.2",
  "sklearn": "1.9.1",
  "numpy": "2.5.4",
- "cuda": true,
- "gpus": [
-  "Tesla T4",
-  "Tesla T4"
- ],
- "gpu_memory_gb": [
-  15.6,
-  15.6
- ],
+ "cuda": false,
+ "gpus": [],
+ "gpu_memory_gb": [],
  "sae_lens": "6.55.4",
  "peft": "0.21.2",
  "bitsandbytes": "not available (ModuleNotFoundError)",
  "accelerate": "1.15.0",
- "git_commit": "406d99485f272f84fe5484cda86378dbd6ca6744"
+ "git_commit": "2ff9e0f6cfb71136ec3c2c9ed993cbc02ccbbdab"
 }

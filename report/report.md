@@ -126,7 +126,7 @@ Accuracy alone cannot tell "no information" from "information hidden by a bias t
 
 <sub>Source: `results/answer_bias.json`</sub>
 
-Reading. On the original Corr2Cause sets the logit difference is weakly informative: AUROC 0.589 [0.531, 0.660] for Qwen2.5-0.5B, 0.561 [0.503, 0.614] for Qwen2.5-1.5B on test, and 0.56 to 0.59 on the balanced pool for all three, where a re-thresholded answer reaches about 0.57 accuracy. So the smallest model is biased rather than empty there. But this weak signal does not survive the two manipulations that remove surface cues: for Qwen2.5-0.5B the AUROC is 0.511 [0.455, 0.572] after renaming the variables and 0.505 [0.485, 0.526] on the debiased pool of Section 3.6. On CLadder every model is at chance by AUROC as well (0.50 to 0.52). The behavioural picture is therefore: at chance on the task, with a small shortcut-driven signal on the original Corr2Cause items that is masked by answer bias.
+Reading. On the original Corr2Cause sets the logit difference is weakly informative: AUROC 0.589 [0.531, 0.660] for Qwen2.5-0.5B, 0.561 [0.503, 0.614] for Qwen2.5-1.5B on test, and 0.56 to 0.59 on the balanced pool for all three, where a re-thresholded answer reaches about 0.57 accuracy. So the smallest model is biased rather than empty there. This weak signal does not survive on the debiased pool of Section 3.6 for any model (0.505 [0.485, 0.526], 0.510 [0.488, 0.533], 0.492 [0.468, 0.515] and 0.507 [0.484, 0.530] for Qwen2.5-0.5B, Qwen2.5-1.5B, Gemma-2-2B and Qwen2.5-3B). Renaming the variables removes it for three of the four models (Qwen2.5-0.5B 0.511 [0.455, 0.572], Gemma-2-2B 0.504 [0.464, 0.531], Qwen2.5-3B 0.512 [0.463, 0.553]) but not for Qwen2.5-1.5B (0.579 [0.523, 0.630]); an earlier version of this paragraph quoted the 0.5B model only. On CLadder every model is at chance by AUROC as well (0.50 to 0.52). The behavioural picture is therefore: at chance on the task, with a small shortcut-driven signal on the original Corr2Cause items that is masked by answer bias.
 
 Other checks. Four demonstrations change the bias, not the skill: Qwen2.5-0.5B flips to mostly Yes (accuracy change -0.526 [-0.611, -0.456]), Gemma loses -0.118 [-0.186, -0.054]. Scoring by answer-token logits and by generated text disagree on under 1% of items for the Qwen models; for Gemma on CLadder 13% of first tokens are neither Yes nor No (first-token-only check, 100 items). Renaming variables flips 0.085 [0.062, 0.106] of Qwen2.5-1.5B's answers and 0.091 [0.074, 0.109] of Gemma's.
 
@@ -250,7 +250,7 @@ Probe accuracy by token position:
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | 0.905 [0.887, 0.922] | 0.499 [0.497, 0.500] | +0.364 [+0.341, +0.387] | -0.042 [-0.061, -0.022] | 0.596 [0.568, 0.623] | – | – |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | 0.623 [0.598, 0.647] | 0.556 [0.528, 0.580] | +0.070 [+0.021, +0.120] | +0.003 [-0.032, +0.038] | 0.519 [0.494, 0.548] | – | – |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 Probes decode the gold label from held-out premises at 0.807 [0.784, 0.828], 0.870 [0.850, 0.890] and 0.863 [0.841, 0.886] on the Corr2Cause pool, and at 0.561 [0.534, 0.586], 0.605 [0.580, 0.631] and 0.626 [0.590, 0.664] on CLadder (report half; layer and regularisation chosen on the other half). The controls behave as controls should: shuffled labels give 0.50, and a randomly initialised model gives 0.50 to 0.62. Taken alone, this is the pattern that is usually read as "the model represents the answer".
 
@@ -270,8 +270,9 @@ All scorers on the report half:
 | Qwen2.5-1.5B | Corr2Cause debiased pool | 0.752 [0.729, 0.776] | 0.518 [0.495, 0.541] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.816 [0.792, 0.837] | 0.579 [0.554, 0.604] | 0.494 [0.474, 0.513] |
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.848 [0.827, 0.868] | 0.859 [0.839, 0.879] | 0.919 [0.902, 0.935] | 0.596 [0.568, 0.623] | 0.507 [0.483, 0.532] |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.510 [0.482, 0.541] | – | 0.800 [0.767, 0.839] | 0.519 [0.494, 0.548] | 0.506 [0.464, 0.549] |
+| Qwen2.5-3B | Corr2Cause debiased pool | 0.765 [0.743, 0.788] | 0.518 [0.495, 0.541] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.816 [0.792, 0.837] | 0.594 [0.568, 0.619] | 0.490 [0.478, 0.501] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 Audited criterion (and, for comparison, the pre-registered one as coded):
 
@@ -285,8 +286,9 @@ Audited criterion (and, for comparison, the pre-registered one as coded):
 | Qwen2.5-1.5B | Corr2Cause debiased pool | 0.752 [0.729, 0.776] | structural | 0.816 [0.792, 0.837] | -0.063 [-0.094, -0.034] | -0.053 [-0.090, -0.015] | -0.094 [-0.125, -0.065] | no | yes | no (84% gold-Yes) |
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | structural | 0.919 [0.902, 0.935] | -0.056 [-0.078, -0.033] | -0.020 [-0.039, -0.001] | -0.030 [-0.051, -0.008] | no | no | yes |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | structural | 0.800 [0.767, 0.839] | -0.174 [-0.220, -0.133] | -0.159 [-0.215, -0.100] | -0.237 [-0.297, -0.185] | no | yes | yes |
+| Qwen2.5-3B | Corr2Cause debiased pool | 0.765 [0.743, 0.788] | structural | 0.816 [0.792, 0.837] | -0.050 [-0.079, -0.020] | -0.039 [-0.080, +0.000] | -0.074 [-0.103, -0.047] | no | yes | no (95% gold-Yes) |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 ![confound c2c](../figures/fig5_confound_c2c_probe.png)
 ![confound cladder](../figures/fig5_confound_cladder.png)
@@ -379,7 +381,7 @@ External check: probe trained on the pool, evaluated on the Corr2Cause test set 
 
 The stronger baselines (D18), the audited criterion (D19) and the debiased pool of Section 3.6 (D21) were all added **after** seeing results. They can only make the claim harder to pass, and they are reported next to the pre-registered analysis, not instead of it.
 
-The external check agrees: a probe trained on the pool and applied to the natural-distribution test set ranks valid above invalid items well (AUROC in the table), but so does the hypothesis-string prior on the same items (0.895 [0.863, 0.919]).
+The external check agrees: a probe trained on the pool and applied to the natural-distribution test set ranks valid above invalid items well (AUROC in the table), but so does the hypothesis-string prior on the same items: the table's value is for a prior fitted on the 300-premise pool, like the probe; fitted on the whole train split it reaches 0.895 [0.863, 0.919].
 
 ### 3.5 What the text alone gives away
 
@@ -681,20 +683,20 @@ This section was rewritten after the second independent audit (Section 6), which
 
 **Matched controls** (150 report-half items for Qwen2.5-0.5B, 100 for Qwen2.5-1.5B): 100 isotropic random directions; 20 probe weight vectors fitted to shuffled labels, the control of the same kind as a probe direction; 20 differences of class means for shuffled labels, the control of the same kind as a difference of means.
 
-| Model | Item set | Layer | Direction | Slope per unit s | Percentile among 100 isotropic directions (|slope|) | Isotropic median |slope| | Isotropic max |slope| | Matched control family (20 directions) | Percentile among matched controls | Matched median |slope| | Matched max |slope| | Ratio to matched median | Natural SD along this direction (units of s) | Natural SD, matched controls (median) | Percentile among matched controls, per natural SD | Ratio to matched median, per natural SD |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold-label probe weights | -0.049 [-0.056, -0.042] | 22 | 0.125 | 0.685 | shuffled-label probe | 20 | 0.130 | 0.294 | 0.4 | 0.0083 | 0.0031 | 50 | 1.0 |
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold difference of class means | +0.865 [+0.855, +0.875] | 100 | 0.125 | 0.685 | shuffled-label difference of means | 100 | 0.189 | 0.628 | 4.6 | 0.3410 | 0.3316 | 100 | 4.0 |
-| Qwen2.5-0.5B | Corr2Cause pool | 15 | model-answer probe weights (positive control) | +1.700 [+1.685, +1.714] | 100 | 0.125 | 0.685 | shuffled-label probe | 100 | 0.130 | 0.294 | 13.1 | 0.0652 | 0.0031 | 100 | 267.8 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold-label probe weights | -0.229 [-0.235, -0.222] | 88 | 0.104 | 0.373 | shuffled-label probe | 85 | 0.075 | 0.360 | 3.0 | 0.0031 | 0.0032 | 80 | 2.9 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold difference of class means | +0.150 [+0.144, +0.157] | 63 | 0.104 | 0.373 | shuffled-label difference of means | 90 | 0.063 | 0.191 | 2.4 | 0.1132 | 0.3692 | 30 | 0.8 |
-| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | model-answer probe weights (positive control) | +0.525 [+0.516, +0.532] | 100 | 0.104 | 0.373 | shuffled-label probe | 100 | 0.075 | 0.360 | 7.0 | 0.0234 | 0.0032 | 100 | 50.4 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 | 0.0159 | 0.0052 | 100 | 5.6 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 | 0.5324 | 0.3511 | 85 | 2.3 |
-| Qwen2.5-1.5B | Corr2Cause pool | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 | 0.3503 | 0.0052 | 100 | 800.8 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold-label probe weights | -0.201 [-0.226, -0.178] | 55 | 0.184 | 0.850 | shuffled-label probe | 65 | 0.113 | 0.449 | 1.8 | 0.0035 | 0.0026 | 75 | 2.4 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 | 0.3543 | 0.4113 | 60 | 1.4 |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 | 0.3029 | 0.0026 | 100 | 1798.5 |
+| Model | Item set | Token | Layer | Direction | Slope per unit s | Percentile among 100 isotropic directions (|slope|) | Isotropic median |slope| | Isotropic max |slope| | Matched control family (20 directions) | Percentile among matched controls | Matched median |slope| | Matched max |slope| | Ratio to matched median | Natural SD along this direction (units of s) | Natural SD, matched controls (median) | Percentile among matched controls, per natural SD | Ratio to matched median, per natural SD |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | Corr2Cause pool | final | 15 | gold-label probe weights | -0.049 [-0.056, -0.042] | 22 | 0.125 | 0.685 | shuffled-label probe | 20 | 0.130 | 0.294 | 0.4 | 0.0083 | 0.0031 | 50 | 1.0 |
+| Qwen2.5-0.5B | Corr2Cause pool | final | 15 | gold difference of class means | +0.865 [+0.855, +0.875] | 100 | 0.125 | 0.685 | shuffled-label difference of means | 100 | 0.189 | 0.628 | 4.6 | 0.3410 | 0.3316 | 100 | 4.0 |
+| Qwen2.5-0.5B | Corr2Cause pool | final | 15 | model-answer probe weights (positive control) | +1.700 [+1.685, +1.714] | 100 | 0.125 | 0.685 | shuffled-label probe | 100 | 0.130 | 0.294 | 13.1 | 0.0652 | 0.0031 | 100 | 267.8 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | final | 14 | gold-label probe weights | -0.229 [-0.235, -0.222] | 88 | 0.104 | 0.373 | shuffled-label probe | 85 | 0.075 | 0.360 | 3.0 | 0.0031 | 0.0032 | 80 | 2.9 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | final | 14 | gold difference of class means | +0.150 [+0.144, +0.157] | 63 | 0.104 | 0.373 | shuffled-label difference of means | 90 | 0.063 | 0.191 | 2.4 | 0.1132 | 0.3692 | 30 | 0.8 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | final | 14 | model-answer probe weights (positive control) | +0.525 [+0.516, +0.532] | 100 | 0.104 | 0.373 | shuffled-label probe | 100 | 0.075 | 0.360 | 7.0 | 0.0234 | 0.0032 | 100 | 50.4 |
+| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 | 0.0159 | 0.0052 | 100 | 5.6 |
+| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 | 0.5324 | 0.3511 | 85 | 2.3 |
+| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 | 0.3503 | 0.0052 | 100 | 800.8 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | gold-label probe weights | -0.201 [-0.226, -0.178] | 55 | 0.184 | 0.850 | shuffled-label probe | 65 | 0.113 | 0.449 | 1.8 | 0.0035 | 0.0026 | 75 | 2.4 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 | 0.3543 | 0.4113 | 60 | 1.4 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 | 0.3029 | 0.0026 | 100 | 1798.5 |
 
 <sub>Source: `results/steering_controls_qwen0.5b_c2c_probe.json`, `results/steering_controls_qwen0.5b_c2c_debiased.json`, `results/steering_controls_qwen1.5b_c2c_probe.json`, `results/steering_controls_qwen1.5b_c2c_debiased.json`</sub>
 
@@ -704,11 +706,11 @@ This section was rewritten after the second independent audit (Section 6), which
 2. *The comparison depends on the unit.* The shuffled-label directions have the same natural spread as the gold direction on the debiased pool, but on the original pool the gold direction is about three times wider. Per natural standard deviation, the gold direction for Qwen2.5-1.5B on the original pool exceeds all 20 shuffled controls (5.63 times their median); in the other three cases it is at the 50%, 80% and 75% percentile. The original pool is the one in which the gold label is confounded with the hypothesis string.
 3. *At natural scale the effect is negligible either way.* One unit of s is 119.00 (Qwen2.5-0.5B) and 63.08 (Qwen2.5-1.5B) natural standard deviations along the gold-probe direction on the original pool, and 322.89 and 280.42 on the debiased pool. Moving an item across the whole natural gap between valid and invalid items along that direction would change LD by -0.001 and -0.009 logits (original pool), against a standard deviation of LD across items of 0.41 and 2.28.
 4. *The difference-of-means direction moves the answer, mostly not because it separates valid from invalid items.* Original pool: +0.865 [+0.855, +0.875] (100% percentile of 20; 4.59 times their median, 1.38 of their maximum) for Qwen2.5-0.5B and +1.981 [+1.925, +2.042] (85% percentile of 20; 1.75 times their median, 0.74 of their maximum) for Qwen2.5-1.5B; debiased pool: +0.150 [+0.144, +0.157] (90% percentile of 20; 2.38 times their median, 0.79 of their maximum) and +1.897 [+1.865, +1.930] (80% percentile of 20; 1.43 times their median, 0.71 of their maximum). A difference of class means lies in the high-variance part of activation space, and so does a difference of means for random labels. On the original pool it separates the model's own answer at least as well as the gold label (AUROC 0.942 against 0.650 for Qwen2.5-1.5B).
-5. *The positive control works.* The model-answer direction has the largest slope everywhere and exceeds every control.
+5. *The positive control works, with one qualification.* The model-answer probe direction exceeds all 100 isotropic and all 20 shuffled-label probe directions in every case. It does not have the largest slope of anything steered: for Qwen2.5-1.5B on the debiased pool the gold difference of means is larger (+1.897 against +1.711), and the largest shuffled-label difference of means there has |slope| 2.674. Differences of means, for real or shuffled labels, point into the high-variance directions that the answer is most sensitive to; a probe direction is the fairer comparison for a probe direction. (An earlier version of this sentence said "largest slope everywhere"; that was wrong.)
 
 **What may and may not be concluded.**
 
-- May: adding the gold-probe direction at the probe's layer and the final token, in steps of one RMS activation radius (60 to 320 natural standard deviations along that direction), shifts the Yes−No logit by an amount inside the range of 20 shuffled-label probe directions. A movement of natural size changes the answer by less than 0.01 logits.
+- May: adding the gold-probe direction at the probe's layer and the final token, in steps of one RMS activation radius (63 to 322 natural standard deviations along that direction, depending on model and pool), shifts the Yes−No logit by an amount inside the range of 20 shuffled-label probe directions. A movement of natural size changes the answer by less than 0.01 logits.
 - May not: that the direction "is not read", or that the decoded information "is unused". With twenty controls and one site the experiment neither shows nor excludes a causal role. The probe's weights and the difference of class means are two views of one discriminant (the covariance times the probe weights has cosine 0.98 with the difference of means for Qwen2.5-1.5B). On the debiased pool the fitted direction is itself noisy (cosine 0.43 between the two halves of the data). And the probe is stronger at the end of the hypothesis, which was not steered.
 - What the behavioural data add (Section 3.6.5): the answers are at chance when pooled, but for direct-causation hypotheses they track validity and the probe's score. "Not expressed" holds only on average.
 - CLadder: the steered gold directions barely decode the gold label there (AUROC 0.547 and 0.622), so those rows are shown for completeness and no conclusion is drawn from them.
@@ -837,11 +839,97 @@ A descriptive comparison of three models from two families, not a scaling law. O
 
 ## 5. Tier 3 results
 
-<!-- T3-TEXT -->
+### 5.1 Sparse-autoencoder features for causal graph type (Gemma-2-2B, CLadder)
+
+**Question.** Does Gemma-2-2B have sparse features that mark the causal graph a CLadder question is about (confounding, collision, chain, fork, mediation), and does removing them change the answer more than removing other features?
+
+**Setup.** Gemma Scope residual-stream SAEs (`gemma-scope-2b-pt-res-canonical`, 16k features) at blocks 6, 12 and 18, applied to activations at the last token of the context and at the final prompt token. Only CLadder's ten "nonsense" stories are used (1,155 items in the sample), because every real-world story has a single graph type, so a "smoking" feature would pass for a "confounding" feature. For each graph type the ten features with the highest AUROC for that type against the rest are selected on stories 0–4 (566 items) and evaluated on stories 5–9 (589 items). Ablation (block 12): the selected features' contributions are subtracted from the residual stream at every token and the answer logit difference is compared with the unablated run, against three sets of random features matched on mean activation. All of this ran on Kaggle, on Kaggle's draw of the CLadder sample (Section 7).
+
+**Two caveats that limit everything below.**
+
+1. *The SAEs fit these activations poorly.* They were trained on the base model `gemma-2-2b`; the activations are from the instruction-tuned `gemma-2-2b-it`, at two specific tokens. At the end of the context the reconstruction leaves 0.65, 0.67 and 0.87 of the variance across items unexplained (blocks 6, 12, 18), although the reconstruction points in nearly the right direction (cosine 0.91 at block 12). At the final prompt token the unexplained fraction is above one at every block: all items share that token and differ little there, and the SAE does not capture the differences. Features at the final token are listed in the table for completeness and I draw nothing from them.
+2. *Three random feature sets are too few.* Their effects range from 0.04 to 0.51 logits. This is the same weakness the Tier 2 audit found in the first steering table, and I did not fix it before the Kaggle run.
+
+| Block | Token | Fraction of variance unexplained | Relative squared error | Cosine(reconstruction, activation) | Mean active features | Features ever active |
+|---|---|---|---|---|---|---|
+| 6 | premise end | 0.65 | 0.16 | 0.92 | 51 | 759 |
+| 6 | final | 47.23 | 0.15 | 0.92 | 43 | 57 |
+| 12 | premise end | 0.67 | 0.18 | 0.91 | 129 | 2389 |
+| 12 | final | 28.61 | 0.27 | 0.86 | 121 | 227 |
+| 18 | premise end | 0.87 | 0.26 | 0.86 | 74 | 1124 |
+| 18 | final | 2.16 | 0.26 | 0.86 | 67 | 286 |
+
+<sub>Source: `results/sae_features.json`</sub>
+
+**Features.** Selected features generalise to held-out stories about as well as they fit the discovery stories, so the selection is not noise, but they are weak markers of graph type.
+
+| Block | Token | Graph type | Held-out items of that type | Mean AUROC of the 10 selected features, discovery stories | …held-out stories | Best feature (held-out AUROC) | Features with held-out AUROC ≥ 0.70 |
+|---|---|---|---|---|---|---|---|
+| 6 | premise end | confounding | 40 | 0.60 | 0.60 | 7015 (0.65) | 0 |
+| 6 | premise end | collision | 27 | 0.70 | 0.64 | 3742 (0.75) | 1 |
+| 6 | premise end | chain | 71 | 0.67 | 0.67 | 13460 (0.84) | 3 |
+| 6 | premise end | fork | 47 | 0.66 | 0.60 | 13460 (0.78) | 2 |
+| 6 | premise end | mediation | 55 | 0.64 | 0.57 | 14499 (0.60) | 0 |
+| 6 | final | confounding | 40 | 0.56 | 0.54 | 6699 (0.57) | 0 |
+| 6 | final | collision | 27 | 0.69 | 0.60 | 12942 (0.69) | 0 |
+| 6 | final | chain | 71 | 0.72 | 0.75 | 13460 (0.86) | 8 |
+| 6 | final | fork | 47 | 0.73 | 0.69 | 13460 (0.82) | 5 |
+| 6 | final | mediation | 55 | 0.62 | 0.60 | 12823 (0.64) | 0 |
+| 12 | premise end | confounding | 40 | 0.65 | 0.64 | 16346 (0.68) | 0 |
+| 12 | premise end | collision | 27 | 0.73 | 0.61 | 13295 (0.71) | 1 |
+| 12 | premise end | chain | 71 | 0.73 | 0.70 | 2620 (0.86) | 3 |
+| 12 | premise end | fork | 47 | 0.71 | 0.66 | 2620 (0.81) | 2 |
+| 12 | premise end | mediation | 55 | 0.69 | 0.57 | 7815 (0.67) | 0 |
+| 12 | final | confounding | 40 | 0.61 | 0.58 | 6869 (0.64) | 0 |
+| 12 | final | collision | 27 | 0.78 | 0.66 | 6869 (0.84) | 3 |
+| 12 | final | chain | 71 | 0.76 | 0.80 | 2620 (0.89) | 10 |
+| 12 | final | fork | 47 | 0.77 | 0.72 | 15848 (0.84) | 6 |
+| 12 | final | mediation | 55 | 0.69 | 0.62 | 2620 (0.72) | 1 |
+| 18 | premise end | confounding | 40 | 0.62 | 0.62 | 3407 (0.67) | 0 |
+| 18 | premise end | collision | 27 | 0.75 | 0.67 | 4602 (0.78) | 2 |
+| 18 | premise end | chain | 71 | 0.74 | 0.70 | 9392 (0.82) | 4 |
+| 18 | premise end | fork | 47 | 0.71 | 0.65 | 9392 (0.84) | 2 |
+| 18 | premise end | mediation | 55 | 0.67 | 0.60 | 9392 (0.69) | 0 |
+| 18 | final | confounding | 40 | 0.58 | 0.54 | 5943 (0.62) | 0 |
+| 18 | final | collision | 27 | 0.70 | 0.73 | 6026 (0.80) | 8 |
+| 18 | final | chain | 71 | 0.61 | 0.61 | 448 (0.77) | 1 |
+| 18 | final | fork | 47 | 0.63 | 0.54 | 448 (0.68) | 0 |
+| 18 | final | mediation | 55 | 0.65 | 0.55 | 10303 (0.63) | 0 |
+
+<sub>Source: `results/sae_features.json`</sub>
+
+At the end of the context no selected feature reaches a held-out AUROC of 0.70 for confounding or mediation at any block. The best features are for chain (up to 0.86), and the same feature is the best one for fork: at block 12 feature 2620 fires on 100% of chain items and on 89% of all other items, and its top-activating examples include collision and mediation items (`results/sae_top_examples.md`). It responds more strongly to contexts that describe the graph as a short list of "has a direct effect on" sentences without probabilities; chain and fork items are over-represented among those. I found no feature that is specific to one graph type.
+
+**Ablation.**
+
+| Graph type whose top-10 features are removed | Evaluated on | Items | Mean |Δ logit difference|, top features | …random features (mean of 3 sets) | …each random set | Top − random (difference of the two means) | Mean signed Δ | Flip rate, top | Flip rate, random | Accuracy before | Accuracy after |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| confounding | items of that graph type | 40 | 0.318 [0.248, 0.384] | 0.171 | 0.17 / 0.18 / 0.16 | +0.147 | +0.307 | 0.07 | 0.07 | 0.53 | 0.45 |
+| confounding | items of other graph types | 40 | 0.336 [0.276, 0.384] | 0.189 | 0.18 / 0.20 / 0.19 | +0.146 | +0.318 | 0.07 | 0.03 | 0.50 | 0.47 |
+| collision | items of that graph type | 27 | 0.223 [0.199, 0.241] | 0.125 | 0.04 / 0.19 / 0.14 | +0.097 | +0.211 | 0.04 | 0.05 | 0.48 | 0.52 |
+| collision | items of other graph types | 40 | 0.137 [0.111, 0.188] | 0.112 | 0.06 / 0.21 / 0.07 | +0.025 | +0.134 | 0.00 | 0.03 | 0.40 | 0.40 |
+| chain | items of that graph type | 40 | 0.442 [0.381, 0.517] | 0.242 | 0.24 / 0.13 / 0.36 | +0.200 | -0.226 | 0.07 | 0.09 | 0.42 | 0.45 |
+| chain | items of other graph types | 40 | 0.360 [0.272, 0.430] | 0.214 | 0.23 / 0.10 / 0.31 | +0.146 | -0.223 | 0.17 | 0.06 | 0.57 | 0.55 |
+| fork | items of that graph type | 40 | 0.439 [0.386, 0.480] | 0.121 | 0.06 / 0.17 / 0.13 | +0.318 | -0.171 | 0.12 | 0.02 | 0.45 | 0.38 |
+| fork | items of other graph types | 40 | 0.415 [0.324, 0.512] | 0.111 | 0.09 / 0.14 / 0.11 | +0.304 | -0.234 | 0.23 | 0.02 | 0.53 | 0.50 |
+| mediation | items of that graph type | 40 | 0.190 [0.144, 0.239] | 0.269 | 0.17 / 0.51 / 0.13 | -0.079 | -0.137 | 0.07 | 0.06 | 0.53 | 0.45 |
+| mediation | items of other graph types | 40 | 0.186 [0.146, 0.232] | 0.270 | 0.16 / 0.48 / 0.17 | -0.084 | -0.180 | 0.05 | 0.06 | 0.53 | 0.53 |
+
+<sub>Source: `results/sae_ablation.json`</sub>
+
+Removing the ten selected features changes the answer logit difference by 0.223 to 0.442 logits on items of the features' own graph type. For four of the five graph types that is more than the mean of the three matched random sets (by 0.10 to 0.32 logits); for mediation it is less. The effect is not specific to the graph type: it is as large on items of other graph types (for example chain: 0.442 on chain items, 0.360 on others). The change is mostly a uniform shift of the logit difference in one direction (the signed column), that is, a change of answer bias. Accuracy before and after differs by at most eight points on 27 to 40 items, which is inside the noise for samples of that size.
+
+**What may be concluded.** With SAEs that fit poorly, on one sample of nonsense-story items: there are features whose activation is moderately associated with chain- or fork-shaped contexts, they are not specific to a graph type, and removing them shifts the answer logit somewhat more than removing three sets of matched random features, equally for all graph types. This is not evidence of a "causal structure" feature that the answer depends on, and it is not evidence against one either: a dictionary that leaves two thirds of the across-item variance unexplained could miss it.
+
+**Compared with what I expected** (logged before opening the results): I expected the features to track story or question type more than graph type (roughly right: they track how the context is worded) and the ablation effect to be below matched random features in at least half the cases (wrong: above in four of five). I expected no accuracy change beyond three points; the data cannot resolve three points.
+
+**A reporting error of mine.** The result file's `top_minus_random_mean_abs_delta` interval subtracts the absolute value of the mean over random sets, not the mean of their absolute effects, and so overstates the gap (for confounding it reads +0.25 where the two means in the table differ by +0.15). The table shows the difference of the two means without an interval; the raw per-item values were not exported, so a correct interval needs a rerun.
+
+LoRA fine-tuning (the optional second half of Tier 3) was dropped when the heavy runs moved to Kaggle (decision D20).
 
 ## 6. Audits
 
-Each tier was reviewed by a fresh reviewer agent that received the code, the result files and the raw outputs, but not the author's conclusions. Raw reports: `notes/audit_tier1_raw.md`, `notes/audit_tier2_raw.md`. Responses, finding by finding: `notes/log.md`.
+Each tier was reviewed by a fresh reviewer agent that received the code, the result files and the raw outputs, but not the author's conclusions. Raw reports: `notes/audit_tier1_raw.md`, `notes/audit_tier2_raw.md`, `notes/audit_debiased_raw.md`. Responses, finding by finding: `notes/log.md`.
 
 **Tier 1 audit (Friday 00:05; Qwen models).** Confirmed: no fold leakage, no premise shared between pool and test, baselines fitted on training folds only, positions, layer indexing and sign conventions, all tables regenerate from the result files. Found:
 

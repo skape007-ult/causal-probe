@@ -140,6 +140,26 @@ cost the others. All four are thin wrappers around `scripts/gpu_round2.py`.
 | **C** `notebooks/colab_r2_qwen1.5b.ipynb` | Colab, T4 | none | Qwen 1.5B: end-of-hypothesis steering controls, adjacency causal test, label-preserving patching pairs | 1.5 – 3 h |
 | **D** `notebooks/kaggle_r2_gemma.ipynb` | Kaggle, T4 x2 | `HF_TOKEN` secret | Gemma 2B: matched steering controls at both tokens, adjacency causal test, label-preserving patching pairs | 2.5 – 4 h |
 
+**Updated Fri 18:10 (commit `4d6afe5`).** An independent review of the round-2 code
+(`notes/audit_round2_code_raw.md`) found that the first version of the adjacency test could not
+answer its question (its "removal" left the information readable; one of its two directions did
+not separate the classes for "X directly causes Y" hypotheses). Notebooks A, C and D now run the
+corrected test (`scripts/17_adjacency_test.py`). If you launched A, C or D from an earlier version
+(pinned commit `9fdec33` or `3c7b87d`, visible in the notebook's first code cell), let it finish:
+its steering-controls and patching results are unaffected. Then run the matching follow-up, which
+does only the corrected adjacency test:
+
+| Follow-up | For | Where | Token | Estimated GPU time |
+|---|---|---|---|---|
+| `notebooks/kaggle_r2b_qwen3b_adjacency.ipynb` | A launched early | Kaggle T4 x2 | none | 1 – 2 h |
+| `notebooks/colab_r2b_qwen1.5b_adjacency.ipynb` | C launched early | Colab T4 | none | 1 – 1.5 h |
+| `notebooks/kaggle_r2b_gemma_adjacency.ipynb` | D launched early | Kaggle T4 x2 | `HF_TOKEN` | 1 – 2 h |
+
+Their downloads go to `kaggle_in/r2b_qwen3b/`, `kaggle_in/r2b_qwen15b/`, `kaggle_in/r2b_gemma/`
+and are ingested with `--run r2b_qwen3b` and so on. Notebook B (7B behaviour) is unchanged in
+substance. A smoke test (`SMOKE_TEST = True`) now writes under its own run name and is refused by
+the ingest, so it can never be mistaken for a real run.
+
 Kaggle total: about 7 – 11.5 hours of the weekly 30 (the first run used 2.4). Colab: 1.5 – 3 hours.
 Qwen 0.5B runs the same jobs on the laptop. The SAE tier already ran in the first notebook.
 

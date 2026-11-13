@@ -127,8 +127,12 @@ def main():
     # ------------------------------------------------------------------ larger model
     M = a.large
     if M:
+        if a.tiny:   # smoke test: a prefix of each Corr2Cause set, but CLadder in full (a prefix of it has one label only)
+            stage(f"large.{M}.cache_tiny", "scripts/01_build_cache.py", "--model", M, "--no-gen", *lim,
+                  "--tags", "c2c_test,c2c_probe,c2c_debiased,c2c_test_renamed,c2c_test_sub_fewshot")
         ok = stage(f"large.{M}.cache", "scripts/01_build_cache.py", "--model", M, "--max-minutes", "80",
-                   "--tags", "c2c_test,c2c_probe,cladder,c2c_debiased,c2c_test_renamed,c2c_test_sub_fewshot,cladder_sub_fewshot", *lim)
+                   "--tags", "c2c_test,c2c_probe,cladder,c2c_debiased,c2c_test_renamed,c2c_test_sub_fewshot,cladder_sub_fewshot",
+                   *(["--gen-limit", "40"] if a.tiny else []))
         if not ok and not a.tiny:   # the cache builder stops itself after 80 min and resumes on re-run
             ok = stage(f"large.{M}.cache_resume", "scripts/01_build_cache.py", "--model", M, "--max-minutes", "80",
                        "--tags", "c2c_test,c2c_probe,cladder,c2c_debiased,c2c_test_renamed,c2c_test_sub_fewshot,cladder_sub_fewshot")
@@ -143,7 +147,7 @@ def main():
                       "--rel-depth", d, "--suffix", f"_d{d}", "--select-stride", "2", *n_steer)
             if M not in QUANT_4BIT:
                 stage(f"large.{M}.cache_random", "scripts/01_build_cache.py", "--model", M, "--random",
-                      "--tags", "c2c_probe,cladder,c2c_debiased", "--max-minutes", "80", *lim)
+                      "--tags", "c2c_debiased,c2c_probe,cladder", "--max-minutes", "80", *lim)
 
     # ------------------------------------------------------------------ Gemma, slower stages last
     if a.gemma and (marks / f"gemma.{G}.cache").exists():

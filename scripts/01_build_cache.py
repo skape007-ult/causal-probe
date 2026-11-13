@@ -22,6 +22,7 @@ def main():
     ap.add_argument("--tags", default=None)
     ap.add_argument("--no-gen", action="store_true")
     ap.add_argument("--limit", type=int, default=None, help="first N items per tag (smoke tests only)")
+    ap.add_argument("--gen-limit", type=int, default=None, help="generate answers for the first N items only (smoke tests)")
     ap.add_argument("--max-minutes", type=float, default=85.0)
     a = ap.parse_args()
     t0 = time.time()
@@ -43,7 +44,7 @@ def main():
                 continue
             out.parent.mkdir(parents=True, exist_ok=True)
             fs = tag.endswith("_fewshot")
-            items = data.get_dataset(tag.removesuffix("_fewshot"))[: a.limit]
+            items = data.get_dataset(tag.removesuffix("_fewshot"))[: a.gen_limit or a.limit]
             shots = cache.fewshot_examples(items[0]["dataset"]) if fs else None
             kw = {}
             if not models.has_cheap_full_vocab(model):

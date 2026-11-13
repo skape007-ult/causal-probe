@@ -60,15 +60,23 @@ print(torch.allclose(hs[-1],g["x"],atol=1e-4), torch.allclose(hs[-1],m.model.nor
 - Repro: `from sae_lens import SAE; s=SAE.from_pretrained(release="gemma-scope-2b-pt-res-canonical", sae_id="layer_12/width_16k/canonical"); print(type(s), s.cfg.hook_name, s.cfg.metadata.hook_name)`
 
 ## U8. transformers 5.22: `model.apply(model._init_weights)` is a silent no-op on a model loaded with `from_pretrained`
-- Intending to get a random-init copy without allocating a float32 model, I called `model.apply(model._init_weights)` on a loaded checkpoint. No error, no warning, weights unchanged (modules are flagged as already initialised and skipped). A warning, or a documented `reinitialize()` helper, would prevent a silent "random-init control" that is actually the trained model.
-- Repro (prints `True`: weights identical after the call):
+- **What.** To get a randomly initialised copy of a model for a probing control without allocating a second, float32 model, I called `model.apply(model._init_weights)` on a loaded checkpoint. No error, no warning, and every weight is unchanged. A "random-init control" built this way is silently the trained model.
+- **Where.** transformers 5.22.2, torch 2.15.0, `Qwen/Qwen2.5-0.5B-Instruct` (Qwen2 architecture).
+- **Minimal reproduction** (prints `True`, then `319 of 319`):
 ```python
-import torch; from transformers import AutoModelForCausalLM
+import torch
+from transformers import AutoModelForCausalLM
 m = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-0.5B-Instruct")
-w0 = m.model.layers[3].mlp.up_proj.weight.clone(); m.apply(m._init_weights)
-print(torch.equal(w0, m.model.layers[3].mlp.up_proj.weight))
+w = m.model.layers[3].mlp.up_proj.weight
+w0 = w.clone()
+m.apply(m._init_weights)
+print(torch.equal(w0, w))                       # True: nothing was re-initialised
+flags = [getattr(mod, "_is_hf_initialized", None) for mod in m.modules()]
+print(sum(f is True for f in flags), "of", len(flags))   # every module is flagged as already initialised
 ```
-- Our workaround: `models.reinit_` (explicit N(0, initializer_range) for Linear/Embedding, constructor defaults for norms); its per-tensor statistics match `from_config` on Qwen2.5-0.5B.
+- **Status: verified** on this machine on 13 Nov 2026 (output `True`, `319 of 319`; weight standard deviation 0.0175 before and after, against `config.initializer_range` = 0.02). The likely mechanism is the `_is_hf_initialized` flag that `from_pretrained` sets on every module and that the initialiser respects; I read the flag but did not trace the library code, so the mechanism is **unverified**. Also not checked: other architectures, earlier transformers versions, and whether this behaviour is documented as intended (`_init_weights` is a private method).
+- **Suggested change.** A warning when an initialiser is applied to modules that are all flagged as initialised, or a documented public way to re-initialise a loaded model.
+- **What we did.** `causal_probe.models.reinit_` re-initialises explicitly (normal with `initializer_range` for Linear and Embedding weights, zeros for biases, constructor defaults for normalisation gains). After it the same weight has standard deviation 0.0200 and differs from the original (checked in the same session). It is used for Gemma, where a float32 model from `from_config` does not fit in memory; the Qwen random-init controls are built with `from_config`.
 
 ## U9. CLadder: two query types are fully predictable from surface features, and overall ~77% is reachable without causal inference
 - A gradient-boosted classifier on shallow features (the percentages quoted in the prompt, two differences between them, polarity words in the question, query type, graph type, and for `backadj` which "Method" is the case-by-case one) reaches ~0.77 accuracy with story-grouped 5-fold CV on a 3,000-item stratified sample of `full_v1.5_default`; `backadj` and `collider_bias` are at 1.00. For `collider_bias` every question of the form "…does it mean that X affects Y?" in the sample has the same answer within a (query type, graph) cell; for `backadj` the answer follows from which method conditions "case by case" and the graph type. This is a benchmark-validity observation rather than a bug: a model can score well on those rungs without reasoning.

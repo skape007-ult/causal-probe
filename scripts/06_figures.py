@@ -40,6 +40,12 @@ def load(name):
     return json.loads(p.read_text()) if p.exists() else None
 
 
+def probes_file(m, tag):
+    """Per-layer probe curves at the C selected (on the selection half) in the confound analysis."""
+    c = load(f"confound_{m}_{tag}.json")
+    return f"probes_{m}_{tag}_C{c['selected_C_gold']:g}.json" if c else None
+
+
 def models_with(prefix):
     return [m for m in MODELS if (RESULTS / f"{prefix}_{m}.json").exists()]
 
@@ -130,12 +136,12 @@ def fig_lens():
 # ------------------------------------------------------------------ fig 3: probes by layer with controls
 def fig_probes():
     for tag in ["c2c_probe", "cladder"]:
-        ms = [m for m in MODELS if (RESULTS / f"probes_{m}_{tag}.json").exists()]
+        ms = [m for m in MODELS if (RESULTS / f"confound_{m}_{tag}.json").exists()]
         if not ms:
             continue
         fig, axes = plt.subplots(1, len(ms), figsize=(4.1 * len(ms), 3.6), squeeze=False, sharey=True)
         for ax, m in zip(axes[0], ms):
-            r = load(f"probes_{m}_{tag}.json")
+            r = load(probes_file(m, tag))
             for key, (col, ls, lab) in SERIES.items():
                 if key not in r["layers"]:
                     continue
@@ -149,7 +155,7 @@ def fig_probes():
             for bname, col, lab in (("tfidf", INK, "TF-IDF text baseline"), ("type_prior", "#6250d6", "type-prior baseline")):
                 ax.axhline(r["baselines"][bname]["accuracy"]["est"], color=col, ls="-.", lw=1, label=lab)
             ax.axhline(0.5, color=AXIS, lw=1)
-            ax.set_title(f"{MODEL_LAB[m]} (model acc. {r['model_accuracy']:.2f})", fontsize=9)
+            ax.set_title(f"{MODEL_LAB[m]} (model acc. {r['model_accuracy']:.2f}; probe C = {r['probe_C']:g})", fontsize=9)
             ax.set_xlabel("layer (0 = embeddings)")
             ax.set_ylim(0.3, 1.0)
         axes[0, 0].set_ylabel("held-out probe accuracy")
@@ -164,12 +170,12 @@ def fig_probes():
 # ------------------------------------------------------------------ fig 4: selectivity + positions
 def fig_selectivity_positions():
     for tag in ["c2c_probe", "cladder"]:
-        ms = [m for m in MODELS if (RESULTS / f"probes_{m}_{tag}.json").exists()]
+        ms = [m for m in MODELS if (RESULTS / f"confound_{m}_{tag}.json").exists()]
         if not ms:
             continue
         fig, axes = plt.subplots(1, 2, figsize=(9, 3.3))
         for m in ms:
-            r = load(f"probes_{m}_{tag}.json")
+            r = load(probes_file(m, tag))
             sel = np.array(r["selectivity_by_layer"])
             axes[0].plot(np.linspace(0, 1, len(sel)), sel, color=MODEL_COL[m], label=MODEL_LAB[m])
         axes[0].axhline(0, color=AXIS, lw=1)
@@ -177,7 +183,7 @@ def fig_selectivity_positions():
         axes[0].set_xlabel("relative depth (0 = embeddings, 1 = last layer)"); axes[0].set_ylabel("accuracy points")
         axes[0].legend(fontsize=8)
         m = ms[-1]
-        r = load(f"probes_{m}_{tag}.json")
+        r = load(probes_file(m, tag))
         for key, col, lab in (("gold", "#2a78d6", "final prompt token"),
                               ("gold@content_end", "#1baf7a", "end of hypothesis / question"),
                               ("gold@premise_end", "#eda100", "end of premise / context")):
@@ -232,5 +238,137 @@ def fig_confound():
         save(fig, f"fig5_confound_{tag}.png")
 
 
+# ------------------------------------------------------------------ fig 6: steering
+DIRS = [("gold_probe", "#2a78d6", "-", "gold-probe direction"), ("gold_diffmeans", "#1baf7a", "-", "gold diff-of-means"),
+        ("model_out", "#eb6834", "-", "model-output direction"), ("random_mean", "#898781", "--", "random directions (mean of 3)")]
+
+
+def fig_steering():
+    for tag in ["c2c_probe", "cladder"]:
+        ms = [m for m in MODELS if (RESULTS / f"steering_{m}_{tag}.json").exists()]
+        if not ms:
+            continue
+        fig, axes = plt.subplots(2, len(ms), figsize=(3.9 * len(ms), 6), squeeze=False, sharey="row")
+        for j, m in enumerate(ms):
+            r = load(f"steering_{m}_{tag}.json")
+            al = r["alphas"]
+            for key, col, ls, lab in DIRS:
+                d = r["directions"][key]["add"]
+                rnd = key == "random_mean"
+                for i, (metric, title) in enumerate((("flip_rate_plus", "answers flipped by +α·direction"),
+                                                     ("accuracy_toward_gold", "accuracy when pushed towards the gold answer"))):
+                    ax = axes[i, j]
+                    est = [x[metric] if rnd else x[metric]["est"] for x in d]
+                    ax.plot(al, est, color=col, ls=ls, marker="o", ms=4, label=lab)
+                    if not rnd:
+                        ax.fill_between(al, [x[metric]["lo"] for x in d], [x[metric]["hi"] for x in d], color=col, alpha=0.15, lw=0)
+                    ax.set_xscale("log", base=2); ax.set_ylim(-0.03, 1.03)
+                    ax.set_title(f"{MODEL_LAB[m]} · layer {r['layer']}\n{title}", fontsize=8.5)
+                    if i == 1:
+                        ax.set_xlabel("steering scale α (units of typical activation spread)")
+            axes[1, j].axhline(r["baseline"]["accuracy"]["est"], color=INK2, ls=":", lw=1)
+        axes[0, 0].set_ylabel("fraction of items"); axes[1, 0].set_ylabel("accuracy")
+        h, l = axes[0, 0].get_legend_handles_labels()
+        fig.legend(h, l, loc="lower center", ncol=4, fontsize=8, bbox_to_anchor=(0.5, -0.04))
+        fig.suptitle(f"Steering at the final token · {DATASET_LAB[tag]} · dotted = unsteered accuracy", fontsize=9, color=INK2)
+        fig.tight_layout()
+        save(fig, f"fig6_steering_{tag}.png")
+
+
+# ------------------------------------------------------------------ fig 7: patching heatmaps
+def fig_patching():
+    ms = models_with("patching")
+    if not ms:
+        return
+    from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
+    cmap = LinearSegmentedColormap.from_list("div", ["#eb6834", "#f0efec", "#2a78d6"])   # two hues + neutral midpoint
+    for kind, ktitle in (("hyp", "hypothesis differs by one variable"), ("prem", "premise relabelled (different causal structure)")):
+        fig, axes = plt.subplots(2, len(ms), figsize=(4.4 * len(ms), 5.2), squeeze=False)
+        for j, m in enumerate(ms):
+            r = load(f"patching_{m}.json")
+            k = r["kinds"][kind]
+            for i, (key, lab) in enumerate((("pooled_recovery", "clean → corrupt"), ("control_pooled_recovery", "random-donor control"))):
+                ax = axes[i, j]
+                g = np.array(k[key], float).T                    # [regions, layers]
+                im = ax.imshow(g, aspect="auto", cmap=cmap, norm=TwoSlopeNorm(0, -1, 1), interpolation="nearest")
+                ax.set_yticks(range(len(r["regions"])), [x.replace("_", " ") for x in r["regions"]], fontsize=7)
+                step = max(1, len(r["layers"]) // 8)
+                ax.set_xticks(range(0, len(r["layers"]), step), [r["layers"][t] for t in range(0, len(r["layers"]), step)])
+                ax.grid(False)
+                ax.set_title(f"{MODEL_LAB[m]} · {lab} (n={k['n_pairs']})", fontsize=8.5)
+                if i == 1:
+                    ax.set_xlabel("layer patched (0 = embeddings)")
+            fig.colorbar(im, ax=axes[:, j], shrink=0.7, label="pooled recovery" if j == len(ms) - 1 else None)
+        fig.suptitle(f"Residual-stream patching by layer × token region · minimal pairs: {ktitle}\n"
+                     "1 = corrupt run behaves like clean run; grey cells = region empty", fontsize=9, color=INK2)
+        save(fig, f"fig7_patching_{kind}.png")
+
+
+# ------------------------------------------------------------------ fig 8: attribution vs real patching
+def fig_components():
+    ms = [m for m in models_with("patching") if "validated" in load(f"patching_{m}.json")["kinds"]["prem"].get("components", {})]
+    if not ms:
+        return
+    fig, axes = plt.subplots(1, len(ms), figsize=(4 * len(ms), 3.6), squeeze=False)
+    for ax, m in zip(axes[0], ms):
+        r = load(f"patching_{m}.json")
+        for kind, mk in (("prem", "o"), ("hyp", "s")):
+            c = r["kinds"][kind].get("components", {})
+            if "validated" not in c:
+                continue
+            for setname, col in (("top", "#2a78d6"), ("random", "#898781")):
+                v = [x for x in c["validated"] if x["set"] == setname]
+                ax.scatter([x["attribution"] for x in v], [x["real_patching"] for x in v], color=col, marker=mk, s=28,
+                           edgecolor=SURF, linewidth=0.8, label=f"{setname} ({kind})")
+            for x in sorted(c["validated"], key=lambda x: -abs(x["real_patching"]))[:3]:
+                ax.annotate(x["component"], (x["attribution"], x["real_patching"]), fontsize=7, color=INK2,
+                            xytext=(3, 3), textcoords="offset points")
+        lim = max(abs(np.array(ax.get_xlim())).max(), abs(np.array(ax.get_ylim())).max())
+        ax.plot([-lim, lim], [-lim, lim], color=AXIS, lw=1)
+        c = r["kinds"]["prem"]["components"]
+        ax.set_title(f"{MODEL_LAB[m]} (prem: r = {c['pearson_attr_vs_real']:.2f})", fontsize=9)
+        ax.set_xlabel("attribution-patching estimate"); ax.legend(fontsize=7)
+    axes[0, 0].set_ylabel("real activation patching (pooled recovery)")
+    fig.suptitle("Do the cheap gradient estimates agree with real patching? Top-10 and 10 random heads/MLPs; line = perfect agreement",
+                 fontsize=9, color=INK2)
+    fig.tight_layout()
+    save(fig, "fig8_attribution_validation.png")
+
+
+# ------------------------------------------------------------------ fig 9: cross-model
+def fig_cross_model():
+    r = load("cross_model.json")
+    if not r:
+        return
+    fig, axes = plt.subplots(1, 3, figsize=(12, 3.5))
+    for tag, mk in (("c2c_probe", "o"), ("cladder", "s")):
+        for m, row in r["models"].items():
+            if tag not in row["datasets"]:
+                continue
+            d = row["datasets"][tag]
+            x = row["params_billion"]
+            for ax, key in ((axes[0], "gold_probe_accuracy"), (axes[1], "probe_minus_tfidf_accuracy")):
+                v = d[key]
+                ax.errorbar(x, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], color=MODEL_COL[m], marker=mk,
+                            ms=7, capsize=3, mfc=MODEL_COL[m] if tag == "c2c_probe" else SURF, lw=1)
+            axes[2].scatter(x, d["selected_layer_relative_depth"], color=MODEL_COL[m], marker=mk, s=50,
+                            facecolor=MODEL_COL[m] if tag == "c2c_probe" else SURF)
+            axes[2].scatter(x, d["first_layer_within_1pt_relative_depth"], color=MODEL_COL[m], marker=mk, s=14, alpha=0.6)
+    axes[0].axhline(0.5, color=INK2, ls="--", lw=1); axes[1].axhline(0, color=INK2, ls="--", lw=1)
+    axes[0].set_title("Gold-probe accuracy (report half)"); axes[1].set_title("Probe − TF-IDF accuracy (paired)")
+    axes[2].set_title("Relative depth of selected layer\n(small dot: first layer within 1 pt of max)", fontsize=9)
+    axes[2].set_ylim(0, 1.05)
+    for ax in axes:
+        ax.set_xscale("log"); ax.set_xlabel("parameters (billions)")
+        ax.set_xticks([0.5, 1.5, 2.6], ["0.5", "1.5", "2.6"])
+    from matplotlib.lines import Line2D
+    axes[0].legend(handles=[Line2D([], [], marker="o", color=INK2, ls="", label="Corr2Cause pool"),
+                            Line2D([], [], marker="s", color=INK2, ls="", mfc=SURF, label="CLadder")], fontsize=8)
+    fig.suptitle("Does decodability scale with model size? Colour = model; whiskers = 95% cluster-bootstrap CI", fontsize=9, color=INK2)
+    fig.tight_layout()
+    save(fig, "fig9_cross_model.png")
+
+
 if __name__ == "__main__":
+    fig_steering(); fig_patching(); fig_components(); fig_cross_model()
     fig_behaviour(); fig_lens(); fig_probes(); fig_selectivity_positions(); fig_confound()

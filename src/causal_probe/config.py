@@ -21,6 +21,11 @@ MODELS = {
     "gemma2b": "google/gemma-2-2b-it",
 }
 
+# LoRA fine-tuned variants: short name -> (base model short name, adapter directory).
+CHECKPOINTS = ROOT / "checkpoints"
+LORA = {"qwen0.5b-lora": ("qwen0.5b", CHECKPOINTS / "qwen0.5b-lora" / "final")}
+ALL_MODELS = list(MODELS) + list(LORA)
+
 # Subsample sizes (see EXPLAINER.md decision log for the arithmetic).
 C2C_PROBE_PREMISES = 300      # premises sampled from train
 C2C_PROBE_PER_PREMISE = 8     # 4 positive + 4 negative hypotheses per premise

@@ -24,7 +24,7 @@ import torch
 from scipy.stats import pearsonr, spearmanr
 
 from causal_probe import cache, data, models, patch
-from causal_probe.config import MODELS, RESULTS, SEED
+from causal_probe.config import ALL_MODELS, MODELS, RESULTS, SEED
 
 REGIONS = ["diff_tokens", "premise_rest", "hypothesis", "template_tail", "final"]
 
@@ -49,7 +49,7 @@ def boot_pooled(delta, eff, groups, n_boot=1000, seed=SEED):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, choices=list(MODELS))
+    ap.add_argument("--model", required=True, choices=ALL_MODELS)
     ap.add_argument("--n-pairs", type=int, default=100)
     ap.add_argument("--n-comp-pairs", type=int, default=40)
     ap.add_argument("--layer-stride", type=int, default=1)
@@ -65,7 +65,7 @@ def main():
     L = len(models.get_layers(model))
     layers = sorted(set(range(0, L + 1, a.layer_stride)) | {L})
     pool = [i for i in data.load_c2c("train") if i["num_variables"] <= a.max_vars]
-    res = {"model": MODELS[a.model], "layers": layers, "regions": REGIONS, "max_vars": a.max_vars, "kinds": {}}
+    res = {"model": a.model, "layers": layers, "regions": REGIONS, "max_vars": a.max_vars, "kinds": {}}
     raw = {}
 
     for kind in ("hyp", "prem"):
@@ -73,30 +73,41 @@ def main():
         encs = [(p, patch.encode_pair(tok, p)) for p in pairs]
         encs = [(p, e) for p, e in encs if e is not None][: a.n_pairs]
         n = len(encs)
-        rec = patch.ResidRecorder(model)
-        clean_resid, ld_clean, ld_cor = [], np.zeros(n), np.zeros(n)
+        ld_clean, ld_cor = np.zeros(n), np.zeros(n)
+
+        def clean_run(k):
+            """Clean forward pass of pair k -> (logit diff, residual stream [L+1, T, d]).
+            Recomputed on demand instead of stored: 60 pairs x 16-45 MB each would not fit
+            next to the model in 8 GB."""
+            rec = patch.ResidRecorder(model)
+            try:
+                ld = patch.run_logit_diff(model, encs[k][1]["clean_ids"], ans)[0]
+                return ld, rec.pop()
+            finally:
+                rec.remove()
+
         with torch.no_grad():
             for k, (p, e) in enumerate(encs):
-                ld_clean[k] = patch.run_logit_diff(model, e["clean_ids"], ans)[0]
-                clean_resid.append(rec.pop())
                 ld_cor[k] = patch.run_logit_diff(model, e["corrupt_ids"], ans)[0]
-                rec.pop()
-        rec.remove()
         groups = np.array([p["group"] for p, _ in encs])
-        delta = ld_clean - ld_cor
         grid = np.full((n, len(layers), len(REGIONS)), np.nan, np.float32)
         ctrl = np.full_like(grid, np.nan)
         rng = np.random.default_rng(SEED + 3)
         for k, (p, e) in enumerate(encs):
-            grid[k] = patch.resid_patch_grid(model, e, ans, layers, clean_resid[k], a.batch)
+            ld_clean[k], cr = clean_run(k)
+            grid[k] = patch.resid_patch_grid(model, e, ans, layers, cr, a.batch)
+            del cr
             # random-donor control: clean run of a different premise with the same token count
             cands = [j for j in range(n) if groups[j] != groups[k] and encs[j][1]["n_tokens"] == e["n_tokens"]]
             if cands:
-                ctrl[k] = patch.resid_patch_grid(model, e, ans, layers, clean_resid[int(rng.choice(cands))], a.batch)
+                _, dr = clean_run(int(rng.choice(cands)))
+                ctrl[k] = patch.resid_patch_grid(model, e, ans, layers, dr, a.batch)
+                del dr
             if k % 10 == 0:
                 print(f"[{kind}] pair {k}/{n} {time.time() - t0:.0f}s", flush=True)
             if model.device.type == "mps":
                 torch.mps.empty_cache()
+        delta = ld_clean - ld_cor
         eff, ceff = grid - ld_cor[:, None, None], ctrl - ld_cor[:, None, None]
         has_ctrl = ~np.isnan(ctrl[:, 0, -1])
         rec_pool = pooled(delta, eff)
@@ -133,7 +144,6 @@ def main():
         io = patch.ComponentIO(model)
         try:
             attr_z = np.zeros((m, L, H)); attr_mlp = np.zeros((m, L))
-            clean_acts = []
             for k in range(m):
                 e = encs[k][1]
                 _, ca, _ = patch.record_components(model, io, e["clean_ids"], ans, grad=False)
@@ -142,7 +152,7 @@ def main():
                     d = (ca[("z", l)] - ka[("z", l)]) * kg[("z", l)]
                     attr_z[k, l] = d.reshape(d.shape[0], H, -1).sum((0, 2)).numpy()
                     attr_mlp[k, l] = float(((ca[("mlp", l)] - ka[("mlp", l)]) * kg[("mlp", l)]).sum())
-                clean_acts.append({key: v.to(torch.float16) for key, v in ca.items()})
+                del ca, ka, kg
                 if model.device.type == "mps":
                     torch.mps.empty_cache()
             assert np.isfinite(attr_z).all() and np.isfinite(attr_mlp).all(), "non-finite attribution"
@@ -156,9 +166,10 @@ def main():
             real = np.zeros((m, len(top) + len(rnd)))
             for k in range(m):
                 e = encs[k][1]
+                _, ca, _ = patch.record_components(model, io, e["clean_ids"], ans, grad=False)
                 for c, ci in enumerate(top + rnd):
                     typ, l, h = comps[ci]
-                    spec = {("z", l): ([h], clean_acts[k][("z", l)])} if typ == "z" else {("mlp", l): clean_acts[k][("mlp", l)]}
+                    spec = {("z", l): ([h], ca[("z", l)])} if typ == "z" else {("mlp", l): ca[("mlp", l)]}
                     real[k, c] = patch.patch_components(model, io, e["corrupt_ids"], ans, spec) - ld_cor[k]
             real_pool = pooled(dm, real)
             sel = top + rnd

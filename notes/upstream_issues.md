@@ -40,3 +40,7 @@ hs=m(tok("The cat sat on the mat",return_tensors="pt").input_ids, output_hidden_
 print(torch.allclose(hs[-1],g["x"],atol=1e-4), torch.allclose(hs[-1],m.model.norm(g["x"]),atol=1e-4), torch.allclose(hs[-2],g["x2"],atol=1e-4))
 ```
 - Our cache uses forward hooks on the blocks, so it is unaffected (tests/test_cache.py checks both facts).
+
+## U7. SAELens 6.55: `sae.cfg.hook_name` is None for Gemma Scope SAEs (moved to `cfg.metadata`)
+- `SAE.from_pretrained("gemma-scope-2b-pt-res-canonical", "layer_12/width_16k/canonical")` returns an SAE whose `cfg.hook_name` is `None`; the hook name (`blocks.12.hook_resid_post`) now lives in `sae.cfg.metadata.hook_name`. Older tutorials read `sae.cfg.hook_name`. Also `from_pretrained` now returns the SAE itself rather than the `(sae, cfg_dict, sparsity)` tuple many examples unpack. Doc/migration gap rather than a bug.
+- Repro: `from sae_lens import SAE; s=SAE.from_pretrained(release="gemma-scope-2b-pt-res-canonical", sae_id="layer_12/width_16k/canonical"); print(type(s), s.cfg.hook_name, s.cfg.metadata.hook_name)`

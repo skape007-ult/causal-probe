@@ -12,7 +12,7 @@ import json
 import numpy as np
 
 from causal_probe import cache, lens, stats
-from causal_probe.config import MODELS, RESULTS
+from causal_probe.config import ALL_MODELS, MODELS, RESULTS
 
 
 def curve(v, groups):
@@ -34,9 +34,9 @@ def curve(v, groups):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, choices=list(MODELS))
+    ap.add_argument("--model", required=True, choices=ALL_MODELS)
     a = ap.parse_args()
-    res = {"model": MODELS[a.model]}
+    res = {"model": a.model}
     for tag in ["c2c_test", "c2c_probe", "cladder"]:
         resid, meta, items = cache.load_cache(a.model, tag)
         ro = lens.load_readout(cache.cache_dir(a.model, tag) / "readout.npz")

@@ -1,5 +1,5 @@
 {
- "model": "Qwen/Qwen2.5-0.5B-Instruct",
+ "model": "qwen0.5b",
  "c2c_test": {
   "n": 1162,
   "n_correct": 982,

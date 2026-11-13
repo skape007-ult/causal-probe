@@ -196,3 +196,14 @@ def answer_logit_diff_from_resid(model, resid: torch.Tensor, ans: dict) -> torch
     lg = _softcap(model, model.model.norm(resid.to(next(model.parameters()).dtype)).float() @ model._W_ans.T)
     ny = len(ans["yes"])
     return torch.logsumexp(lg[..., :ny], -1) - torch.logsumexp(lg[..., ny:], -1)
+
+
+def answer_logit_diff_from_normed(model, h: torch.Tensor, ans: dict) -> torch.Tensor:
+    """Post-norm hidden state [B, d] -> Yes-No logit difference, on-device and differentiable
+    (used for attribution patching)."""
+    if not hasattr(model, "_W_ans"):
+        ids = list(ans["yes"].values()) + list(ans["no"].values())
+        model._W_ans = unembed_rows(model, ids).to(h.device)
+    lg = _softcap(model, h.float() @ model._W_ans.T)
+    ny = len(ans["yes"])
+    return torch.logsumexp(lg[..., :ny], -1) - torch.logsumexp(lg[..., ny:], -1)

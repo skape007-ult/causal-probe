@@ -44,7 +44,7 @@ def summarise(y, S, groups, ci=True):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True, choices=ALL_MODELS)
-    ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder"])
+    ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder", "c2c_debiased"])
     ap.add_argument("--jobs", type=int, default=6)
     ap.add_argument("--C", type=float, default=probes.PROBE_C,
                     help="L2 strength of the probes. Run once per value in probes.PROBE_CS; 05_confound.py then "
@@ -86,7 +86,8 @@ def main():
 
     # ---- other positions: gold only
     gjobs = [(f"gold/{s}", y, None, folds[s]) for s in PROBE_SEEDS]
-    for pi, pname in enumerate(POSITIONS[1:], start=1):
+    # (caches exported from Kaggle hold the final position only: nothing to do then)
+    for pi, pname in list(enumerate(meta["positions"]))[1:]:
         pl = Parallel(n_jobs=a.jobs)(delayed(run_layer)(resid, l, pi, gjobs, C, groups) for l in range(L))
         oof[f"gold@{pname}"] = np.stack([[pl[l][f"gold/{s}"] for l in range(L)] for s in PROBE_SEEDS])
     del resid
@@ -120,6 +121,7 @@ def main():
            "layers": {}, "baselines": {}}
     targets = {"gold": y, "shuffled": y, "control": ctrl, "model_out": m, "model_out_cal": mcal, "random_init": y,
                "gold@content_end": y, "gold@premise_end": y}
+    res["positions_available"] = list(meta["positions"])
     for name, S in oof.items():
         if S.ndim == 3:
             res["layers"][name] = [summarise(targets[name], S[:, l], groups) for l in range(L)]

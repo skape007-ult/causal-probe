@@ -40,7 +40,7 @@ ALL_MODELS = list(MODELS) + list(REMOTE_MODELS) + list(LORA)
 # Subsample sizes (see EXPLAINER.md decision log for the arithmetic).
 C2C_PROBE_PREMISES = 300      # premises sampled from train
 C2C_PROBE_PER_PREMISE = 8     # 4 positive + 4 negative hypotheses per premise
-C2C_DEBIASED_PER_CELL = 25    # items per (hypothesis string, label) cell in the debiased pool
+C2C_DEBIASED_BLOCKS = 25      # debiased pool: 25 blocks x 48 hypothesis strings x (1 valid + 1 invalid)
 CLADDER_N = 3000              # stratified by label x query_type (rung is a function of query_type)
 N_SUB = 500                   # evenly spaced subset per dataset: generated-text scoring and few-shot runs
 K_SHOTS = 4

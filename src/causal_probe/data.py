@@ -18,7 +18,7 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
-from .config import (C2C_DEBIASED_PER_CELL, C2C_PROBE_PER_PREMISE, C2C_PROBE_PREMISES, CLADDER_N,
+from .config import (C2C_DEBIASED_BLOCKS, C2C_PROBE_PER_PREMISE, C2C_PROBE_PREMISES, CLADDER_N,
                      DATA_RAW, N_SUB, SEED)
 
 csv.field_size_limit(10**9)
@@ -72,32 +72,69 @@ def c2c_probe_pool(train: list[dict], seed: int = SEED,
 
 
 def c2c_debiased_pool(train: list[dict], seed: int = SEED,
-                      per_cell: int = C2C_DEBIASED_PER_CELL) -> list[dict]:
-    """Corr2Cause pool in which the hypothesis string carries no label information.
+                      n_blocks: int = C2C_DEBIASED_BLOCKS) -> list[dict]:
+    """Corr2Cause pool in which neither the hypothesis alone nor the premise alone carries any
+    label information, in the pool as a whole and in every cross-validation fold.
 
     In the official data most hypothesis strings ("D directly causes C.") have the same label for
-    every premise, so the string alone predicts the label. Here we keep only the strings that
-    occur with BOTH labels and sample exactly `per_cell` valid and `per_cell` invalid items for
-    each of them. Every hypothesis string (and therefore every template and every variable pair)
-    is then exactly 50/50, and a classifier that sees only the hypothesis is at chance by
-    construction. Premises still repeat across items, so evaluation must hold out by premise
-    (`group`), as everywhere else. Items are returned sorted by (hypothesis, label, uid)."""
+    every premise, so the string alone predicts the label; and premises differ in how many of
+    their hypotheses are valid, so the premise alone predicts it too. Construction:
+
+      * only the hypothesis strings that occur with BOTH labels are used (48 of 120);
+      * the pool is made of `n_blocks` blocks. Inside a block every string appears exactly once
+        as a valid and once as an invalid hypothesis;
+      * every premise is used exactly once in the whole pool and contributes exactly two items:
+        one valid and one invalid hypothesis.
+
+    Folds and the selection/report split are unions of whole blocks (`grouped_folds`,
+    `selection_mask`), so in every training set and every test set each hypothesis string and
+    each premise is exactly half valid. Any classifier that sees only the hypothesis, or only the
+    premise, scores exactly 0.50 by construction. (A first version balanced strings over the
+    whole pool only. Under premise-held-out folds a string's label rate in the training folds
+    then mirrors its rate in the test fold, and a hypothesis-only classifier scored 0.32 - below
+    chance; and a premise-only classifier scored 0.72. See decision D21 in EXPLAINER.md.)
+
+    Items carry `block` (int). Order: by block, then hypothesis string, then label."""
     rng = np.random.default_rng(seed)
-    cells = defaultdict(list)
+    lab = defaultdict(dict)                 # premise -> {hypothesis string: item}
     for it in train:
-        cells[(it["query"], it["label"])].append(it)
-    strings = sorted({q for q, _ in cells})
-    both = [q for q in strings if len(cells.get((q, 0), [])) >= per_cell and len(cells.get((q, 1), [])) >= per_cell]
-    pool = []
-    for q in both:
-        for lab in (0, 1):
-            cand = cells[(q, lab)]
-            idx = rng.choice(len(cand), size=per_cell, replace=False)
-            pool.extend(cand[j] for j in sorted(idx))
+        lab[it["group"]][it["query"]] = it
+    cells = Counter((it["query"], it["label"]) for it in train)
+    strings = sorted(q for q in {q for q, _ in cells} if cells[(q, 0)] > 0 and cells[(q, 1)] > 0)
+    pos_prems = {q: sorted(g for g, d in lab.items() if q in d and d[q]["label"] == 1) for q in strings}
+    used, pool = set(), []
+    for b in range(n_blocks):
+        for attempt in range(500):
+            need_neg, local, picks = set(strings), set(), []
+            # scarce strings first, random tie-break
+            order = sorted(strings, key=lambda q: (sum(g not in used for g in pos_prems[q]), rng.random()))
+            ok = True
+            for q in order:
+                cands = [g for g in pos_prems[q] if g not in used and g not in local]
+                rng.shuffle(cands)
+                hit = None
+                for g in cands[:200]:
+                    ts = sorted(t for t in need_neg if t != q and t in lab[g] and lab[g][t]["label"] == 0)
+                    if ts:
+                        hit = (g, ts[int(rng.integers(len(ts)))])
+                        break
+                if hit is None:
+                    ok = False
+                    break
+                local.add(hit[0]); need_neg.discard(hit[1]); picks.append((hit[0], q, hit[1]))
+            if ok:
+                break
+        else:
+            raise RuntimeError(f"could not build block {b}")
+        used |= local
+        blk = []
+        for g, q, t in picks:
+            blk.append(dict(lab[g][q], block=b)); blk.append(dict(lab[g][t], block=b))
+        pool.extend(sorted(blk, key=lambda i: (i["query"], i["label"], i["uid"])))
     return pool
 
 
-def c2c_debiased_stats(items: list[dict], per_cell: int = C2C_DEBIASED_PER_CELL) -> dict:
+def c2c_debiased_stats(items: list[dict], per_cell: int = C2C_DEBIASED_BLOCKS) -> dict:
     """How much of a split survives the debiasing rule (for the write-up)."""
     cells = Counter((i["query"], i["label"]) for i in items)
     strings = sorted({q for q, _ in cells})
@@ -181,7 +218,15 @@ def label_balance(items: list[dict]) -> dict:
 
 
 def grouped_folds(items: list[dict], n_folds: int, seed: int):
-    """Stratified (by label) K-fold where no `group` (premise / story) is in both train and test."""
+    """Stratified (by label) K-fold where no `group` (premise / story) is in both train and test.
+    Items that carry a `block` (the debiased pool) are split by whole blocks instead, which keeps
+    every hypothesis string and every premise exactly half valid in every fold."""
+    if items and "block" in items[0]:
+        blk = np.array([i["block"] for i in items])
+        ub = np.random.default_rng(seed).permutation(np.unique(blk))
+        n_folds = min(n_folds, len(ub))
+        return [(np.where(~np.isin(blk, ub[f::n_folds]))[0], np.where(np.isin(blk, ub[f::n_folds]))[0])
+                for f in range(n_folds)]
     from sklearn.model_selection import StratifiedGroupKFold
     y = np.array([i["label"] for i in items])
     g = np.array([i["group"] for i in items])
@@ -194,7 +239,7 @@ def _from_train(tag: str, build) -> list[dict]:
     data/derived/, so later scripts do not each parse the whole file (about 1 GB of Python
     objects, which matters on an 8 GB machine). The file name carries every sampling parameter."""
     import json
-    name = f"{tag}_seed{SEED}_{C2C_PROBE_PREMISES}x{C2C_PROBE_PER_PREMISE}_{C2C_DEBIASED_PER_CELL}.json"
+    name = f"{tag}_seed{SEED}_{C2C_PROBE_PREMISES}x{C2C_PROBE_PER_PREMISE}_blocks{C2C_DEBIASED_BLOCKS}.json"
     path = DATA_RAW.parent / "derived" / name
     if path.exists():
         return json.loads(path.read_text())
@@ -204,6 +249,17 @@ def _from_train(tag: str, build) -> list[dict]:
     tmp.write_text(json.dumps(items))
     tmp.rename(path)
     return items
+
+
+def selection_mask(items: list[dict]) -> np.ndarray:
+    """The fixed selection/report split: True = selection half (used to choose layers and
+    hyper-parameters and to fit steering directions), False = report half (all reported numbers).
+    A seeded random half of the premises / stories; for the debiased pool, of the blocks."""
+    key = "block" if items and "block" in items[0] else "group"
+    g = np.array([i[key] for i in items])
+    ug = np.unique(g)
+    sel_groups = set(np.random.default_rng(SEED + 7).permutation(ug)[: len(ug) // 2])
+    return np.array([x in sel_groups for x in g])
 
 
 def get_dataset(tag: str) -> list[dict]:

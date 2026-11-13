@@ -20,21 +20,20 @@ import time
 import numpy as np
 import torch
 
-from causal_probe import cache, models, probes, prompts, stats, steer
+from causal_probe import cache, data, models, probes, prompts, stats, steer
 from causal_probe.config import ALL_MODELS, MODELS, RESULTS, SEED
 
 ALPHAS = [0.25, 0.5, 1.0, 2.0, 4.0, 8.0]
 N_RANDOM = 3
 
 
-def quick_select(resid, y, groups, sel, stride: int = 1, log=print):
+def quick_select(resid, y, items, sel, stride: int = 1, log=print):
     """Choose (layer, C) for the gold probe when 05_confound.py has not been run for this
     model/tag (Kaggle runs; the debiased pool). Same rule as 05_confound - best selection-half
     accuracy over the (layer, C) grid, report half never touched - but cheaper: grouped 3-fold
     cross-validation with one seed inside the selection half, optionally every `stride`-th layer."""
-    from sklearn.model_selection import StratifiedGroupKFold
     idx = np.where(sel)[0]
-    folds = list(StratifiedGroupKFold(n_splits=3, shuffle=True, random_state=SEED).split(idx, y[idx], groups[idx]))
+    folds = data.grouped_folds([items[j] for j in idx], 3, SEED)      # indices into idx
     layers = sorted(set(range(1, resid.shape[1], stride)) | {resid.shape[1] - 1})
     import os
     from joblib import Parallel, delayed
@@ -76,9 +75,7 @@ def main():
     else:
         if not sel_path.exists():
             y_, g_ = np.array(meta["labels"]), np.array([i["group"] for i in items])
-            ug_ = np.unique(g_)
-            sg_ = set(np.random.default_rng(SEED + 7).permutation(ug_)[: len(ug_) // 2])
-            l_, c_, grid = quick_select(resid, y_, g_, np.array([g in sg_ for g in g_]), a.select_stride)
+            l_, c_, grid = quick_select(resid, y_, items, data.selection_mask(items), a.select_stride)
             sel_path.write_text(json.dumps({"model": a.model, "tag": a.tag, "selected_layer_gold": l_,
                                             "selected_C_gold": c_, "stride": a.select_stride,
                                             "selection_half_cv_accuracy": grid}, indent=1))
@@ -93,10 +90,7 @@ def main():
     y = np.array(meta["labels"]); ld0 = np.array(meta["logit_diff"])
     groups = np.array([i["group"] for i in items])
     # identical split to 05_confound.py
-    ug = np.unique(groups)
-    rng = np.random.default_rng(SEED + 7)
-    sel_groups = set(rng.permutation(ug)[: len(ug) // 2])
-    sel = np.array([g in sel_groups for g in groups]); rep = ~sel
+    sel = data.selection_mask(items); rep = ~sel
 
     mcal = (ld0 > np.median(ld0)).astype(int)
     mu = X[sel].mean(0)

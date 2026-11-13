@@ -8,9 +8,11 @@ import json
 import numpy as np
 
 from causal_probe import cache, data, stats
-from causal_probe.config import MODELS, RESULTS, SEED
+from causal_probe.config import MODELS, REMOTE_MODELS, RESULTS, SEED
 
-PARAMS_B = {"qwen0.5b": 0.494, "qwen1.5b": 1.54, "gemma2b": 2.61}   # parameter counts (billions), from model cards
+MODELS = {**MODELS, **REMOTE_MODELS}
+
+PARAMS_B = {"qwen0.5b": 0.494, "qwen1.5b": 1.54, "gemma2b": 2.61, "qwen3b": 3.09, "qwen7b-4bit": 7.62}   # parameter counts (billions), from model cards
 
 
 def main():

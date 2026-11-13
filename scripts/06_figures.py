@@ -158,9 +158,9 @@ def fig_probes():
                     hi = [l["accuracy"]["hi"] for l in r["layers"][key]]
                     ax.fill_between(x, lo, hi, color=col, alpha=0.18, lw=0)
             c = load(f"confound_{m}_{tag}.json")
-            tf = f"tfidf_C{c['selected_C_tfidf']:g}"
-            for bname, col, lab in ((tf, INK, "TF-IDF text baseline"), ("type_prior", "#6250d6", "type-prior baseline")):
-                ax.axhline(r["baselines"][bname]["accuracy"]["est"], color=col, ls="-.", lw=1, label=lab)
+            tb0 = c["text_baselines_all_items"]
+            for bname, col, lab in (("tfidf", INK, "TF-IDF, whole prompt"), ("type_prior", "#6250d6", "template / type prior")):
+                ax.axhline(tb0[bname]["accuracy"], color=col, ls="-.", lw=1, label=lab)
             tb = c.get("text_baselines_all_items", {})
             if "structural" in tb:
                 ax.axhline(tb["structural"]["accuracy"], color="#1baf7a", ls="-.", lw=1.4,

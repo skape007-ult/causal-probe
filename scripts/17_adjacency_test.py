@@ -42,6 +42,13 @@ Interventions on evaluation items (report half, --per-template items per templat
            difference: on average this puts an item where the other class sits
   erase    LEACE per template: remove the component that carries adjacency, v = -delta (w.x)/(w.delta)
            with w = (Sigma + lambda I)^-1 delta
+  transfer translate by the class-mean difference of EACH template (five vectors per item), to ask
+           whether the encoding is shared across hypothesis types. If one adjacency feature is read
+           in a template-specific way, the effect on an item follows the item's own template (the
+           target); if each template's class difference is just that template's answer shift, the
+           effect follows the template the vector came from (the source). Added after the first
+           full-size result (notes/log.md 13 Nov 18:20): at Qwen 0.5B's final token the "parent"
+           class difference is anti-parallel to the other four and all align with the answer direction.
 """
 import argparse
 import json
@@ -188,8 +195,8 @@ def fit(X, sel, t, y, mcal, tm, strs, items, C, n_shuf, log):
 def item_vectors(F, i, t_i, n_shuf):
     """All intervention vectors for item i, and the norm of each. Layout (K = 1 + 4n + 2(1 + n_shuf),
     n = 4 + 2 n_shuf directions in the order probe, dom, gold_probe, model_out, shuffled probes,
-    shuffled doms):  [0] none | +small x n | -small x n | +large x n | -large x n |
-    translate: real, shuffles | erase: real, shuffles"""
+    shuffled doms; + 5 transfer vectors):  [0] none | +small x n | -small x n | +large x n | -large x n |
+    translate: real, shuffles | erase: real, shuffles | transfer: the class-mean difference of each template"""
     g = F["tm_idx"][i]
     unit = lambda v: v / (np.linalg.norm(v) + 1e-12)                            # noqa: E731
     dirs = [F["probe"], unit(F["delta"][g]), F["gold_probe"], F["model_out"]] + list(F["shuf_probe"]) + [unit(dl[g]) for dl in F["shuf_delta"]]
@@ -204,7 +211,8 @@ def item_vectors(F, i, t_i, n_shuf):
     def er(dl, W):
         return -dl[g] * float(W[g] @ x) / float(W[g] @ dl[g])
     erase = np.stack([er(F["delta"], F["W"])] + [er(dl, W) for dl, W in zip(F["shuf_delta"], F["shuf_W"])])
-    V = np.concatenate([np.zeros((1, D.shape[1])), small, -small, large, -large, trans, erase]).astype(np.float32)
+    xfer = sgn * F["delta"]                                              # [5, d]: every template's class-mean difference
+    V = np.concatenate([np.zeros((1, D.shape[1])), small, -small, large, -large, trans, erase, xfer]).astype(np.float32)
     return V, np.linalg.norm(V, axis=1)
 
 
@@ -252,7 +260,9 @@ def analyse(a, z, meta, items, t_all, layer, layer_info):
     assert int(z["layer"]) == layer, f"raw file is for layer {int(z['layer'])}, the selection now gives {layer}: stale file?"
     n_shuf = int(z["n_shuf"]); n = 4 + 2 * n_shuf
     idx, out, norms = z["idx"], z["out"].astype(np.float64), z["norms"].astype(np.float64)
-    assert out.shape == norms.shape == (len(idx), 1 + 4 * n + 2 * (1 + n_shuf)), out.shape
+    K0 = 1 + 4 * n + 2 * (1 + n_shuf)
+    assert out.shape == norms.shape and out.shape[0] == len(idx) and out.shape[1] in (K0, K0 + len(TEMPLATES)), out.shape
+    has_xfer = out.shape[1] == K0 + len(TEMPLATES)
     assert len(idx) >= int(z["min_items"]), f"only {len(idx)} items in the raw file"
     y_all = np.array(meta["labels"]); ld_all = np.array(meta["logit_diff"])
     tm_all = np.array([i["template"] for i in items]); str_all = np.array([i["query"] for i in items])
@@ -267,7 +277,8 @@ def analyse(a, z, meta, items, t_all, layer, layer_info):
     sd = nrm(0) / SMALL_SD                            # natural SD of each direction (per item: dom is per template)
     noise_small = np.abs((ps + ms_) / 2 - base[:, None])       # symmetric part: zero for a linear response
     tr = out[:, 1 + 4 * n: 1 + 4 * n + 1 + n_shuf]; tr_n = norms[:, 1 + 4 * n: 1 + 4 * n + 1 + n_shuf]
-    er = out[:, 1 + 4 * n + 1 + n_shuf:]; er_n = norms[:, 1 + 4 * n + 1 + n_shuf:]
+    er = out[:, 1 + 4 * n + 1 + n_shuf: K0]; er_n = norms[:, 1 + 4 * n + 1 + n_shuf: K0]
+    xf = out[:, K0:]; xf_n = norms[:, K0:]
     sgn = np.where(t == 0, 1.0, -1.0)
     iP, iD, iG, iM = 0, 1, 2, 3
     cP = np.arange(4, 4 + n_shuf); cD = np.arange(4 + n_shuf, n)
@@ -391,6 +402,35 @@ def analyse(a, z, meta, items, t_all, layer, layer_info):
     res["erasure"]["contrast_reduction_of_dependence"] = {
         "value": float(contrast(-np.array(ch))[0]), "vs_controls": two_sided(float(contrast(-np.array(ch))[0]), contrast(-np.stack(chc))),
         "benchmark_full_removal_on_evaluation_items": float(contrast([gap_eval(base, m) for m in gm])[0])}
+    # ---- 4. transfer: the class-mean difference of template h applied to items of template g
+    if has_xfer:
+        e_x = sgn[:, None] * (xf - base[:, None])                               # [items, source template]
+        M = np.array([[e_x[gm[gi], hi].mean() for hi in range(len(TEMPLATES))] for gi in range(len(TEMPLATES))])   # [target, source]
+        cells = {}
+        for gi, g in enumerate(TEMPLATES):
+            for hi, h in enumerate(TEMPLATES):
+                m = gm[gi]
+                ctrl = e_tr_c[m] * (xf_n[m, hi][:, None] / tr_n[m, 1:])         # target's own controls, rescaled to this vector's norm
+                cells[f"{h} -> {g}"] = {**ci(e_x[:, hi], m), "vs_controls_norm_matched": two_sided(M[gi, hi], ctrl.mean(0))}
+        off = [(gi, hi) for gi in range(len(TEMPLATES)) for hi in range(len(TEMPLATES)) if gi != hi and used[gi] and used[hi]]
+        D_ = z["delta"].astype(np.float64); U_ = D_ / np.linalg.norm(D_, axis=1, keepdims=True)
+
+        def xcontrast(which):                                                    # per-item effects -> mean over off-diagonal cells
+            codes_ = np.array([TEMPLATES.index(g) for g in tm])
+            def fn(*cols):
+                e, c = np.stack(cols[:-1], 1), cols[-1]
+                return float(np.mean([sig[gi if which == "target" else hi] * e[c == gi, hi].mean() for gi, hi in off])) if off else float("nan")
+            return stats.bootstrap_ci(fn, tuple(e_x[:, hi] for hi in range(len(TEMPLATES))) + (codes_,), grp, n_boot=1000)
+
+        res["transfer"] = {
+            "templates": TEMPLATES, "effect_matrix_rows_target_cols_source": M.tolist(), "cells": cells,
+            "cosine_between_class_mean_differences": (U_ @ U_.T).tolist(),
+            "off_diagonal_contrast_with_the_TARGET_template_sign": xcontrast("target"),
+            "off_diagonal_contrast_with_the_SOURCE_template_sign": xcontrast("source"),
+            "note": "effect towards Yes, per move towards adjacent, of translating an item of the row's template by the class-mean "
+                    "difference of the column's template. A shared adjacency feature read in a template-specific way predicts a "
+                    "positive target-sign contrast; class differences that are each template's own answer shift predict a positive "
+                    "source-sign contrast."}
     res["minutes_gpu"] = float(z["minutes"])
     (RESULTS / f"adjacency_{a.model}_{a.tag}_{a.site}.json").write_text(json.dumps(res, indent=1))
 
@@ -407,6 +447,15 @@ def analyse(a, z, meta, items, t_all, layer, layer_info):
     print("  erasure, gap change: " + " ".join(f"{g[:10]} {res['erasure']['by_template'][g]['change_in_gap']['est']:+.3f}" for g in TEMPLATES)
           + f" | reduction contrast {res['erasure']['contrast_reduction_of_dependence']['value']:+.4f} (full removal "
             f"{res['erasure']['contrast_reduction_of_dependence']['benchmark_full_removal_on_evaluation_items']:+.3f})")
+    if has_xfer:
+        x_ = res["transfer"]
+        print("  transfer (rows = item's template, columns = template the vector came from):")
+        for gi, g in enumerate(TEMPLATES):
+            print("    %-10s " % g[:10] + " ".join(f"{v:+.3f}" for v in x_["effect_matrix_rows_target_cols_source"][gi]))
+        print(f"    off-diagonal contrast, target sign {x_['off_diagonal_contrast_with_the_TARGET_template_sign']['est']:+.4f} "
+              f"[{x_['off_diagonal_contrast_with_the_TARGET_template_sign']['lo']:+.4f}, {x_['off_diagonal_contrast_with_the_TARGET_template_sign']['hi']:+.4f}]; "
+              f"source sign {x_['off_diagonal_contrast_with_the_SOURCE_template_sign']['est']:+.4f} "
+              f"[{x_['off_diagonal_contrast_with_the_SOURCE_template_sign']['lo']:+.4f}, {x_['off_diagonal_contrast_with_the_SOURCE_template_sign']['hi']:+.4f}]")
     m_ = res["steps"]["model_out"]["per_unit_norm_from_large_step"]
     print(f"  positive control (model-answer direction): slope {m_['est']:+.4f} per unit norm, larger in absolute value than "
           f"{100 * m_['vs_controls']['share_of_controls_smaller_in_absolute_value']:.0f}% of shuffled-label probe directions")
@@ -492,7 +541,8 @@ def main():
     ans = models.answer_token_ids(tok)
     # self-check in the model's own dtype and device: shortcut vs full forward pass, three vectors at the steered token
     enc0 = prompts.encode_with_positions(tok, items[idx[0]])
-    pick = torch.tensor(V0[[0, 2 * (4 + 2 * a.n_shuf) + 2, K - 1 - a.n_shuf]])       # none, a large step, the real erasure
+    n_dir = 4 + 2 * a.n_shuf
+    pick = torch.tensor(V0[[0, 2 * n_dir + 2, 1 + 4 * n_dir + 1 + a.n_shuf]])        # none, a large step, the real erasure
     fast = steer.steered_logit_diffs(model, enc0["input_ids"], layer, pick, ans, sub_batch=3, pos=enc0["pos"][a.position])
     slow = steer.steered_logit_diffs_full(model, enc0["input_ids"], layer, pick, ans, pos=enc0["pos"][a.position])
     self_check = float(np.abs(fast - slow).max())

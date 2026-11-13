@@ -409,7 +409,7 @@ def fig_cross_model():
     from matplotlib.lines import Line2D
     axes[0].legend(handles=[Line2D([], [], marker="o", color=INK2, ls="", label="Corr2Cause pool"),
                             Line2D([], [], marker="s", color=INK2, ls="", mfc=SURF, label="CLadder")], fontsize=8)
-    fig.suptitle("Does decodability scale with model size? Colour = model; whiskers = 95% cluster-bootstrap CI", fontsize=9, color=INK2)
+    fig.suptitle("Decodability by model (four models; not a scaling law). Colour = model; whiskers = 95% cluster-bootstrap CI", fontsize=9, color=INK2)
     fig.tight_layout()
     save(fig, "fig9_cross_model.png")
 

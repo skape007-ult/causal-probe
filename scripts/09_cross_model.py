@@ -1,7 +1,9 @@
 """Tier 2c: cross-model comparison, assembled from existing results (no new computation
 except bootstrap CIs on already-saved out-of-fold probe scores). Writes results/cross_model.json.
 
-Question: do decodability and the depth at which it peaks scale with model size?
+Question: how do probe accuracy, its margin over the strongest text baseline and the selected depth
+compare across the models? A handful of models from two families cannot establish a scaling law
+(Tier 2 audit, finding 21); the table is descriptive.
 """
 import json
 

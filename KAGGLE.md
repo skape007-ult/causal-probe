@@ -57,20 +57,17 @@ stages after it. A summary table is printed at the end and saved in
      "random-init probe" column needs it. Set `EXPORT_RANDOM_INIT = False` to leave it out.
    - `cache_gemma2b.zip` and `cache_gemma2b-rand.zip` (about 0.3 GB each): Gemma on the debiased
      pool (the laptop already has Gemma's other caches).
-9. **Unpack into the repository** (from the repository root; the zips contain `results/…` and
-   `cache/…` paths):
+9. **Put the zips into `kaggle_in/` in the repository root and run the ingest command.** Do not
+   unzip them by hand (a plain unzip would overwrite newer local results and the metadata of the
+   local Gemma cache). Details and what a partial run looks like: `notes/kaggle_ingest.md`.
 
    ```bash
-   unzip -o ~/Downloads/results.zip -d .
+   .venv/bin/python scripts/kaggle_ingest.py
    ```
 
-   ```bash
-   for z in ~/Downloads/cache_*.zip; do unzip -o "$z" -d .; done
-   ```
-
-   `results.zip` overwrites nothing that exists locally except files the Kaggle run recomputed
-   (it only adds Gemma steering/patching/SAE files, the larger model's files and `kaggle_*`).
-10. **Tell me (or run yourself)** the laptop analysis for the new model, CPU only:
+   It checks the zips, the code commit and every stage, extracts only what the run produced,
+   verifies the caches, and regenerates tables, figures and documents.
+10. **Laptop analysis for the new model**, CPU only:
 
     ```bash
     OMP_NUM_THREADS=2 nice ./scripts/run_tier1.sh qwen3b 2

@@ -316,6 +316,27 @@ Four demonstrations changed the answer bias more than the skill: see `behaviour_
 
 **15. What does the variable-renaming check tell you?**
 Renaming A,B,C to Z,Y,X leaves the logic untouched. A model that reasons should not care. Prediction flips and the change in macro-F1 are in `robustness_renaming.md`; the original paper used the same idea to show that fine-tuned models had learned surface patterns.
+
+**16. The models score 50%. Are they guessing, or biased?**
+Both, in different places, and the difference matters. `report/tables/answer_bias.md` gives, for every model and prompt, the Yes-rate, the AUROC of the Yes−No score (which a constant lean cannot move) and the accuracy after moving the threshold to its best position on other items. Qwen2.5-0.5B says "No" to nearly everything, yet on the original Corr2Cause items its score ranks valid above invalid slightly better than chance (AUROC about 0.59): biased, not empty. On CLadder all three models are at 0.50 by AUROC too: empty. And the faint Corr2Cause signal disappears when the variables are renamed or the debiased pool is used, so it was the same surface cue the probes were reading.
+
+**17. How can the wording of the hypothesis predict the answer without the premise?**
+Because of how the benchmark is built. Graphs are generated with variables in causal order, so a cause always has an earlier letter than its effect. "A directly causes D" can be valid; "D directly causes A" never is. Of 120 distinct hypothesis strings, 72 are never valid in the whole training split. A classifier that only memorises each string's track record ranks test items with AUROC 0.90. The construction is described in the benchmark paper (Sec. 3.3 and Appendix D); the consequence is not, and no earlier report of a hypothesis-only baseline was found (`notes/literature_check.md`).
+
+**18. Is that a flaw in the benchmark?**
+That is not the claim. The benchmark was designed to test models zero-shot, and a model that has never seen the label statistics cannot exploit them. The finding matters for anything *trained* on in-distribution items: fine-tuned models, few-shot prompts, and probes. The original paper itself showed fine-tuned models failing when variables are renamed. What is added here is a measurement of how far a hypothesis-only classifier gets, and the consequence for probing.
+
+**19. Why did your first debiased pool put a hypothesis-only classifier *below* chance?**
+Because the pool was balanced as a whole (25 valid, 25 invalid items per hypothesis string) but then cut into folds by premise. If the test fold happens to hold 7 valid and 3 invalid copies of a string, the training folds hold 18 valid and 22 invalid, so the training-fold prior says "probably invalid" exactly where the test fold is mostly valid. Exact balance in the whole turns chance imbalance in one part into the opposite imbalance in the rest. It is the same arithmetic as the leave-one-out leak in the primer. The fix was to make every fold balanced, by building the pool from blocks that are each balanced and using whole blocks as folds.
+
+**20. In the debiased pool the parsed-feature baseline still gets 81%. Isn't the pool still biased?**
+No single input is: hypothesis-only and premise-only classifiers are at exactly 50%. What the parsed-feature classifier uses is the *combination*: it looks up, in the premise, what is said about the two variables named in the hypothesis (are they correlated, are they ever made independent, by how many conditioning sets, do they share neighbours). That is the first step of the textbook algorithm for this task. It is deliberately kept as a baseline: if a probe cannot beat it, the activations expose no more about the answer than a hand-written parser that stops after step one. A probe that only ties it would still be interesting, and is reported against the weaker baselines as well.
+
+**21. Gemma's probes come from activations cached on the laptop, its steering from activations recomputed on Kaggle. Is that a problem?**
+It would be if the two differed materially. Both use the same weights in half precision; the laptop keeps Gemma's embedding matrix on disk and runs on Apple's GPU backend, Kaggle runs everything on an NVIDIA GPU. `results/cache_agreement_gemma2b.json` (written by the Kaggle run) compares the answer scores item by item with reference values committed from the laptop cache: maximum and mean absolute difference, correlation, and the share of items with the same Yes/No answer. Steering directions are fitted and applied on the Kaggle activations, so each experiment is internally consistent; only the *choice of layer* is carried over from the laptop analysis.
+
+**22. You pre-registered a criterion, it passed, and you say the claim is false. Which is it?**
+The criterion passed as coded and the claim is not supported; both statements are in the report. Pre-registration protects against moving the goalposts towards a result. Here the goalposts were found to be in the wrong place, in the direction that made the claim too easy: the baselines named in the criterion were weak. Tightening a test after seeing that it can be passed by a shortcut is legitimate, provided the original analysis is still shown and the change is labelled post hoc, which it is (decisions D18, D19, D21).
 <!-- /QA-TIER1 -->
 
 <!-- QA-TIER2 -->

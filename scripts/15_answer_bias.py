@@ -57,7 +57,7 @@ def main():
             if not (d / "meta.json").exists():
                 continue
             meta = json.loads((d / "meta.json").read_text())
-            items = data.get_dataset(tag.removesuffix("_fewshot"))[: meta["n"]]
+            items = cache.items_for(tag, meta)
             y = np.array(meta["labels"]); s = np.array(meta["logit_diff"]); g = np.array([i["group"] for i in items])
             cf = crossfit_acc(y, s, g)
             acc = lambda a_, b_: stats.accuracy(a_, b_)        # noqa: E731

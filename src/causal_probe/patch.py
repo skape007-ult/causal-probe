@@ -30,8 +30,17 @@ def _swap(text: str, a: str, b: str) -> str:
     return _VARS.sub(lambda m: {a: b, b: a}.get(m.group(1), m.group(1)), text)
 
 
-def build_pairs(items: list[dict], kind: str, n: int, seed: int = 0, max_per_premise: int = 2) -> list[dict]:
-    """Find minimal pairs among dataset items (see module docstring)."""
+def build_pairs(items: list[dict], kind: str, n: int, seed: int = 0, max_per_premise: int = 2,
+                label_mode: str = "change") -> list[dict]:
+    """Find minimal pairs among dataset items (see module docstring).
+
+    label_mode "change" (default): clean has gold Yes, corrupt has gold No.
+    label_mode "same": the same kind of edit (one variable letter in the hypothesis, or the
+        corresponding relabelling of the premise), but both prompts have the SAME gold label. A
+        control added after the Tier 2 audit: if patching these pairs gives the same picture, the
+        picture is about prompt differences, not about a change of answer. Each pair records its
+        common label in `label`; "clean"/"corrupt" are then arbitrary names for the two prompts."""
+    assert label_mode in ("change", "same")
     rng = np.random.default_rng(seed)
     by_prem = defaultdict(dict)
     for it in items:
@@ -41,7 +50,7 @@ def build_pairs(items: list[dict], kind: str, n: int, seed: int = 0, max_per_pre
         hyps = by_prem[g]
         cand = []
         for q, it in hyps.items():
-            if it["label"] != 1:
+            if label_mode == "change" and it["label"] != 1:
                 continue
             vs = sorted(set(_VARS.findall(q)))
             allv = sorted(set(_VARS.findall(it["context"])))
@@ -51,20 +60,41 @@ def build_pairs(items: list[dict], kind: str, n: int, seed: int = 0, max_per_pre
                         continue
                     q2 = _swap(q, a, b)
                     # exactly one letter position changes (b not already in q) and the swapped
-                    # hypothesis exists in the data with label 0
-                    if b in vs or q2 not in hyps or hyps[q2]["label"] != 0:
+                    # hypothesis exists in the data with the required label
+                    if b in vs or q2 not in hyps:
                         continue
+                    if label_mode == "change" and hyps[q2]["label"] != 0:
+                        continue
+                    if label_mode == "same" and (hyps[q2]["label"] != it["label"] or q2 < q):
+                        continue                    # q2 < q: count each unordered pair once
+                    extra = {"label": it["label"]} if label_mode == "same" else {}
                     if kind == "hyp":
-                        cand.append(dict(kind=kind, clean=it, corrupt=hyps[q2], group=g, swap=(a, b)))
+                        cand.append(dict(kind=kind, clean=it, corrupt=hyps[q2], group=g, swap=(a, b), **extra))
                     else:
                         cor = dict(it)
                         cor["context"] = _swap(it["context"], a, b)
-                        cor["label"] = 0
+                        cor["label"] = hyps[q2]["label"]
                         cor["uid"] = it["uid"] + f"-swap{a}{b}"
-                        cand.append(dict(kind=kind, clean=it, corrupt=cor, group=g, swap=(a, b)))
+                        cand.append(dict(kind=kind, clean=it, corrupt=cor, group=g, swap=(a, b), **extra))
         if cand:
-            for j in rng.choice(len(cand), min(max_per_premise, len(cand)), replace=False):
-                pairs.append(cand[int(j)])
+            if label_mode == "same":
+                # the data are 85% "No": take one Yes/Yes pair per premise where there is one, so
+                # that both kinds of label-preserving pair are represented
+                yes = [c for c in cand if c["label"] == 1]
+                no = [c for c in cand if c["label"] == 0]
+                take = ([yes[int(rng.integers(len(yes)))]] if yes else []) + ([no[int(rng.integers(len(no)))]] if no else [])
+                pairs.extend(take[:max_per_premise])
+            else:
+                for j in rng.choice(len(cand), min(max_per_premise, len(cand)), replace=False):
+                    pairs.append(cand[int(j)])
+    if label_mode == "same":
+        # balance the two common labels as far as the data allow
+        yes = [p for p in pairs if p["label"] == 1]; no = [p for p in pairs if p["label"] == 0]
+        k = min(n // 2, len(yes))
+        yes = [yes[i] for i in sorted(rng.permutation(len(yes))[:k])]
+        no = [no[i] for i in sorted(rng.permutation(len(no))[: n - k])]
+        both = yes + no
+        return [both[i] for i in rng.permutation(len(both))]
     idx = rng.permutation(len(pairs))[:n]
     return [pairs[i] for i in sorted(idx)]
 

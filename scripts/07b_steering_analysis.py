@@ -46,6 +46,19 @@ def main():
     idx, out, names, alphas = z["idx"], z["out"].astype(np.float64), [str(n) for n in z["names"]], [float(x) for x in z["alphas"]]
     layer, s_unit, C = int(z["layer"]), float(z["s_unit"]), sj["probe_C"]
     resid, meta, items = cache.load_cache(a.model, a.tag)
+    other = None
+    mk = d / "meta_kaggle.json"
+    if mk.exists() and json.loads(mk.read_text())["uids"] != meta["uids"]:
+        # Decision D28: the GPU run steered items of a different draw of the CLadder sample than the
+        # one whose activations are on this machine. Keep the steered items that are in both draws
+        # (the selection/report split is by story, so it is the same split), and use the directions
+        # the GPU run saved instead of refitting them on this machine's draw.
+        kuids = json.loads(mk.read_text())["uids"]
+        local = {u: j for j, u in enumerate(meta["uids"])}
+        keep = np.array([kuids[i] in local for i in idx])
+        other = {"n_items_steered": int(len(idx)), "n_items_analysed": int(keep.sum()),
+                 "note": "items steered on the GPU machine that are also in the laptop's CLadder sample; directions as saved by the GPU run"}
+        idx = np.array([local[kuids[i]] for i in idx[keep]]); out = out[keep]
     X = probes.layer_features(resid, layer, 0).astype(np.float64)
     y = np.array(meta["labels"]); ld = np.array(meta["logit_diff"])
     groups = np.array([i["group"] for i in items])
@@ -70,6 +83,9 @@ def main():
     r2 = np.random.default_rng(0 + 11)
     for k in range(nd - 3):
         dirs[f"random_{k}"] = steer.unit(r2.standard_normal(X.shape[1]))
+    if other is not None:
+        for k, n in enumerate(names):
+            dirs[n] = z["D"][k].astype(np.float64)
     s_check = float(np.sqrt(((X[sel] - mu) ** 2).sum(1).mean()))
     Xc = X[sel] - mu
     # top principal directions of the selection-half activations
@@ -82,6 +98,10 @@ def main():
            "baseline": {"frac_yes": float((base > 0).mean()), "logit_diff_sd": float(base.std()),
                         "max_abs_diff_vs_cache": float(np.abs(base - ld[idx]).max())},
            "alphas": alphas, "directions": {}}
+    if other is not None:
+        res["other_cladder_sample"] = other
+    if meta.get("other_sample"):
+        res["other_cladder_sample"] = {"note": "this model's CLadder cache is the GPU machine's draw of the stratified sample (decision D28)"}
     slope_items = {}
     for k, n in enumerate(names):
         v = dirs[n]

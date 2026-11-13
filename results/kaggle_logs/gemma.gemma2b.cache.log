@@ -1,0 +1,16 @@
+Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]Loading weights:   0%|          | 1/288 [00:01<07:23,  1.55s/it]Loading weights:  59%|█████▊    | 169/288 [00:01<00:00, 142.51it/s]Loading weights:  93%|█████████▎| 267/288 [00:02<00:00, 136.77it/s]Loading weights: 100%|██████████| 288/288 [00:02<00:00, 115.02it/s]
+[cache] /kaggle/temp/cache/gemma2b/c2c_probe already complete
+[cache] /kaggle/temp/cache/gemma2b/c2c_debiased already complete
+[cache] gemma2b/cladder chunk 1/12 20.27 items/s
+[cache] gemma2b/cladder chunk 2/12 21.36 items/s
+[cache] gemma2b/cladder chunk 3/12 21.87 items/s
+[cache] gemma2b/cladder chunk 4/12 21.48 items/s
+[cache] gemma2b/cladder chunk 5/12 21.28 items/s
+[cache] gemma2b/cladder chunk 6/12 20.57 items/s
+[cache] gemma2b/cladder chunk 7/12 20.63 items/s
+[cache] gemma2b/cladder chunk 8/12 20.97 items/s
+[cache] gemma2b/cladder chunk 9/12 21.30 items/s
+[cache] gemma2b/cladder chunk 10/12 21.13 items/s
+[cache] gemma2b/cladder chunk 11/12 21.20 items/s
+[cache] gemma2b/cladder chunk 12/12 20.68 items/s
+done in 2.6 min

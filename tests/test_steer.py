@@ -25,6 +25,31 @@ def test_kv_steering_equals_full_forward():
     assert abs(fast[0] - base) < 2e-3                                    # zero vector = unsteered
 
 
+def test_kv_steering_at_end_of_hypothesis_equals_full_forward():
+    """Round 2: steering at an earlier token (the last token of the hypothesis). The shortcut runs
+    the tokens before it once and the remaining tokens once per vector; it must equal a full
+    forward pass that adds the same vector at that absolute position."""
+    tok = models.load_tokenizer("qwen0.5b")
+    model = models.load_model("qwen0.5b", device="cpu", dtype=torch.float32)
+    ans = models.answer_token_ids(tok)
+    it = data.load_c2c("test")[40]
+    enc = prompts.encode_with_positions(tok, it)
+    ids, p = enc["input_ids"], enc["pos"]["content_end"]
+    assert p < len(ids) - 1
+    g = torch.Generator().manual_seed(2)
+    vecs = torch.cat([torch.zeros(1, 896), 3.0 * torch.randn(4, 896, generator=g)])
+    for layer in (0, 9, 24):
+        fast = steer.steered_logit_diffs(model, ids, layer, vecs, ans, sub_batch=2, pos=p)
+        slow = steer.steered_logit_diffs_full(model, ids, layer, vecs, ans, pos=p)
+        assert np.allclose(fast, slow, atol=2e-3), (layer, fast, slow)
+        if layer < 24:      # at the last layer an earlier position cannot reach the answer position any more
+            assert np.abs(fast[1:] - fast[0]).max() > 1e-3
+        else:
+            assert np.abs(fast[1:] - fast[0]).max() < 2e-3
+    base = models.answer_logit_diff(models.final_logits(model, torch.tensor([ids])), ans).item()
+    assert abs(fast[0] - base) < 2e-3
+
+
 def test_hook_changes_exactly_the_intended_layer():
     """Added after the Tier 2 audit: the test above compares two code paths that share the hook,
     so hooking the wrong layer would pass. Here the residual stream is recorded independently

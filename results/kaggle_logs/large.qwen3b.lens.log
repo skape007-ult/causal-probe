@@ -1,0 +1,3 @@
+qwen3b/c2c_test: lens-vs-model max err 0.004, sign agree 1.000, best-layer lens AUROC 0.590 @ 24
+qwen3b/c2c_probe: lens-vs-model max err 0.005, sign agree 1.000, best-layer lens AUROC 0.632 @ 25
+qwen3b/cladder: lens-vs-model max err 0.004, sign agree 1.000, best-layer lens AUROC 0.544 @ 35

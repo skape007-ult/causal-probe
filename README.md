@@ -50,10 +50,18 @@ Behaviour, separating bias from chance:
 | Qwen2.5-1.5B | CLadder (500 items) | 4-shot | 500 | 0.72 | 0.528 [0.487, 0.565] | 0.500 | 0.559 [0.511, 0.601] | 0.496 [0.460, 0.533] | informative (AUROC CI above 0.5) |
 | Gemma-2-2B | Corr2Cause test | zero-shot | 1162 | 0.34 | 0.615 [0.573, 0.658] | 0.845 | 0.536 [0.495, 0.566] | 0.843 [0.800, 0.897] | at chance (AUROC CI includes 0.5) |
 | Gemma-2-2B | Corr2Cause pool | zero-shot | 2400 | 0.25 | 0.505 [0.487, 0.525] | 0.500 | 0.559 [0.537, 0.582] | 0.565 [0.553, 0.576] | informative (AUROC CI above 0.5) |
+| Gemma-2-2B | Corr2Cause debiased pool | zero-shot | 2400 | 0.31 | 0.496 [0.477, 0.515] | 0.500 | 0.492 [0.468, 0.515] | 0.497 [0.481, 0.513] | at chance (AUROC CI includes 0.5) |
 | Gemma-2-2B | CLadder | zero-shot | 3000 | 0.63 | 0.508 [0.482, 0.535] | 0.500 | 0.519 [0.482, 0.557] | 0.500 [0.483, 0.520] | at chance (AUROC CI includes 0.5) |
 | Gemma-2-2B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.32 | 0.602 [0.562, 0.641] | 0.845 | 0.504 [0.464, 0.531] | 0.844 [0.801, 0.897] | at chance (AUROC CI includes 0.5) |
 | Gemma-2-2B | Corr2Cause test (500 items) | 4-shot | 500 | 0.54 | 0.486 [0.445, 0.526] | 0.840 | 0.569 [0.523, 0.613] | 0.834 [0.793, 0.886] | informative (AUROC CI above 0.5) |
 | Gemma-2-2B | CLadder (500 items) | 4-shot | 500 | 0.83 | 0.504 [0.458, 0.546] | 0.500 | 0.543 [0.498, 0.585] | 0.504 [0.465, 0.543] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-3B | Corr2Cause test | zero-shot | 1162 | 0.05 | 0.812 [0.768, 0.862] | 0.845 | 0.534 [0.493, 0.573] | 0.838 [0.794, 0.892] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-3B | Corr2Cause pool | zero-shot | 2400 | 0.05 | 0.509 [0.500, 0.519] | 0.500 | 0.581 [0.559, 0.603] | 0.593 [0.573, 0.613] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | Corr2Cause debiased pool | zero-shot | 2400 | 0.04 | 0.495 [0.487, 0.503] | 0.500 | 0.507 [0.484, 0.530] | 0.506 [0.490, 0.524] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-3B | CLadder | zero-shot | 3000 | 0.50 | 0.526 [0.503, 0.547] | 0.500 | 0.543 [0.521, 0.567] | 0.501 [0.482, 0.522] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.04 | 0.822 [0.783, 0.868] | 0.845 | 0.512 [0.463, 0.553] | 0.844 [0.802, 0.896] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-3B | Corr2Cause test (500 items) | 4-shot | 500 | 0.46 | 0.556 [0.517, 0.596] | 0.840 | 0.538 [0.507, 0.569] | 0.838 [0.797, 0.890] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | CLadder (500 items) | 4-shot | 500 | 0.56 | 0.560 [0.514, 0.609] | 0.500 | 0.564 [0.518, 0.610] | 0.494 [0.457, 0.533] | informative (AUROC CI above 0.5) |
 
 <sub>Source: `results/answer_bias.json`</sub>
 

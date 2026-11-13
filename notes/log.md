@@ -271,3 +271,37 @@ Asked to attack, sentence by sentence, the claim I was about to make from the de
 - **Answers by template, Qwen 1.5B (within hypothesis string, all items):** parent 0.628 [0.581, 0.673] with r(answer, probe) = +0.359; has_collider 0.500; has_confounder 0.442; non-child descendant 0.430; non-parent ancestor 0.449. Identical to the reviewer's.
 - **Robustness:** single-seed accuracies 0.736 / 0.741 / 0.754; shuffled-label null 0.498 ± 0.013; trained on the selection half only 0.708.
 - Against my own expectations of 13:58: the property-probe expectation held; the stratification and incremental-value expectations were wrong in the ways logged above.
+
+## Fri 2026-11-13 16:35 — Scope change, and expectations written before opening the Kaggle results
+
+**Scope change (user, 16:25):** the scope freeze is lifted. Push the science until Sunday 10:00, then package. Heavy runs on Kaggle (and a free Colab GPU as a second machine). New work, in the user's priority order: (1) ingest Qwen 3B, 7B behaviour check, matched steering controls on any above-chance model; (2) label-preserving patching pairs and steering at the end-of-hypothesis token with the audit's controls; (3) structural-feature probes by layer and position and a causal test of the adjacency information for "X directly causes Y" hypotheses; (4) SAE tier. In parallel on the laptop: prior-work check, an audit after each new result, and a `study/` folder. Decision D27 in EXPLAINER.md.
+
+**The download is complete** (validated with `kaggle_ingest.py --dry-run` before extracting anything): all 25 stages succeeded at commit 406d994, 143 minutes in total on two T4s. I have not opened any result file yet. Expectations for what I am about to read:
+
+1. *Qwen 3B behaviour, original sets* (logged on Thursday): Corr2Cause logit-difference AUROC 0.55–0.65; CLadder accuracy 0.52–0.58. Would surprise me: AUROC above 0.70.
+2. *Qwen 3B answers on the debiased pool:* pooled AUROC 0.50–0.56 (the original-pool signal is partly the hypothesis prior, which the pool removes). By template I expect the Qwen 1.5B pattern, stronger: "parent" (X directly causes Y) AUROC 0.62–0.72, the other templates at or below 0.50. Would surprise me: pooled AUROC above 0.62, or no template pattern.
+3. *Qwen 3B gold probe on the debiased pool* (computed locally after the ingest): accuracy 0.76–0.82, above Qwen 1.5B (0.752), at or just below the hand parse (0.816). Incremental value over the hand parse +0.02 to +0.05; over parse + 4-grams within ±0.015 of zero. Would surprise me: the probe above the parse + 4-gram stack (0.865), or below Qwen 1.5B.
+4. *Gemma 2B gold probe on the debiased pool:* 0.72–0.80, similar to Qwen 1.5B; adjacency decodable above 0.95.
+5. *Gemma and Qwen 3B steering (three random directions only in this run):* the model-answer direction moves the answer strongly; the gold-probe direction little. I can say nothing about "within the range of controls" until the matched controls run.
+6. *Gemma patching:* mean D about zero on the pairs, as for the Qwen models; final-token recovery reaching 0.5 at about 60–70% of depth.
+7. *SAE tier:* the features most associated with the gold label on CLadder will mostly track the story or question type, not validity; ablating them changes the answer logit by less than ablating matched random features does in at least half the cases. Would surprise me: a feature whose ablation changes accuracy by more than 3 points.
+
+**Expectations for the round-2 experiments (written before any of them has run on any model):**
+
+8. *Label-preserving patching pairs.* A one-letter change in the hypothesis that does NOT change the gold label will move the answer logit about as much as one that does (mean |D| within 25% of each other), and the layer at which patching the final token recovers half the difference will be the same within two layers. If so, the patching result is about prompt differences and says nothing about a judgement. Would surprise me: label-changing pairs with clearly larger |D| and a consistent sign for the 3B model.
+9. *Steering at the end of the hypothesis.* The gold-probe direction fitted there will again fall inside the range of the 20 shuffled-label directions (|slope| percentile below 95) for Qwen 0.5B; for Qwen 1.5B and 3B I am less sure (the end-of-hypothesis probe was the stronger one for 0.5B). Would surprise me: a gold-probe slope above all 20 controls at this site for two models.
+10. *Is the adjacency information causally used?* In the debiased pool, adjacency of the queried pair predicts a valid hypothesis for the "parent" template (P(valid | adjacent) = 0.88, P(valid | not adjacent) = 0) and predicts an INVALID one for the other templates (0.35 vs 0.72). The answers of Qwen 1.5B lean towards Yes with adjacency for every template (hence AUROC 0.63 for parent and below 0.50 elsewhere). My hypothesis: the model applies "the pair is connected → Yes" regardless of what the hypothesis asks. Predictions: (a) pushing the final-token activation along the adjacency direction raises the Yes logit, by more than the shuffled-label directions do (above the 95th percentile of 20), for Qwen 1.5B and 3B; (b) the effect has the same sign for parent and non-parent templates; (c) removing the direction lowers the answers' AUROC on parent items towards 0.5 and raises it on the other templates towards 0.5; (d) for Qwen 0.5B, whose answers do not track adjacency, no effect beyond controls. Would surprise me: (a) failing for both larger models at both sites, which would mean adjacency is readable but the answer is computed from something else; or a sign flip between templates, which would mean the model does condition on the hypothesis type.
+11. *Qwen 7B (4-bit) behaviour:* Corr2Cause logit AUROC 0.62–0.75 on the original test set; on the debiased pool pooled AUROC 0.52–0.62. The paper reports that models of this class without fine-tuning are near the majority baseline in F1, so I do not expect "solved". Would surprise me: debiased-pool AUROC above 0.70.
+
+### 16:45 Correction to expectation 10, made before the experiment
+Expectation 10 rests on a statement I wrote without computing it: "the answers of Qwen 1.5B lean towards Yes with adjacency for every template". The cached answers say otherwise (within hypothesis string, AUROC of the answer logit for *adjacency* of the queried pair, all 2400 debiased items):
+
+| template | Qwen 0.5B | Qwen 1.5B | Gemma 2B | Qwen 3B |
+|---|---|---|---|---|
+| parent | 0.531 | 0.649 | 0.420 | 0.605 |
+| non-parent ancestor | 0.452 | 0.434 | 0.439 | 0.637 |
+| non-child descendant | 0.570 | 0.469 | 0.557 | 0.582 |
+| has_collider | 0.261 | 0.381 | 0.370 | 0.515 |
+| has_confounder | 0.375 | 0.427 | 0.309 | 0.196 |
+
+So the dependence of the answer on adjacency has a template-specific sign in every model, and is strongest in Qwen 3B (0.196 to 0.637). Predictions 10(a), (c), (d) stand as written. Prediction 10(b) is replaced, before any intervention has run: **if the adjacency direction is what the answer reads, the sign of the steering effect per template should match the sign of this observational pattern for the same model** (for Qwen 3B: up for parent, ancestor and descendant hypotheses, down for has_confounder). If steering has the same sign for all templates while the observational pattern does not, the direction is not what produces the pattern. The expectation above is left as written, wrong premise included.

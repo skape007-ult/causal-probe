@@ -11,6 +11,9 @@ plus dataset-specific metadata (template, num_variables, rung, query_type, graph
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import csv
 import hashlib
 import re
@@ -221,6 +224,12 @@ def stratified_sample(items: list[dict], n: int, keys: tuple[str, ...], seed: in
     names = sorted(strata)
     quota = np.array([len(strata[s]) * n / len(items) for s in names])
     alloc = np.floor(quota).astype(int)
+    # NOTE (found 13 Nov when the Kaggle results came back): this argsort is not a stable sort, and
+    # CLadder has a four-way tie for the last two places. NumPy breaks the tie differently on the
+    # ARM laptop and on x86, so the "same" seeded sample differed between machines (2271 of 3000
+    # items shared). The line is kept as it was, because every laptop result was computed from the
+    # sample it gives here; `cladder_sample` now returns the laptop's sample from a committed list
+    # of ids on every machine. See notes/log.md and EXPLAINER.md decision D28.
     for j in np.argsort(-(quota - alloc))[: n - alloc.sum()]:
         alloc[j] += 1
     out = []
@@ -230,8 +239,26 @@ def stratified_sample(items: list[dict], n: int, keys: tuple[str, ...], seed: in
     return out
 
 
+PINNED_CLADDER = Path(__file__).parent / "pinned" / "cladder_sample_seed0_n3000.json"
+
+
 def cladder_sample(seed: int = SEED, n: int = CLADDER_N) -> list[dict]:
+    """The 3000-item CLadder sample, stratified by label x query type. For the default arguments
+    the ids are read from a committed list (the sample the laptop drew), because the sampling code
+    is not reproducible across CPU architectures (see `stratified_sample`)."""
+    if seed == SEED and n == CLADDER_N and PINNED_CLADDER.exists():
+        by = {i["uid"]: i for i in load_cladder()}
+        return [by[u] for u in json.loads(PINNED_CLADDER.read_text())]
     return stratified_sample(load_cladder(), n, ("label", "query_type"), seed)
+
+
+def items_by_uid(tag: str, uids: list[str]) -> list[dict] | None:
+    """Items for a cache whose item list differs from this machine's (only possible for CLadder
+    caches built on another machine before the sample was pinned). None if the ids are unknown."""
+    if not tag.startswith("cladder"):
+        return None
+    by = {i["uid"]: i for i in load_cladder()}
+    return [by[u] for u in uids] if all(u in by for u in uids) else None
 
 
 # ----------------------------------------------------------------------------- shared

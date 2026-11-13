@@ -38,24 +38,9 @@ def quick_select(resid, y, items, sel, stride: int = 1, log=print):
     """Choose (layer, C) for the gold probe when 05_confound.py has not been run for this
     model/tag (Kaggle runs; the debiased pool). Same rule as 05_confound - best selection-half
     accuracy over the (layer, C) grid, report half never touched - but cheaper: grouped 3-fold
-    cross-validation with one seed inside the selection half, optionally every `stride`-th layer."""
-    idx = np.where(sel)[0]
-    folds = data.grouped_folds([items[j] for j in idx], 3, SEED)      # indices into idx
-    layers = sorted(set(range(1, resid.shape[1], stride)) | {resid.shape[1] - 1})
-    import os
-    from joblib import Parallel, delayed
-
-    def one(l):
-        X = probes.layer_features(resid, l, 0)[idx]
-        return {c: sum(int(((probes.fit_predict(X[tr], y[idx][tr], X[te], C=c) > 0) == y[idx][te]).sum())
-                       for tr, te in folds) / len(idx) for c in probes.PROBE_CS}
-
-    rows = Parallel(n_jobs=int(os.environ.get("CAUSAL_PROBE_JOBS", "2")))(delayed(one)(l) for l in layers)
-    acc = {(l, c): v for l, r in zip(layers, rows) for c, v in r.items()}
-    for l in layers:
-        log(f"[select] layer {l}: " + " ".join(f"C={c:g} {acc[(l, c)]:.3f}" for c in probes.PROBE_CS))
-    (l, c) = max(acc, key=acc.get)
-    return int(l), float(c), {f"{k[0]}|{k[1]:g}": v for k, v in acc.items()}
+    cross-validation with one seed inside the selection half, optionally every `stride`-th layer.
+    The implementation lives in causal_probe.probes so that the round-2 scripts share it."""
+    return probes.quick_select(resid, y, items, sel, stride, log)
 
 
 def main():

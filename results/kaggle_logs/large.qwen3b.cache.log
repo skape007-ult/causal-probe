@@ -1,0 +1,53 @@
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:31<00:31, 31.73s/it]Fetching 2 files: 100%|██████████| 2/2 [00:31<00:00, 15.87s/it]
+Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<05:41,  1.27it/s]Loading weights:  26%|██▌       | 111/434 [00:00<00:01, 168.99it/s]Loading weights:  40%|████      | 175/434 [00:01<00:01, 160.97it/s]Loading weights:  50%|█████     | 217/434 [00:01<00:01, 168.55it/s]Loading weights:  58%|█████▊    | 250/434 [00:01<00:01, 154.61it/s]Loading weights:  64%|██████▎   | 276/434 [00:01<00:00, 162.52it/s]Loading weights:  69%|██████▉   | 300/434 [00:02<00:00, 154.44it/s]Loading weights:  74%|███████▍  | 321/434 [00:02<00:00, 133.93it/s]Loading weights:  78%|███████▊  | 339/434 [00:02<00:00, 123.25it/s]Loading weights:  82%|████████▏ | 354/434 [00:02<00:00, 118.93it/s]Loading weights:  85%|████████▍ | 368/434 [00:02<00:00, 121.67it/s]Loading weights:  89%|████████▉ | 387/434 [00:02<00:00, 120.22it/s]Loading weights:  92%|█████████▏| 401/434 [00:03<00:00, 121.20it/s]Loading weights:  98%|█████████▊| 424/434 [00:03<00:00, 138.77it/s]Loading weights: 100%|██████████| 434/434 [00:03<00:00, 136.47it/s]
+[cache] qwen3b/c2c_test chunk 1/5 13.07 items/s
+[cache] qwen3b/c2c_test chunk 2/5 10.67 items/s
+[cache] qwen3b/c2c_test chunk 3/5 9.54 items/s
+[cache] qwen3b/c2c_test chunk 4/5 8.42 items/s
+[cache] qwen3b/c2c_test chunk 5/5 8.46 items/s
+[cache] qwen3b/c2c_probe chunk 1/10 5.24 items/s
+[cache] qwen3b/c2c_probe chunk 2/10 5.73 items/s
+[cache] qwen3b/c2c_probe chunk 3/10 5.80 items/s
+[cache] qwen3b/c2c_probe chunk 4/10 5.80 items/s
+[cache] qwen3b/c2c_probe chunk 5/10 5.71 items/s
+[cache] qwen3b/c2c_probe chunk 6/10 5.75 items/s
+[cache] qwen3b/c2c_probe chunk 7/10 5.57 items/s
+[cache] qwen3b/c2c_probe chunk 8/10 5.54 items/s
+[cache] qwen3b/c2c_probe chunk 9/10 5.60 items/s
+[cache] qwen3b/c2c_probe chunk 10/10 5.56 items/s
+[cache] qwen3b/cladder chunk 1/12 15.41 items/s
+[cache] qwen3b/cladder chunk 2/12 16.04 items/s
+[cache] qwen3b/cladder chunk 3/12 16.63 items/s
+[cache] qwen3b/cladder chunk 4/12 16.53 items/s
+[cache] qwen3b/cladder chunk 5/12 16.36 items/s
+[cache] qwen3b/cladder chunk 6/12 15.77 items/s
+[cache] qwen3b/cladder chunk 7/12 15.73 items/s
+[cache] qwen3b/cladder chunk 8/12 15.91 items/s
+[cache] qwen3b/cladder chunk 9/12 16.14 items/s
+[cache] qwen3b/cladder chunk 10/12 16.01 items/s
+[cache] qwen3b/cladder chunk 11/12 16.02 items/s
+[cache] qwen3b/cladder chunk 12/12 15.63 items/s
+[cache] qwen3b/c2c_debiased chunk 1/10 5.28 items/s
+[cache] qwen3b/c2c_debiased chunk 2/10 5.66 items/s
+[cache] qwen3b/c2c_debiased chunk 3/10 5.63 items/s
+[cache] qwen3b/c2c_debiased chunk 4/10 5.67 items/s
+[cache] qwen3b/c2c_debiased chunk 5/10 5.75 items/s
+[cache] qwen3b/c2c_debiased chunk 6/10 5.75 items/s
+[cache] qwen3b/c2c_debiased chunk 7/10 5.71 items/s
+[cache] qwen3b/c2c_debiased chunk 8/10 5.68 items/s
+[cache] qwen3b/c2c_debiased chunk 9/10 5.66 items/s
+[cache] qwen3b/c2c_debiased chunk 10/10 5.63 items/s
+[cache] qwen3b/c2c_test_renamed chunk 1/5 12.98 items/s
+[cache] qwen3b/c2c_test_renamed chunk 2/5 10.73 items/s
+[cache] qwen3b/c2c_test_renamed chunk 3/5 9.69 items/s
+[cache] qwen3b/c2c_test_renamed chunk 4/5 8.47 items/s
+[cache] qwen3b/c2c_test_renamed chunk 5/5 8.53 items/s
+[cache] qwen3b/c2c_test_sub_fewshot chunk 1/2 3.19 items/s
+[cache] qwen3b/c2c_test_sub_fewshot chunk 2/2 2.95 items/s
+[cache] qwen3b/cladder_sub_fewshot chunk 1/2 3.64 items/s
+[cache] qwen3b/cladder_sub_fewshot chunk 2/2 3.64 items/s
+[gen] qwen3b/c2c_test_sub done
+[gen] qwen3b/cladder_sub done
+[gen] qwen3b/c2c_test_sub_fewshot done
+[gen] qwen3b/cladder_sub_fewshot done
+done in 35.8 min

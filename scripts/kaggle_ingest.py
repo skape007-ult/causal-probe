@@ -1,4 +1,5 @@
-"""Validate the zip files downloaded from the Kaggle run and fold them into this repository.
+"""Validate the files downloaded from the Kaggle run (zips, or the folders a browser made by
+unzipping them) and fold them into this repository.
 
   .venv/bin/python scripts/kaggle_ingest.py                  # zips in ./kaggle_in/
   .venv/bin/python scripts/kaggle_ingest.py --allow-partial  # accept a run that did not finish
@@ -60,6 +61,50 @@ def expected_stages(gemma: bool, large: str | None, quant: bool) -> list[str]:
     return out
 
 
+class Src:
+    """One downloaded archive: a zip file, or the folder a browser made by unzipping it
+    (Safari unpacks downloads; several cache zips then become cache/, cache-1/, 'cache 2'/ ...).
+    Member names are the names inside the original zip ('results/...', 'cache/<model>/...')."""
+
+    def __init__(self, path: Path):
+        self.path, self.is_zip = path, path.is_file()
+        if self.is_zip:
+            self.z = zipfile.ZipFile(path)
+            self.names = [n for n in self.z.namelist() if not n.endswith("/")]
+            self.top = "results" if path.name == "results.zip" else "cache"
+        else:
+            self.top = "results" if path.name == "results" else "cache"
+            self.names = sorted(f"{self.top}/{f.relative_to(path).as_posix()}" for f in path.rglob("*")
+                                if f.is_file() and f.name != ".DS_Store")
+
+    @property
+    def label(self) -> str:
+        return self.path.name + ("" if self.is_zip else "/ (already unzipped)")
+
+    def size(self) -> int:
+        return self.path.stat().st_size if self.is_zip else sum((self.path / Path(n).relative_to(self.top)).stat().st_size for n in self.names)
+
+    def test(self):
+        return self.z.testzip() if self.is_zip else None
+
+    def read(self, name: str) -> bytes:
+        return self.z.read(name) if self.is_zip else (self.path / Path(name).relative_to(self.top)).read_bytes()
+
+    def copy_to(self, name: str, dst: Path):
+        import shutil
+        if self.is_zip:
+            with self.z.open(name) as fi, open(dst, "wb") as fo:
+                shutil.copyfileobj(fi, fo, 1 << 24)
+        else:
+            shutil.copyfile(self.path / Path(name).relative_to(self.top), dst)
+
+
+def find_sources(src: Path):
+    res = src / "results.zip" if (src / "results.zip").exists() else (src / "results" if (src / "results").is_dir() else None)
+    caches = sorted(src.glob("cache_*.zip")) + sorted(d for d in src.iterdir() if d.is_dir() and d.name.startswith("cache"))
+    return (Src(res) if res else None), [Src(c) for c in caches]
+
+
 def git_blob(commit: str, path: str) -> bytes | None:
     r = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=ROOT, capture_output=True)
     return r.stdout if r.returncode == 0 else None
@@ -85,25 +130,22 @@ def main():
     report = {"dir": str(src), "expected_commit": commit}
 
     # ------------------------------------------------------------------ 1. zips
-    rz = src / "results.zip"
-    if not rz.exists():
-        sys.exit(f"ERROR: {rz} not found. Put the downloaded results.zip (and cache_*.zip) into {src}/ and re-run.")
-    zips = [rz] + sorted(src.glob("cache_*.zip"))
+    R, caches = find_sources(src) if src.is_dir() else (None, [])
+    if R is None:
+        sys.exit(f"ERROR: neither results.zip nor an unzipped results/ folder in {src}/. Put the downloaded "
+                 f"results.zip and cache_*.zip there (zipped or unzipped) and re-run.")
     print("== 1. files ==")
-    for zp in zips:
-        with zipfile.ZipFile(zp) as z:
-            bad = z.testzip()
-            names = z.namelist()
-            print(f"  {zp.name:28s} {zp.stat().st_size / 1e6:9.1f} MB  {len(names):4d} files  {'CORRUPT at ' + bad if bad else 'ok'}")
-            if bad:
-                problems.append(f"{zp.name} is corrupt (first bad member: {bad}); download it again")
+    for S in [R] + caches:
+        bad = S.test()
+        print(f"  {S.label:38s} {S.size() / 1e6:9.1f} MB  {len(S.names):4d} files  {'CORRUPT at ' + bad if bad else 'ok'}")
+        if bad:
+            problems.append(f"{S.label} is corrupt (first bad member: {bad}); download it again")
     if problems:
         sys.exit("ERROR: " + "; ".join(problems))
-    Z = zipfile.ZipFile(rz)
-    names = set(Z.namelist())
+    names = set(R.names)
 
     def zjson(name):
-        return json.loads(Z.read(name)) if name in names else None
+        return json.loads(R.read(name)) if name in names else None
 
     # ------------------------------------------------------------------ 2. commit
     print("== 2. code version ==")
@@ -140,14 +182,14 @@ def main():
     finished = "export" in status
     print(f"  run reached the export step: {'yes' if finished else 'NO (the run was cut short)'}; "
           f"total {status.get('total_minutes', '?')} min")
-    exp_zips = (["cache_gemma2b.zip", "cache_gemma2b-rand.zip"] if not a.no_gemma else []) + \
-               ([f"cache_{large}.zip"] + ([] if large in QUANT_4BIT else [f"cache_{large}-rand.zip"]) if large else [])
-    have = {z.name for z in zips}
-    for zn in exp_zips:
-        if zn not in have:
-            (notes if zn.endswith("-rand.zip") else missing).append(f"{zn} (not in {src.name}/)")
-            print(f"  {'note' if zn.endswith('-rand.zip') else 'MISSING'}: {zn} is not in {src.name}/"
-                  + (" (optional: random-init control)" if zn.endswith("-rand.zip") else ""))
+    exp_models = (["gemma2b", "gemma2b-rand"] if not a.no_gemma else []) + \
+                 ([large] + ([] if large in QUANT_4BIT else [f"{large}-rand"]) if large else [])
+    have = {Path(n).parts[1] for S in caches for n in S.names}          # model folders present in any cache archive
+    for mn in exp_models:
+        if mn not in have:
+            (notes if mn.endswith("-rand") else missing).append(f"cache_{mn}.zip (not in {src.name}/)")
+            print(f"  {'note' if mn.endswith('-rand') else 'MISSING'}: cache_{mn}.zip is not in {src.name}/"
+                  + (" (optional: random-init control)" if mn.endswith("-rand") else ""))
     report.update(missing=missing, failed=failed, run_finished=finished, notes=notes)
     if missing or failed or not finished:
         problems.append(f"{len(missing)} missing and {len(failed)} failed stage(s)"
@@ -168,7 +210,7 @@ def main():
     for n in sorted(names):
         if n.endswith("/") or not n.startswith("results/"):
             continue
-        blob = Z.read(n)
+        blob = R.read(n)
         if commit and git_blob(commit, n) == blob:
             skipped += 1                       # unchanged copy of a file from the pinned commit
             continue
@@ -187,33 +229,32 @@ def main():
     # ------------------------------------------------------------------ 5. caches
     print("== 5. extracting caches ==")
     loaded = []
-    for zp in zips[1:]:
-        with zipfile.ZipFile(zp) as z:
-            dirs = sorted({str(Path(n).parent) for n in z.namelist() if not n.endswith("/")})
-            for d in dirs:                      # d = cache/<model>[-rand]/<tag>  (or cache/<model> for patching.npz)
-                rel = Path(d).relative_to("cache")
-                dst = CACHE / rel
-                members = [n for n in z.namelist() if str(Path(n).parent) == d and not n.endswith("/")]
-                zip_has_resid = any(n.endswith("resid.npy") for n in members)
-                local_has_resid = (dst / "resid.npy").exists()
-                dst.mkdir(parents=True, exist_ok=True)
-                for n in members:
-                    base = Path(n).name
-                    if local_has_resid and not zip_has_resid:
-                        # keep the laptop cache intact; store Kaggle's logits beside it
-                        if base == "meta.json":
-                            base = "meta_kaggle.json"
-                        elif base == "readout.npz":
-                            base = "readout_kaggle.npz"
-                    elif local_has_resid and zip_has_resid:
-                        print(f"  SKIPPED {rel}: activations exist both locally and in the zip (delete the local folder to replace it)")
-                        break
-                    (dst / base).write_bytes(z.read(n))
-                else:
-                    kind = "activations + logits" if zip_has_resid else ("logits only, beside the local cache" if local_has_resid else "logits / generated answers only")
-                    print(f"  {str(rel):38s} {kind}")
-                    if zip_has_resid:
-                        loaded.append(rel)
+    for S in caches:
+        dirs = sorted({str(Path(n).parent) for n in S.names})
+        for d in dirs:                      # d = cache/<model>[-rand]/<tag>  (or cache/<model> for patching.npz)
+            rel = Path(d).relative_to("cache")
+            dst = CACHE / rel
+            members = [n for n in S.names if str(Path(n).parent) == d]
+            zip_has_resid = any(n.endswith("resid.npy") for n in members)
+            local_has_resid = (dst / "resid.npy").exists()
+            dst.mkdir(parents=True, exist_ok=True)
+            for n in members:
+                base = Path(n).name
+                if local_has_resid and not zip_has_resid:
+                    # keep the laptop cache intact; store Kaggle's logits beside it
+                    if base == "meta.json":
+                        base = "meta_kaggle.json"
+                    elif base == "readout.npz":
+                        base = "readout_kaggle.npz"
+                elif local_has_resid and zip_has_resid:
+                    print(f"  SKIPPED {rel}: activations exist both locally and in the download (delete the local folder to replace it)")
+                    break
+                S.copy_to(n, dst / base)
+            else:
+                kind = "activations + logits" if zip_has_resid else ("logits only, beside the local cache" if local_has_resid else "logits / generated answers only")
+                print(f"  {str(rel):38s} {kind}")
+                if zip_has_resid:
+                    loaded.append(rel)
 
     # ------------------------------------------------------------------ 6. caches load
     print("== 6. checking extracted caches ==")

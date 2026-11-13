@@ -65,7 +65,15 @@ Gemma only runs at usable speed if its 256k × 2304 embedding matrix is kept on 
 
 ![behaviour](../figures/fig1_behaviour.png)
 
-<!-- T1-BEHAVIOUR-TEXT -->
+**No model answers above chance, and for different reasons.** On the Corr2Cause test set (15.5% valid) Qwen2.5-0.5B answers "No" to essentially everything (Yes-rate {{behaviour_qwen0.5b.json|zero_shot/c2c_test/logit_scored/frac_pred_yes|num2}}), so its accuracy {{behaviour_qwen0.5b.json|zero_shot/c2c_test/logit_scored/accuracy|est}} is the majority rate and its macro-F1 {{behaviour_qwen0.5b.json|zero_shot/c2c_test/logit_scored/macro_f1|est}} is the majority baseline's. Qwen2.5-1.5B says Yes {{behaviour_qwen1.5b.json|zero_shot/c2c_test/logit_scored/frac_pred_yes|pct}} of the time and Gemma-2-2B {{behaviour_gemma2b.json|zero_shot/c2c_test/logit_scored/frac_pred_yes|pct}}; their accuracies ({{behaviour_qwen1.5b.json|zero_shot/c2c_test/logit_scored/accuracy|ci}}, {{behaviour_gemma2b.json|zero_shot/c2c_test/logit_scored/accuracy|ci}}) are *below* the majority rate because the extra Yes answers are mostly wrong. On CLadder (50% yes) all three are at 0.50.
+
+Accuracy alone cannot tell "no information" from "information hidden by a bias towards one answer". The next table separates them: the Yes-rate, the AUROC of the Yes−No logit difference (which ignores any constant bias), and the accuracy when the decision threshold is moved to its best position (chosen on one half of the premises or stories, scored on the other).
+
+<!-- TABLE:answer_bias -->
+
+Reading. On the original Corr2Cause sets the logit difference is weakly informative: AUROC {{answer_bias.json|qwen0.5b/c2c_test/auroc|ci}} for Qwen2.5-0.5B, {{answer_bias.json|qwen1.5b/c2c_test/auroc|ci}} for Qwen2.5-1.5B on test, and 0.56 to 0.59 on the balanced pool for all three, where a re-thresholded answer reaches about 0.57 accuracy. So the smallest model is biased rather than empty there. But this weak signal does not survive the two manipulations that remove surface cues: for Qwen2.5-0.5B the AUROC is {{answer_bias.json|qwen0.5b/c2c_test_renamed/auroc|ci}} after renaming the variables and {{answer_bias.json|qwen0.5b/c2c_debiased/auroc|ci}} on the debiased pool of Section 3.6. On CLadder every model is at chance by AUROC as well (0.50 to 0.52). The behavioural picture is therefore: at chance on the task, with a small shortcut-driven signal on the original Corr2Cause items that is masked by answer bias.
+
+Other checks. Four demonstrations change the bias, not the skill: Qwen2.5-0.5B flips to mostly Yes (accuracy change {{behaviour_qwen0.5b.json|few_shot/c2c_test_sub_fewshot/delta_accuracy_fewshot_minus_zeroshot|signedci}}), Gemma loses {{behaviour_gemma2b.json|few_shot/c2c_test_sub_fewshot/delta_accuracy_fewshot_minus_zeroshot|signedci}}. Scoring by answer-token logits and by generated text disagree on under 1% of items for the Qwen models; for Gemma on CLadder 13% of first tokens are neither Yes nor No (first-token-only check, 100 items). Renaming variables flips {{behaviour_qwen1.5b.json|robustness_variable_renaming/prediction_flip_frac|ci}} of Qwen2.5-1.5B's answers and {{behaviour_gemma2b.json|robustness_variable_renaming/prediction_flip_frac|ci}} of Gemma's.
 
 Few-shot (500-item subsets, paired with zero-shot on the same items):
 
@@ -92,7 +100,7 @@ By rung and query type (CLadder) and by template (Corr2Cause test):
 ![lens](../figures/fig2_logit_lens.png)
 ![lens auroc](../figures/fig2b_lens_auroc.png)
 
-<!-- T1-LENS-TEXT -->
+The first figure shows the Yes−No logit difference the model would produce if it stopped at each layer, for gold-Yes and gold-No items separately. In every panel the curves move together: the lens shows a shared drift towards one answer, not a separation by the correct answer. The second figure removes the drift by asking only whether the lens value ranks gold-Yes above gold-No items (AUROC). On the Corr2Cause pool it never exceeds 0.60 at any layer for any model (the maxima are 0.59 to 0.60, reached in the second half of the network); on CLadder it stays between 0.47 and 0.53 at every layer. The lens at the last layer reproduces the model's actual answer logits (maximum error and sign agreement are in `results/lens_*.json`). So the lens gives no sign of a correct answer that forms in the middle of the network and is then overwritten.
 
 ### 3.3 Probes and controls
 
@@ -106,7 +114,9 @@ Probe accuracy by token position:
 
 <!-- TABLE:probe_positions -->
 
-<!-- T1-PROBES-TEXT -->
+Probes decode the gold label from held-out premises at {{confound_qwen0.5b_c2c_probe.json|all_items/gold_probe/accuracy|ci}}, {{confound_qwen1.5b_c2c_probe.json|all_items/gold_probe/accuracy|ci}} and {{confound_gemma2b_c2c_probe.json|all_items/gold_probe/accuracy|ci}} on the Corr2Cause pool, and at {{confound_qwen0.5b_cladder.json|all_items/gold_probe/accuracy|ci}}, {{confound_qwen1.5b_cladder.json|all_items/gold_probe/accuracy|ci}} and {{confound_gemma2b_cladder.json|all_items/gold_probe/accuracy|ci}} on CLadder (report half; layer and regularisation chosen on the other half). The controls behave as controls should: shuffled labels give 0.50, and a randomly initialised model gives 0.50 to 0.62. Taken alone, this is the pattern that is usually read as "the model represents the answer".
+
+Three observations already argue against that reading before any text baseline is considered. (1) Selectivity is small on Corr2Cause (+0.07 to +0.12) and negative on CLadder (about −0.2): the same probes memorise an arbitrary label per hypothesis string, or per graph and query type, almost as well as or better than they decode the gold label. The activations expose *which question is being asked* very well, and on Corr2Cause that alone predicts validity (Section 3.5). (2) On Corr2Cause the probe is better at the last token of the hypothesis than at the final prompt token where the answer is produced (final minus end-of-hypothesis is negative for all three models), and at the end of the premise, before the hypothesis has been read, it is at chance as it must be in a pool balanced within premise. (3) On CLadder most of the probe's small signal is present at the end of the context, before the question has been read: the gain from reading the question is {{confound_qwen0.5b_cladder.json|positions/premise_end/final_minus_this_accuracy|signedci}} for Qwen2.5-0.5B, {{confound_qwen1.5b_cladder.json|positions/premise_end/final_minus_this_accuracy|signedci}} for Qwen2.5-1.5B and {{confound_gemma2b_cladder.json|positions/premise_end/final_minus_this_accuracy|signedci}} for Gemma-2-2B.
 
 ### 3.4 Gold label vs model output: is anything represented beyond the text?
 
@@ -137,7 +147,33 @@ External check: probe trained on the pool, evaluated on the Corr2Cause test set 
 
 <!-- TABLE:external_c2c_test -->
 
-<!-- T1-CONFOUND-TEXT -->
+**Result: the audited criterion is not met in any of the six model × dataset cells.** The strongest text-only baseline is the parsed-feature classifier everywhere. On all report-half items the probe trails it by {{confound_qwen0.5b_c2c_probe.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}}, {{confound_qwen1.5b_c2c_probe.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} and {{confound_gemma2b_c2c_probe.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} on Corr2Cause, and by {{confound_qwen0.5b_cladder.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}}, {{confound_qwen1.5b_cladder.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} and {{confound_gemma2b_cladder.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} on CLadder. On Corr2Cause the hypothesis string alone scores {{confound_qwen0.5b_c2c_probe.json|all_items/hyp_prior/accuracy|est}}; the probe's paired difference to it is {{confound_qwen0.5b_c2c_probe.json|all_items/gold_probe_minus_hyp_prior/accuracy|signedci}} for Qwen2.5-0.5B, {{confound_qwen1.5b_c2c_probe.json|all_items/gold_probe_minus_hyp_prior/accuracy|signedci}} for Qwen2.5-1.5B and {{confound_gemma2b_c2c_probe.json|all_items/gold_probe_minus_hyp_prior/accuracy|signedci}} for Gemma-2-2B. Nothing in these data requires the models to represent more about the answer than a shallow reader of the prompt could compute.
+
+**What was pre-registered, what passed, and what was retracted.** Before any probe was run, the decision log fixed this criterion (D11): on report-half items the model answers wrongly, gold-probe accuracy must exceed 0.5, TF-IDF and the template prior, by 95% CI lower bounds. As coded, that criterion is met for Qwen2.5-1.5B on CLadder and for Gemma-2-2B on CLadder, and in variants (median-split model answer, or the original fixed regularisation) also for Qwen2.5-1.5B and Gemma-2-2B on Corr2Cause; the full tables are above. When the first of these appeared (Qwen2.5-1.5B, Thursday night) I logged it as a positive result. The independent audit then showed why it does not support the claim, and I retracted it:
+
+- the pre-registered baselines were too weak. TF-IDF of the whole prompt dilutes the hypothesis, and a six-template prior ignores which variables are named. The hypothesis string alone, and parsed features, are far stronger (table above);
+- "accuracy above 0.5 on the items the model gets wrong" is not a test against chance when those items are mostly one class (for Qwen2.5-1.5B on Corr2Cause, 90% of wrong items are gold-Yes);
+- with model answers almost independent of the gold label, "items the model gets wrong" is close to a random half of the data, so the design reduces to probe versus text baseline.
+
+The stronger baselines (D18), the audited criterion (D19) and the debiased pool of Section 3.6 (D21) were all added **after** seeing results. They can only make the claim harder to pass, and they are reported next to the pre-registered analysis, not instead of it.
+
+The external check agrees: a probe trained on the pool and applied to the natural-distribution test set ranks valid above invalid items well (AUROC in the table), but so does the hypothesis-string prior on the same items ({{benchmark_baselines.json|corr2cause_official_splits/test/hypothesis_only/auroc|ci}}).
+
+### 3.5 What the text alone gives away
+
+The full analysis, with data versions, definitions and what is and is not already known, is in `report/benchmark_text_baselines.md` and is reproducible from one script (`scripts/14_benchmark_baselines.py`). The two tables that matter for this study:
+
+<!-- TABLE:benchmark_c2c_pools -->
+
+<!-- TABLE:benchmark_cladder -->
+
+On the balanced Corr2Cause pool the hypothesis string alone predicts the label with {{benchmark_baselines.json|corr2cause_balanced_pool/baselines/hypothesis_only/accuracy|ci}} accuracy; this follows from how the benchmark names variables (causes get earlier letters), which makes 72 of the 120 hypothesis strings never valid. On CLadder, the quoted numbers and the polarity of the question predict {{benchmark_baselines.json|cladder_full_v1.5/baselines/numeric_polarity/accuracy|ci}} on held-out stories, a result largely anticipated by Clarke et al. (2026). These are properties of how text-only classifiers perform on the released data; for a probing study they set the bar a probe has to clear.
+
+### 3.6 A fairer test: the debiased Corr2Cause pool
+
+The original pool cannot separate "represents the answer" from "represents the hypothesis". The debiased pool (D21) removes every single-input route: 2,400 items in which each premise contributes one valid and one invalid hypothesis and each of the 48 usable hypothesis strings is half valid in every cross-validation fold. A classifier that sees only the hypothesis or only the premise scores exactly 0.50 by construction, and whole-prompt TF-IDF scores {{benchmark_baselines.json|corr2cause_debiased_pool/baselines/full_text_tfidf/accuracy|ci}}. The parsed-feature classifier still reaches {{benchmark_baselines.json|corr2cause_debiased_pool/baselines/parsed_features/accuracy|ci}}: it binds the premise's statements to the two variables named in the hypothesis, which is the first step of the task itself.
+
+<!-- T1-DEBIASED-TEXT -->
 
 ## 4. Tier 2 results
 

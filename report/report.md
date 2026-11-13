@@ -75,7 +75,37 @@ Gemma only runs at usable speed if its 256k × 2304 embedding matrix is kept on 
 
 ![behaviour](../figures/fig1_behaviour.png)
 
-<!-- T1-BEHAVIOUR-TEXT -->
+**No model answers above chance, and for different reasons.** On the Corr2Cause test set (15.5% valid) Qwen2.5-0.5B answers "No" to essentially everything (Yes-rate 0.00), so its accuracy 0.845 is the majority rate and its macro-F1 0.458 is the majority baseline's. Qwen2.5-1.5B says Yes 10% of the time and Gemma-2-2B 34%; their accuracies (0.773 [0.711, 0.846], 0.615 [0.573, 0.658]) are *below* the majority rate because the extra Yes answers are mostly wrong. On CLadder (50% yes) all three are at 0.50.
+
+Accuracy alone cannot tell "no information" from "information hidden by a bias towards one answer". The next table separates them: the Yes-rate, the AUROC of the Yes−No logit difference (which ignores any constant bias), and the accuracy when the decision threshold is moved to its best position (chosen on one half of the premises or stories, scored on the other).
+
+| Model | Item set | Prompt | Items | Yes-rate | Accuracy | Majority-class accuracy | AUROC of Yes−No logit difference | Accuracy at best threshold (cross-fitted) | Reading |
+|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | Corr2Cause test | zero-shot | 1162 | 0.00 | 0.845 [0.803, 0.898] | 0.845 | 0.589 [0.531, 0.660] | 0.843 [0.801, 0.895] | informative (AUROC CI above 0.5) |
+| Qwen2.5-0.5B | Corr2Cause pool | zero-shot | 2400 | 0.00 | 0.502 [0.500, 0.504] | 0.500 | 0.591 [0.569, 0.614] | 0.578 [0.558, 0.598] | informative (AUROC CI above 0.5) |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | zero-shot | 2400 | 0.00 | 0.498 [0.496, 0.501] | 0.500 | 0.505 [0.485, 0.526] | 0.498 [0.484, 0.512] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-0.5B | CLadder | zero-shot | 3000 | 0.04 | 0.500 [0.483, 0.515] | 0.500 | 0.499 [0.468, 0.527] | 0.509 [0.484, 0.531] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-0.5B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.01 | 0.842 [0.800, 0.895] | 0.845 | 0.511 [0.455, 0.572] | 0.843 [0.800, 0.896] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-0.5B | Corr2Cause test (500 items) | 4-shot | 500 | 0.81 | 0.314 [0.260, 0.367] | 0.840 | 0.660 [0.579, 0.741] | 0.846 [0.814, 0.887] | informative (AUROC CI above 0.5) |
+| Qwen2.5-0.5B | CLadder (500 items) | 4-shot | 500 | 0.20 | 0.516 [0.481, 0.552] | 0.500 | 0.495 [0.451, 0.542] | 0.486 [0.452, 0.521] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-1.5B | Corr2Cause test | zero-shot | 1162 | 0.10 | 0.773 [0.711, 0.846] | 0.845 | 0.561 [0.503, 0.614] | 0.843 [0.801, 0.895] | informative (AUROC CI above 0.5) |
+| Qwen2.5-1.5B | Corr2Cause pool | zero-shot | 2400 | 0.10 | 0.500 [0.488, 0.512] | 0.500 | 0.568 [0.545, 0.590] | 0.565 [0.551, 0.580] | informative (AUROC CI above 0.5) |
+| Qwen2.5-1.5B | CLadder | zero-shot | 3000 | 0.64 | 0.497 [0.474, 0.519] | 0.500 | 0.509 [0.478, 0.542] | 0.499 [0.480, 0.519] | at chance (AUROC CI includes 0.5) |
+| Qwen2.5-1.5B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.17 | 0.729 [0.667, 0.803] | 0.845 | 0.579 [0.523, 0.630] | 0.843 [0.800, 0.897] | informative (AUROC CI above 0.5) |
+| Qwen2.5-1.5B | Corr2Cause test (500 items) | 4-shot | 500 | 0.05 | 0.800 [0.752, 0.856] | 0.840 | 0.556 [0.502, 0.606] | 0.818 [0.770, 0.877] | informative (AUROC CI above 0.5) |
+| Qwen2.5-1.5B | CLadder (500 items) | 4-shot | 500 | 0.72 | 0.528 [0.487, 0.565] | 0.500 | 0.559 [0.511, 0.601] | 0.496 [0.460, 0.533] | informative (AUROC CI above 0.5) |
+| Gemma-2-2B | Corr2Cause test | zero-shot | 1162 | 0.34 | 0.615 [0.573, 0.658] | 0.845 | 0.536 [0.495, 0.566] | 0.843 [0.800, 0.897] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-2B | Corr2Cause pool | zero-shot | 2400 | 0.25 | 0.505 [0.487, 0.525] | 0.500 | 0.559 [0.537, 0.582] | 0.565 [0.553, 0.576] | informative (AUROC CI above 0.5) |
+| Gemma-2-2B | CLadder | zero-shot | 3000 | 0.63 | 0.508 [0.482, 0.535] | 0.500 | 0.519 [0.482, 0.557] | 0.500 [0.483, 0.520] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-2B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.32 | 0.602 [0.562, 0.641] | 0.845 | 0.504 [0.464, 0.531] | 0.844 [0.801, 0.897] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-2B | Corr2Cause test (500 items) | 4-shot | 500 | 0.54 | 0.486 [0.445, 0.526] | 0.840 | 0.569 [0.523, 0.613] | 0.834 [0.793, 0.886] | informative (AUROC CI above 0.5) |
+| Gemma-2-2B | CLadder (500 items) | 4-shot | 500 | 0.83 | 0.504 [0.458, 0.546] | 0.500 | 0.543 [0.498, 0.585] | 0.504 [0.465, 0.543] | at chance (AUROC CI includes 0.5) |
+
+<sub>Source: `results/answer_bias.json`</sub>
+
+Reading. On the original Corr2Cause sets the logit difference is weakly informative: AUROC 0.589 [0.531, 0.660] for Qwen2.5-0.5B, 0.561 [0.503, 0.614] for Qwen2.5-1.5B on test, and 0.56 to 0.59 on the balanced pool for all three, where a re-thresholded answer reaches about 0.57 accuracy. So the smallest model is biased rather than empty there. But this weak signal does not survive the two manipulations that remove surface cues: for Qwen2.5-0.5B the AUROC is 0.511 [0.455, 0.572] after renaming the variables and 0.505 [0.485, 0.526] on the debiased pool of Section 3.6. On CLadder every model is at chance by AUROC as well (0.50 to 0.52). The behavioural picture is therefore: at chance on the task, with a small shortcut-driven signal on the original Corr2Cause items that is masked by answer bias.
+
+Other checks. Four demonstrations change the bias, not the skill: Qwen2.5-0.5B flips to mostly Yes (accuracy change -0.526 [-0.611, -0.456]), Gemma loses -0.118 [-0.186, -0.054]. Scoring by answer-token logits and by generated text disagree on under 1% of items for the Qwen models; for Gemma on CLadder 13% of first tokens are neither Yes nor No (first-token-only check, 100 items). Renaming variables flips 0.085 [0.062, 0.106] of Qwen2.5-1.5B's answers and 0.091 [0.074, 0.109] of Gemma's.
 
 Few-shot (500-item subsets, paired with zero-shot on the same items):
 
@@ -153,7 +183,7 @@ By rung and query type (CLadder) and by template (Corr2Cause test):
 ![lens](../figures/fig2_logit_lens.png)
 ![lens auroc](../figures/fig2b_lens_auroc.png)
 
-<!-- T1-LENS-TEXT -->
+The first figure shows the Yes−No logit difference the model would produce if it stopped at each layer, for gold-Yes and gold-No items separately. In every panel the curves move together: the lens shows a shared drift towards one answer, not a separation by the correct answer. The second figure removes the drift by asking only whether the lens value ranks gold-Yes above gold-No items (AUROC). On the Corr2Cause pool it never exceeds 0.60 at any layer for any model (the maxima are 0.59 to 0.60, reached in the second half of the network); on CLadder it stays between 0.47 and 0.53 at every layer. The lens at the last layer reproduces the model's actual answer logits (maximum error and sign agreement are in `results/lens_*.json`). So the lens gives no sign of a correct answer that forms in the middle of the network and is then overwritten.
 
 ### 3.3 Probes and controls
 
@@ -187,7 +217,9 @@ Probe accuracy by token position:
 
 <sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
 
-<!-- T1-PROBES-TEXT -->
+Probes decode the gold label from held-out premises at 0.807 [0.784, 0.828], 0.870 [0.850, 0.890] and 0.863 [0.841, 0.886] on the Corr2Cause pool, and at 0.561 [0.534, 0.586], 0.605 [0.580, 0.631] and 0.626 [0.590, 0.664] on CLadder (report half; layer and regularisation chosen on the other half). The controls behave as controls should: shuffled labels give 0.50, and a randomly initialised model gives 0.50 to 0.62. Taken alone, this is the pattern that is usually read as "the model represents the answer".
+
+Three observations already argue against that reading before any text baseline is considered. (1) Selectivity is small on Corr2Cause (+0.07 to +0.12) and negative on CLadder (about −0.2): the same probes memorise an arbitrary label per hypothesis string, or per graph and query type, almost as well as or better than they decode the gold label. The activations expose *which question is being asked* very well, and on Corr2Cause that alone predicts validity (Section 3.5). (2) On Corr2Cause the probe is better at the last token of the hypothesis than at the final prompt token where the answer is produced (final minus end-of-hypothesis is negative for all three models), and at the end of the premise, before the hypothesis has been read, it is at chance as it must be in a pool balanced within premise. (3) On CLadder most of the probe's small signal is present at the end of the context, before the question has been read: the gain from reading the question is +0.000 [-0.038, +0.036] for Qwen2.5-0.5B, +0.035 [+0.008, +0.068] for Qwen2.5-1.5B and +0.070 [+0.021, +0.120] for Gemma-2-2B.
 
 ### 3.4 Gold label vs model output: is anything represented beyond the text?
 
@@ -298,7 +330,76 @@ External check: probe trained on the pool, evaluated on the Corr2Cause test set 
 
 <sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_gemma2b_c2c_probe.json`</sub>
 
-<!-- T1-CONFOUND-TEXT -->
+**Result: the audited criterion is not met in any of the six model × dataset cells.** The strongest text-only baseline is the parsed-feature classifier everywhere. On all report-half items the probe trails it by -0.113 [-0.136, -0.091], -0.049 [-0.068, -0.032] and -0.056 [-0.078, -0.033] on Corr2Cause, and by -0.240 [-0.285, -0.203], -0.196 [-0.234, -0.162] and -0.174 [-0.220, -0.133] on CLadder. On Corr2Cause the hypothesis string alone scores 0.859; the probe's paired difference to it is -0.052 [-0.077, -0.030] for Qwen2.5-0.5B, +0.011 [-0.012, +0.032] for Qwen2.5-1.5B and +0.004 [-0.017, +0.024] for Gemma-2-2B. Nothing in these data requires the models to represent more about the answer than a shallow reader of the prompt could compute.
+
+**What was pre-registered, what passed, and what was retracted.** Before any probe was run, the decision log fixed this criterion (D11): on report-half items the model answers wrongly, gold-probe accuracy must exceed 0.5, TF-IDF and the template prior, by 95% CI lower bounds. As coded, that criterion is met for Qwen2.5-1.5B on CLadder and for Gemma-2-2B on CLadder, and in variants (median-split model answer, or the original fixed regularisation) also for Qwen2.5-1.5B and Gemma-2-2B on Corr2Cause; the full tables are above. When the first of these appeared (Qwen2.5-1.5B, Thursday night) I logged it as a positive result. The independent audit then showed why it does not support the claim, and I retracted it:
+
+- the pre-registered baselines were too weak. TF-IDF of the whole prompt dilutes the hypothesis, and a six-template prior ignores which variables are named. The hypothesis string alone, and parsed features, are far stronger (table above);
+- "accuracy above 0.5 on the items the model gets wrong" is not a test against chance when those items are mostly one class (for Qwen2.5-1.5B on Corr2Cause, 90% of wrong items are gold-Yes);
+- with model answers almost independent of the gold label, "items the model gets wrong" is close to a random half of the data, so the design reduces to probe versus text baseline.
+
+The stronger baselines (D18), the audited criterion (D19) and the debiased pool of Section 3.6 (D21) were all added **after** seeing results. They can only make the claim harder to pass, and they are reported next to the pre-registered analysis, not instead of it.
+
+The external check agrees: a probe trained on the pool and applied to the natural-distribution test set ranks valid above invalid items well (AUROC in the table), but so does the hypothesis-string prior on the same items (0.895 [0.863, 0.919]).
+
+### 3.5 What the text alone gives away
+
+The full analysis, with data versions, definitions and what is and is not already known, is in `report/benchmark_text_baselines.md` and is reproducible from one script (`scripts/14_benchmark_baselines.py`). The two tables that matter for this study:
+
+| Corr2Cause item set | Text-only baseline (premise-held-out cross-validation) | Items | Premises | Accuracy | Macro-F1 | AUROC |
+|---|---|---|---|---|---|---|
+| Balanced pool | Hypothesis only (string prior) | 2400 | 300 | 0.859 [0.846, 0.871] | 0.857 [0.844, 0.870] | 0.913 [0.902, 0.924] |
+| Balanced pool | Hypothesis only (TF-IDF) | 2400 | 300 | 0.842 [0.829, 0.856] | 0.841 [0.827, 0.856] | 0.909 [0.898, 0.920] |
+| Balanced pool | Premise only (TF-IDF) | 2400 | 300 | 0.500 [0.500, 0.500] | 0.333 [0.333, 0.333] | 0.500 [0.500, 0.500] |
+| Balanced pool | Whole prompt (TF-IDF) | 2400 | 300 | 0.753 [0.734, 0.770] | 0.753 [0.734, 0.770] | 0.812 [0.793, 0.830] |
+| Balanced pool | Parsed features + hypothesis prior (GBM) | 2400 | 300 | 0.924 [0.913, 0.934] | 0.924 [0.913, 0.934] | 0.965 [0.957, 0.973] |
+| Debiased pool | Hypothesis only (string prior) | 2400 | 1200 | 0.500 [0.500, 0.500] | 0.333 [0.333, 0.333] | 0.500 [0.500, 0.500] |
+| Debiased pool | Hypothesis only (TF-IDF) | 2400 | 1200 | 0.500 [0.500, 0.500] | 0.333 [0.333, 0.333] | 0.500 [0.500, 0.500] |
+| Debiased pool | Premise only (TF-IDF) | 2400 | 1200 | 0.500 [0.500, 0.500] | 0.333 [0.333, 0.333] | 0.500 [0.500, 0.500] |
+| Debiased pool | Whole prompt (TF-IDF) | 2400 | 1200 | 0.495 [0.476, 0.514] | 0.493 [0.474, 0.512] | 0.512 [0.491, 0.535] |
+| Debiased pool | Parsed features + hypothesis prior (GBM) | 2400 | 1200 | 0.812 [0.797, 0.829] | 0.812 [0.797, 0.829] | 0.901 [0.889, 0.913] |
+| Rejected first design (strings balanced over the whole pool only) | Hypothesis only (string prior) | 2400 | 1498 | 0.315 [0.296, 0.334] | 0.314 [0.296, 0.333] | 0.247 [0.228, 0.267] |
+| Rejected first design (strings balanced over the whole pool only) | Hypothesis only (TF-IDF) | 2400 | 1498 | 0.341 [0.323, 0.359] | 0.341 [0.323, 0.359] | 0.283 [0.263, 0.303] |
+| Rejected first design (strings balanced over the whole pool only) | Premise only (TF-IDF) | 2400 | 1498 | 0.722 [0.701, 0.742] | 0.721 [0.700, 0.741] | 0.797 [0.776, 0.818] |
+| Rejected first design (strings balanced over the whole pool only) | Whole prompt (TF-IDF) | 2400 | 1498 | 0.713 [0.692, 0.733] | 0.712 [0.691, 0.732] | 0.792 [0.770, 0.813] |
+| Rejected first design (strings balanced over the whole pool only) | Parsed features + hypothesis prior (GBM) | 2400 | 1498 | 0.808 [0.790, 0.824] | 0.808 [0.790, 0.824] | 0.892 [0.878, 0.905] |
+
+<sub>Source: `results/benchmark_baselines.json`</sub>
+
+| Text-only baseline (story-held-out cross-validation) | Items | Stories | Accuracy | Macro-F1 | AUROC |
+|---|---|---|---|---|---|
+| Graph x query-type prior | 10112 | 47 | 0.446 [0.439, 0.454] | 0.446 [0.439, 0.453] | 0.429 [0.420, 0.439] |
+| Question only (TF-IDF) | 10112 | 47 | 0.513 [0.499, 0.530] | 0.504 [0.488, 0.523] | 0.522 [0.499, 0.549] |
+| Whole prompt (TF-IDF) | 10112 | 47 | 0.517 [0.499, 0.536] | 0.513 [0.494, 0.533] | 0.527 [0.501, 0.557] |
+| Quoted numbers + question polarity (GBM) | 10112 | 47 | 0.835 [0.818, 0.853] | 0.835 [0.818, 0.853] | 0.936 [0.924, 0.949] |
+
+<sub>Source: `results/benchmark_baselines.json`</sub>
+
+| Query type / rung | Items | Fraction yes | Accuracy of numbers + polarity baseline | AUROC |
+|---|---|---|---|---|
+| ate | 1422 | 0.50 | 0.903 [0.862, 0.941] | 0.968 |
+| backadj | 1580 | 0.50 | 1.000 [1.000, 1.000] | 1.000 |
+| collider_bias | 158 | 0.50 | 1.000 [1.000, 1.000] | 1.000 |
+| correlation | 1422 | 0.50 | 0.840 [0.799, 0.880] | 0.911 |
+| det-counterfactual | 1422 | 0.50 | 0.480 [0.460, 0.501] | 0.481 |
+| ett | 1264 | 0.50 | 0.907 [0.866, 0.948] | 0.971 |
+| exp_away | 158 | 0.50 | 0.734 [0.598, 0.838] | 0.756 |
+| marginal | 1580 | 0.50 | 0.941 [0.919, 0.956] | 0.984 |
+| nde | 316 | 0.50 | 0.642 [0.578, 0.693] | 0.659 |
+| nie | 790 | 0.50 | 0.746 [0.669, 0.814] | 0.851 |
+| rung 1 | 3160 | 0.50 | 0.885 [0.858, 0.907] | 0.948 |
+| rung 2 | 3160 | 0.50 | 0.956 [0.937, 0.973] | 0.994 |
+| rung 3 | 3792 | 0.50 | 0.691 [0.666, 0.722] | 0.807 |
+
+<sub>Source: `results/benchmark_baselines.json`</sub>
+
+On the balanced Corr2Cause pool the hypothesis string alone predicts the label with 0.859 [0.846, 0.871] accuracy; this follows from how the benchmark names variables (causes get earlier letters), which makes 72 of the 120 hypothesis strings never valid. On CLadder, the quoted numbers and the polarity of the question predict 0.835 [0.818, 0.853] on held-out stories, a result largely anticipated by Clarke et al. (2026). These are properties of how text-only classifiers perform on the released data; for a probing study they set the bar a probe has to clear.
+
+### 3.6 A fairer test: the debiased Corr2Cause pool
+
+The original pool cannot separate "represents the answer" from "represents the hypothesis". The debiased pool (D21) removes every single-input route: 2,400 items in which each premise contributes one valid and one invalid hypothesis and each of the 48 usable hypothesis strings is half valid in every cross-validation fold. A classifier that sees only the hypothesis or only the premise scores exactly 0.50 by construction, and whole-prompt TF-IDF scores 0.495 [0.476, 0.514]. The parsed-feature classifier still reaches 0.812 [0.797, 0.829]: it binds the premise's statements to the two variables named in the hypothesis, which is the first step of the task itself.
+
+<!-- T1-DEBIASED-TEXT -->
 
 ## 4. Tier 2 results
 

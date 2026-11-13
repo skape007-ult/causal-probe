@@ -140,7 +140,7 @@ cost the others. All four are thin wrappers around `scripts/gpu_round2.py`.
 | **C** `notebooks/colab_r2_qwen1.5b.ipynb` | Colab, T4 | none | Qwen 1.5B: end-of-hypothesis steering controls, adjacency causal test, label-preserving patching pairs | 1.5 – 3 h |
 | **D** `notebooks/kaggle_r2_gemma.ipynb` | Kaggle, T4 x2 | `HF_TOKEN` secret | Gemma 2B: matched steering controls at both tokens, adjacency causal test, label-preserving patching pairs | 2.5 – 4 h |
 
-**Updated Fri 18:10 (commit `4d6afe5`).** An independent review of the round-2 code
+**Updated Fri 18:25 (commit `5c31791`; `4d6afe5` from 18:10 is also fine and lacks only the small cross-template arm added since).** An independent review of the round-2 code
 (`notes/audit_round2_code_raw.md`) found that the first version of the adjacency test could not
 answer its question (its "removal" left the information readable; one of its two directions did
 not separate the classes for "X directly causes Y" hypotheses). Notebooks A, C and D now run the

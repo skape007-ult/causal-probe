@@ -528,7 +528,11 @@ For Qwen2.5-1.5B on the debiased pool: the activations encode part of the premis
 
 ## 4. Tier 2 results
 
-### 4.1 Steering and ablation: is the decodable direction used?
+This section was rewritten after the second independent audit (Section 6), which showed that my first summary of the steering results ("the gold-probe direction is inert, the model-output direction flips answers") did not survive scrutiny as stated. The analysis below uses the audit's metrics and adds the controls it asked for. Results for Gemma-2-2B and Qwen2.5-3B come from the Kaggle run and are added when it returns; that run used three random directions only, so the matched controls exist for the two local Qwen models.
+
+### 4.1 Steering: what does adding a decodable direction do to the answer?
+
+**Design.** At one layer (the gold probe's selected layer) and the final prompt token, add ±α·s·d for a unit direction d and read the Yes−No answer logit difference (LD). s is the RMS distance of that layer's activations from their mean, a norm over all dimensions. Directions are fitted on the selection half and applied to 300 report-half items (150 valid, 150 invalid). Three real directions: the gold-label probe's weight vector; the difference between the mean activation of valid and invalid items; and, as a positive control, the weight vector of a probe for the model's own (median-split) answer, which is fitted to the very quantity being measured. The headline number is the **slope**, (LD(+α) − LD(−α)) / 2α at α = 1, in logits per unit of s.
 
 | Model | Item set | Layer | Direction | Slope: Δ(Yes−No logit) per unit s | Share of items with positive slope | One unit of s in the direction's own SDs | Slope per own SD | Effect of moving across the natural gold-class gap | AUROC for gold label | AUROC for model's answer |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -584,11 +588,99 @@ For Qwen2.5-1.5B on the debiased pool: the activations encode part of the premis
 <sub>Source: `results/steering_analysis_qwen0.5b_c2c_probe.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen0.5b_c2c_debiased.json`, `results/steering_analysis_qwen0.5b_cladder.json`, `results/steering_analysis_qwen1.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_c2c_debiased.json`, `results/steering_analysis_qwen1.5b_cladder.json`</sub>
 
 ![steering c2c](../figures/fig6_steering_c2c_probe.png)
-![steering cladder](../figures/fig6_steering_cladder.png)
+![steering debiased](../figures/fig6_steering_c2c_debiased.png)
 
-<!-- T2-STEERING-TEXT -->
+**Matched controls** (150 report-half items for Qwen2.5-0.5B, 100 for Qwen2.5-1.5B): 100 isotropic random directions; 20 probe weight vectors fitted to shuffled labels, the control of the same kind as a probe direction; 20 differences of class means for shuffled labels, the control of the same kind as a difference of means.
 
-### 4.2 Patching: where is the answer determined?
+| Model | Item set | Layer | Direction | Slope per unit s | Percentile among 100 isotropic directions (|slope|) | Isotropic median |slope| | Isotropic max |slope| | Matched control family (20 directions) | Percentile among matched controls | Matched median |slope| | Matched max |slope| | Ratio to matched median |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold-label probe weights | -0.049 [-0.056, -0.042] | 22 | 0.125 | 0.685 | shuffled-label probe | 20 | 0.130 | 0.294 | 0.4 |
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | gold difference of class means | +0.865 [+0.855, +0.875] | 100 | 0.125 | 0.685 | shuffled-label difference of means | 100 | 0.189 | 0.628 | 4.6 |
+| Qwen2.5-0.5B | Corr2Cause pool | 15 | model-answer probe weights (positive control) | +1.700 [+1.685, +1.714] | 100 | 0.125 | 0.685 | shuffled-label probe | 100 | 0.130 | 0.294 | 13.1 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold-label probe weights | -0.229 [-0.235, -0.222] | 88 | 0.104 | 0.373 | shuffled-label probe | 85 | 0.075 | 0.360 | 3.0 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | gold difference of class means | +0.150 [+0.144, +0.157] | 63 | 0.104 | 0.373 | shuffled-label difference of means | 90 | 0.063 | 0.191 | 2.4 |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14 | model-answer probe weights (positive control) | +0.525 [+0.516, +0.532] | 100 | 0.104 | 0.373 | shuffled-label probe | 100 | 0.075 | 0.360 | 7.0 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 |
+| Qwen2.5-1.5B | Corr2Cause pool | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold-label probe weights | -0.201 [-0.226, -0.178] | 55 | 0.184 | 0.850 | shuffled-label probe | 65 | 0.113 | 0.449 | 1.8 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 |
+
+<sub>Source: `results/steering_controls_qwen0.5b_c2c_probe.json`, `results/steering_controls_qwen0.5b_c2c_debiased.json`, `results/steering_controls_qwen1.5b_c2c_probe.json`, `results/steering_controls_qwen1.5b_c2c_debiased.json`</sub>
+
+**What the data show.**
+
+1. *The gold-probe weight direction does no more than label-free directions of the same kind.* On the original pool its slope is -0.049 [-0.056, -0.042] (percentile 20% among 20 shuffled-label probe directions; their median |slope| 0.130, maximum 0.294) for Qwen2.5-0.5B and -0.367 [-0.382, -0.351] (percentile 85% among 20 shuffled-label probe directions; their median |slope| 0.206, maximum 0.533) for Qwen2.5-1.5B. On the debiased pool: -0.229 [-0.235, -0.222] (percentile 85% among 20 shuffled-label probe directions; their median |slope| 0.075, maximum 0.360) and -0.201 [-0.226, -0.178] (percentile 65% among 20 shuffled-label probe directions; their median |slope| 0.113, maximum 0.449). In no case is it beyond the 95th percentile of its matched controls. For Qwen2.5-1.5B on the original pool the effect is consistent in sign across items and *opposite* to the gold label (pushing "towards valid" lowers the Yes logit); my first table showed one sign only and hid this. It is within what shuffled-label probe directions do, so it is not evidence of a gold-specific mechanism in either direction.
+2. *At natural scale the probe direction does essentially nothing.* A probe's weight vector points into low-variance directions: one unit of s is 119.00 (Qwen2.5-0.5B) and 63.08 (Qwen2.5-1.5B) natural standard deviations along it. Moving an item across the whole natural gap between valid and invalid items along that direction would change LD by -0.001 and -0.009 logits, against a standard deviation of LD across items of 0.41 and 2.28.
+3. *The difference-of-means direction moves the answer, but not specifically because it separates valid from invalid items.* Its slope is +0.865 [+0.855, +0.875] (percentile 100% among 20 shuffled-label differences of means; their median |slope| 0.189, maximum 0.628) for Qwen2.5-0.5B and +1.981 [+1.925, +2.042] (percentile 85% among 20 shuffled-label differences of means; their median |slope| 1.131, maximum 2.685) for Qwen2.5-1.5B on the original pool; on the debiased pool +0.150 [+0.144, +0.157] (percentile 90% among 20 shuffled-label differences of means; their median |slope| 0.063, maximum 0.191) and +1.897 [+1.865, +1.930] (percentile 80% among 20 shuffled-label differences of means; their median |slope| 1.330, maximum 2.674). A difference of class means lies in the high-variance part of activation space, and so does a difference of means for random labels. On the original pool this direction also separates the model's own answer at least as well as the gold label (AUROC 0.942 against 0.650 for Qwen2.5-1.5B). Only for Qwen2.5-0.5B on the original pool does it exceed all 20 shuffled controls, and that pool is the one in which the gold label is confounded with the hypothesis string.
+4. *The positive control works.* The model-answer direction has the largest slope everywhere and exceeds every control, as it must.
+
+**What may and may not be concluded.**
+
+- May: at the probed layer and the final token, later layers do not read the gold probe's weight direction more than they read a label-free direction of the same kind, and a movement of natural size along it leaves the answer unchanged.
+- May not: "the decoded information is unused". The probe's weights and the difference of class means are two views of one discriminant (the covariance times the probe weights has cosine 0.98 with the difference of means for Qwen2.5-1.5B); one site and one position were tested; and the activation pattern that does move the answer was not gold-specific.
+- The most direct evidence that the information of Section 3.6 is not used is behavioural: on the debiased pool the answers are at chance while the probe decodes validity at 0.63 and 0.75.
+- CLadder: the steered gold directions barely decode the gold label there (AUROC 0.547 and 0.622), so those rows are shown for completeness and no conclusion is drawn from them.
+
+Flip rates and the earlier "accuracy when pushed towards gold" (now called controllability) are in the next table. They are poor measures for models that answer No to most items: a flip is a threshold on slope × α against the margin, and controllability uses the gold label to choose the sign of the push, so any direction with a consistent slope reaches 0 or 1. Ablating the component along the probe or random directions changes LD by amounts at the float16 noise floor; no ablation comparison is claimed.
+
+| Model | Item set | Layer | Direction | Flip rate +4s | Flip rate −4s | Controllability towards gold (4s) | Controllability away from gold (4s) | Ablation mean |ΔLD| | Noise floor | Ablation above 3× floor |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | Corr2Cause pool | 15/24 | gold-label probe weights | 0.00 [0.00, 0.00] | 0.00 [0.00, 0.01] | 0.50 [0.46, 0.55] | 0.50 [0.46, 0.55] | 0.0048 | 0.0058 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 15/24 | gold difference of class means | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.2683 | 0.0058 | yes |
+| Qwen2.5-0.5B | Corr2Cause pool | 15/24 | model-answer probe weights (positive control) | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.0948 | 0.0058 | yes |
+| Qwen2.5-0.5B | Corr2Cause pool | 15/24 | random direction 0 | 0.00 [0.00, 0.01] | 0.00 [0.00, 0.00] | 0.50 [0.46, 0.55] | 0.50 [0.45, 0.54] | 0.0047 | 0.0058 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 15/24 | random direction 1 | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.0100 | 0.0058 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 15/24 | random direction 2 | 0.00 [0.00, 0.00] | 0.57 [0.51, 0.63] | 0.24 [0.19, 0.28] | 0.81 [0.76, 0.85] | 0.0077 | 0.0058 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | gold-label probe weights | 0.12 [0.08, 0.16] | 0.00 [0.00, 0.00] | 0.58 [0.53, 0.63] | 0.46 [0.42, 0.51] | 0.0045 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | gold difference of class means | 0.00 [0.00, 0.00] | 0.06 [0.03, 0.09] | 0.49 [0.44, 0.53] | 0.54 [0.50, 0.59] | 0.0262 | 0.0059 | yes |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | model-answer probe weights (positive control) | 0.02 [0.01, 0.04] | 0.01 [0.00, 0.02] | 0.51 [0.47, 0.56] | 0.50 [0.46, 0.55] | 0.0043 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | random direction 0 | 0.00 [0.00, 0.00] | 0.01 [0.00, 0.03] | 0.50 [0.45, 0.54] | 0.51 [0.47, 0.56] | 0.0050 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | random direction 1 | 0.15 [0.11, 0.19] | 0.00 [0.00, 0.00] | 0.61 [0.56, 0.66] | 0.46 [0.42, 0.51] | 0.0053 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 12/24 | random direction 2 | 0.27 [0.21, 0.33] | 0.00 [0.00, 0.00] | 0.67 [0.62, 0.72] | 0.40 [0.35, 0.45] | 0.0076 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | gold-label probe weights | 0.06 [0.03, 0.09] | 0.00 [0.00, 0.00] | 0.55 [0.50, 0.59] | 0.49 [0.45, 0.54] | 0.0044 | 0.0056 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | gold difference of class means | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.2374 | 0.0056 | yes |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | model-answer probe weights (positive control) | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.1710 | 0.0056 | yes |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | random direction 0 | 0.07 [0.04, 0.10] | 0.00 [0.00, 0.00] | 0.55 [0.50, 0.60] | 0.49 [0.44, 0.53] | 0.0052 | 0.0056 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | random direction 1 | 0.36 [0.30, 0.42] | 0.00 [0.00, 0.00] | 0.71 [0.66, 0.77] | 0.36 [0.31, 0.41] | 0.0056 | 0.0056 | no |
+| Qwen2.5-0.5B | Corr2Cause pool | 20/24 | random direction 2 | 0.00 [0.00, 0.00] | 0.05 [0.03, 0.08] | 0.49 [0.45, 0.54] | 0.54 [0.50, 0.59] | 0.0058 | 0.0056 | no |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | gold-label probe weights | 0.00 [0.00, 0.01] | 0.17 [0.12, 0.21] | 0.42 [0.37, 0.47] | 0.59 [0.54, 0.64] | 0.0046 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | gold difference of class means | 0.09 [0.06, 0.13] | 0.00 [0.00, 0.01] | 0.55 [0.49, 0.60] | 0.45 [0.40, 0.50] | 0.0144 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | model-answer probe weights (positive control) | 0.99 [0.98, 1.00] | 0.00 [0.00, 0.01] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.01] | 0.0107 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | random direction 0 | 0.00 [0.00, 0.01] | 0.03 [0.01, 0.05] | 0.49 [0.44, 0.54] | 0.52 [0.47, 0.57] | 0.0046 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | random direction 1 | 0.13 [0.09, 0.16] | 0.00 [0.00, 0.01] | 0.56 [0.51, 0.61] | 0.43 [0.38, 0.48] | 0.0052 | 0.0059 | no |
+| Qwen2.5-0.5B | Corr2Cause debiased pool | 14/24 | random direction 2 | 0.00 [0.00, 0.01] | 0.05 [0.03, 0.08] | 0.47 [0.42, 0.52] | 0.53 [0.48, 0.58] | 0.0052 | 0.0059 | no |
+| Qwen2.5-0.5B | CLadder | 16/24 | gold-label probe weights | 0.12 [0.09, 0.16] | 0.04 [0.02, 0.06] | 0.59 [0.53, 0.64] | 0.43 [0.37, 0.48] | 0.0040 | 0.0048 | no |
+| Qwen2.5-0.5B | CLadder | 16/24 | gold difference of class means | 0.05 [0.02, 0.08] | 0.95 [0.92, 0.98] | 0.00 [0.00, 0.01] | 1.00 [1.00, 1.00] | 0.2176 | 0.0048 | yes |
+| Qwen2.5-0.5B | CLadder | 16/24 | model-answer probe weights (positive control) | 0.95 [0.92, 0.98] | 0.05 [0.02, 0.08] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.1021 | 0.0048 | yes |
+| Qwen2.5-0.5B | CLadder | 16/24 | random direction 0 | 0.35 [0.28, 0.42] | 0.03 [0.01, 0.04] | 0.70 [0.64, 0.77] | 0.33 [0.28, 0.38] | 0.0052 | 0.0048 | no |
+| Qwen2.5-0.5B | CLadder | 16/24 | random direction 1 | 0.68 [0.61, 0.76] | 0.04 [0.02, 0.07] | 0.88 [0.83, 0.92] | 0.15 [0.09, 0.20] | 0.0066 | 0.0048 | no |
+| Qwen2.5-0.5B | CLadder | 16/24 | random direction 2 | 0.02 [0.00, 0.03] | 0.54 [0.49, 0.60] | 0.25 [0.20, 0.30] | 0.78 [0.72, 0.83] | 0.0041 | 0.0048 | no |
+| Qwen2.5-1.5B | Corr2Cause pool | 21/28 | gold-label probe weights | 0.10 [0.07, 0.14] | 0.30 [0.26, 0.35] | 0.31 [0.26, 0.35] | 0.71 [0.66, 0.76] | 0.0076 | 0.0080 | no |
+| Qwen2.5-1.5B | Corr2Cause pool | 21/28 | gold difference of class means | 0.89 [0.85, 0.93] | 0.11 [0.07, 0.15] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 1.0198 | 0.0080 | yes |
+| Qwen2.5-1.5B | Corr2Cause pool | 21/28 | model-answer probe weights (positive control) | 0.89 [0.85, 0.93] | 0.11 [0.07, 0.15] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.7409 | 0.0080 | yes |
+| Qwen2.5-1.5B | Corr2Cause pool | 21/28 | random direction 0 | 0.04 [0.02, 0.06] | 0.05 [0.03, 0.07] | 0.51 [0.47, 0.56] | 0.51 [0.47, 0.56] | 0.0071 | 0.0080 | no |
+| Qwen2.5-1.5B | Corr2Cause pool | 21/28 | random direction 1 | 0.08 [0.05, 0.12] | 0.21 [0.17, 0.26] | 0.35 [0.31, 0.39] | 0.64 [0.59, 0.69] | 0.0074 | 0.0080 | no |
+| Qwen2.5-1.5B | Corr2Cause pool | 21/28 | random direction 2 | 0.13 [0.10, 0.17] | 0.06 [0.03, 0.09] | 0.55 [0.51, 0.60] | 0.48 [0.43, 0.52] | 0.0065 | 0.0080 | no |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | gold-label probe weights | 0.05 [0.03, 0.07] | 0.02 [0.00, 0.03] | 0.45 [0.40, 0.50] | 0.51 [0.46, 0.56] | 0.0042 | 0.0060 | no |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | gold difference of class means | 0.88 [0.84, 0.91] | 0.12 [0.09, 0.16] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.5521 | 0.0060 | yes |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | model-answer probe weights (positive control) | 0.88 [0.84, 0.91] | 0.12 [0.09, 0.16] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.4372 | 0.0060 | yes |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | random direction 0 | 0.04 [0.02, 0.07] | 0.03 [0.01, 0.05] | 0.52 [0.47, 0.57] | 0.44 [0.39, 0.49] | 0.0047 | 0.0060 | no |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | random direction 1 | 0.10 [0.07, 0.14] | 0.38 [0.32, 0.43] | 0.25 [0.20, 0.29] | 0.73 [0.68, 0.78] | 0.0088 | 0.0060 | no |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | 22/28 | random direction 2 | 0.24 [0.19, 0.28] | 0.02 [0.00, 0.03] | 0.60 [0.54, 0.65] | 0.37 [0.31, 0.42] | 0.0061 | 0.0060 | no |
+| Qwen2.5-1.5B | CLadder | 24/28 | gold-label probe weights | 0.03 [0.01, 0.05] | 0.08 [0.05, 0.10] | 0.54 [0.48, 0.61] | 0.45 [0.39, 0.53] | 0.0047 | 0.0061 | no |
+| Qwen2.5-1.5B | CLadder | 24/28 | gold difference of class means | 0.37 [0.31, 0.43] | 0.39 [0.34, 0.44] | 0.89 [0.85, 0.92] | 0.13 [0.09, 0.18] | 0.1670 | 0.0061 | yes |
+| Qwen2.5-1.5B | CLadder | 24/28 | model-answer probe weights (positive control) | 0.37 [0.31, 0.43] | 0.63 [0.57, 0.69] | 1.00 [1.00, 1.00] | 0.00 [0.00, 0.00] | 0.6141 | 0.0061 | yes |
+| Qwen2.5-1.5B | CLadder | 24/28 | random direction 0 | 0.17 [0.13, 0.21] | 0.14 [0.10, 0.18] | 0.65 [0.58, 0.73] | 0.35 [0.29, 0.41] | 0.0076 | 0.0061 | no |
+| Qwen2.5-1.5B | CLadder | 24/28 | random direction 1 | 0.33 [0.27, 0.38] | 0.18 [0.13, 0.22] | 0.26 [0.20, 0.32] | 0.76 [0.71, 0.82] | 0.0053 | 0.0061 | no |
+| Qwen2.5-1.5B | CLadder | 24/28 | random direction 2 | 0.27 [0.22, 0.32] | 0.12 [0.08, 0.16] | 0.71 [0.65, 0.78] | 0.32 [0.26, 0.39] | 0.0069 | 0.0061 | no |
+
+<sub>Source: `results/steering_analysis_qwen0.5b_c2c_probe.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.5.json`, `results/steering_analysis_qwen0.5b_c2c_probe_d0.85.json`, `results/steering_analysis_qwen0.5b_c2c_debiased.json`, `results/steering_analysis_qwen0.5b_cladder.json`, `results/steering_analysis_qwen1.5b_c2c_probe.json`, `results/steering_analysis_qwen1.5b_c2c_debiased.json`, `results/steering_analysis_qwen1.5b_cladder.json`</sub>
+
+### 4.2 Patching: where does a change of variable reach the answer position?
+
+**Design.** Token-aligned Corr2Cause minimal pairs with opposite gold labels: *hyp* pairs share the premise and differ in one variable of the hypothesis; *prem* pairs share the hypothesis and have two variable letters swapped throughout the premise. The residual stream of the "clean" run is copied into the "corrupt" run at one layer and one group of token positions. Pooled recovery = Σ sign(D)·(LD_patched − LD_corrupt) / Σ|D|, with D = LD_clean − LD_corrupt.
 
 | Model | Pair kind | Pairs | Mean D = LD(clean) − LD(corrupt) | Frac. D > 0 | Both answered correctly | First layer with ≥ 0.5 recovery at final token | …as relative depth | Max |control| at diff tokens | Max |control| at final token | Pairs with control |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -602,6 +694,10 @@ For Qwen2.5-1.5B on the debiased pool: the activations encode part of the premis
 ![patching prem](../figures/fig7_patching_prem.png)
 ![patching hyp](../figures/fig7_patching_hyp.png)
 
+**What the data show.** The models do not prefer the valid member of a pair: mean D is +0.009 [-0.060, +0.078] (Qwen2.5-0.5B) and -0.088 [-0.420, +0.267] (Qwen2.5-1.5B) for hyp pairs, and D is positive for about half of the pairs. Because recovery is normalised by each pair's own D, the heat-maps show where *any* difference between the two prompts is carried to the final token, not where a causal judgement is made. That transfer is sharp: recovery at the final token first reaches 0.5 at layer 15 of 24 for Qwen2.5-0.5B (relative depth 0.62) and at layer 17 or 18 of 28 for Qwen2.5-1.5B (every second layer was patched; relative depth 0.61 to 0.64). The two pair kinds share their clean prompts and are not independent replications.
+
+**The random-donor row is not a control.** Only 16 of 60 (Qwen2.5-0.5B) and 6 of 40 (Qwen2.5-1.5B) pairs have a donor prompt of equal length, half of the donors carry the same token as the clean prompt at the changed position, and the statistic is not zero under the null. It is shown and not used.
+
 | Model | Pair kind | Pairs | Pearson r (attr. vs real) | Spearman | Mean |real| top-10 | Mean |real| random-10 | Largest real effects |
 |---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | hyp | 30 | 1.00 | 0.98 | 0.449 | 0.034 | L14H5 (+0.76), MLP23 (-0.67), MLP12 (+0.50), MLP14 (+0.45), L12H2 (+0.44) |
@@ -613,7 +709,9 @@ For Qwen2.5-1.5B on the debiased pool: the activations encode part of the premis
 
 ![attribution](../figures/fig8_attribution_validation.png)
 
-<!-- T2-PATCHING-TEXT -->
+**Components.** Attribution patching (one gradient) agrees with real patching for the ten highest-ranked components of each model and pair kind. Among ten random components the agreement is driven by one or two large ones; without them the two estimates can disagree in sign. So: accurate for the largest components, not a complete ranking. Component names such as L14H5 are block numbers; residual index 15 is the output of block 14.
+
+**Not done.** A label-preserving minimal-pair control (two prompts that differ in a variable but have the same gold label) would separate "the answer changes" from "the prompt changes". It is the experiment this section most needs.
 
 ### 4.3 Cross-model comparison
 
@@ -641,7 +739,7 @@ For Qwen2.5-1.5B on the debiased pool: the activations encode part of the premis
 
 ![cross model](../figures/fig9_cross_model.png)
 
-<!-- T2-CROSS-TEXT -->
+A descriptive comparison of three models from two families, not a scaling law. On the original item sets gold-probe accuracy is higher for the two larger models than for Qwen2.5-0.5B, and the probe trails the strongest text baseline for every model. The selected layer lies at relative depth 0.6 to 0.9. On the debiased pool (Section 3.6) the difference between Qwen2.5-0.5B and Qwen2.5-1.5B is larger and is the more informative comparison, since it is not inflated by the hypothesis-string cue.
 
 ## 5. Tier 3 results
 

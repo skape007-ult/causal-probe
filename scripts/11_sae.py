@@ -34,7 +34,30 @@ TOP_K = 10
 POS = {"premise_end": 2, "final": 0}
 
 
+class FakeSAE(torch.nn.Module):
+    """Random ReLU dictionary with the same interface as a SAELens SAE. Only for smoke-testing
+    the code paths on a model that has no public SAEs (--fake-sae); results are meaningless."""
+
+    def __init__(self, d: int, k: int = 512, seed: int = 0):
+        super().__init__()
+        g = torch.Generator().manual_seed(seed)
+        W = torch.nn.functional.normalize(torch.randn(k, d, generator=g), dim=-1)
+        self.W_dec = torch.nn.Parameter(W, requires_grad=False)
+        self.b = torch.nn.Parameter(torch.zeros(k), requires_grad=False)
+
+    def encode(self, x):
+        return torch.relu(x.float() @ self.W_dec.T.float() + self.b)
+
+    def decode(self, f):
+        return f @ self.W_dec.float()
+
+
+FAKE_D = None      # set by --fake-sae: d_model of the model under test
+
+
 def load_sae(block: int, device="cpu"):
+    if FAKE_D is not None:
+        return FakeSAE(FAKE_D, seed=block).to(device).eval()
     from sae_lens import SAE
     out = SAE.from_pretrained(release=RELEASE, sae_id=f"layer_{block}/width_16k/canonical", device=device)
     sae = out[0] if isinstance(out, tuple) else out
@@ -53,7 +76,12 @@ def recon_stats(sae, X: np.ndarray) -> dict:
     f = sae.encode(x)
     xh = sae.decode(f)
     fvu = float(((x - xh) ** 2).sum() / ((x - x.mean(0)) ** 2).sum())
-    return {"fraction_variance_unexplained": fvu, "mean_l0": float((f > 0).float().sum(-1).mean()),
+    # FVU divides by the variance ACROSS ITEMS at this position. At the final prompt token every item
+    # has the same token and nearly the same activation, so that variance is tiny and FVU explodes;
+    # the error relative to the activation's own squared norm is the comparable number there.
+    rel = float((((x - xh) ** 2).sum(-1) / (x ** 2).sum(-1)).mean())
+    return {"fraction_variance_unexplained": fvu, "relative_squared_error": rel,
+            "mean_l0": float((f > 0).float().sum(-1).mean()),
             "cosine_recon": float(torch.nn.functional.cosine_similarity(x, xh, dim=-1).mean())}
 
 
@@ -151,7 +179,7 @@ class FeatureAblator:
             return None
         h = output[0] if isinstance(output, tuple) else output
         f = self.sae.encode(h.float())[..., self.feats]                       # [B, T, k]
-        h = h - (f @ self.sae.W_dec[self.feats]).to(h.dtype)
+        h = h - (f @ self.sae.W_dec[self.feats].float()).to(h.dtype)
         return (h,) + tuple(output[1:]) if isinstance(output, tuple) else h
 
     def remove(self):
@@ -241,5 +269,14 @@ if __name__ == "__main__":
     ap.add_argument("--stage", required=True, choices=["features", "ablate"])
     ap.add_argument("--n-per-struct", type=int, default=40)
     ap.add_argument("--block", type=int, default=12)
+    ap.add_argument("--model", default="gemma2b")
+    ap.add_argument("--fake-sae", action="store_true", help="smoke test with a random dictionary (any model)")
     a = ap.parse_args()
+    MODEL = a.model
+    if a.fake_sae:
+        FAKE_D = cache.load_cache(MODEL, "cladder")[0].shape[-1]
+        n_blocks = cache.load_cache(MODEL, "cladder")[0].shape[1] - 1
+        SAE_LAYERS = [b for b in SAE_LAYERS if b < n_blocks]
+    else:
+        assert MODEL == "gemma2b", "Gemma Scope SAEs exist for gemma-2-2b only"
     stage_features() if a.stage == "features" else stage_ablate(a.n_per_struct, a.block)

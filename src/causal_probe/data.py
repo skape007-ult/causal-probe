@@ -18,7 +18,7 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
-from .config import (C2C_PROBE_PER_PREMISE, C2C_PROBE_PREMISES, CLADDER_N,
+from .config import (C2C_DEBIASED_PER_CELL, C2C_PROBE_PER_PREMISE, C2C_PROBE_PREMISES, CLADDER_N,
                      DATA_RAW, N_SUB, SEED)
 
 csv.field_size_limit(10**9)
@@ -69,6 +69,46 @@ def c2c_probe_pool(train: list[dict], seed: int = SEED,
             idx = rng.choice(len(cand), size=half, replace=False)
             pool.extend(cand[j] for j in sorted(idx))
     return pool
+
+
+def c2c_debiased_pool(train: list[dict], seed: int = SEED,
+                      per_cell: int = C2C_DEBIASED_PER_CELL) -> list[dict]:
+    """Corr2Cause pool in which the hypothesis string carries no label information.
+
+    In the official data most hypothesis strings ("D directly causes C.") have the same label for
+    every premise, so the string alone predicts the label. Here we keep only the strings that
+    occur with BOTH labels and sample exactly `per_cell` valid and `per_cell` invalid items for
+    each of them. Every hypothesis string (and therefore every template and every variable pair)
+    is then exactly 50/50, and a classifier that sees only the hypothesis is at chance by
+    construction. Premises still repeat across items, so evaluation must hold out by premise
+    (`group`), as everywhere else. Items are returned sorted by (hypothesis, label, uid)."""
+    rng = np.random.default_rng(seed)
+    cells = defaultdict(list)
+    for it in train:
+        cells[(it["query"], it["label"])].append(it)
+    strings = sorted({q for q, _ in cells})
+    both = [q for q in strings if len(cells.get((q, 0), [])) >= per_cell and len(cells.get((q, 1), [])) >= per_cell]
+    pool = []
+    for q in both:
+        for lab in (0, 1):
+            cand = cells[(q, lab)]
+            idx = rng.choice(len(cand), size=per_cell, replace=False)
+            pool.extend(cand[j] for j in sorted(idx))
+    return pool
+
+
+def c2c_debiased_stats(items: list[dict], per_cell: int = C2C_DEBIASED_PER_CELL) -> dict:
+    """How much of a split survives the debiasing rule (for the write-up)."""
+    cells = Counter((i["query"], i["label"]) for i in items)
+    strings = sorted({q for q, _ in cells})
+    both = [q for q in strings if cells[(q, 0)] > 0 and cells[(q, 1)] > 0]
+    return {"n_items": len(items), "n_hypothesis_strings": len(strings),
+            "n_strings_with_both_labels": len(both),
+            "n_strings_single_label": len(strings) - len(both),
+            "n_items_in_single_label_strings": sum(cells[(q, 0)] + cells[(q, 1)] for q in strings if q not in set(both)),
+            "max_items_balanced_within_string": sum(2 * min(cells[(q, 0)], cells[(q, 1)]) for q in both),
+            "min_cell_size_among_both": min((min(cells[(q, 0)], cells[(q, 1)]) for q in both), default=0),
+            "n_strings_with_cells_at_least_per_cell": sum(min(cells[(q, 0)], cells[(q, 1)]) >= per_cell for q in both)}
 
 
 _VAR_RE = re.compile(r"\b([A-F])\b")
@@ -149,12 +189,31 @@ def grouped_folds(items: list[dict], n_folds: int, seed: int):
     return list(sgkf.split(np.zeros(len(y)), y, g))
 
 
+def _from_train(tag: str, build) -> list[dict]:
+    """Pools sampled from the 383 MB train file are stored once as a small JSON under
+    data/derived/, so later scripts do not each parse the whole file (about 1 GB of Python
+    objects, which matters on an 8 GB machine). The file name carries every sampling parameter."""
+    import json
+    name = f"{tag}_seed{SEED}_{C2C_PROBE_PREMISES}x{C2C_PROBE_PER_PREMISE}_{C2C_DEBIASED_PER_CELL}.json"
+    path = DATA_RAW.parent / "derived" / name
+    if path.exists():
+        return json.loads(path.read_text())
+    items = build(load_c2c("train"))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(items))
+    tmp.rename(path)
+    return items
+
+
 def get_dataset(tag: str) -> list[dict]:
     """The named item sets that get cached. One place, so every script agrees on order."""
     if tag == "c2c_test":
         return load_c2c("test")
     if tag == "c2c_probe":
-        return c2c_probe_pool(load_c2c("train"))
+        return _from_train(tag, c2c_probe_pool)
+    if tag == "c2c_debiased":
+        return _from_train(tag, c2c_debiased_pool)
     if tag == "c2c_test_renamed":
         return [rename_variables(i) for i in load_c2c("test")]
     if tag == "cladder":

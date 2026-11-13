@@ -1,0 +1,13 @@
+# Direct dependencies only, pinned to the versions used on the laptop (requirements.txt is the
+# full freeze). Used by the Kaggle notebook if the full freeze cannot be installed there.
+torch==2.15.0
+transformers==5.22.2
+tokenizers==0.23.3
+huggingface-hub==2.4.0
+safetensors==0.8.0
+accelerate==1.15.0
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.9.1
+sae-lens==6.55.4
+peft==0.21.2

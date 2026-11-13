@@ -24,6 +24,18 @@ from .config import CACHE, K_SHOTS, POSITIONS, SEED
 # machine batching gives it no speed-up (the GPU is already saturated) and the extra
 # activation memory pushes it into swap (measured: B=1 0.6 s/item, B=4 2.6-6 s/batch).
 TOKEN_BUDGET = {"qwen0.5b": 6000, "qwen1.5b": 3500, "gemma2b": 1}
+# On a CUDA GPU with ~15 GB (Kaggle T4 / P100) every model here can take a real batch.
+CUDA_TOKEN_BUDGET = {"qwen0.5b": 16000, "qwen1.5b": 12000, "gemma2b": 6000, "qwen3b": 6000, "qwen7b-4bit": 4000}
+
+
+def token_budget(model_name: str, device=None) -> int:
+    """Tokens per batch. CAUSAL_PROBE_TOKEN_BUDGET overrides (e.g. to recover from an OOM)."""
+    import os
+    if os.environ.get("CAUSAL_PROBE_TOKEN_BUDGET"):
+        return int(os.environ["CAUSAL_PROBE_TOKEN_BUDGET"])
+    if device is not None and str(device).startswith("cuda"):
+        return CUDA_TOKEN_BUDGET.get(model_name, 4000)
+    return TOKEN_BUDGET.get(model_name, 2000)
 
 
 def cache_dir(model_name: str, tag: str, random_init: bool = False) -> Path:
@@ -135,7 +147,7 @@ def build_cache(model_name: str, tag: str, random_init: bool = False, model=None
         resid = [None] * len(chunk)
         ans_logits = np.zeros((len(chunk), len(yes_ids) + len(no_ids)), np.float32)
         top1 = np.zeros((len(chunk), 2), np.float32)
-        for batch in make_batches([lengths[i] for i in chunk], TOKEN_BUDGET.get(model_name, 2000)):
+        for batch in make_batches([lengths[i] for i in chunk], token_budget(model_name, device)):
             gi = [chunk[j] for j in batch]
             T = max(lengths[i] for i in gi)
             ids = torch.full((len(gi), T), tok.pad_token_id, dtype=torch.long)
@@ -251,3 +263,34 @@ def parse_answer(text: str) -> int | None:
     if t.startswith("no"):
         return 0
     return None
+
+
+def export_cache(model_name: str, tag: str, dest: Path, random_init: bool = False,
+                 positions: tuple[str, ...] = ("final",), with_resid: bool = True) -> int:
+    """Copy one cache directory to `dest/<model>[-rand]/<tag>/`, keeping only the listed token
+    positions of the residual stream (float16), so it is small enough to download. meta.json is
+    rewritten to describe the reduced array; readout.npz, gen.json and steering*.npz are copied.
+    `load_cache` reads the result unchanged. Returns the number of bytes written."""
+    import shutil
+    src = cache_dir(model_name, tag, random_init)
+    out = Path(dest) / src.parent.name / tag
+    out.mkdir(parents=True, exist_ok=True)
+    n = 0
+    if (src / "meta.json").exists():
+        meta = json.loads((src / "meta.json").read_text())
+        keep = [meta["positions"].index(p) for p in positions]
+        if with_resid:
+            r = np.load(src / "resid.npy", mmap_mode="r")
+            np.save(out / "resid.npy", np.ascontiguousarray(r[:, :, keep, :]))
+            meta["shape"] = [meta["shape"][0], meta["shape"][1], len(keep), meta["shape"][3]]
+        meta["positions_full_cache"] = meta["positions"]
+        meta["positions"] = list(positions)
+        meta["pos"] = [[row[k] for k in keep] for row in meta["pos"]]
+        meta["resid_exported"] = bool(with_resid)
+        (out / "meta.json").write_text(json.dumps(meta))
+    for f in src.glob("*"):
+        if f.name in ("readout.npz", "gen.json") or f.name.startswith("steering"):
+            shutil.copy2(f, out / f.name)
+    for f in out.glob("*"):
+        n += f.stat().st_size
+    return n

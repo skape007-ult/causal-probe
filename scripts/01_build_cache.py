@@ -21,6 +21,7 @@ def main():
     ap.add_argument("--random", action="store_true")
     ap.add_argument("--tags", default=None)
     ap.add_argument("--no-gen", action="store_true")
+    ap.add_argument("--limit", type=int, default=None, help="first N items per tag (smoke tests only)")
     ap.add_argument("--max-minutes", type=float, default=85.0)
     a = ap.parse_args()
     t0 = time.time()
@@ -34,7 +35,7 @@ def main():
             raise SystemExit("time budget reached; re-run to resume")
 
     for tag in tags:
-        cache.build_cache(a.model, tag, random_init=a.random, model=model, tok=tok, log=log)
+        cache.build_cache(a.model, tag, random_init=a.random, model=model, tok=tok, log=log, limit=a.limit)
     if not a.random and not a.no_gen:
         for tag in GEN_TAGS:
             out = cache.cache_dir(a.model, tag) / "gen.json"
@@ -42,7 +43,7 @@ def main():
                 continue
             out.parent.mkdir(parents=True, exist_ok=True)
             fs = tag.endswith("_fewshot")
-            items = data.get_dataset(tag.removesuffix("_fewshot"))
+            items = data.get_dataset(tag.removesuffix("_fewshot"))[: a.limit]
             shots = cache.fewshot_examples(items[0]["dataset"]) if fs else None
             kw = {}
             if not models.has_cheap_full_vocab(model):
@@ -50,7 +51,7 @@ def main():
                 # through memory (~6 s). Decode only the first token, on every 5th item.
                 items, kw = items[::5], {"max_new_tokens": 1}
             texts = cache.generate_answers(model, tok, items, shots,
-                                           budget=cache.TOKEN_BUDGET.get(a.model, 2000), **kw)
+                                           budget=cache.token_budget(a.model, next(model.parameters()).device), **kw)
             out.write_text(json.dumps({"uids": [i["uid"] for i in items], "text": texts}))
             log(f"[gen] {a.model}/{tag} done")
     print(f"done in {(time.time() - t0) / 60:.1f} min")

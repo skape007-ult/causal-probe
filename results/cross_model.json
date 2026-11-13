@@ -377,6 +377,195 @@
      }
     }
    }
+  },
+  "gemma2b": {
+   "params_billion": 2.61,
+   "datasets": {
+    "c2c_probe": {
+     "n_layers": 26,
+     "selected_layer": 18,
+     "selected_C": 1.0,
+     "selected_layer_relative_depth": 0.6923076923076923,
+     "first_layer_within_1pt_of_max": 16,
+     "first_layer_within_1pt_relative_depth": 0.6153846153846154,
+     "model_accuracy": 0.5075,
+     "gold_probe_accuracy": {
+      "est": 0.8633333333333333,
+      "lo": 0.8408125,
+      "hi": 0.8858333333333334,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "gold_probe_auroc": {
+      "est": 0.9353777777777778,
+      "lo": 0.9187343055555556,
+      "hi": 0.9510510416666667,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "tfidf_accuracy": {
+      "est": 0.8025,
+      "lo": 0.7783333333333333,
+      "hi": 0.8258333333333333,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "type_prior_accuracy": {
+      "est": 0.6991666666666667,
+      "lo": 0.6716666666666666,
+      "hi": 0.7258541666666666,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_tfidf_accuracy": {
+      "est": 0.060833333333333295,
+      "lo": 0.03497916666666659,
+      "hi": 0.08750000000000002,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_tfidf_auroc": {
+      "est": 0.09881388888888876,
+      "lo": 0.0754378472222224,
+      "hi": 0.12375236111111113,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_type_prior_accuracy": {
+      "est": 0.16416666666666657,
+      "lo": 0.13250000000000006,
+      "hi": 0.19666666666666666,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "best_text_baseline": "structural",
+     "best_text_accuracy": {
+      "est": 0.9191666666666667,
+      "lo": 0.9025,
+      "hi": 0.935,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_best_text_accuracy": {
+      "est": -0.0558333333333334,
+      "lo": -0.0783541666666667,
+      "hi": -0.033312500000000106,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "audited_criterion_met": false,
+     "selectivity_at_selected_layer": 0.07055555555555548,
+     "max_selectivity": 0.11486111111111119,
+     "represents_but_doesnt_say": false,
+     "represents_but_doesnt_say_calibrated": true,
+     "random_init_accuracy": {
+      "est": 0.5958333333333333,
+      "lo": 0.5675,
+      "hi": 0.6225,
+      "n": 1200,
+      "n_groups": 150
+     },
+     "probe_minus_random_init_accuracy": {
+      "est": 0.26749999999999996,
+      "lo": 0.23583333333333334,
+      "hi": 0.30166666666666664,
+      "n": 1200,
+      "n_groups": 150
+     }
+    },
+    "cladder": {
+     "n_layers": 26,
+     "selected_layer": 20,
+     "selected_C": 1.0,
+     "selected_layer_relative_depth": 0.7692307692307693,
+     "first_layer_within_1pt_of_max": 17,
+     "first_layer_within_1pt_relative_depth": 0.6538461538461539,
+     "model_accuracy": 0.5057962172056132,
+     "gold_probe_accuracy": {
+      "est": 0.6259914582062233,
+      "lo": 0.5897258513756416,
+      "hi": 0.664415198814805,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "gold_probe_auroc": {
+      "est": 0.6785451578223229,
+      "lo": 0.6288389968811483,
+      "hi": 0.724494761300415,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "tfidf_accuracy": {
+      "est": 0.5271507016473459,
+      "lo": 0.49386817174968567,
+      "hi": 0.5661810802302571,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "type_prior_accuracy": {
+      "est": 0.4838316046369738,
+      "lo": 0.46222128851540617,
+      "hi": 0.5037438945788896,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_tfidf_accuracy": {
+      "est": 0.09884075655887736,
+      "lo": 0.03779008477164001,
+      "hi": 0.15018161871028018,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_tfidf_auroc": {
+      "est": 0.14675808320105777,
+      "lo": 0.07394189646358355,
+      "hi": 0.20774589949965744,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_type_prior_accuracy": {
+      "est": 0.14215985356924948,
+      "lo": 0.0994727707214666,
+      "hi": 0.1876198213672922,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "best_text_baseline": "structural",
+     "best_text_accuracy": {
+      "est": 0.8004881025015254,
+      "lo": 0.767204220353789,
+      "hi": 0.8390894186577794,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_best_text_accuracy": {
+      "est": -0.1744966442953021,
+      "lo": -0.2203301662287831,
+      "hi": -0.13333127698951264,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "audited_criterion_met": false,
+     "selectivity_at_selected_layer": -0.19411111111111123,
+     "max_selectivity": 0.024333333333333318,
+     "represents_but_doesnt_say": true,
+     "represents_but_doesnt_say_calibrated": false,
+     "random_init_accuracy": {
+      "est": 0.5192190359975595,
+      "lo": 0.49414591714689576,
+      "hi": 0.5475910335545551,
+      "n": 1639,
+      "n_groups": 24
+     },
+     "probe_minus_random_init_accuracy": {
+      "est": 0.10677242220866379,
+      "lo": 0.06358249901012503,
+      "hi": 0.15018471894092816,
+      "n": 1639,
+      "n_groups": 24
+     }
+    }
+   }
   }
  },
  "note": "selected layer = argmax of gold-probe accuracy on the selection half of premises/stories. Probe/baseline accuracies and their differences are on the report half (see 05_confound.py). Selectivity and first_layer_within_1pt_* are computed on all items from the per-layer curves at the selected C.",
@@ -388,10 +577,38 @@
    "n": 1200,
    "n_groups": 150
   },
+  "c2c_probe:gemma2b_minus_qwen0.5b": {
+   "est": 0.05666666666666664,
+   "lo": 0.033333333333333326,
+   "hi": 0.08083333333333331,
+   "n": 1200,
+   "n_groups": 150
+  },
+  "c2c_probe:gemma2b_minus_qwen1.5b": {
+   "est": -0.00666666666666671,
+   "lo": -0.029166666666666674,
+   "hi": 0.01749999999999996,
+   "n": 1200,
+   "n_groups": 150
+  },
   "cladder:qwen1.5b_minus_qwen0.5b": {
    "est": 0.043929225137278816,
    "lo": 0.014043915705304697,
    "hi": 0.07623038286755093,
+   "n": 1639,
+   "n_groups": 24
+  },
+  "cladder:gemma2b_minus_qwen0.5b": {
+   "est": 0.06528370957901153,
+   "lo": 0.028537777698914087,
+   "hi": 0.10292322430328986,
+   "n": 1639,
+   "n_groups": 24
+  },
+  "cladder:gemma2b_minus_qwen1.5b": {
+   "est": 0.021354484441732713,
+   "lo": -0.013468208092485503,
+   "hi": 0.05616275829835419,
    "n": 1639,
    "n_groups": 24
   }

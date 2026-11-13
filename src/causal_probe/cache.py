@@ -162,7 +162,7 @@ def build_cache(model_name: str, tag: str, random_init: bool = False, model=None
             h = models.body_forward(model, ids, mask).last_hidden_state[:, -1]
             res = coll.pop()
             al = models.answer_logits_from_hidden(model, h, ans)
-            if device.type == "mps" and not full_vocab:
+            if device.type == "mps" and (not full_vocab or token_budget(model_name, device) <= 1):
                 torch.mps.empty_cache()     # keep the allocator from growing into swap
             if full_vocab:      # top-1 token over the whole vocabulary (diagnostic)
                 top = models.logits_from_hidden(model, h).max(-1)

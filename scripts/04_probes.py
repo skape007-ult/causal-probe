@@ -56,6 +56,11 @@ def main():
     L = resid.shape[1]
     minority = min(m.mean(), 1 - m.mean())
     do_model_out = minority >= 0.05
+    # Median-split of the model's answer logit difference: its *relative* preference once a
+    # constant Yes/No bias is removed (added after seeing that Qwen-0.5B answers "No" to
+    # ~everything, which makes the raw model-output target degenerate; logged in notes/log.md).
+    ldv = np.array(meta["logit_diff"])
+    mcal = (ldv > np.median(ldv)).astype(int)
     ctrl = probes.control_task_labels(items)
     folds = {s: probes.folds_for(items, s) for s in PROBE_SEEDS}
 
@@ -66,10 +71,11 @@ def main():
         jobs.append((f"gold/{s}", y, None, folds[s]))
         jobs.append((f"shuffled/{s}", y, probes.shuffled_labels(y, s), folds[s]))
         jobs.append((f"control/{s}", ctrl, None, folds[s]))
+        jobs.append((f"model_out_cal/{s}", mcal, None, folds[s]))
         if do_model_out:
             jobs.append((f"model_out/{s}", m, None, folds[s]))
     per_layer = Parallel(n_jobs=a.jobs)(delayed(run_layer)(resid, l, 0, jobs) for l in range(L))
-    for name in ["gold", "shuffled", "control"] + (["model_out"] if do_model_out else []):
+    for name in ["gold", "shuffled", "control", "model_out_cal"] + (["model_out"] if do_model_out else []):
         oof[name] = np.stack([[per_layer[l][f"{name}/{s}"] for l in range(L)] for s in PROBE_SEEDS])
     print(f"final position done {time.time() - t0:.0f}s", flush=True)
 
@@ -93,10 +99,11 @@ def main():
     # ---- text baselines (no layers)
     oof["tfidf"] = np.stack([probes.tfidf_oof(items, y, folds[s]) for s in PROBE_SEEDS])
     oof["type_prior"] = np.stack([probes.query_only_oof(items, y, folds[s]) for s in PROBE_SEEDS])
+    oof["tfidf_model_out_cal"] = np.stack([probes.tfidf_oof(items, mcal, folds[s]) for s in PROBE_SEEDS])
     if do_model_out:
         oof["tfidf_model_out"] = np.stack([probes.tfidf_oof(items, m, folds[s]) for s in PROBE_SEEDS])
 
-    np.savez_compressed(cache.cache_dir(a.model, a.tag) / "probe_oof.npz", y=y, model_pred=m,
+    np.savez_compressed(cache.cache_dir(a.model, a.tag) / "probe_oof.npz", y=y, model_pred=m, model_pred_cal=mcal,
                         control_labels=ctrl, **{k.replace("@", "_at_"): v for k, v in oof.items()})
 
     # ---- summary
@@ -105,13 +112,13 @@ def main():
            "model_pred_yes_frac": float(m.mean()), "model_out_probe_run": bool(do_model_out),
            "model_accuracy": stats.accuracy(y, m), "control_label_balance": float(ctrl.mean()),
            "layers": {}, "baselines": {}}
-    targets = {"gold": y, "shuffled": y, "control": ctrl, "model_out": m, "random_init": y,
+    targets = {"gold": y, "shuffled": y, "control": ctrl, "model_out": m, "model_out_cal": mcal, "random_init": y,
                "gold@content_end": y, "gold@premise_end": y}
     for name, S in oof.items():
         if S.ndim == 3:
             res["layers"][name] = [summarise(targets[name], S[:, l], groups) for l in range(L)]
         else:
-            res["baselines"][name] = summarise(m if name == "tfidf_model_out" else y, S, groups)
+            res["baselines"][name] = summarise({"tfidf_model_out": m, "tfidf_model_out_cal": mcal}.get(name, y), S, groups)
     g = np.array([r["accuracy"]["est"] for r in res["layers"]["gold"]])
     c = np.array([r["accuracy"]["est"] for r in res["layers"]["control"]])
     res["selectivity_by_layer"] = (g - c).tolist()

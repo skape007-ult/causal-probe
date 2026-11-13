@@ -23,5 +23,9 @@
 | Gemma-2-2B | CLadder | raw | said no | 637 | 0.650 [0.587, 0.709] | 0.530 [0.471, 0.594] | 0.481 [0.427, 0.525] | 0.496 [0.445, 0.542] | +0.120 [+0.047, +0.193] | 0.897 [0.862, 0.935] | -0.246 [-0.313, -0.194] |
 | Gemma-2-2B | CLadder | calibrated | said yes | 812 | 0.697 [0.631, 0.756] | 0.534 [0.474, 0.600] | 0.471 [0.422, 0.522] | 0.555 [0.479, 0.624] | +0.163 [+0.057, +0.248] | 0.856 [0.816, 0.895] | -0.159 [-0.215, -0.100] |
 | Gemma-2-2B | CLadder | calibrated | said no | 827 | 0.661 [0.603, 0.717] | 0.530 [0.475, 0.595] | 0.473 [0.427, 0.511] | 0.501 [0.446, 0.550] | +0.131 [+0.059, +0.196] | 0.898 [0.866, 0.934] | -0.237 [-0.297, -0.185] |
+| Qwen2.5-3B | Corr2Cause pool | raw | said yes | 59 | 0.939 [0.854, 0.997] | 0.867 [0.748, 0.964] | 0.374 [0.235, 0.527] | 0.538 [0.397, 0.703] | +0.073 [-0.001, +0.156] | 0.986 [0.958, 1.000] | -0.046 [-0.127, +0.005] |
+| Qwen2.5-3B | Corr2Cause pool | raw | said no | 1141 | 0.935 [0.919, 0.949] | 0.839 [0.814, 0.864] | 0.746 [0.716, 0.775] | 0.593 [0.565, 0.620] | +0.096 [+0.074, +0.119] | 0.960 [0.946, 0.972] | -0.026 [-0.039, -0.013] |
+| Qwen2.5-3B | Corr2Cause pool | calibrated | said yes | 590 | 0.905 [0.877, 0.931] | 0.752 [0.700, 0.801] | 0.599 [0.549, 0.652] | 0.489 [0.437, 0.538] | +0.153 [+0.107, +0.201] | 0.944 [0.922, 0.963] | -0.039 [-0.064, -0.015] |
+| Qwen2.5-3B | Corr2Cause pool | calibrated | said no | 610 | 0.954 [0.937, 0.969] | 0.894 [0.868, 0.917] | 0.817 [0.784, 0.850] | 0.463 [0.420, 0.503] | +0.060 [+0.039, +0.083] | 0.971 [0.953, 0.986] | -0.018 [-0.032, -0.004] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_probe.json`</sub>

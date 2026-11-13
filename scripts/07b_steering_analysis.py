@@ -84,8 +84,13 @@ def main():
     for k in range(nd - 3):
         dirs[f"random_{k}"] = steer.unit(r2.standard_normal(X.shape[1]))
     if other is not None:
-        for k, n in enumerate(names):
-            dirs[n] = z["D"][k].astype(np.float64)
+        if "D" in z.files:
+            for k, n in enumerate(names):
+                dirs[n] = z["D"][k].astype(np.float64)
+        else:   # the first Kaggle run did not save its directions: the slopes are exact, but the natural SDs, AUROCs and
+                # the ablation prediction below use directions refitted on this machine's draw of the sample
+            other["note"] += ("; the GPU run's directions were not saved, so direction-dependent quantities (natural SD, AUROC, "
+                              "ablation prediction) use directions refitted on the laptop's draw and are approximate")
     s_check = float(np.sqrt(((X[sel] - mu) ** 2).sum(1).mean()))
     Xc = X[sel] - mu
     # top principal directions of the selection-half activations

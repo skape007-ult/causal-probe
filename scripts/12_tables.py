@@ -14,7 +14,7 @@ from pathlib import Path
 
 OUT = Path(os.environ.get("CAUSAL_PROBE_TABLES", ROOT / "report" / "tables"))
 LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B", "qwen0.5b-lora": "Qwen2.5-0.5B + LoRA",
-       "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)"}
+       "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)", "qwen7b": "Qwen2.5-7B"}
 DS = {"c2c_test": "Corr2Cause test", "c2c_probe": "Corr2Cause pool", "cladder": "CLadder",
       "c2c_debiased": "Corr2Cause debiased pool", "c2c_test_renamed": "Corr2Cause test, variables renamed",
       "c2c_test_sub_fewshot": "Corr2Cause test (500 items)", "cladder_sub_fewshot": "CLadder (500 items)"}
@@ -630,6 +630,77 @@ def t_feature_causal():
          "Mean |Δ logit difference|", "…largest control"], r3, src))
 
 
+ADJ_SITES = (("final_best", "final token, best layer"), ("hyp_best", "end of hypothesis, best layer"),
+             ("final_first50", "final token, earlier layer"), ("hyp_first50", "end of hypothesis, earlier layer"))
+
+
+def rng_(c, d=3):
+    return f"{num(c['control_min'], d, signed=True)} to {num(c['control_max'], d, signed=True)}"
+
+
+def t_adjacency():
+    """The corrected adjacency test (round 2, scripts/17_adjacency_test.py)."""
+    r1, r2, r3, src = [], [], [], []
+    for m in MODELS:
+        for site, slab in ADJ_SITES:
+            r = load(f"adjacency_{m}_c2c_debiased_{site}.json")
+            if not r:
+                continue
+            src.append(f"adjacency_{m}_c2c_debiased_{site}.json")
+            where = f"{slab} ({r['layer']}/{r['n_layers']})"
+            lv = r["leace"]["adjacency_auroc_of_fresh_probe_report_half"]
+            da = r["directions"]["auroc_for_adjacency_report_half_by_template"]
+            cc = lv["after_control_erasures_pooled"]
+            r1.append([LAB[m], where, r["n_items"], num(lv["before"]["pooled"]), num(lv["after_erasure"]["pooled"]),
+                       num(lv["after_removing_probe_direction_only"]["pooled"]), f"{min(cc):.3f} to {max(cc):.3f}",
+                       f"{min(da['probe'].values()):.2f} to {max(da['probe'].values()):.2f}",
+                       f"{min(da['dom_own_template'].values()):.2f} to {max(da['dom_own_template'].values()):.2f}",
+                       num(r["erasure"]["norm_of_edit_over_s"]["real"], 3),
+                       f"{r['erasure']['norm_of_edit_over_s']['controls_range'][0]:.3f} to {r['erasure']['norm_of_edit_over_s']['controls_range'][1]:.3f}",
+                       num(r["self_check_shortcut_vs_full_forward_max_abs_diff"], 3), num(r["baseline_max_abs_diff_vs_cache"], 2),
+                       num(r["baseline_logit_diff_sd"], 2)])
+            for g in r["observational"]:
+                o = r["observational"][g]; tr = r["translation"]["by_template"][g]
+                pg = r["probe_direction_across_class_gap"]["by_template"][g]; er = r["erasure"]["by_template"][g]
+                r2.append([LAB[m], where, TSHORT[g], ci(o["gap_adjacent_minus_not"], signed=True), {1: "+", -1: "−", 0: "none"}[o["predicted_sign"]],
+                           ci(tr, signed=True), rng_(tr["vs_controls_norm_matched"]),
+                           f"{100 * tr['vs_controls_norm_matched']['share_of_controls_below']:.0f}",
+                           ci(pg, 4, signed=True), rng_(pg["vs_controls"], 4),
+                           num(er["gap_on_evaluation_items_before"], 3, signed=True), num(er["gap_after_erasure"], 3, signed=True),
+                           ci(er["change_in_gap"], signed=True), rng_(er["change_in_gap"]["vs_controls"])])
+            tc = r["translation"]["contrast"]; pc = r["probe_direction_across_class_gap"]["contrast"]; ec = r["erasure"]["contrast_reduction_of_dependence"]
+            mo = r["steps"]["model_out"]["per_unit_norm_from_large_step"]; dm = r["steps"]["dom_own_template"]
+            r3.append([LAB[m], where, ", ".join(TSHORT[g] for g in r["templates_in_contrast"]) or "none", num(r["full_mediation_benchmark"]),
+                       ci(tc, signed=True), num(tc["share_of_full_mediation"], 2) if tc["share_of_full_mediation"] is not None else "–",
+                       rng_(tc["vs_controls_norm_matched"]), f"{100 * tc['vs_controls_norm_matched']['share_of_controls_below']:.0f}",
+                       rng_(tc["vs_controls_as_fitted"]),
+                       ci(pc, 4, signed=True), rng_(pc["vs_controls"], 4),
+                       num(ec["value"], 3, signed=True), num(ec["benchmark_full_removal_on_evaluation_items"], 3, signed=True),
+                       rng_(ec["vs_controls"]), f"{100 * ec['vs_controls']['share_of_controls_below']:.0f}",
+                       f"{mo['est']:+.3f} ({100 * mo['vs_controls']['share_of_controls_smaller_in_absolute_value']:.0f}%)",
+                       num(dm["linearity_ratio_small_over_large_slope"], 2) if dm["linearity_ratio_small_over_large_slope"] is not None else "–"])
+    if not src:
+        return
+    write("adjacency_sites", table(
+        ["Model", "Site (layer)", "Items", "Adjacency AUROC of a fresh probe, report half: before", "…after LEACE erasure",
+         "…after removing the probe direction only", "…after 5 control erasures (shuffled labels)",
+         "AUROC along the probe direction, by template (range)", "AUROC along the template's class-mean difference (range)",
+         "Size of the erasure edit (units of s)", "…control erasures", "Self-check: shortcut vs full forward pass (logits)",
+         "Max |unsteered − cached| logit difference", "SD of the answer logit difference"], r1, src))
+    write("adjacency_effects", table(
+        ["Model", "Site (layer)", "Template", "Observed gap in the answer logit, adjacent − not adjacent", "Predicted sign",
+         "Translation by the class-mean difference: effect towards Yes per move towards adjacent", "…20 controls, same norm (range)",
+         "Share of controls below (%)", "Moving across the class gap along the probe direction", "…20 controls, same distance (range)",
+         "Gap on evaluated items: before", "…after erasure", "Change in gap", "…20 control erasures (range of change)"], r2, src))
+    write("adjacency_contrast", table(
+        ["Model", "Site (layer)", "Templates in the contrast", "Full-mediation benchmark (mean |observed gap|)",
+         "Translation: contrast", "…as a share of the benchmark", "…controls, same norm (range)", "Share of controls below (%)",
+         "…controls as fitted (range)", "Probe direction across the gap: contrast", "…controls (range)",
+         "Erasure: reduction of the dependence (contrast)", "…what full removal would give on these items", "…control erasures (range)",
+         "Share of controls below (%)", "Positive control: model-answer direction, slope per unit norm (share of controls it exceeds)",
+         "Linearity check: small-step / large-step slope, class-mean difference"], r3, src))
+
+
 def t_sae():
     """Tier 3: SAE features for causal structure on Gemma-2-2B (first Kaggle run)."""
     f, a = load("sae_features.json"), load("sae_ablation.json")
@@ -675,4 +746,4 @@ def t_sae():
 if __name__ == "__main__":
     t_behaviour(); t_probes(); t_confound(); t_confound(suffix="_fixedC", name="confound_fixedC"); t_audited(); t_external()
     t_steering(); t_patching(); t_cross_model(); t_benchmarks(); t_answer_bias(); t_probe_content()
-    t_patching_same(); t_feature_causal(); t_sae()
+    t_patching_same(); t_adjacency(); t_sae()      # t_feature_causal(): first version of the adjacency test, superseded

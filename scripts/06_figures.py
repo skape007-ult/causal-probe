@@ -17,9 +17,9 @@ MODELS = {**MODELS, **REMOTE_MODELS}     # models run on Kaggle appear once thei
 
 INK, INK2, MUTED, GRID, AXIS, SURF = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#fcfcfb"
 MODEL_COL = {"qwen0.5b": "#2a78d6", "qwen1.5b": "#eb6834", "gemma2b": "#1baf7a", "qwen0.5b-lora": "#6250d6",
-             "qwen3b": "#8a5a00", "qwen7b-4bit": "#7a3fb0"}
+             "qwen3b": "#8a5a00", "qwen7b-4bit": "#7a3fb0", "qwen7b": "#7a3fb0"}
 MODEL_LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B",
-             "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)"}
+             "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)", "qwen7b": "Qwen2.5-7B"}
 SERIES = {  # probe targets and controls: fixed hue + line style
     "gold": ("#2a78d6", "-", "gold-label probe"),
     "model_out": ("#eb6834", "-", "model-output probe"),
@@ -449,54 +449,64 @@ def fig_patching_same():
     save(fig, "fig10_patching_label_preserving.png")
 
 
-# ------------------------------------------------------------------ fig 11: adjacency direction, observed vs intervened
+# ------------------------------------------------------------------ fig 11/12: is the adjacency information used?
 TEMPLATE_ORDER = ["parent", "non-parent ancestor", "non-child descendant", "has_collider", "has_confounder"]
 TEMPLATE_LAB = {"parent": "X directly\ncauses Y", "non-parent ancestor": "X causes\nsomething that\ncauses Y",
                 "non-child descendant": "X causes Y,\nbut not\ndirectly", "has_collider": "X and Y\nhave a common\neffect",
                 "has_confounder": "X and Y\nhave a common\ncause"}
 
 
-def fig_adjacency(site="adj_final_best", name="fig11_adjacency_final.png", where="final prompt token"):
-    ms = [m for m in MODELS if (RESULTS / f"feature_causal_{m}_c2c_debiased_{site}.json").exists()]
+def fig_adjacency(site="final_best", name="fig11_adjacency_final.png", where="final prompt token"):
+    """Corrected adjacency test (17_adjacency_test.py): observed dependence, translation, erasure."""
+    ms = [m for m in MODELS if (RESULTS / f"adjacency_{m}_c2c_debiased_{site}.json").exists()]
     if not ms:
         return
-    fig, axes = plt.subplots(3, len(ms), figsize=(max(4.3 * len(ms) + 0.8, 8.6), 8.2), squeeze=False, sharex=True)
+    fig, axes = plt.subplots(3, len(ms), figsize=(max(4.3 * len(ms) + 0.8, 8.6), 8.6), squeeze=False, sharex=True)
     x = np.arange(len(TEMPLATE_ORDER))
     for j, m in enumerate(ms):
-        r = load(f"feature_causal_{m}_c2c_debiased_{site}.json")
-        obs = [r["observational_by_template"][k]["mean_logit_diff_gap_property_1_minus_0"] for k in TEMPLATE_ORDER]
+        r = load(f"adjacency_{m}_c2c_debiased_{site}.json")
+        lv = r["leace"]["adjacency_auroc_of_fresh_probe_report_half"]
+        col = MODEL_COL[m]
         ax = axes[0, j]
-        ax.bar(x, obs, width=0.55, color=MODEL_COL[m], alpha=0.85)
+        g = [r["observational"][k]["gap_adjacent_minus_not"] for k in TEMPLATE_ORDER]
+        ax.bar(x, [v["est"] for v in g], width=0.55, color=col, alpha=0.85)
+        ax.errorbar(x, [v["est"] for v in g], yerr=[[v["est"] - v["lo"] for v in g], [v["hi"] - v["est"] for v in g]], fmt="none",
+                    ecolor=INK2, elinewidth=1.1, capsize=2.5)
         ax.axhline(0, color=AXIS, lw=0.8)
-        ax.set_title(f"{MODEL_LAB[m]} · layer {r['layer']}/{r['n_layers']} · adjacency AUROC "
-                     f"{r['direction_geometry']['report_half_auroc_for_property']['feat_probe']:.2f}", fontsize=8.5)
-        if j == 0:
-            ax.set_ylabel("observed: Yes−No logit,\nadjacent minus not adjacent")
-        for i, (d, dlab) in enumerate((("feat_probe", "adjacency probe direction"), ("feat_dom", "adjacency difference of means"))):
+        ax.set_title(f"{MODEL_LAB[m]} · layer {r['layer']}/{r['n_layers']} · n = {r['n_items']}", fontsize=8.5)
+        tc = r["translation"]["contrast"]; ec = r["erasure"]["contrast_reduction_of_dependence"]
+        rows = (("translation", "moved to where the other class sits",
+                 f"contrast {tc['est']:+.3f} of {r['full_mediation_benchmark']:.3f}; above {100 * tc['vs_controls_norm_matched']['share_of_controls_below']:.0f}% of controls"),
+                ("erasure", f"adjacency erased (fresh probe {lv['before']['pooled']:.2f} → {lv['after_erasure']['pooled']:.2f})",
+                 f"reduction {ec['value']:+.3f} of {ec['benchmark_full_removal_on_evaluation_items']:+.3f}; above {100 * ec['vs_controls']['share_of_controls_below']:.0f}% of controls"))
+        for i, (key, lab, note) in enumerate(rows):
             ax = axes[i + 1, j]
-            sl = r["slope_per_own_sd"][d]["by_template"]
-            for t, k in enumerate(TEMPLATE_ORDER):
-                c = sl[k]["vs_matched_controls"]
-                ax.plot([t, t], [c["control_min"], c["control_max"]], color=AXIS, lw=7, solid_capstyle="butt", zorder=1)
-                ax.plot([t - 0.16, t + 0.16], [c["control_mean"]] * 2, color=MUTED, lw=1.2, zorder=2)
-                ax.errorbar(t, sl[k]["est"], yerr=[[sl[k]["est"] - sl[k]["lo"]], [sl[k]["hi"] - sl[k]["est"]]], fmt="o", ms=5,
-                            color=MODEL_COL[m], ecolor=MODEL_COL[m], elinewidth=1.4, capsize=2.5, zorder=3)
+            for t_, k in enumerate(TEMPLATE_ORDER):
+                if key == "translation":
+                    v = r["translation"]["by_template"][k]; c = v["vs_controls_norm_matched"]
+                else:
+                    v = r["erasure"]["by_template"][k]["change_in_gap"]; c = v["vs_controls"]
+                ax.plot([t_, t_], [c["control_min"], c["control_max"]], color=AXIS, lw=7, solid_capstyle="butt", zorder=1)
+                ax.plot([t_ - 0.16, t_ + 0.16], [c["control_mean"]] * 2, color=MUTED, lw=1.2, zorder=2)
+                ax.errorbar(t_, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], fmt="o", ms=5, color=col, ecolor=col,
+                            elinewidth=1.4, capsize=2.5, zorder=3)
             ax.axhline(0, color=AXIS, lw=0.8)
-            pt = r["slope_per_own_sd"][d]["pattern_across_templates"]
-            ax.set_title(f"{dlab} · signs matching the observed pattern: {pt['n_sign_agreements']}/5", fontsize=7.5,
-                         fontweight="normal", color=INK2, loc="left")
-            if j == 0:
-                ax.set_ylabel("steered: Δ(Yes−No logit)\nper natural SD")
+            ax.set_title(f"{lab} · {note}", fontsize=7, fontweight="normal", color=INK2, loc="left")
+        if j == 0:
+            axes[0, 0].set_ylabel("observed: Yes−No logit,\nadjacent minus not adjacent")
+            axes[1, 0].set_ylabel("effect towards Yes\nper move towards adjacent")
+            axes[2, 0].set_ylabel("change in the observed gap\n(evaluated items)")
         axes[2, j].set_xticks(x, [TEMPLATE_LAB[k] for k in TEMPLATE_ORDER], fontsize=6.5 if len(ms) > 2 else 7.5)
         axes[2, j].set_xlim(-0.6, len(x) - 0.4)
-    fig.suptitle(f"Is the adjacency information used? Top: how the answer depends on adjacency of the queried pair, per hypothesis type (all 2,400 debiased items).\n"
-                 f"Below: effect of pushing the {where} activation along the adjacency direction (dot, 95% CI) against 20 directions "
-                 "fitted to shuffled labels (grey bar = their range, tick = mean)", fontsize=8.5, color=INK2)
+    fig.suptitle(f"Is the adjacency information used? Interventions at the {where}, debiased Corr2Cause pool.\n"
+                 "Top: how the answer depends on adjacency of the queried pair, by hypothesis type (bars, 95% CI). Middle and bottom: what changing or erasing\n"
+                 "the encoded adjacency does (dot, 95% CI), against the same operation built from labels shuffled within hypothesis string (grey bar = range, tick = mean).\n"
+                 "If the answer read this encoding, middle-row dots would follow the top bars and bottom-row dots would mirror them.", fontsize=8.2, color=INK2)
     fig.tight_layout()
     save(fig, name)
 
 
 if __name__ == "__main__":
     fig_steering(); fig_patching(); fig_components(); fig_cross_model(); fig_patching_same()
-    fig_adjacency(); fig_adjacency("adj_hyp_best", "fig12_adjacency_end_of_hypothesis.png", "end-of-hypothesis")
+    fig_adjacency(); fig_adjacency("hyp_best", "fig12_adjacency_end_of_hypothesis.png", "last token of the hypothesis")
     fig_behaviour(); fig_lens(); fig_probes(); fig_selectivity_positions(); fig_confound()

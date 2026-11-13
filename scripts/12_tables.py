@@ -286,7 +286,10 @@ def t_steering():
                               mf.replace("_", "-label ", 1).replace("diffmeans", "difference of means"),
                               f"{100 * x['versus'][mf]['percentile_of_abs_slope_per_s']:.0f}",
                               num(fam[mf]["abs_slope_per_s"]["median"]), num(fam[mf]["abs_slope_per_s"]["max"]),
-                              num(x["versus"][mf]["ratio_to_median_abs_slope_per_s"], 1)])
+                              num(x["versus"][mf]["ratio_to_median_abs_slope_per_s"], 1),
+                              num(x["own_sd_over_s"], 4), num(fam[mf]["own_sd_over_s_median"], 4),
+                              f"{100 * x['versus'][mf]['percentile_of_abs_slope_per_own_sd']:.0f}",
+                              num(x["versus"][mf]["ratio_to_median_abs_slope_per_own_sd"], 1)])
     write("steering", table(
         ["Model", "Item set", "Layer", "Direction", "Slope: Δ(Yes−No logit) per unit s", "Share of items with positive slope",
          "One unit of s in the direction's own SDs", "Slope per own SD", "Effect of moving across the natural gold-class gap",
@@ -298,7 +301,9 @@ def t_steering():
         write("steering_controls", table(
             ["Model", "Item set", "Layer", "Direction", "Slope per unit s", "Percentile among 100 isotropic directions (|slope|)",
              "Isotropic median |slope|", "Isotropic max |slope|", "Matched control family (20 directions)",
-             "Percentile among matched controls", "Matched median |slope|", "Matched max |slope|", "Ratio to matched median"], rows3, src3))
+             "Percentile among matched controls", "Matched median |slope|", "Matched max |slope|", "Ratio to matched median",
+             "Natural SD along this direction (units of s)", "Natural SD, matched controls (median)",
+             "Percentile among matched controls, per natural SD", "Ratio to matched median, per natural SD"], rows3, src3))
 
 
 def t_patching():
@@ -425,63 +430,95 @@ def t_answer_bias():
 
 
 def t_probe_content():
-    """Post-hoc analysis on the debiased pool (05b): two baseline groups, incremental value, property probes, strata."""
-    blab = {"bag_of_words_whole_prompt": "Bag-of-words, whole prompt", "hypothesis_string_prior": "Hypothesis-string prior",
-            "bag_of_words_premise_only": "Bag-of-words, premise only", "probe_on_shuffled_labels": "Probe trained on shuffled labels",
-            "probe_on_random_init_model": "Probe on a randomly initialised copy of the model"}
-    plab = {"pair_correlated": "queried pair correlates", "pair_marginally_independent": "queried pair is marginally independent",
-            "pair_adjacent_in_skeleton": "queried pair adjacent in the skeleton (never separated)",
-            "pair_has_separating_set": "some conditioning set separates the pair", "pair_has_common_neighbour": "pair has a common neighbour",
-            "common_neighbour_in_a_separating_set": "a common neighbour lies in a separating set",
-            "common_neighbour_in_no_separating_set": "a common neighbour lies in no separating set",
-            "six_variables": "premise has six variables", "many_correlation_statements": "many correlation statements (≥ median)",
+    """Post-hoc analysis on the debiased pool (05b): baseline ladder, incremental value, property probes, strata, answers."""
+    glab = {"A0_single_input": "(a0) single-input control: 0.50 by construction",
+            "A_no_binding_interaction": "(a) shallow confound control: interaction, nothing bound to the queried variables",
+            "B_binding_text_reference": "(b) structure-aware text reference: binds premise statements to the queried variables"}
+    blab = {"hypothesis_string_prior": "Hypothesis-string prior", "bag_of_words_premise_only": "Bag-of-words, premise only",
+            "bag_of_words_whole_prompt_linear": "Bag-of-words, whole prompt (linear)", "probe_on_shuffled_labels_null": "Probe trained on shuffled labels (20 shuffles)",
+            "template_x_premise_counts": "Per template: premise-level counts", "template_x_premise_bag_of_words": "Per template: bag-of-words of the premise",
+            "probe_on_random_init_model": "Probe on a randomly initialised copy of the model",
+            "template_x_per_variable_statement_counts": "Per template: statement counts for each queried variable separately",
+            "template_x_statements_naming_the_pair": "Per template: statements naming the queried pair (lookup)",
+            "per_string_premise_bigrams": "Per hypothesis string: bag of premise 1–2-grams (no parser)",
+            "per_string_premise_4grams": "Per hypothesis string: bag of premise 1–4-grams (no parser)",
+            "hand_parse_all_features": "Hand-written parse, all features (gradient boosting)",
+            "strongest_text_only_parse_plus_4grams": "Hand parse stacked with per-string 4-grams (strongest text-only model here)"}
+    plab = {"pair_correlated": "queried pair correlates", "pair_adjacent_in_skeleton": "queried pair adjacent in the skeleton (never separated)",
+            "pair_has_common_neighbour": "pair has a common neighbour", "common_neighbour_in_a_separating_set": "a common neighbour lies in a separating set",
+            "common_neighbour_in_no_separating_set": "a common neighbour lies in no separating set", "six_variables": "premise has six variables",
+            "many_correlation_statements": "many correlation statements (≥ median)",
             "any_marginal_independence_statement": "premise states a marginal independence",
             "many_conditional_independence_statements": "many conditional-independence statements (≥ median)"}
-    slab = {"template": "hypothesis template (5)", "pair_adjacent_in_skeleton": "pair adjacent in skeleton", "pair_has_separating_set": "pair has a separating set",
-            "pair_correlated": "pair correlated", "pair_has_common_neighbour": "pair has a common neighbour",
-            "common_neighbour_in_no_separating_set": "common neighbour in no separating set",
-            "parsed_classifier_prediction": "parsed-feature classifier's prediction", "template_x_adjacent_x_common_neighbour": "template × adjacent × common neighbour"}
-    rA, rB, rC, rD, src = [], [], [], [], []
+    slab = {"template": "hypothesis template", "pair_adjacent_in_skeleton": "pair adjacent in skeleton", "pair_correlated": "pair correlated",
+            "pair_has_common_neighbour": "pair has a common neighbour", "template_x_adjacent_x_common_neighbour": "template × adjacent × common neighbour",
+            "hand_parse_prediction": "hand parse's prediction (2 strata)", "hand_parse_score_quintiles": "quintiles of the hand-parse score",
+            "parse_quintile_x_4gram_quintile": "hand-parse quintile × per-string 4-gram quintile"}
+    tlab = {"parent": "parent: \"X directly causes Y\"", "has_collider": "has_collider", "has_confounder": "has_confounder",
+            "non-child descendant": "non-child descendant", "non-parent ancestor": "non-parent ancestor"}
+    rA, rB, rC, rD, rE, rF, src = [], [], [], [], [], [], []
     for m in MODELS:
         r = load(f"probe_content_{m}_c2c_debiased.json")
-        if not r:
+        if not r or "A0_single_input" not in r.get("baselines", {}):
             continue
         src.append(f"probe_content_{m}_c2c_debiased.json")
         b = r["baselines"]
-        rA.append([LAB[m], "—", "**Gold-label probe**", ci(b["gold_probe"]["accuracy"]), ci(b["gold_probe"]["auroc"]), "—"])
-        for k, v in b["shallow_confound_controls"].items():
-            rA.append([LAB[m], "(a) shallow confound control", blab[k], ci(v["accuracy"]), ci(v["auroc"]), ci(v["probe_minus_this_accuracy"], signed=True)])
-        v = b["structure_aware_reference"]["parsed_features"]
-        rA.append([LAB[m], "(b) structure-aware reference", "Parsed features (gradient boosting)", ci(v["accuracy"]), ci(v["auroc"]),
-                   ci(v["probe_minus_this_accuracy"], signed=True)])
-        g = r["incremental_value"]
-        rB.append([LAB[m], ci(g["parsed_features_only"]["accuracy"]), ci(g["parsed_features_plus_probe"]["accuracy"]), ci(g["gain_accuracy"], signed=True),
-                   ci(g["gain_auroc"], signed=True), f"{g['probe_right_when_parsed_wrong']:.2f} (n = {g['n_parsed_wrong']})",
-                   f"{g['parsed_right_when_probe_wrong']:.2f} (n = {g['n_probe_wrong']})", num(g["pearson_r_probe_vs_parsed_score"], 2)])
+        rA.append([LAB[m], "—", f"**Gold-label probe, final token, layer {r['layer']}**", ci(b["gold_probe"]["accuracy"]), ci(b["gold_probe"]["auroc"]), "—"])
+        for g in ("A0_single_input", "A_no_binding_interaction", "B_binding_text_reference"):
+            for k, v in b[g].items():
+                if "accuracy" in v:
+                    rA.append([LAB[m], glab[g], blab[k], ci(v["accuracy"]), ci(v["auroc"]), ci(v["probe_minus_this_accuracy"], signed=True)])
+                else:
+                    rA.append([LAB[m], glab[g], blab[k], f"{v['mean']:.3f} ± {v['sd']:.3f} (max {v['max']:.3f})", "–", "–"])
+        iv = r["incremental_value"]
+        for key, lab in (("over_hand_parse", "hand-written parse"), ("over_strongest_text_only", "strongest text-only model (parse + per-string 4-grams)")):
+            g = iv[key]
+            rB.append([LAB[m], lab, ci(g["base"]["accuracy"]), ci(g["with_probe"]["accuracy"]), ci(g["gain_accuracy"], signed=True),
+                       ci(g["gain_auroc"], signed=True), ci(g["gain_accuracy_all_items"], signed=True)])
         for k, v in r["properties"]["by_property"].items():
             x = v["at_gold_probe_layer"]
-            rC.append([LAB[m], r["layer"], plab[k], num(v["majority_rate"], 2), ci(x["trained"]["auroc"]), ci(x["shuffled"]["auroc"]),
-                       ci(x["random_init"]["auroc"]) if x["random_init"] else "–",
-                       ci(x["trained_minus_random_init_auroc"], signed=True) if x["trained_minus_random_init_auroc"] else "–",
-                       ci(x["trained"]["accuracy"]), num(v["gold_accuracy_from_property_alone"])])
+            rC.append([LAB[m], plab[k], num(v["majority_rate"], 2), ci(x["trained"]["auroc"]),
+                       f"{x['shuffled_null_auroc']['mean']:.3f} ± {x['shuffled_null_auroc']['sd']:.3f}",
+                       ci(x["random_init_same_layer_auroc"]) if x["random_init_same_layer_auroc"] else "–",
+                       num(x["random_init_best_layer_auroc"]) if x["random_init_best_layer_auroc"] is not None else "–",
+                       ci(x["text_no_binding_auroc"]), ci(x["text_per_variable_counts_auroc"]),
+                       ci(x["trained_at_end_of_premise_auroc"]) if x["trained_at_end_of_premise_auroc"] else "–",
+                       num(v["gold_accuracy_from_property_alone"])])
         s_ = r["stratified"]
         for k, v in s_["by_stratifier"].items():
-            lo = min(v["strata"].values(), key=lambda t: t["probe_auroc"]["est"]) if v["strata"] else None
-            rD.append([LAB[m], slab[k], len(v["strata"]), num(v["gold_accuracy_from_stratifier_alone"]), ci(s_["overall_probe_auroc"]),
-                       ci(v["pair_weighted_within_stratum_probe_auroc"]),
-                       f"{lo['probe_auroc']['est']:.3f} (n = {lo['n']})" if lo else "–"])
+            rD.append([LAB[m], slab[k], v["n_strata"], num(v["gold_accuracy_from_strata_alone"]), ci(s_["overall_probe_auroc"]), ci(v["probe_auroc_within_strata"])])
+        an = r["answers"]
+        rE.append([LAB[m], "all templates", 2400, ci(an["within_string_auroc_for_gold"]), "–", "–", "–",
+                   ci(an["corr_answer_logit_with_probe_score_string_means_removed"], signed=True), "–"])
+        for t, v in an["by_template"].items():
+            rE.append([LAB[m], tlab.get(t, t), v["n"], ci(v["within_string_auroc_for_gold"]), num(v["within_string_auroc_for_gold_selection_half"]["est"]),
+                       num(v["within_string_auroc_for_gold_report_half"]["est"]), ci(v["within_string_auroc_for_adjacency"]),
+                       ci(v["corr_answer_logit_with_probe_score"], signed=True), ci(v["probe_within_string_auroc_for_gold"])])
+        rb = r["robustness"]
+        rF.append([LAB[m], num(rb["three_seed_ensemble_accuracy"]), " / ".join(f"{x:.3f}" for x in rb["single_seed_accuracy"]),
+                   f"{rb['shuffled_label_null_accuracy']['mean']:.3f} ± {rb['shuffled_label_null_accuracy']['sd']:.3f}",
+                   ci(rb["trained_on_selection_half_only_accuracy"])])
     if not rA:
         return
-    write("debiased_two_groups", table(["Model", "Group", "Scorer", "Accuracy", "AUROC", "Gold probe − this (accuracy, paired)"], rA, src))
+    write("debiased_ladder", table(["Model", "Group", "Scorer", "Accuracy", "AUROC", "Gold probe − this (accuracy, paired)"], rA, src))
     write("debiased_incremental", table(
-        ["Model", "Parsed features only", "Parsed features + probe score", "Gain in accuracy", "Gain in AUROC",
-         "Probe right when parsed features wrong", "Parsed features right when probe wrong", "Correlation of the two scores"], rB, src))
+        ["Model", "Probe added to", "Base accuracy", "Base + probe", "Gain in accuracy (report half)", "Gain in AUROC (report half)",
+         "Gain in accuracy (all items)"], rB, src))
     write("debiased_properties", table(
-        ["Model", "Layer", "Property of the item (read off the prompt by a parser)", "Majority rate", "Probe AUROC, trained model",
-         "Shuffled-label control", "Random-init model", "Trained − random-init", "Probe accuracy, trained", "Gold accuracy from this property alone"], rC, src))
+        ["Model", "Property of the item", "Majority rate", "Probe AUROC, trained model", "Shuffled-label null (mean ± SD, 10 shuffles)",
+         "Random-init model, same layer", "Random-init, its best layer", "Text, no binding (per template: premise counts + string id)",
+         "Text, per-variable statement counts", "Trained model at end of premise (hypothesis not yet read)",
+         "Gold accuracy from this property alone"], rC, src))
     write("debiased_strata", table(
-        ["Model", "Stratified by", "Strata used", "Gold accuracy from the strata alone", "Gold-probe AUROC, unstratified",
-         "Gold-probe AUROC within strata (pair-weighted)", "Lowest single stratum"], rD, src))
+        ["Model", "Stratified by", "Strata", "Gold accuracy from the strata alone", "Gold-probe AUROC, unstratified",
+         "Gold-probe AUROC within strata (pair-weighted)"], rD, src))
+    write("debiased_answers", table(
+        ["Model", "Hypothesis template", "Items", "Answer logit: AUROC for gold within hypothesis string", "…selection half", "…report half",
+         "Answer logit: AUROC for pair adjacency", "Correlation of answer logit with probe score (string means removed)",
+         "Gold probe: AUROC within hypothesis string"], rE, src))
+    write("debiased_robustness", table(
+        ["Model", "Probe accuracy, 3-seed ensemble (report half)", "Single seeds", "Shuffled-label null (20 shuffles)",
+         "Probe trained on the selection half only"], rF, src))
 
 
 if __name__ == "__main__":

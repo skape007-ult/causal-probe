@@ -51,3 +51,8 @@ All times America/Toronto. Format per experiment: **Expectation** (written befor
 - **Headline prediction:** "represents but doesn't say" will *fail* the pre-registered criterion for most model × dataset cells: where the gold probe beats chance on model-wrong items, the text baselines will too. My credence that the criterion passes in at least one of six cells: ~35%.
 - Surprise: gold probe > 85% anywhere; or the criterion passing in most cells; or the random-init model matching the trained one.
 - Cross-model: decodability rises modestly with size; best layer in the middle-to-late range for all.
+
+### 19:10 First look at qwen0.5b; one analysis added after seeing results (logged as required)
+- qwen0.5b answers "No" on 100% of Corr2Cause test, 99.6% of the pool and 96% of CLadder. So (i) the raw model-output probe target is degenerate (skipped when the minority answer is < 5%), and (ii) "items the model gets wrong" = "items whose gold label is Yes", so accuracy-on-wrong-items is just recall on positives.
+- **Change made after seeing this (not a hyperparameter):** added a second, clearly labelled "calibrated" version of the model's answer = answer logit difference above/below its own median (constant bias removed), with its own probe target and its own strata in `05_confound.py`. The pre-registered verdict (D11) is unchanged and still computed on the raw answer; the calibrated verdict is reported next to it. Nothing about the probes themselves (C, layers, folds) was changed.
+- Smoke-run on qwen0.5b/c2c_probe (random-init cache not yet built): gold probe 0.760 at best layer vs TF-IDF 0.750, type prior 0.692, control task 0.644, shuffled 0.498. In line with the logged expectation (text baseline matches the probe).

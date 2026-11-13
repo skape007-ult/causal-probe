@@ -115,8 +115,25 @@ def main():
     res["model_said_yes"] = sub(m == 1)     # within stratum: gold-yes = model right, gold-no = model wrong
     res["model_said_no"] = sub(m == 0)
 
-    def lo(path):
-        cur = res
+    # Secondary, post-hoc (see notes/log.md): the same analysis with the model's answer taken
+    # relative to its own median logit difference, i.e. with a constant Yes/No bias removed.
+    mc = oof["model_pred_cal"]
+    L_mc, _ = pick("model_out_cal")
+    moc = oof["model_out_cal"][:, L_mc].mean(0)
+    res["calibrated"] = {
+        "definition": "model answer := answer logit diff > its median over this item set",
+        "model_accuracy_report_half": stats.accuracy(y[rep], mc[rep]),
+        "selected_layer_model_out_cal": L_mc,
+        "model_out_cal_probe_accuracy": ci(lambda a_, b_: acc_fn(a_, b_), (mc[rep], moc[rep]), groups[rep]),
+        "tfidf_accuracy_predicting_model_answer_cal": ci(acc_fn, (mc[rep], oof["tfidf_model_out_cal"].mean(0)[rep]), groups[rep]),
+        "gold_probe_scored_against_model_answer_cal": ci(acc_fn, (mc[rep], scores["gold_probe"][rep]), groups[rep]),
+        "corr_gold_probe_score_vs_model_out_cal_probe_score": float(np.corrcoef(scores["gold_probe"][rep], moc[rep])[0, 1]),
+        "model_wrong": sub(mc != y), "model_right": sub(mc == y),
+        "model_said_yes": sub(mc == 1), "model_said_no": sub(mc == 0),
+    }
+
+    def lo(path, root=None):
+        cur = res if root is None else root
         for p in path:
             if not isinstance(cur, dict) or p not in cur:
                 return None
@@ -148,6 +165,17 @@ def main():
                       "(report half, layer chosen on the other half) > 0.5, and CI lower bounds of the paired "
                       "accuracy differences vs TF-IDF and vs the type-prior baseline > 0.",
     }
+
+    cw = res["calibrated"]
+    cal_checks = {
+        "probe_beats_chance_on_wrong_items": lo(["model_wrong", "gold_probe", "accuracy"], cw),
+        "probe_beats_tfidf_on_wrong_items": lo(["model_wrong", "gold_probe_minus_tfidf", "accuracy"], cw),
+        "probe_beats_type_prior_on_wrong_items": lo(["model_wrong", "gold_probe_minus_type_prior", "accuracy"], cw),
+    }
+    cal_passed = {k: (v is not None and v > thresholds.get(k, 0.0)) for k, v in cal_checks.items()}
+    res["verdict"]["calibrated"] = {"ci_lower_bounds_wrong_items": cal_checks, "passed": cal_passed,
+                                    "represents_but_doesnt_say": bool(all(cal_passed.values()))}
+    res["verdict"]["degenerate_raw_answer"] = bool(min(m.mean(), 1 - m.mean()) < 0.05)
 
     # ---- external check for Corr2Cause: train on the whole pool, test on the natural-distribution test set
     if a.tag == "c2c_probe":
@@ -182,6 +210,10 @@ def main():
               f"probe acc {mw['gold_probe']['accuracy']['est']:.3f} [{mw['gold_probe']['accuracy']['lo']:.3f},{mw['gold_probe']['accuracy']['hi']:.3f}] "
               f"tfidf {mw['tfidf']['accuracy']['est']:.3f} prior {mw['type_prior']['accuracy']['est']:.3f} "
               f"-> represents_but_doesnt_say={res['verdict']['represents_but_doesnt_say']}")
+    cmw = res["calibrated"]["model_wrong"]
+    print(f"   calibrated answer: wrong items (n={cmw['n']}): probe acc {cmw['gold_probe']['accuracy']['est']:.3f} "
+          f"[{cmw['gold_probe']['accuracy']['lo']:.3f},{cmw['gold_probe']['accuracy']['hi']:.3f}] tfidf {cmw['tfidf']['accuracy']['est']:.3f} "
+          f"prior {cmw['type_prior']['accuracy']['est']:.3f} -> {res['verdict']['calibrated']['represents_but_doesnt_say']}")
     for sname in ("model_said_yes", "model_said_no"):
         b = res[sname]
         if "gold_probe" in b:

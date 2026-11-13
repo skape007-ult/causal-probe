@@ -630,6 +630,7 @@ def t_feature_causal():
          "Mean |Δ logit difference|", "…largest control"], r3, src))
 
 
+TEMPLATES_T = ["parent", "non-parent ancestor", "non-child descendant", "has_collider", "has_confounder"]
 ADJ_SITES = (("final_best", "final token, best layer"), ("hyp_best", "end of hypothesis, best layer"),
              ("final_first50", "final token, earlier layer"), ("hyp_first50", "end of hypothesis, earlier layer"))
 
@@ -664,21 +665,47 @@ def t_adjacency():
                 pg = r["probe_direction_across_class_gap"]["by_template"][g]; er = r["erasure"]["by_template"][g]
                 r2.append([LAB[m], where, TSHORT[g], ci(o["gap_adjacent_minus_not"], signed=True), {1: "+", -1: "−", 0: "none"}[o["predicted_sign"]],
                            ci(tr, signed=True), rng_(tr["vs_controls_norm_matched"]),
-                           f"{100 * tr['vs_controls_norm_matched']['share_of_controls_below']:.0f}",
+                           f"{100 * tr['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
                            ci(pg, 4, signed=True), rng_(pg["vs_controls"], 4),
                            num(er["gap_on_evaluation_items_before"], 3, signed=True), num(er["gap_after_erasure"], 3, signed=True),
-                           ci(er["change_in_gap"], signed=True), rng_(er["change_in_gap"]["vs_controls"])])
+                           ci(er["change_in_gap"], signed=True), rng_(er["change_in_gap"]["vs_controls_norm_matched"]),
+                           f"{100 * er['change_in_gap']['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}"])
             tc = r["translation"]["contrast"]; pc = r["probe_direction_across_class_gap"]["contrast"]; ec = r["erasure"]["contrast_reduction_of_dependence"]
             mo = r["steps"]["model_out"]["per_unit_norm_from_large_step"]; dm = r["steps"]["dom_own_template"]
             r3.append([LAB[m], where, ", ".join(TSHORT[g] for g in r["templates_in_contrast"]) or "none", num(r["full_mediation_benchmark"]),
                        ci(tc, signed=True), num(tc["share_of_full_mediation"], 2) if tc["share_of_full_mediation"] is not None else "–",
-                       rng_(tc["vs_controls_norm_matched"]), f"{100 * tc['vs_controls_norm_matched']['share_of_controls_below']:.0f}",
+                       rng_(tc["vs_controls_norm_matched"]), f"{100 * tc['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
                        rng_(tc["vs_controls_as_fitted"]),
                        ci(pc, 4, signed=True), rng_(pc["vs_controls"], 4),
                        num(ec["value"], 3, signed=True), num(ec["benchmark_full_removal_on_evaluation_items"], 3, signed=True),
-                       rng_(ec["vs_controls"]), f"{100 * ec['vs_controls']['share_of_controls_below']:.0f}",
+                       rng_(ec["vs_controls_norm_matched"]), f"{100 * ec['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
                        f"{mo['est']:+.3f} ({100 * mo['vs_controls']['share_of_controls_smaller_in_absolute_value']:.0f}%)",
                        num(dm["linearity_ratio_small_over_large_slope"], 2) if dm["linearity_ratio_small_over_large_slope"] is not None else "–"])
+    r4, r5, src4 = [], [], []
+    for m in MODELS:
+        for site, slab in ADJ_SITES:
+            r = load(f"adjacency_{m}_c2c_debiased_{site}.json")
+            if not r or "transfer" not in r:
+                continue
+            src4.append(f"adjacency_{m}_c2c_debiased_{site}.json")
+            where = f"{slab} ({r['layer']}/{r['n_layers']})"
+            x = r["transfer"]; T = x["templates"]; M = x["effect_matrix_rows_target_cols_source"]; C = x["cosine_between_class_mean_differences"]
+            for gi, g in enumerate(T):
+                r4.append([LAB[m], where, TSHORT[g], num(r["observational"][g]["gap_adjacent_minus_not"]["est"], 3, signed=True)]
+                          + [num(M[gi][hi], 3, signed=True) for hi in range(len(T))])
+            off = [C[i][j] for i in range(len(T)) for j in range(len(T)) if i < j]
+            tg, sr = x["off_diagonal_contrast_with_the_TARGET_template_sign"], x["off_diagonal_contrast_with_the_SOURCE_template_sign"]
+            r5.append([LAB[m], where, ci(tg, signed=True), ci(sr, signed=True), num(r["full_mediation_benchmark"]),
+                       f"{min(off):+.2f} to {max(off):+.2f}",
+                       " · ".join(f"{TSHORT[T[j]]} {C[0][j]:+.2f}" for j in range(1, len(T)))])
+    if src4:
+        write("adjacency_transfer", table(
+            ["Model", "Site (layer)", "Item's template (target)", "Target's observed gap"]
+            + [f"Vector from: {TSHORT[g]}" for g in TEMPLATES_T], r4, src4))
+        write("adjacency_transfer_summary", table(
+            ["Model", "Site (layer)", "Off-diagonal contrast with the target template's sign", "…with the source template's sign",
+             "Full-mediation benchmark", "Cosines between the five class-mean differences (range)",
+             "Cosine of the direct-causation difference with each of the others"], r5, src4))
     if not src:
         return
     write("adjacency_sites", table(
@@ -690,14 +717,15 @@ def t_adjacency():
     write("adjacency_effects", table(
         ["Model", "Site (layer)", "Template", "Observed gap in the answer logit, adjacent − not adjacent", "Predicted sign",
          "Translation by the class-mean difference: effect towards Yes per move towards adjacent", "…20 controls, same norm (range)",
-         "Share of controls below (%)", "Moving across the class gap along the probe direction", "…20 controls, same distance (range)",
-         "Gap on evaluated items: before", "…after erasure", "Change in gap", "…20 control erasures (range of change)"], r2, src))
+         "Controls smaller in absolute value (%)", "Moving across the class gap along the probe direction", "…20 controls, same distance (range)",
+         "Gap on evaluated items: before", "…after erasure", "Change in gap", "…20 control erasures rescaled to the same edit size (range of change)",
+         "Controls smaller in absolute value (%)"], r2, src))
     write("adjacency_contrast", table(
         ["Model", "Site (layer)", "Templates in the contrast", "Full-mediation benchmark (mean |observed gap|)",
-         "Translation: contrast", "…as a share of the benchmark", "…controls, same norm (range)", "Share of controls below (%)",
+         "Translation: contrast", "…as a share of the benchmark", "…controls, same norm (range)", "Controls smaller in absolute value (%)",
          "…controls as fitted (range)", "Probe direction across the gap: contrast", "…controls (range)",
-         "Erasure: reduction of the dependence (contrast)", "…what full removal would give on these items", "…control erasures (range)",
-         "Share of controls below (%)", "Positive control: model-answer direction, slope per unit norm (share of controls it exceeds)",
+         "Erasure: reduction of the dependence (contrast)", "…what full removal would give on these items", "…control erasures, same edit size (range)",
+         "Controls smaller in absolute value (%)", "Positive control: model-answer direction, slope per unit norm (share of controls it exceeds)",
          "Linearity check: small-step / large-step slope, class-mean difference"], r3, src))
 
 

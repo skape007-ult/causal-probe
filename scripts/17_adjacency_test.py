@@ -385,15 +385,21 @@ def analyse(a, z, meta, items, t_all, layer, layer_info):
     res["erasure"] = {"by_template": {}, "mean_abs_delta_logit_diff": two_sided(float(np.abs(er[:, 0] - base).mean()), np.abs(er[:, 1:] - base[:, None]).mean(0)),
                       "norm_of_edit_over_s": {"real": float(er_n[:, 0].mean() / float(z["s_unit"])),
                                               "controls_range": [float(er_n[:, 1:].mean(0).min() / float(z["s_unit"])), float(er_n[:, 1:].mean(0).max() / float(z["s_unit"]))]}}
-    ch, chc = [], []
+    # control erasures are smaller edits than the real one (the real labels' read-out has more variance to remove).
+    # Under a linear response a control edit scaled to the real edit's mean norm changes the answer by the same factor:
+    er_scale = er_n[:, 0].mean() / er_n[:, 1:].mean(0)                           # [n_shuf]
+    er_cm = base[:, None] + (er[:, 1:] - base[:, None]) * er_scale[None, :]     # control-erased answers, rescaled
+    ch, chc, chcm = [], [], []
     for gi, g in enumerate(TEMPLATES):
         m = gm[gi]
         g0 = gap_eval(base, m); g1 = gap_eval(er[:, 0], m); gc = np.array([gap_eval(er[:, 1 + k], m) for k in range(n_shuf)])
-        ch.append(g1 - g0); chc.append(gc - g0)
+        gcm = np.array([gap_eval(er_cm[:, k], m) for k in range(n_shuf)])
+        ch.append(g1 - g0); chc.append(gc - g0); chcm.append(gcm - g0)
         bt = stats.bootstrap_ci(lambda b_, e_, tt: float((e_[tt == 1].mean() - e_[tt == 0].mean()) - (b_[tt == 1].mean() - b_[tt == 0].mean())),
                                 (base[m], er[m, 0], t[m]), grp[m], n_boot=1000)
         res["erasure"]["by_template"][g] = {
-            "gap_on_evaluation_items_before": g0, "gap_after_erasure": g1, "change_in_gap": {**bt, "vs_controls": two_sided(g1 - g0, gc - g0)},
+            "gap_on_evaluation_items_before": g0, "gap_after_erasure": g1,
+            "change_in_gap": {**bt, "vs_controls": two_sided(g1 - g0, gc - g0), "vs_controls_norm_matched": two_sided(g1 - g0, gcm - g0)},
             "auroc_answer_for_adjacency_before": stats.auroc(t[m], base[m]), "auroc_answer_for_adjacency_after": stats.auroc(t[m], er[m, 0]),
             "auroc_after_control_erasures_range": [float(min(stats.auroc(t[m], er[m, 1 + k]) for k in range(n_shuf))),
                                                    float(max(stats.auroc(t[m], er[m, 1 + k]) for k in range(n_shuf)))],
@@ -401,6 +407,8 @@ def analyse(a, z, meta, items, t_all, layer, layer_info):
     # contrast: predicted_sign x (gap before - gap after) > 0 means the erasure shrinks the dependence in the predicted direction
     res["erasure"]["contrast_reduction_of_dependence"] = {
         "value": float(contrast(-np.array(ch))[0]), "vs_controls": two_sided(float(contrast(-np.array(ch))[0]), contrast(-np.stack(chc))),
+        "vs_controls_norm_matched": two_sided(float(contrast(-np.array(ch))[0]), contrast(-np.stack(chcm))),
+        "control_edit_norm_scale_factors_range": [float(er_scale.min()), float(er_scale.max())],
         "benchmark_full_removal_on_evaluation_items": float(contrast([gap_eval(base, m) for m in gm])[0])}
     # ---- 4. transfer: the class-mean difference of template h applied to items of template g
     if has_xfer:

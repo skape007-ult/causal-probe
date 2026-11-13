@@ -27,7 +27,8 @@ SERIES = {  # probe targets and controls: fixed hue + line style
     "random_init": ("#e87ba4", "--", "random-init model"),
     "shuffled": ("#898781", ":", "shuffled labels"),
 }
-DATASET_LAB = {"c2c_probe": "Corr2Cause (balanced pool)", "cladder": "CLadder", "c2c_test": "Corr2Cause test"}
+DATASET_LAB = {"c2c_probe": "Corr2Cause (balanced pool)", "cladder": "CLadder", "c2c_test": "Corr2Cause test",
+               "c2c_debiased": "Corr2Cause (debiased pool)"}
 
 plt.rcParams.update({
     "figure.facecolor": SURF, "axes.facecolor": SURF, "savefig.facecolor": SURF,
@@ -275,33 +276,43 @@ DIRS = [("gold_probe", "#2a78d6", "-", "gold-probe direction"), ("gold_diffmeans
 
 
 def fig_steering():
-    for tag in ["c2c_probe", "cladder"]:
-        ms = [m for m in MODELS if (RESULTS / f"steering_{m}_{tag}.json").exists()]
+    """From the audited re-analysis (07b): dose-response for both signs, and effect per natural SD."""
+    styles = {"gold_probe": ("#2a78d6", "-", "gold-label probe weights"), "gold_diffmeans": ("#1baf7a", "-", "gold difference of class means"),
+              "model_out": ("#eb6834", "-", "model-answer probe weights (positive control)")}
+    for tag in ["c2c_probe", "c2c_debiased", "cladder"]:
+        ms = [m for m in MODELS if (RESULTS / f"steering_analysis_{m}_{tag}.json").exists()]
         if not ms:
             continue
-        fig, axes = plt.subplots(2, len(ms), figsize=(3.9 * len(ms), 6), squeeze=False, sharey="row")
+        fig, axes = plt.subplots(2, len(ms), figsize=(4.2 * len(ms), 6.4), squeeze=False)
         for j, m in enumerate(ms):
-            r = load(f"steering_{m}_{tag}.json")
-            al = r["alphas"]
-            for key, col, ls, lab in DIRS:
-                d = r["directions"][key]["add"]
-                rnd = key == "random_mean"
-                for i, (metric, title) in enumerate((("flip_rate_plus", "answers flipped by +α·direction"),
-                                                     ("accuracy_toward_gold", "accuracy when pushed towards the gold answer"))):
-                    ax = axes[i, j]
-                    est = [x[metric] if rnd else x[metric]["est"] for x in d]
-                    ax.plot(al, est, color=col, ls=ls, marker="o", ms=4, label=lab)
-                    if not rnd:
-                        ax.fill_between(al, [x[metric]["lo"] for x in d], [x[metric]["hi"] for x in d], color=col, alpha=0.15, lw=0)
-                    ax.set_xscale("log", base=2); ax.set_ylim(-0.03, 1.03)
-                    ax.set_title(f"{MODEL_LAB[m]} · layer {r['layer']}\n{title}", fontsize=8.5)
-                    if i == 1:
-                        ax.set_xlabel("steering scale α (units of typical activation spread)")
-            axes[1, j].axhline(r["baseline"]["accuracy"]["est"], color=INK2, ls=":", lw=1)
-        axes[0, 0].set_ylabel("fraction of items"); axes[1, 0].set_ylabel("accuracy")
+            r = load(f"steering_analysis_{m}_{tag}.json")
+            al = np.array(r["alphas"])
+            ax = axes[0, j]
+            for key, d in r["directions"].items():
+                col, ls, lab = styles.get(key, (MUTED, "--", "random directions (3)" if key == "random_0" else None))
+                yv = [f["mean_delta_logit_diff_minus"] for f in d["flip_rate"]][::-1] + [0.0] + [f["mean_delta_logit_diff_plus"] for f in d["flip_rate"]]
+                ax.plot(np.concatenate([-al[::-1], [0], al]), yv, color=col, ls=ls, lw=2 if key in styles else 1, marker="o", ms=3, label=lab)
+            ax.set_xscale("symlog", linthresh=0.25); ax.axhline(0, color=AXIS, lw=0.8); ax.axvline(0, color=AXIS, lw=0.8)
+            ax.set_xticks([-8, -2, -0.5, 0, 0.5, 2, 8], ["−8", "−2", "−½", "0", "½", "2", "8"])
+            ax.set_title(f"{MODEL_LAB[m]} · layer {r['layer']} of {r['n_layers']}\nmean change in Yes−No logit difference", fontsize=8.5)
+            ax.set_xlabel("vector added, in units of s (total activation spread)")
+            ax = axes[1, j]
+            keys = list(r["directions"])
+            vals = [abs(r["directions"][k]["slope_per_own_sd_at_alpha_1"]) for k in keys]
+            cols = [styles.get(k, (MUTED,))[0] for k in keys]
+            labs = [styles[k][2].split(" (")[0] if k in styles else f"random {k[-1]}" for k in keys]
+            ax.barh(range(len(keys)), vals, color=cols, height=0.6)
+            for i, v in enumerate(vals):
+                ax.text(v * 1.15, i, f"{v:.3g}", va="center", fontsize=7.5, color=INK2)
+            ax.set_yticks(range(len(keys)), labs if j == 0 else [""] * len(keys), fontsize=8); ax.invert_yaxis()
+            ax.set_xscale("log"); ax.set_xlim(min(vals) / 3, max(vals) * 6)
+            ax.set_title("|change in logit difference| per natural SD along the direction", fontsize=8.5)
+            ax.set_xlabel("logits per SD (log scale)")
+        axes[0, 0].set_ylabel("Δ logit difference (positive = more Yes)")
         h, l = axes[0, 0].get_legend_handles_labels()
-        fig.legend(h, l, loc="lower center", ncol=4, fontsize=8, bbox_to_anchor=(0.5, -0.04))
-        fig.suptitle(f"Steering at the final token · {DATASET_LAB[tag]} · dotted = unsteered accuracy", fontsize=9, color=INK2)
+        fig.legend(h, l, loc="lower center", ncol=2, fontsize=8, bbox_to_anchor=(0.5, -0.07))
+        fig.suptitle(f"Steering at the final token · {DATASET_LAB.get(tag, tag)} · top: both signs; bottom: effect at each direction's natural scale",
+                     fontsize=9, color=INK2)
         fig.tight_layout()
         save(fig, f"fig6_steering_{tag}.png")
 
@@ -318,7 +329,7 @@ def fig_patching():
         for j, m in enumerate(ms):
             r = load(f"patching_{m}.json")
             k = r["kinds"][kind]
-            for i, (key, lab) in enumerate((("pooled_recovery", "clean → corrupt"), ("control_pooled_recovery", "random-donor control"))):
+            for i, (key, lab) in enumerate((("pooled_recovery", "clean → corrupt"), ("control_pooled_recovery", "random-donor patch (uninformative)"))):
                 ax = axes[i, j]
                 g = np.array(k[key], float).T                    # [regions, layers]
                 im = ax.imshow(g, aspect="auto", cmap=cmap, norm=TwoSlopeNorm(0, -1, 1), interpolation="nearest")
@@ -326,12 +337,13 @@ def fig_patching():
                 step = max(1, len(r["layers"]) // 8)
                 ax.set_xticks(range(0, len(r["layers"]), step), [r["layers"][t] for t in range(0, len(r["layers"]), step)])
                 ax.grid(False)
-                ax.set_title(f"{MODEL_LAB[m]} · {lab} (n={k['n_pairs']})", fontsize=8.5)
+                ax.set_title(f"{MODEL_LAB[m]} · {lab} (n={k['n_pairs'] if i == 0 else k['n_pairs_with_control']} pairs)", fontsize=8.5)
                 if i == 1:
                     ax.set_xlabel("layer patched (0 = embeddings)")
             fig.colorbar(im, ax=axes[:, j], shrink=0.7, label="pooled recovery" if j == len(ms) - 1 else None)
-        fig.suptitle(f"Residual-stream patching by layer × token region · minimal pairs: {ktitle}\n"
-                     "1 = corrupt run behaves like clean run; grey cells = region empty", fontsize=9, color=INK2)
+        fig.suptitle(f"Where does a change of variable reach the answer position? Residual-stream patching by layer × token region · "
+                     f"minimal pairs: {ktitle}\n1 = patched run gives the other prompt's Yes−No logit difference; grey cells = region empty. "
+                     "Bottom row: few pairs have a donor and the statistic is not zero under the null (see report).", fontsize=8.5, color=INK2)
         save(fig, f"fig7_patching_{kind}.png")
 
 

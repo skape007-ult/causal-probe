@@ -99,6 +99,12 @@ def main():
         assert rmeta["uids"] == meta["uids"]
         pl = Parallel(n_jobs=a.jobs)(delayed(run_layer)(rres, l, 0, gjobs, C, groups) for l in range(L))
         oof["random_init"] = np.stack([[pl[l][f"gold/{s}"] for l in range(L)] for s in PROBE_SEEDS])
+        # the same control at the other token positions (added 13 Nov: on the debiased pool the gold probe is
+        # strongest at the end of the hypothesis, so the random-init comparison is needed there too)
+        for pi, pname in list(enumerate(meta["positions"]))[1:]:
+            if pname in rmeta["positions"]:
+                pl = Parallel(n_jobs=a.jobs)(delayed(run_layer)(rres, l, rmeta["positions"].index(pname), gjobs, C, groups) for l in range(L))
+                oof[f"random_init@{pname}"] = np.stack([[pl[l][f"gold/{s}"] for l in range(L)] for s in PROBE_SEEDS])
         del rres
 
     # ---- text baselines (no layers)
@@ -120,7 +126,7 @@ def main():
            "model_accuracy": stats.accuracy(y, m), "control_label_balance": float(ctrl.mean()),
            "layers": {}, "baselines": {}}
     targets = {"gold": y, "shuffled": y, "control": ctrl, "model_out": m, "model_out_cal": mcal, "random_init": y,
-               "gold@content_end": y, "gold@premise_end": y}
+               "gold@content_end": y, "gold@premise_end": y, "random_init@content_end": y, "random_init@premise_end": y}
     res["positions_available"] = list(meta["positions"])
     for name, S in oof.items():
         if S.ndim == 3:

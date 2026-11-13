@@ -173,7 +173,18 @@ On the balanced Corr2Cause pool the hypothesis string alone predicts the label w
 
 The original pool cannot separate "represents the answer" from "represents the hypothesis". The debiased pool (D21) removes every single-input route: 2,400 items in which each premise contributes one valid and one invalid hypothesis and each of the 48 usable hypothesis strings is half valid in every cross-validation fold. A classifier that sees only the hypothesis or only the premise scores exactly 0.50 by construction, and whole-prompt TF-IDF scores {{benchmark_baselines.json|corr2cause_debiased_pool/baselines/full_text_tfidf/accuracy|ci}}. The parsed-feature classifier still reaches {{benchmark_baselines.json|corr2cause_debiased_pool/baselines/parsed_features/accuracy|ci}}: it binds the premise's statements to the two variables named in the hypothesis, which is the first step of the task itself.
 
-<!-- T1-DEBIASED-TEXT -->
+Gold-label probes on the debiased pool (report half; layer and regularisation chosen on the other half; hypothesis-only and premise-only classifiers are at 0.500 by construction):
+
+| Model | Gold probe, final token | Random-init model's probe, final token | Whole-prompt TF-IDF | Parsed features | Probe − random-init | Probe − parsed features | Gold probe, end of hypothesis | Random-init, end of hypothesis |
+|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | {{confound_qwen0.5b_c2c_debiased.json|all_items/gold_probe/accuracy|ci}} | {{confound_qwen0.5b_c2c_debiased.json|all_items/random_init_probe/accuracy|ci}} | {{confound_qwen0.5b_c2c_debiased.json|all_items/tfidf/accuracy|ci}} | {{confound_qwen0.5b_c2c_debiased.json|all_items/structural/accuracy|ci}} | {{confound_qwen0.5b_c2c_debiased.json|all_items/gold_probe_minus_random_init_probe/accuracy|signedci}} | {{confound_qwen0.5b_c2c_debiased.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} | {{confound_qwen0.5b_c2c_debiased.json|positions/content_end/accuracy|ci}} | {{confound_qwen0.5b_c2c_debiased.json|positions/content_end/random_init_accuracy|ci}} |
+| Qwen2.5-1.5B | {{confound_qwen1.5b_c2c_debiased.json|all_items/gold_probe/accuracy|ci}} | {{confound_qwen1.5b_c2c_debiased.json|all_items/random_init_probe/accuracy|ci}} | {{confound_qwen1.5b_c2c_debiased.json|all_items/tfidf/accuracy|ci}} | {{confound_qwen1.5b_c2c_debiased.json|all_items/structural/accuracy|ci}} | {{confound_qwen1.5b_c2c_debiased.json|all_items/gold_probe_minus_random_init_probe/accuracy|signedci}} | {{confound_qwen1.5b_c2c_debiased.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} | {{confound_qwen1.5b_c2c_debiased.json|positions/content_end/accuracy|ci}} | {{confound_qwen1.5b_c2c_debiased.json|positions/content_end/random_init_accuracy|ci}} |
+| Gemma-2-2B (activations from Kaggle) | {{confound_gemma2b_c2c_debiased.json|all_items/gold_probe/accuracy|ci}} | {{confound_gemma2b_c2c_debiased.json|all_items/random_init_probe/accuracy|ci}} | {{confound_gemma2b_c2c_debiased.json|all_items/tfidf/accuracy|ci}} | {{confound_gemma2b_c2c_debiased.json|all_items/structural/accuracy|ci}} | {{confound_gemma2b_c2c_debiased.json|all_items/gold_probe_minus_random_init_probe/accuracy|signedci}} | {{confound_gemma2b_c2c_debiased.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} | {{confound_gemma2b_c2c_debiased.json|positions/content_end/accuracy|ci}} | {{confound_gemma2b_c2c_debiased.json|positions/content_end/random_init_accuracy|ci}} |
+| Qwen2.5-3B (activations from Kaggle) | {{confound_qwen3b_c2c_debiased.json|all_items/gold_probe/accuracy|ci}} | {{confound_qwen3b_c2c_debiased.json|all_items/random_init_probe/accuracy|ci}} | {{confound_qwen3b_c2c_debiased.json|all_items/tfidf/accuracy|ci}} | {{confound_qwen3b_c2c_debiased.json|all_items/structural/accuracy|ci}} | {{confound_qwen3b_c2c_debiased.json|all_items/gold_probe_minus_random_init_probe/accuracy|signedci}} | {{confound_qwen3b_c2c_debiased.json|verdict/audited/all_items_probe_minus_best_text_accuracy|signedci}} | {{confound_qwen3b_c2c_debiased.json|positions/content_end/accuracy|ci}} | {{confound_qwen3b_c2c_debiased.json|positions/content_end/random_init_accuracy|ci}} |
+
+<sub>Source: `results/confound_<model>_c2c_debiased.json`. "(pending: …)" marks runs that have not finished.</sub>
+
+<!-- T1-DEBIASED-READING -->
 
 ## 4. Tier 2 results
 
@@ -213,11 +224,53 @@ The original pool cannot separate "represents the answer" from "represents the h
 
 ## 6. Audits
 
-<!-- AUDITS -->
+Each tier was reviewed by a fresh reviewer agent that received the code, the result files and the raw outputs, but not the author's conclusions. Raw reports: `notes/audit_tier1_raw.md`, `notes/audit_tier2_raw.md`. Responses, finding by finding: `notes/log.md`.
+
+**Tier 1 audit (Friday 00:05; Qwen models).** Confirmed: no fold leakage, no premise shared between pool and test, baselines fitted on training folds only, positions, layer indexing and sign conventions, all tables regenerate from the result files. Found:
+
+| Finding | Consequence |
+|---|---|
+| The hypothesis string alone predicts the label at 0.86 in the balanced pool; my baselines (whole-prompt TF-IDF, six-template prior) were too weak | Hypothesis-string, question-only and parsed-feature baselines added; "audited criterion" = probe versus strongest text baseline; the one positive verdict was retracted |
+| "Accuracy above 0.5 on items the model gets wrong" is not a chance test when those items are mostly one class | Balanced accuracy and class balance reported; criterion flagged not applicable outside 20–80% balance |
+| With model answers nearly independent of the gold label, the wrong-items design reduces to probe versus text baseline | Said plainly; audited criterion is exactly that comparison |
+| On CLadder the probe's signal is present before the question is read | Probe accuracy by token position added |
+| The gold-signed logit-lens figure showed answer bias, not knowledge | Figure replaced; AUROC version is the headline |
+| Stale figures and result files | Everything regenerated |
+
+**Tier 2 audit (Friday 11:37; Qwen models).** Confirmed: every number reproduces from the raw outputs; selection and report halves are disjoint; layer indexing is consistent; the key-value-cache shortcut is equivalent to a full forward pass by code reading. The claim I had asked it to attack ("the gold-probe direction is inert while the model-output direction flips answers") **did not survive as stated**:
+
+| Finding | Consequence |
+|---|---|
+| For Qwen2.5-1.5B on Corr2Cause the gold-probe direction has a consistent, wrong-signed effect that my table hid by showing one sign only | Re-analysis with signed slopes and both signs (`scripts/07b_steering_analysis.py`) |
+| Three random directions cannot support "no more than random" | 100 isotropic and 2 × 20 label-shuffled control directions (`scripts/07c_steering_controls.py`) |
+| Steps were tens to hundreds of the probe direction's natural SDs; `s` was mislabelled as a typical deviation | Natural-scale quantities reported; labels corrected |
+| The probe weights and the difference of class means are two views of one discriminant; "weights inert" is not "information unused" | Wording |
+| The difference-of-means effect is not specific to the gold label | Shuffled-label control; wording |
+| CLadder steering rows are vacuous (the direction barely decodes gold) | Conclusions restricted to Corr2Cause |
+| Qwen2.5-0.5B steering had been run at an outdated layer and regularisation | Rerun |
+| Flip rate and "accuracy towards gold" are poor metrics for near-constant answerers | Signed slope is the headline; column renamed "controllability" |
+| Ablation effects are at the float16 noise floor | No ablation claim; noise floor reported |
+| Patching localises where a prompt difference reaches the final token, not where the answer is determined; the random-donor control is invalid as run | Section retitled and reworded; control removed from the argument |
+| Attribution patching is validated for the largest components only | Wording |
+
+**What the audits did not cover.** Gemma-2-2B's Tier 1 results were produced after the Tier 1 audit by the same, already-audited code and were reviewed by the author only. Results from the Kaggle run (Gemma steering, patching and SAEs; the larger model) are covered by a third audit after they arrive. *(Pending.)*
 
 ## 7. Limitations
 
-<!-- LIMITATIONS -->
+- **Models and scale.** Three models of 0.5 to 2.6 billion parameters (plus one larger model run remotely), all at chance on both tasks. Nothing here says what a model that can do the task would show.
+- **One probe family.** Linear probes (L2 logistic regression) at three token positions. A non-linear or multi-position read-out could find more; a negative probing result is weak evidence.
+- **Post-hoc analysis.** The stronger text baselines, the audited criterion and the debiased pool were introduced after seeing results (decisions D18, D19, D21). They make the claim harder to pass, but they are not pre-registered.
+- **Multiplicity.** Many model × dataset × criterion cells are reported with unadjusted 95% intervals.
+- **Few clusters.** The Corr2Cause test set has 21 premises, CLadder 47 stories (24 in a report half); cluster-bootstrap intervals with so few clusters under-cover.
+- **Numerics.** Activations are cached in float16 from float16 models; for the two larger local models no float32 reference fits in memory. Probe fits at C = 1 are stopped at 300 iterations (bias against the probe of under one point on the one fold checked).
+- **Two machines.** Gemma's probes on the original item sets use activations cached on the laptop; its steering, patching, SAE results and its debiased-pool activations were computed on a Kaggle GPU. Agreement of the answer logits between the two is reported in `results/cache_agreement_gemma2b.json`.
+- **Remote caches hold the final token only.** For the larger model, and for Gemma on the debiased pool, the position comparison is unavailable.
+- **Steering.** One layer (plus two fixed depths for some models), final token only; directions fitted on about 1,200 items; float16.
+- **Patching.** 40 to 60 minimal pairs from at most five-variable premises; the models do not distinguish the pairs by gold label; every second layer for the 1.5B model.
+- **Gemma generation check** is first-token-only on 100 items per set.
+- **Labels as released.** Public reports of label errors in both benchmarks exist and were not checked.
+- **CLadder few-shot demonstrations** come from stories that also occur among the evaluated items.
+- **No fine-tuning tier.** The planned LoRA comparison was dropped for compute reasons (decision D20).
 
 ## 8. Interpretation and what I'd do next
 

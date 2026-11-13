@@ -221,10 +221,13 @@ def t_audited(models=MODELS):
             a = c["all_items"]; ps = c["positions"]
             rows.append([LAB[m], DS[tag], ci(a["gold_probe"]["accuracy"]), ci(ps["content_end"]["accuracy"]),
                          ci(ps["premise_end"]["accuracy"]), ci(ps["premise_end"]["final_minus_this_accuracy"], signed=True),
-                         ci(ps["content_end"]["final_minus_this_accuracy"], signed=True)])
+                         ci(ps["content_end"]["final_minus_this_accuracy"], signed=True),
+                         ci(a.get("random_init_probe", {}).get("accuracy")), ci(ps["content_end"].get("random_init_accuracy")),
+                         ci(ps["content_end"].get("trained_minus_random_init_accuracy"), signed=True)])
     write("probe_positions", table(
         ["Model", "Dataset", "Final token", "End of hypothesis / question", "End of premise / context (question not yet read)",
-         "Final − end of premise", "Final − end of hypothesis"], rows, src))
+         "Final − end of premise", "Final − end of hypothesis", "Random-init model, final token",
+         "Random-init model, end of hypothesis", "Trained − random-init, end of hypothesis"], rows, src))
 
 
 def t_external(models=MODELS):
@@ -245,26 +248,57 @@ def t_external(models=MODELS):
 
 
 def t_steering():
-    rows, src = [], []
+    """Steering tables from the audited re-analysis (07b) and the matched controls (07c)."""
+    names = (("gold_probe", "gold-label probe weights"), ("gold_diffmeans", "gold difference of class means"),
+             ("model_out", "model-answer probe weights (positive control)"))
+    rows, rows2, rows3, src, src3 = [], [], [], [], []
     for m in MODELS:
-        for tag in ("c2c_probe", "cladder"):
-            r = load(f"steering_{m}_{tag}.json")
+        for tag, suffix in (("c2c_probe", ""), ("c2c_probe", "_d0.5"), ("c2c_probe", "_d0.85"), ("c2c_debiased", ""),
+                            ("cladder", ""), ("cladder", "_d0.5"), ("cladder", "_d0.85")):
+            r = load(f"steering_analysis_{m}_{tag}{suffix}.json")
             if not r:
                 continue
-            src.append(f"steering_{m}_{tag}.json")
-            for d, lab in (("gold_probe", "gold probe"), ("gold_diffmeans", "gold diff-of-means"), ("model_out", "model output")):
+            src.append(f"steering_analysis_{m}_{tag}{suffix}.json")
+            site = f"{r['layer']}/{r['n_layers']}"
+            dnames = list(names) + [(k, f"random direction {k[-1]}") for k in r["directions"] if k.startswith("random")]
+            for d, lab in dnames:
                 x = r["directions"][d]
-                a1 = next(v for v in x["add"] if v["alpha"] == 1.0); a4 = next(v for v in x["add"] if v["alpha"] == 4.0)
-                rows.append([LAB[m], DS[tag], r["layer"], lab, ci(a1["flip_rate_plus"], 2), ci(a4["flip_rate_plus"], 2),
-                             ci(a4["accuracy_toward_gold"], 2), num(x["ablate"]["mean_abs_delta_logit_diff"]),
-                             num(r["direction_geometry"]["proj_std_over_s_unit"][d])])
-            x = r["directions"]["random_mean"]
-            a1 = next(v for v in x["add"] if v["alpha"] == 1.0); a4 = next(v for v in x["add"] if v["alpha"] == 4.0)
-            rows.append([LAB[m], DS[tag], r["layer"], "random (mean of 3)", num(a1["flip_rate_plus"], 2), num(a4["flip_rate_plus"], 2),
-                         num(a4["accuracy_toward_gold"], 2), num(x["ablate"]["mean_abs_delta_logit_diff"]), "–"])
+                f4 = next(v for v in x["flip_rate"] if v["alpha"] == 4.0)
+                rows.append([LAB[m], DS[tag], site, lab, ci(x["slope_per_s_at_alpha_1"], signed=True),
+                             num(x["frac_items_with_positive_slope_at_alpha_1"], 2), num(x["alpha_1_in_own_sd"], 1),
+                             num(x["slope_per_own_sd_at_alpha_1"], 4, signed=True),
+                             num(x["effect_of_natural_class_gap_on_logit_diff"], 4, signed=True),
+                             num(x["auroc_gold_report_half"]), num(x["auroc_model_answer_report_half"])])
+                rows2.append([LAB[m], DS[tag], site, lab, ci(f4["plus"], 2), ci(f4["minus"], 2),
+                              ci(f4["controllability_toward_gold"], 2), ci(f4["controllability_away_from_gold"], 2),
+                              num(x["ablation"]["mean_abs_delta_logit_diff"], 4), num(r["ablation_noise_floor_logit_diff"], 4),
+                              "yes" if x["ablation"]["above_noise_floor"] else "no"])
+        for tag in ("c2c_probe", "c2c_debiased", "cladder"):
+            c = load(f"steering_controls_{m}_{tag}.json")
+            if not c:
+                continue
+            src3.append(f"steering_controls_{m}_{tag}.json")
+            for d, lab in names:
+                x = c["real"][d]; mf = x["matched_control_family"]; fam = c["families"]
+                rows3.append([LAB[m], DS[tag], c["layer"], lab, ci(x["slope_per_s"], signed=True),
+                              f"{100 * x['versus']['isotropic']['percentile_of_abs_slope_per_s']:.0f}",
+                              num(fam["isotropic"]["abs_slope_per_s"]["median"]), num(fam["isotropic"]["abs_slope_per_s"]["max"]),
+                              mf.replace("_", "-label ", 1).replace("diffmeans", "difference of means"),
+                              f"{100 * x['versus'][mf]['percentile_of_abs_slope_per_s']:.0f}",
+                              num(fam[mf]["abs_slope_per_s"]["median"]), num(fam[mf]["abs_slope_per_s"]["max"]),
+                              num(x["versus"][mf]["ratio_to_median_abs_slope_per_s"], 1)])
     write("steering", table(
-        ["Model", "Dataset", "Layer", "Direction", "Flip rate α=1", "Flip rate α=4", "Acc. towards gold α=4",
-         "Ablation mean |ΔLD|", "Proj. std / s"], rows, src))
+        ["Model", "Item set", "Layer", "Direction", "Slope: Δ(Yes−No logit) per unit s", "Share of items with positive slope",
+         "One unit of s in the direction's own SDs", "Slope per own SD", "Effect of moving across the natural gold-class gap",
+         "AUROC for gold label", "AUROC for model's answer"], rows, src))
+    write("steering_flips", table(
+        ["Model", "Item set", "Layer", "Direction", "Flip rate +4s", "Flip rate −4s", "Controllability towards gold (4s)",
+         "Controllability away from gold (4s)", "Ablation mean |ΔLD|", "Noise floor", "Ablation above 3× floor"], rows2, src))
+    if rows3:
+        write("steering_controls", table(
+            ["Model", "Item set", "Layer", "Direction", "Slope per unit s", "Percentile among 100 isotropic directions (|slope|)",
+             "Isotropic median |slope|", "Isotropic max |slope|", "Matched control family (20 directions)",
+             "Percentile among matched controls", "Matched median |slope|", "Matched max |slope|", "Ratio to matched median"], rows3, src3))
 
 
 def t_patching():

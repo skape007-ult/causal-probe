@@ -165,6 +165,19 @@ def main():
         res["positions"][pname] = {"selected_layer": best[2], "selected_C": best[1],
                                    "accuracy": ci(acc_fn, (y[rep], sp[rep]), groups[rep]),
                                    "final_minus_this_accuracy": ci(diff_acc, (y[rep], scores["gold_probe"][rep], sp[rep]), groups[rep])}
+        rkey = f"random_init_at_{pname}"
+        if all(rkey in oofs[c].files for c in Cs):     # random-init control at this position, selected the same way
+            rb = None
+            for c in Cs:
+                S = oofs[c][rkey]
+                acc = ((S[:, :, sel] > 0) == y[sel][None, None]).mean((0, 2))
+                if rb is None or acc.max() > rb[0]:
+                    rb = (acc.max(), c, int(acc.argmax()))
+            rp = oofs[rb[1]][rkey][:, rb[2]].mean(0)
+            res["positions"][pname].update({
+                "random_init_selected_layer": rb[2], "random_init_selected_C": rb[1],
+                "random_init_accuracy": ci(acc_fn, (y[rep], rp[rep]), groups[rep]),
+                "trained_minus_random_init_accuracy": ci(diff_acc, (y[rep], sp[rep], rp[rep]), groups[rep])})
     if "random_init" in oof.files:
         L_r, _ = pick("random_init")
         res["selected_layer_random_init"] = L_r

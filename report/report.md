@@ -5,7 +5,19 @@ Technical report. Every number in a table comes from `results/*.json` via `scrip
 
 ## 1. Question and summary
 
-<!-- SUMMARY -->
+**Question.** Do small open-weight language models internally represent the correct answer to formal causal-reasoning questions they answer wrongly; is that representation used; and where is the answer formed?
+
+**Summary of findings.**
+
+1. *Behaviour.* Qwen2.5-0.5B, Qwen2.5-1.5B and Gemma-2-2B are at chance on Corr2Cause and CLadder. Part of the picture is answer bias; the bias-free ranking score is at or near 0.5 as well, and the small signal on the original Corr2Cause items disappears when surface cues are removed (Section 3.1).
+2. *First probing result and its retraction.* Linear probes decode the gold label at 0.807 to 0.870 on a balanced Corr2Cause pool, and the pre-registered criterion for "represents but doesn't say" passed as coded in some cells. An independent audit showed the criterion's baselines were too weak: the hypothesis string alone predicts the label at 0.859 on that pool. Against the strongest text-only baseline the probes lose in all six model × benchmark cells. The positive verdict was retracted (Section 3.4).
+3. *Text-only baselines on the benchmarks.* On the official Corr2Cause test split a hypothesis-only classifier reaches AUROC 0.895 [0.863, 0.919] and a parsed-feature classifier accuracy 0.938 [0.921, 0.957]; on CLadder, quoted numbers plus question polarity reach 0.835 [0.818, 0.853] on held-out stories. The Corr2Cause effect follows from the benchmark's published construction; the CLadder one is largely documented by prior work (Section 3.5 and `report/benchmark_text_baselines.md`).
+4. *A fairer test.* On a debiased Corr2Cause pool, in which the hypothesis alone and the premise alone carry no label information in any fold, the gold probe scores 0.633 [0.609, 0.658] for Qwen2.5-0.5B and 0.752 [0.729, 0.776] for Qwen2.5-1.5B, with both models answering at chance. For the 1.5B model this is well above every shallow confound control (strongest: a probe on a randomly initialised copy, 0.579), below a parsed-feature classifier (0.816), and adds nothing measurable to it. Properties that require binding premise statements to the queried variables are readable from the trained model and not from a random one. The supported statement is that this model encodes part of the premise's structure that its answers do not express; the audited criterion for the stronger claim is not met (Section 3.6; post hoc).
+5. *Steering.* At the probed layer, adding the gold probe's weight direction changes the answer no more than adding a probe direction fitted to shuffled labels, and a movement of natural size along it changes nothing. The difference-of-class-means direction does move the answer, but about as much as differences of means for shuffled labels. This does not establish that the decoded information is unused (Section 4.1; rewritten after the second audit).
+6. *Patching.* A change of one variable in the prompt reaches the answer position at about 0.6 of the network's depth in both Qwen models. This locates the arrival of a prompt difference, not a causal judgement (Section 4.2).
+7. *Remote runs.* Gemma-2-2B interventions and SAE features, and all analyses for Qwen2.5-3B, are pending the Kaggle run (Sections 3.6, 4, 5).
+
+**Pre-registration status.** Pre-registered before any probe was run: the wrong-items criterion (D11) with TF-IDF and template-prior baselines, grouped cross-validation, split-half selection, cluster bootstrap. Added after seeing results, each making the claim harder to pass or narrowing it: stronger text baselines (D18), the audited criterion (D19), the debiased pool (D21), the steering metric and matched controls (D24), the two-group reading and its three tests (D25). The pre-registered analysis is reported in full alongside.
 
 ## 2. Setup
 

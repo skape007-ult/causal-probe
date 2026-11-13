@@ -121,6 +121,7 @@ def main():
                 torch.mps.empty_cache()
         delta = ld_clean - ld_cor
         lab = np.array([p.get("label", -1) for p, _ in encs])
+        tpl = np.array([p["clean"].get("template", "") for p, _ in encs])
         eff, ceff = grid - ld_cor[:, None, None], ctrl - ld_cor[:, None, None]
         has_ctrl = ~np.isnan(ctrl[:, 0, -1])
         rec_pool = pooled(delta, eff)
@@ -146,12 +147,18 @@ def main():
                          "pooled_recovery_final_token_by_layer": pooled(delta[lab == c], eff[lab == c])[:, -1].tolist()}
                 for c in (0, 1) if (lab == c).sum() >= 5}} if a.label_mode == "same" else {}),
             "abs_delta_quartiles": [float(v) for v in np.quantile(np.abs(delta), [0.25, 0.5, 0.75])],
+            "by_template": {tt: {"n_pairs": int((tpl == tt).sum()), "mean_abs_delta": float(np.abs(delta[tpl == tt]).mean()),
+                                 "mean_delta": float(delta[tpl == tt].mean())} for tt in sorted(set(tpl))},
             "note_regions": "premise_rest is empty for kind=hyp (premises are identical); positions before the "
                             "first differing token are identical in both runs and are not patched.",
         }
         res["kinds"][kind] = kres
         raw.update({f"{kind}_grid": grid, f"{kind}_ctrl": ctrl, f"{kind}_ld_clean": ld_clean, f"{kind}_ld_cor": ld_cor,
-                    f"{kind}_groups": groups, f"{kind}_common_label": lab})
+                    f"{kind}_groups": groups, f"{kind}_common_label": lab,
+                    f"{kind}_clean_uid": np.array([p["clean"]["uid"] for p, _ in encs]),
+                    f"{kind}_corrupt_uid": np.array([p["corrupt"]["uid"] for p, _ in encs]),
+                    f"{kind}_template": np.array([p["clean"].get("template", "") for p, _ in encs]),
+                    f"{kind}_swap": np.array(["".join(p["swap"]) for p, _ in encs])})
         print(f"[{kind}] n={n} mean delta {delta.mean():.3f} frac>0 {(delta > 0).mean():.2f}; "
               f"final-position recovery by layer: " + " ".join(f"{v:.2f}" for v in rec_pool[:, -1]), flush=True)
 

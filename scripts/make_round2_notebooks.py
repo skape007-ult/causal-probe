@@ -14,7 +14,7 @@ REPO = "https://github.com/skape007-ult/causal-probe.git"
 
 RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF token, title, what it does, estimate
     dict(file="kaggle_r2_qwen3b.ipynb", platform="kaggle", run="r2_qwen3b", models="qwen3b",
-         jobs="cache,controls,controls_hyp,feature,patch_same,patch,export", fallback="", token=False,
+         jobs="cache,controls,controls_hyp,adjacency,patch_same,patch,export", fallback="", token=False,
          title="Round 2 / A: Qwen2.5-3B interventions",
          what="matched steering controls at the final and end-of-hypothesis tokens, the adjacency causal test at four sites, "
               "label-preserving and label-changing patching pairs", est="3 to 4.5 hours"),
@@ -24,11 +24,26 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
          what="per-item answer logits of the 7B model (4-bit; float16 over two GPUs if 4-bit loading fails) on the debiased pool, "
               "the official Corr2Cause test set, CLadder and the original probe pool; no interventions", est="1.5 to 3 hours"),
     dict(file="kaggle_r2_gemma.ipynb", platform="kaggle", run="r2_gemma", models="gemma2b",
-         jobs="cache,controls,controls_hyp,feature,patch_same,export", fallback="", token=True,
+         jobs="cache,controls,controls_hyp,adjacency,patch_same,export", fallback="", token=True,
          title="Round 2 / D: Gemma-2-2B interventions",
          what="matched steering controls at both tokens, the adjacency causal test, label-preserving patching pairs", est="2.5 to 4 hours"),
+    dict(file="kaggle_r2b_qwen3b_adjacency.ipynb", platform="kaggle", run="r2b_qwen3b", models="qwen3b",
+         jobs="cache,adjacency,export", fallback="", token=False,
+         title="Round 2 / A2: Qwen2.5-3B, corrected adjacency test only",
+         what="ONLY needed if notebook A was launched at commit 9fdec33 or earlier: the corrected adjacency test at four sites",
+         est="1 to 2 hours"),
+    dict(file="kaggle_r2b_gemma_adjacency.ipynb", platform="kaggle", run="r2b_gemma", models="gemma2b",
+         jobs="cache,adjacency,export", fallback="", token=True,
+         title="Round 2 / D2: Gemma-2-2B, corrected adjacency test only",
+         what="ONLY needed if notebook D was launched at commit 9fdec33 or earlier: the corrected adjacency test at four sites",
+         est="1 to 2 hours"),
+    dict(file="colab_r2b_qwen1.5b_adjacency.ipynb", platform="colab", run="r2b_qwen15b", models="qwen1.5b",
+         jobs="cache,adjacency,export", fallback="", token=False,
+         title="Round 2 / C2: Qwen2.5-1.5B, corrected adjacency test only (Colab)",
+         what="ONLY needed if notebook C was launched at commit 9fdec33 or earlier: the corrected adjacency test at four sites",
+         est="1 to 1.5 hours"),
     dict(file="colab_r2_qwen1.5b.ipynb", platform="colab", run="r2_qwen15b", models="qwen1.5b",
-         jobs="cache,controls_hyp,feature,patch_same,export", fallback="", token=False,
+         jobs="cache,controls_hyp,adjacency,patch_same,export", fallback="", token=False,
          title="Round 2 / C: Qwen2.5-1.5B interventions (Colab)",
          what="steering controls at the end-of-hypothesis token, the adjacency causal test, label-preserving patching pairs "
               "(this model's final-token controls already ran on the laptop)", est="1.5 to 3 hours"),

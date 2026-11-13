@@ -16,3 +16,6 @@ site: content_end, layer 13, C 0.1 (quick_select)
 W1113 17:29:19.442000 30387 .venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
 Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights:   0%|          | 1/290 [00:01<08:59,  1.87s/it]Loading weights: 100%|██████████| 290/290 [00:01<00:00, 154.37it/s]
 [timing] projected 6.8 min for the remaining 145 items
+gold_probe      slope +0.095/s | vs isotropic: percentile 0.61 | vs shuffled_probe: percentile 0.50, x1.0 its median
+gold_diffmeans  slope +0.287/s | vs isotropic: percentile 0.99 | vs shuffled_diffmeans: percentile 1.00, x4.3 its median
+model_out       slope +0.756/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x7.6 its median

@@ -125,7 +125,7 @@ def fig_lens():
                 ax.fill_between(x, c["lo"][1:], c["hi"][1:], color=col, alpha=0.12, lw=0)
             ax.axhline(0, color=AXIS, lw=1)
             ax.set_title(f"{MODEL_LAB[m]} · {DATASET_LAB[tag]}", fontsize=9)
-            ax.legend(fontsize=7, loc="upper left")
+            ax.legend(fontsize=7, loc="center left")
             if i == len(tags) - 1:
                 ax.set_xlabel("layer (0 = embeddings)")
             if j == 0:
@@ -414,6 +414,89 @@ def fig_cross_model():
     save(fig, "fig9_cross_model.png")
 
 
+# ------------------------------------------------------------------ fig 10: label-preserving patching pairs
+def fig_patching_same():
+    ms = [m for m in MODELS if (RESULTS / f"patching_{m}_same.json").exists()]
+    if not ms:
+        return
+    fig, axes = plt.subplots(2, len(ms), figsize=(3.6 * len(ms) + 0.6, 5.6), squeeze=False, sharey="row")
+    for j, m in enumerate(ms):
+        ch, sm = load(f"patching_{m}.json"), load(f"patching_{m}_same.json")
+        for i, (kind, klab) in enumerate((("hyp", "hypothesis differs by one variable"), ("prem", "premise relabelled"))):
+            ax = axes[i, j]
+            for r, lab, ls, mk in ((ch, "label changes", "-", "o"), (sm, "label preserved", "--", "s")):
+                if not r:
+                    continue
+                k = r["kinds"][kind]
+                x = np.array(r["layers"]) / r["layers"][-1]
+                y = np.array(k["pooled_recovery"], float)[:, -1]
+                lo = np.array(k["pooled_recovery_lo"], float)[:, -1]; hi = np.array(k["pooled_recovery_hi"], float)[:, -1]
+                ax.fill_between(x, lo, hi, color=MODEL_COL[m], alpha=0.12 if ls == "-" else 0.06, lw=0)
+                ax.plot(x, y, ls, color=MODEL_COL[m] if ls == "-" else INK2, marker=mk, ms=3, lw=1.6,
+                        label=f"{lab} (n={k['n_pairs']}, mean |D| {k['behaviour_on_pairs']['mean_abs_delta']:.2f})")
+            ax.axhline(0.5, color=AXIS, lw=0.8)
+            ax.set_ylim(-0.1, 1.1)
+            ax.set_title(f"{MODEL_LAB[m]} · {klab}", fontsize=8.5)
+            ax.legend(fontsize=7, loc="center left")
+            if i == 1:
+                ax.set_xlabel("layer patched at the final token (relative depth)")
+            if j == 0:
+                ax.set_ylabel("pooled recovery of D")
+    fig.suptitle("Does patching see a change of answer, or a change of prompt? Final-token patching for pairs whose gold label changes\n"
+                 "(solid, model colour) and pairs with the same kind of edit and the same gold label (dashed, grey). "
+                 "D = difference in the Yes−No logit between the two prompts; bands = 95% cluster-bootstrap CI", fontsize=8.5, color=INK2)
+    fig.tight_layout()
+    save(fig, "fig10_patching_label_preserving.png")
+
+
+# ------------------------------------------------------------------ fig 11: adjacency direction, observed vs intervened
+TEMPLATE_ORDER = ["parent", "non-parent ancestor", "non-child descendant", "has_collider", "has_confounder"]
+TEMPLATE_LAB = {"parent": "X directly\ncauses Y", "non-parent ancestor": "X causes\nsomething that\ncauses Y",
+                "non-child descendant": "X causes Y,\nbut not\ndirectly", "has_collider": "X and Y\nhave a common\neffect",
+                "has_confounder": "X and Y\nhave a common\ncause"}
+
+
+def fig_adjacency(site="adj_final_best", name="fig11_adjacency_final.png", where="final prompt token"):
+    ms = [m for m in MODELS if (RESULTS / f"feature_causal_{m}_c2c_debiased_{site}.json").exists()]
+    if not ms:
+        return
+    fig, axes = plt.subplots(3, len(ms), figsize=(max(4.3 * len(ms) + 0.8, 8.6), 8.2), squeeze=False, sharex=True)
+    x = np.arange(len(TEMPLATE_ORDER))
+    for j, m in enumerate(ms):
+        r = load(f"feature_causal_{m}_c2c_debiased_{site}.json")
+        obs = [r["observational_by_template"][k]["mean_logit_diff_gap_property_1_minus_0"] for k in TEMPLATE_ORDER]
+        ax = axes[0, j]
+        ax.bar(x, obs, width=0.55, color=MODEL_COL[m], alpha=0.85)
+        ax.axhline(0, color=AXIS, lw=0.8)
+        ax.set_title(f"{MODEL_LAB[m]} · layer {r['layer']}/{r['n_layers']} · adjacency AUROC "
+                     f"{r['direction_geometry']['report_half_auroc_for_property']['feat_probe']:.2f}", fontsize=8.5)
+        if j == 0:
+            ax.set_ylabel("observed: Yes−No logit,\nadjacent minus not adjacent")
+        for i, (d, dlab) in enumerate((("feat_probe", "adjacency probe direction"), ("feat_dom", "adjacency difference of means"))):
+            ax = axes[i + 1, j]
+            sl = r["slope_per_own_sd"][d]["by_template"]
+            for t, k in enumerate(TEMPLATE_ORDER):
+                c = sl[k]["vs_matched_controls"]
+                ax.plot([t, t], [c["control_min"], c["control_max"]], color=AXIS, lw=7, solid_capstyle="butt", zorder=1)
+                ax.plot([t - 0.16, t + 0.16], [c["control_mean"]] * 2, color=MUTED, lw=1.2, zorder=2)
+                ax.errorbar(t, sl[k]["est"], yerr=[[sl[k]["est"] - sl[k]["lo"]], [sl[k]["hi"] - sl[k]["est"]]], fmt="o", ms=5,
+                            color=MODEL_COL[m], ecolor=MODEL_COL[m], elinewidth=1.4, capsize=2.5, zorder=3)
+            ax.axhline(0, color=AXIS, lw=0.8)
+            pt = r["slope_per_own_sd"][d]["pattern_across_templates"]
+            ax.set_title(f"{dlab} · signs matching the observed pattern: {pt['n_sign_agreements']}/5", fontsize=7.5,
+                         fontweight="normal", color=INK2, loc="left")
+            if j == 0:
+                ax.set_ylabel("steered: Δ(Yes−No logit)\nper natural SD")
+        axes[2, j].set_xticks(x, [TEMPLATE_LAB[k] for k in TEMPLATE_ORDER], fontsize=6.5 if len(ms) > 2 else 7.5)
+        axes[2, j].set_xlim(-0.6, len(x) - 0.4)
+    fig.suptitle(f"Is the adjacency information used? Top: how the answer depends on adjacency of the queried pair, per hypothesis type (all 2,400 debiased items).\n"
+                 f"Below: effect of pushing the {where} activation along the adjacency direction (dot, 95% CI) against 20 directions "
+                 "fitted to shuffled labels (grey bar = their range, tick = mean)", fontsize=8.5, color=INK2)
+    fig.tight_layout()
+    save(fig, name)
+
+
 if __name__ == "__main__":
-    fig_steering(); fig_patching(); fig_components(); fig_cross_model()
+    fig_steering(); fig_patching(); fig_components(); fig_cross_model(); fig_patching_same()
+    fig_adjacency(); fig_adjacency("adj_hyp_best", "fig12_adjacency_end_of_hypothesis.png", "end-of-hypothesis")
     fig_behaviour(); fig_lens(); fig_probes(); fig_selectivity_positions(); fig_confound()

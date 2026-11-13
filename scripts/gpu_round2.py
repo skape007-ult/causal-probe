@@ -21,9 +21,12 @@ Jobs (each applies to every model in --models, in this order):
                 models that have no patching result yet
   patch_same    the same on label-preserving pairs (the control for "patching localises a prompt
                 difference")
-  feature       interventions on the adjacency direction with matched controls, at four sites
-                (final token / end of hypothesis x best layer / first layer at 90% of the best):
-                scripts/16_feature_causal.py
+  adjacency     interventions on the encoding of adjacency (steps, translation by the class-mean
+                difference, LEACE erasure) with controls from labels shuffled within hypothesis
+                string, at four sites (final token / end of hypothesis x best layer / first layer
+                at 50% of the best layer's excess AUROC): scripts/17_adjacency_test.py
+  feature       the first version of that test (scripts/16_feature_causal.py), superseded after the
+                code review; kept so that its results can be reproduced
   export        cache_<run>_<model>.zip: debiased-pool activations at the final and end-of-hypothesis
                 tokens, per-item logits, and the raw logit differences of every intervention
 """
@@ -42,8 +45,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
 T0 = time.time()
-JOBS = ["behaviour", "cache", "controls", "controls_hyp", "patch", "patch_same", "feature", "export"]
-SITES = [("final", "best"), ("content_end", "best"), ("final", "first90"), ("content_end", "first90")]
+JOBS = ["behaviour", "cache", "controls", "controls_hyp", "patch", "patch_same", "adjacency", "feature", "export"]
+SITES = [("final", "best"), ("content_end", "best"), ("final", "first90"), ("content_end", "first90")]      # first version (feature)
+SITES2 = [("final", "best"), ("content_end", "best"), ("final", "first50"), ("content_end", "first50")]    # adjacency
 
 
 def main():
@@ -171,6 +175,12 @@ def main():
                 for tag in ("c2c_debiased", "c2c_probe"):
                     stage(f"r2.{M}.controls_hyp.{tag}", "scripts/07c_steering_controls.py", "--model", M, "--tag", tag,
                           "--position", "content_end", "--sub-batch", "16", "--max-minutes", "50", *stride, *n_c, minutes=58)
+            if "adjacency" in jobs:
+                for pos, spec in SITES2:
+                    stage(f"r2.{M}.adjacency.{pos}.{spec}", "scripts/17_adjacency_test.py", "--model", M, "--position", pos,
+                          "--layer-spec", spec, "--sub-batch", "16", "--max-minutes", "55",
+                          *(["--per-template", "24", "--n-shuf", "3", "--select-stride", "6"] if a.tiny
+                            else ["--per-template", "100", "--select-stride", "1"]), minutes=65)
             if "feature" in jobs:
                 for pos, spec in SITES:
                     stage(f"r2.{M}.feature.{pos}.{spec}", "scripts/16_feature_causal.py", "--model", M, "--position", pos,

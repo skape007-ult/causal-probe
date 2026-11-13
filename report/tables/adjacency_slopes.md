@@ -1,0 +1,8 @@
+| Model | Site (layer) | Items | Direction | Slope: Δ(Yes−No logit) per natural SD, all templates | Percentile of |slope| among 20 matched controls | Largest matched-control slope | Slope by hypothesis template | Signs agreeing with the observational pattern | Correlation with the observational pattern (5 templates) | Percentile of that correlation among controls | Range of slopes across templates | Percentile of that range among controls |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | final token, best layer (15/24) | 500 | adjacency probe weights | -0.0001 [-0.0003, -0.0000] | 40 | +0.0006 | parent -0.000 · ancestor -0.000 · descendant -0.000 · collider -0.000 · confounder +0.000 | 2/5 | +0.22 | 70 | 0.000 | 55 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | 500 | adjacency difference of means | -0.2395 [-0.2415, -0.2371] | 90 | +0.3701 | parent -0.260 · ancestor -0.249 · descendant -0.228 · collider -0.226 · confounder -0.233 | 3/5 | -0.54 | 30 | 0.034 | 85 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | 500 | gold-label probe weights | +0.0005 [+0.0004, +0.0006] | 75 | +0.0006 | parent +0.001 · ancestor +0.000 · descendant +0.000 · collider +0.000 · confounder +0.001 | 2/5 | -0.42 | 25 | 0.000 | 50 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | 500 | model-answer probe weights | +0.1103 [+0.1098, +0.1108] | 100 | +0.0006 | parent +0.113 · ancestor +0.110 · descendant +0.110 · collider +0.110 · confounder +0.108 | 2/5 | +0.61 | 80 | 0.005 | 100 |
+
+<sub>Source: `results/feature_causal_qwen0.5b_c2c_debiased_adj_final_best.json`</sub>

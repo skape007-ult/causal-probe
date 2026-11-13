@@ -1,0 +1,159 @@
+{
+ "model": "qwen0.5b",
+ "tag": "c2c_debiased",
+ "position": "content_end",
+ "layer": 13,
+ "layer_selection": "quick_select",
+ "n_layers": 24,
+ "probe_C": 0.1,
+ "alpha": 1.0,
+ "s_unit": 3.3907992839813232,
+ "n_items": 150,
+ "baseline_max_abs_diff_vs_cache": 0.03578758239746094,
+ "families": {
+  "isotropic": {
+   "abs_slope_per_s": {
+    "n": 100,
+    "median": 0.06867845356464386,
+    "p90": 0.1882188767194748,
+    "max": 0.3200896084308624,
+    "rms": 0.11263357102870941
+   },
+   "abs_slope_per_own_sd": {
+    "n": 100,
+    "median": 0.002110125729814172,
+    "p90": 0.006213071756064892,
+    "max": 0.009776024147868156,
+    "rms": 0.0034872766118496656
+   },
+   "own_sd_over_s_median": 0.028543662279844284,
+   "frac_sign_consistent_directions": 0.4
+  },
+  "shuffled_probe": {
+   "abs_slope_per_s": {
+    "n": 20,
+    "median": 0.09922181814908981,
+    "p90": 0.16253022849559784,
+    "max": 0.2312667816877365,
+    "rms": 0.11065920442342758
+   },
+   "abs_slope_per_own_sd": {
+    "n": 20,
+    "median": 0.0005625792546197772,
+    "p90": 0.0008844820549711585,
+    "max": 0.001399715431034565,
+    "rms": 0.0006501810858026147
+   },
+   "own_sd_over_s_median": 0.00573134608566761,
+   "frac_sign_consistent_directions": 0.35
+  },
+  "shuffled_diffmeans": {
+   "abs_slope_per_s": {
+    "n": 20,
+    "median": 0.0665777251124382,
+    "p90": 0.18590621650218964,
+    "max": 0.2153194397687912,
+    "rms": 0.10762050747871399
+   },
+   "abs_slope_per_own_sd": {
+    "n": 20,
+    "median": 0.030314434319734573,
+    "p90": 0.07825060188770294,
+    "max": 0.09894993901252747,
+    "rms": 0.04909009858965874
+   },
+   "own_sd_over_s_median": 0.508493185043335,
+   "frac_sign_consistent_directions": 0.45
+  }
+ },
+ "real": {
+  "gold_probe": {
+   "slope_per_s": {
+    "est": 0.09547674655914307,
+    "lo": 0.07356240991503,
+    "hi": 0.11488415841013193,
+    "n": 150,
+    "n_groups": 143
+   },
+   "own_sd_over_s": 0.006288313306868076,
+   "slope_per_own_sd": 0.0006003876915201545,
+   "frac_items_positive_slope": 0.84,
+   "versus": {
+    "isotropic": {
+     "percentile_of_abs_slope_per_s": 0.61,
+     "ratio_to_median_abs_slope_per_s": 1.3901994228363037,
+     "ratio_to_max_abs_slope_per_s": 0.29828131198883057,
+     "percentile_of_abs_slope_per_own_sd": 0.21,
+     "ratio_to_median_abs_slope_per_own_sd": 0.2845269739627838
+    },
+    "shuffled_probe": {
+     "percentile_of_abs_slope_per_s": 0.5,
+     "ratio_to_median_abs_slope_per_s": 0.9622555375099182,
+     "ratio_to_max_abs_slope_per_s": 0.41284245252609253,
+     "percentile_of_abs_slope_per_own_sd": 0.55,
+     "ratio_to_median_abs_slope_per_own_sd": 1.067205548286438
+    }
+   },
+   "matched_control_family": "shuffled_probe"
+  },
+  "gold_diffmeans": {
+   "slope_per_s": {
+    "est": 0.2874045670032501,
+    "lo": 0.26194239780306816,
+    "hi": 0.313136824965477,
+    "n": 150,
+    "n_groups": 143
+   },
+   "own_sd_over_s": 0.13230712711811066,
+   "slope_per_own_sd": 0.03802567347884178,
+   "frac_items_positive_slope": 0.9733333333333334,
+   "versus": {
+    "isotropic": {
+     "percentile_of_abs_slope_per_s": 0.99,
+     "ratio_to_median_abs_slope_per_s": 4.184784889221191,
+     "ratio_to_max_abs_slope_per_s": 0.8978878259658813,
+     "percentile_of_abs_slope_per_own_sd": 1.0,
+     "ratio_to_median_abs_slope_per_own_sd": 18.020572662353516
+    },
+    "shuffled_diffmeans": {
+     "percentile_of_abs_slope_per_s": 1.0,
+     "ratio_to_median_abs_slope_per_s": 4.316827774047852,
+     "ratio_to_max_abs_slope_per_s": 1.3347822427749634,
+     "percentile_of_abs_slope_per_own_sd": 0.55,
+     "ratio_to_median_abs_slope_per_own_sd": 1.2543752193450928
+    }
+   },
+   "matched_control_family": "shuffled_diffmeans"
+  },
+  "model_out": {
+   "slope_per_s": {
+    "est": 0.7562833428382874,
+    "lo": 0.7089485496282577,
+    "hi": 0.806984044611454,
+    "n": 150,
+    "n_groups": 143
+   },
+   "own_sd_over_s": 0.027992822229862213,
+   "slope_per_own_sd": 0.02117050811648369,
+   "frac_items_positive_slope": 1.0,
+   "versus": {
+    "isotropic": {
+     "percentile_of_abs_slope_per_s": 1.0,
+     "ratio_to_median_abs_slope_per_s": 11.011946678161621,
+     "ratio_to_max_abs_slope_per_s": 2.3627243041992188,
+     "percentile_of_abs_slope_per_own_sd": 1.0,
+     "ratio_to_median_abs_slope_per_own_sd": 10.032818794250488
+    },
+    "shuffled_probe": {
+     "percentile_of_abs_slope_per_s": 1.0,
+     "ratio_to_median_abs_slope_per_s": 7.6221489906311035,
+     "ratio_to_max_abs_slope_per_s": 3.2701776027679443,
+     "percentile_of_abs_slope_per_own_sd": 1.0,
+     "ratio_to_median_abs_slope_per_own_sd": 37.63115692138672
+    }
+   },
+   "matched_control_family": "shuffled_probe"
+  }
+ },
+ "minutes": 4.4
+}

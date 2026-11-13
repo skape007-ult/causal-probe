@@ -585,6 +585,8 @@ def t_feature_causal():
                     r2.append([LAB[m], where, TSHORT[k], lab, num(o["within_string_auroc_answer_for_property"]),
                                num(o["mean_logit_diff_gap_property_1_minus_0"], 3, signed=True), ci(x, 4, signed=True),
                                f"{100 * x['signed_percentile_among_controls']:.0f}", ci(sh, 3, signed=True),
+                               (f"{100 * sh['est'] / o['mean_logit_diff_gap_property_1_minus_0']:+.0f}%"
+                                if abs(o["mean_logit_diff_gap_property_1_minus_0"]) > 1e-6 else "–"),
                                f"{100 * sh['vs_matched_controls']['percentile']:.0f}",
                                num(sh["auroc_property_baseline"]), num(sh["auroc_property_after_shift"]),
                                num(sh["auroc_property_after_shift_controls_mean"])])
@@ -620,7 +622,7 @@ def t_feature_causal():
     write("adjacency_by_template", table(
         ["Model", "Site (layer)", "Template", "Direction", "Observed: AUROC of answer for adjacency (within string)",
          "Observed: logit-difference gap, adjacent − not adjacent", "Steering slope per natural SD", "Signed percentile among matched controls",
-         "Shift to the other class: effect towards Yes per push towards adjacent", "Percentile among matched controls",
+         "Shift to the other class: effect towards Yes per push towards adjacent", "…as a share of the observed gap", "Percentile among matched controls",
          "AUROC of answer for adjacency: unsteered", "…after the shift", "…after the shift, control mean"], r2, src))
     write("adjacency_ablation", table(
         ["Model", "Site (layer)", "Removed", "Template", "AUROC of answer for gold label: unsteered", "Change after removal",

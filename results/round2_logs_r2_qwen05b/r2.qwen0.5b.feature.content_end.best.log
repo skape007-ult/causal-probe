@@ -1,0 +1,46 @@
+[    6s] [select] layer 1: C=0.01 0.579 C=0.1 0.601 C=1 0.620
+[    6s] [select] layer 2: C=0.01 0.611 C=0.1 0.623 C=1 0.621
+[    6s] [select] layer 3: C=0.01 0.629 C=0.1 0.641 C=1 0.626
+[    6s] [select] layer 4: C=0.01 0.636 C=0.1 0.649 C=1 0.645
+[    6s] [select] layer 5: C=0.01 0.740 C=0.1 0.766 C=1 0.767
+[    6s] [select] layer 6: C=0.01 0.734 C=0.1 0.766 C=1 0.763
+[    6s] [select] layer 7: C=0.01 0.733 C=0.1 0.773 C=1 0.773
+[    6s] [select] layer 8: C=0.01 0.725 C=0.1 0.761 C=1 0.766
+[    6s] [select] layer 9: C=0.01 0.773 C=0.1 0.822 C=1 0.830
+[    6s] [select] layer 10: C=0.01 0.770 C=0.1 0.809 C=1 0.814
+[    6s] [select] layer 11: C=0.01 0.835 C=0.1 0.881 C=1 0.889
+[    6s] [select] layer 12: C=0.01 0.820 C=0.1 0.872 C=1 0.881
+[    6s] [select] layer 13: C=0.01 0.882 C=0.1 0.914 C=1 0.911
+[    6s] [select] layer 14: C=0.01 0.867 C=0.1 0.901 C=1 0.900
+[    6s] [select] layer 15: C=0.01 0.852 C=0.1 0.888 C=1 0.888
+[    6s] [select] layer 16: C=0.01 0.860 C=0.1 0.891 C=1 0.888
+[    6s] [select] layer 17: C=0.01 0.846 C=0.1 0.886 C=1 0.884
+[    6s] [select] layer 18: C=0.01 0.833 C=0.1 0.881 C=1 0.884
+[    6s] [select] layer 19: C=0.01 0.834 C=0.1 0.877 C=1 0.880
+[    6s] [select] layer 20: C=0.01 0.836 C=0.1 0.876 C=1 0.880
+[    6s] [select] layer 21: C=0.01 0.831 C=0.1 0.874 C=1 0.881
+[    6s] [select] layer 22: C=0.01 0.818 C=0.1 0.865 C=1 0.874
+[    6s] [select] layer 23: C=0.01 0.811 C=0.1 0.862 C=1 0.870
+[    6s] [select] layer 24: C=0.01 0.803 C=0.1 0.852 C=1 0.861
+[    6s] site adj_hyp_best: layer 13, C 0.1, selection-half AUROC 0.914
+[    6s] real directions fitted (rank-4 subspace included)
+[   11s] 65 directions; class gap along feat_probe 1.52 own SDs, feat_dom 0.54; report-half AUROC for the property 0.938 / 0.661
+W1113 17:45:51.735000 31654 .venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights:   0%|          | 1/290 [00:02<09:41,  2.01s/it]Loading weights: 100%|██████████| 290/290 [00:02<00:00, 143.06it/s]
+[   32s] [timing] 1.98 s/item (259 vectors) -> projected 16.3 min for the remaining 495 items
+[   97s] 50/500
+[  180s] 100/500
+[  276s] 150/500
+[  374s] 200/500
+[  479s] 250/500
+[  600s] 300/500
+[  720s] 350/500
+[  820s] 400/500
+[  924s] 450/500
+[ 1019s] 500/500
+qwen0.5b/c2c_debiased adj_hyp_best: layer 13/24  property AUROC (report half) 0.938
+  feat_probe  pooled slope/SD -0.0009 (controls pct 0.95) | by template has_collid -0.000 has_confou -0.001 non-child  -0.003 non-parent -0.001 parent -0.000 | pattern r -0.54 (pct 0.25), signs 3/5
+  feat_dom    pooled slope/SD -0.0286 (controls pct 0.90) | by template has_collid -0.026 has_confou -0.028 non-child  -0.012 non-parent -0.043 parent -0.033 | pattern r +0.13 (pct 0.50), signs 3/5
+  gold_probe  pooled slope/SD +0.0005 (controls pct 0.45) | by template has_collid +0.001 has_confou +0.001 non-child  -0.001 non-parent +0.001 parent +0.001 | pattern r -0.41 (pct 0.25), signs 1/5
+  model_out   pooled slope/SD +0.0211 (controls pct 1.00) | by template has_collid +0.015 has_confou +0.017 non-child  +0.013 non-parent +0.035 parent +0.026 | pattern r +0.26 (pct 0.60), signs 2/5
+  observational gap by template: has_collid -0.230 has_confou -0.113 non-child  +0.055 non-parent -0.042 parent +0.050

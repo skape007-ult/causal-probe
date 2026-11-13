@@ -35,10 +35,20 @@ ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
 
 
+def notebook_setting(run: str, name: str) -> str | None:
+    """A string setting (JOBS, MODELS) from the notebook whose RUN_NAME is `run`."""
+    for nb in sorted((ROOT / "notebooks").glob("*_r2*.ipynb")):
+        txt = nb.read_text()
+        if re.search(r'RUN_NAME\s*=\s*\\"%s\\"' % re.escape(run), txt):
+            m = re.search(r'%s\s*=\s*\\"([^"\\]*)\\"' % name, txt)
+            return m.group(1) if m else None
+    return None
+
+
 def pinned_commit(run: str | None = None) -> str | None:
     """The commit pinned in the notebook of this run (round 1: notebooks/kaggle_gpu.ipynb; round 2:
     the notebook whose RUN_NAME is `run`)."""
-    nbs = [ROOT / "notebooks" / "kaggle_gpu.ipynb"] if run is None else sorted((ROOT / "notebooks").glob("*_r2_*.ipynb"))
+    nbs = [ROOT / "notebooks" / "kaggle_gpu.ipynb"] if run is None else sorted((ROOT / "notebooks").glob("*_r2*.ipynb"))
     for nb in nbs:
         txt = nb.read_text() if nb.exists() else ""
         if run is not None and not re.search(r'RUN_NAME\s*=\s*\\"%s\\"' % re.escape(run), txt):
@@ -179,6 +189,11 @@ def main():
         exp = status.get("planned", [])
         if not exp:
             problems.append(f"results/round2_status_{a.run}.json is missing or lists no planned stages (wrong folder, or the run never started)")
+        if status.get("tiny") or a.run.endswith("_tiny"):
+            sys.exit("ERROR: this is the output of a smoke test (SMOKE_TEST = True; a few items per stage). It is never ingested.")
+        want = notebook_setting(a.run, "JOBS")
+        if want is not None and sorted(status.get("jobs", [])) != sorted(want.split(",")):
+            problems.append(f"the run executed jobs {status.get('jobs')} but its notebook lists {want.split(',')}")
     else:
         exp = expected_stages(not a.no_gemma, large, bool(large) and large in QUANT_4BIT)
     missing, failed = [], []
@@ -194,7 +209,7 @@ def main():
                 print(f"            | {line[:160]}")
         else:
             print(f"  ok      {s['minutes']:6.1f} min  {name}")
-    finished = "export" in status
+    finished = bool(status.get("finished")) if a.run else "export" in status
     print(f"  run reached the export step: {'yes' if finished else 'NO (the run was cut short)'}; "
           f"total {status.get('total_minutes', '?')} min")
     if a.run:

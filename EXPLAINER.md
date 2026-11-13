@@ -21,7 +21,8 @@ Contents: [Start here](#start-here) · [Pipeline](#pipeline) · [Concept primer]
 4. *Retraction.* Against text-only baselines that exploit this (and a similar one for CLadder, where the quoted numbers plus the wording of the question predict 80% and more), the probes lose in every model and both benchmarks. The positive result was withdrawn. The stronger baselines were added after seeing results, and the write-up says so.
 5. *Making the benchmark finding solid.* The same baselines were run on the official splits with one reproducible script, the papers were read to separate what is already known from what is not, and a neutral note was written (`report/benchmark_text_baselines.md`).
 6. *A fair test.* A new set of Corr2Cause items was built in which neither the question alone nor the premise alone says anything about the answer, in any training or test fold. Result so far (two models; two more are on a Kaggle GPU): the smallest model's probe scores 63%, barely above a probe on a randomly initialised copy of the same network (60%). The 1.5B model's probe scores 75%, clearly above its random copy (58%), while the model's actual answers stay at chance. So that model does hold something about the answer that it does not say. But a hand-written text parser that only performs the first step of the textbook method (look up what the premise says about the two variables in the question) scores 82%, and the model's activations turn out to contain exactly that lookup (readable at 93%). The fair description is: *partial computation that is not expressed*, not a hidden correct answer.
-7. *Is the readable information used?* Pushing the activations along the probe's direction ("steering") does no more to the model's answer than pushing in a random direction, while pushing along the direction that predicts the model's *own* answer flips it. So even the information that can be read out is not what drives the answer. *(Being re-examined by a second independent audit; Gemma and a larger model are running on a Kaggle GPU.)*
+7. *Is the readable information used?* My first answer was "no: pushing the activations along the probe's direction does nothing, while pushing along the direction of the model's own answer flips it". A second independent audit took that apart. I had shown one sign of the push only, which hid a consistent effect in one model; I had compared with three random directions, far too few; and the pushes were a hundred times larger than anything that occurs naturally along the probe's direction. Redone with the right measure (how much the answer moves per unit pushed, both signs) and the right controls (directions built the same way from shuffled labels), the careful statement is: the probe's direction moves the answer no more than a label-free direction of the same kind, and a push of natural size does nothing. That is weaker than "unused", and the report says why. The plainest evidence that the information is not used is simply that the model's answers stay at chance.
+8. *Where is the answer formed?* Swapping activations between two prompts that differ in one variable shows the difference travelling from the changed word to the final position at about 60% of the network's depth. The audit pointed out that this is where a *change in the prompt* arrives, not where a *causal judgement* is made, because the models do not prefer the correct prompt of a pair. The section is retitled accordingly.
 
 **The one-sentence version (so far).** What first looked like a hidden correct answer was the probe reading the wording of the question; once that route is closed, the smallest model shows almost nothing and a larger one shows a first step of the reasoning that it carries internally and never uses. The general lesson: a probe's score means nothing until it is compared with what the text alone gives away, on items where the cheap routes are closed.
 <!-- /START-HERE -->
@@ -245,6 +246,26 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 *Alternatives:* all three positions (3.5 GB per archive).
 *Why:* download size. *Cost:* the position comparison (final token versus end of hypothesis versus end of premise) is not available for the larger model, nor for Gemma on the debiased pool. `--export-positions final,content_end,premise_end` restores it.
 
+### D24. Steering is summarised by signed slopes and judged against matched controls (Fri 13 Nov, 11:50; after the Tier 2 audit)
+*Decision:* the headline steering number is the slope of the Yes−No logit difference per unit of vector added, from both signs, with a cluster-bootstrap interval (`07b_steering_analysis.py`). Each real direction is compared with 20 directions of the same construction fitted to shuffled labels, and with 100 isotropic directions (`07c_steering_controls.py`). Effects are also reported per natural standard deviation along each direction. Flip rates stay in a secondary table; "accuracy towards gold" is renamed controllability; no ablation comparison is claimed.
+*Alternatives:* keep flip rates and three random directions (the original design).
+*Why:* the audit showed the original summary hid a sign-consistent effect, could not support "no more than random", and used steps of 40 to 300 natural standard deviations along the probe direction.
+*Would change it:* nothing foreseeable; more control directions would tighten the percentiles.
+*Post-hoc status:* metric and controls were changed after seeing results, at an auditor's request, in the direction of a weaker claim.
+
+### D25. Two kinds of baseline, and three tests of what the probe adds and reads (Fri 13 Nov, 13:58; user request)
+*Decision:* on the debiased pool, baselines are reported in two labelled groups: shallow confound controls (bag-of-words, hypothesis prior, premise-only, random-init probe, shuffled labels) and a structure-aware reference (parsed features). Three analyses are added (`05b_probe_content.py`): incremental predictive value of the probe over the parsed features (nested cross-validation); probes for individual parsed properties with shuffled-label and random-init controls; the gold probe's AUROC inside strata of the strongest properties.
+*What does not change:* the pre-registered criterion (D11) and the audited criterion (D19) and their verdicts. On the debiased pool the audited criterion is not met; the pre-registered one, as coded, is met for both Qwen models and is reported but not relied on.
+*Why:* "below the best text baseline" lumps together two different comparisons. Being above the confound controls says the signal is real; being below the reference says how much of the task it amounts to.
+*Would change it:* if the third audit finds a cheap feature between bag-of-words and the full parse that matches the probe, the "beyond shallow features" wording has to be narrowed to name that feature.
+*Post-hoc status:* all of it.
+
+### D26. Running the 1.5B model on the laptop under a memory watchdog (Fri 13 Nov, 11:40)
+*Decision:* Qwen 1.5B GPU jobs run through `scripts/guarded.sh`: batch size about one prompt, GPU memory capped just above the model size (PyTorch MPS watermarks), two CPU threads, nothing else running, and a watchdog that stops the job when swap use passes 5.2 GB while growing. Cache builds resume from finished chunks.
+*Alternatives:* move every 1.5B pass to Kaggle; or run uncapped as on Thursday night.
+*Why:* the user's rule is to stop any job that pushes memory into swap. A 1.5B model (3.1 GB of weights) on an 8 GB machine with a desktop session cannot run with zero swap; with the cap, swap stayed flat at 3 to 4 GB and throughput steady. The first uncapped attempt reached 5.5 GB of wired memory and was stopped.
+*Would change it:* if the user prefers zero swap use, the remaining 1.5B passes go to Kaggle.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.
@@ -360,5 +381,35 @@ It shows that adjacency *alone* is not the signal, which is expected: in this po
 <!-- /QA-TIER1 -->
 
 <!-- QA-TIER2 -->
-*(Tier 2 and 3 questions follow when those tiers are written up.)*
+### Tier 2 — steering, patching, cross-model
+
+**26. What exactly do you add to the model when you "steer", and how big is it?**
+A vector, at one layer, at the last token of the prompt, before the remaining layers run. Its length is a multiple of s, the typical distance of an activation from the average activation at that layer. That sounds like "one typical deviation", and I first described it that way. It is not: s adds up the spread over about a thousand dimensions, so along one particular direction the natural spread is a small fraction of s. Along a probe's weight direction one unit of s is 60 to 300 natural standard deviations. The report therefore gives every effect twice: per unit of s and per natural standard deviation.
+
+**27. Why is the slope better than counting flipped answers?**
+A flip happens when the push is larger than the margin by which the model preferred its answer. A model that says "No" with a small margin flips easily; one with a large margin does not. So flip rates mix up the strength of the direction with the model's confidence, and for a model that says "No" to everything only one sign of push can flip anything. The slope (change in the Yes−No logit difference per unit pushed, measured with both signs) describes the direction alone.
+
+**28. Your first conclusion was that the gold-probe direction is "inert". What changed?**
+Three things, all from the second audit. In the 1.5B model the direction has a small, perfectly consistent effect of the *wrong* sign, which a table of one-sided flip rates hid. Three random directions gave slopes differing 17-fold, so "no more than random" had no basis. And the natural comparison for a probe's weight vector is not a random direction but a probe's weight vector fitted to shuffled labels. Against twenty of those, the gold direction sits at the 20th to 85th percentile in the four cases tested. So the statement is now "no more effect than a label-free direction of the same kind", which is a statement about that direction, not about the information.
+
+**29. If the probe direction does nothing, isn't the information unused?**
+That does not follow. A probe's weights say which combination of activations to *read*; they point into quiet directions where a small difference is reliable. How the activations actually *differ* between valid and invalid items is another vector, the difference of class means, which lies in loud directions. The two are linked by the covariance of the activations and can be nearly perpendicular. Later layers respond to the second, not the first. And the second turned out not to be specific to validity either: differences of means for shuffled labels move the answer about as much.
+
+**30. So what is the evidence that the model does not use what the probe reads?**
+The plainest evidence is behavioural: on the debiased pool the probe decodes validity at 0.75 from the 1.5B model while that model's own answers rank valid above invalid items no better than chance. Steering adds that no gold-specific direction was found whose movement changes the answer more than matched controls. What is not shown: that no later computation reads the information in some non-linear way, or at another position.
+
+**31. Why is the model-answer direction called a positive control and not a finding?**
+It is the weight vector of a probe trained to predict the sign of the very quantity steering measures. Of course moving along it changes that quantity. It is there to show that the method can detect an effect when one exists, and how large an effect looks.
+
+**32. What does activation patching show here, and what does it not?**
+It shows the route by which a change in the prompt reaches the place where the answer is read out: at the changed word in early layers, at the final token from about 60% of the depth. It does not show where the model "decides" the causal question, because the models do not treat the valid and the invalid prompt of a pair differently in the right direction; any difference between the prompts is tracked equally. A control with pairs that differ in a variable but share the gold label is what is missing.
+
+**33. The random-donor row in the patching figure looks like the real one. Is that a problem?**
+It means that row is not a control. Patching in activations from an unrelated prompt of the same length should, one would think, do nothing. But few pairs have such a donor (16 of 60, 6 of 40), in half of them the donor has the same word at the changed position, and the recovery statistic is not zero on average even for random patches. The row is kept in the figure and labelled as uninformative.
+
+**34. Can attribution patching be trusted?**
+For the components with the largest effects, yes: its estimates match real patching closely. For small components the two can disagree even in sign, and checking ten random components out of several hundred cannot show that none of the unchecked ones matters. So it supports "these are among the largest contributors", not "this is the complete circuit".
+
+**35. Do the results scale with model size?**
+There are too few models to say (three local ones from two families, plus one larger one from the remote run). On the debiased pool the 1.5B model's probe is clearly above the 0.5B model's (0.75 against 0.63); whether that continues is what the larger model is for.
 <!-- /QA-TIER2 -->

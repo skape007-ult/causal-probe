@@ -208,3 +208,4 @@ W1113 18:33:37.922000 35569 .venv/lib/python3.12/site-packages/torch/distributed
 [   17s] self-check, shortcut vs full forward pass: max |difference| 0.0096 logits; unsteered vs cache 0.0094
 [   24s] [timing] 1.16 s/item (224 vectors) -> 9.5 min for the remaining 494 items; 54.6 min left of 55
 [   77s] 50/500
+[  136s] 100/500

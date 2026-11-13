@@ -181,7 +181,29 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 
 ## How to read each figure
 
-*(Filled in as figures are produced.)*
+All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.
+
+**fig1_behaviour.png — how well do the models answer?** One bar per model: macro-F1 and accuracy on the Corr2Cause test set, accuracy on CLadder, scored from the answer-token logits. The dashed line is the majority-class baseline (always answer the commoner label) and the dotted line is a coin flip. A bar level with the dashed line means the model is doing no better than answering "No" every time. On Corr2Cause read macro-F1, not accuracy: 84.5% of labels are "No", so accuracy rewards a model that never says "Yes".
+
+**fig2_logit_lens.png — when does the answer take shape?** x: layer. y: the Yes−No logit difference the model would produce if it stopped at that layer, sign-flipped so that positive always means "leaning towards the correct answer". Blue: items the model finally gets right; red: items it finally gets wrong. If red rose above zero in the middle and fell later, the model would have "known and then overwritten" the answer. Caution: for a model that always says "No", "correct" simply means "gold label is No", so the two curves are mirror images by construction. Layer 0 is omitted (the lens on raw embeddings is off-scale noise).
+
+**fig2b_lens_auroc.png — the same lens, threshold-free.** y: AUROC of the per-layer lens logit difference for the gold label (0.5 = no information, 1 = perfect ranking). This ignores any constant Yes/No bias and asks only whether the model's would-be answer ranks true-Yes items above true-No items. x is relative depth so models with different numbers of layers can share an axis.
+
+**fig3_probes_<dataset>.png — what can a linear probe read, and is it more than the controls?** One panel per model. Solid blue: held-out accuracy of the gold-label probe at each layer. Solid orange: probe for the model's own answer (shown only where the model's answers vary). Dashed yellow: control task (random label per question type; high = the probe can memorise). Dashed pink: same probe on a randomly initialised model. Dotted grey: shuffled labels (must sit at 0.5). Horizontal dash-dot lines: TF-IDF text baseline (black) and type-prior baseline (violet), which have no layers. The claim "the model's activations hold the answer beyond what the text gives away" needs blue clearly above the black line.
+
+**fig4_selectivity_positions_<dataset>.png.** Left: selectivity (gold accuracy minus control-task accuracy) against relative depth, one line per model; near or below zero means the probe's success is within what memorising question types could achieve. Right: the gold probe at three token positions for the largest model: final token, end of hypothesis/question, end of premise. The end of the premise comes before the question is asked, so a probe there cannot know which hypothesis is being tested; it is a built-in sanity check and should sit near the baselines.
+
+**fig5_confound_<dataset>.png — the key test.** Report-half items only. Left: accuracy of each scorer on the items the model gets wrong. Middle and right: AUROC for the gold label *within* the items where the model said Yes, and within those where it said No; inside one group the model's yes/no answer is constant, so a probe that merely reads that answer scores 0.5. Bars: gold probe (blue), TF-IDF (black), type prior (violet), random-init probe (pink), the model's own graded confidence (orange). "Represents but doesn't say" needs blue above the dashed chance line *and* above black and violet by more than the whiskers. In the left panel the orange bar is zero by definition (those are the items the model's own answer gets wrong).
+
+**fig6_steering_<dataset>.png — is the decodable direction used?** Top row: fraction of items whose answer flips when α × direction is added at the final token. Bottom row: accuracy when each item is pushed towards its gold answer. x: α on a log scale; α = 1 is one typical item-to-item spread of the activations. Blue: the gold probe's direction. Green: difference of class means. Orange: the model-output direction. Grey dashed: random directions of the same length. A direction the model reads from rises quickly; one it ignores stays with (or below) the grey line.
+
+**fig7_patching_<kind>.png — where is the answer determined?** Heat-map per model. x: layer at which the residual stream is overwritten; y: token region. Colour: pooled recovery (blue = patching in the clean activation makes the corrupt run answer like the clean run; grey = no effect; orange = pushes the other way). Top row: true clean donor. Bottom row: random-donor control (an unrelated premise), which should stay grey wherever the top row's effect is specific to the pair. Read the blue band from top-left to bottom-right: it traces the information moving from the tokens that differ, through later tokens, to the final token.
+
+**fig8_attribution_validation.png — can the cheap method be trusted?** Each point is one attention head or MLP. x: effect predicted by attribution patching (one gradient). y: effect measured by really patching that component. Blue: the ten components ranked highest by attribution; grey: ten random ones. Points on the diagonal mean the approximation is accurate.
+
+**fig9_cross_model.png — does it scale with size?** x: parameters (log scale). Left: gold-probe accuracy on the report half. Middle: probe minus TF-IDF (paired); whiskers that cross zero mean no detectable advantage over the text baseline. Right: relative depth of the selected layer (large marker) and of the first layer within one point of the maximum (small marker). Filled circles: Corr2Cause pool; open squares: CLadder.
+
+*(Tier 3 figures are added below when produced.)*
 
 ---
 

@@ -29,6 +29,21 @@
     "  erasure, gap change: parent +0.006 non-parent -0.001 non-child  +0.002 has_collid +0.042 has_confou +0.028 | reduction contrast +0.0156 (full removal +0.105)",
     "  positive control (model-answer direction): slope +0.2090 per unit norm, larger in absolute value than 100% of shuffled-label probe directions"
    ]
+  },
+  "r2.qwen0.5b.adjacency.final.first50": {
+   "ok": true,
+   "minutes": 8.6,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.005 +0.004 +0.009 +0.013 -0.010",
+    "    non-parent +0.006 +0.000 +0.002 +0.007 -0.012",
+    "    non-child  -0.003 +0.007 +0.013 +0.016 +0.001",
+    "    has_collid +0.004 +0.002 +0.018 +0.020 -0.005",
+    "    has_confou +0.001 +0.002 +0.012 +0.014 -0.004",
+    "    off-diagonal contrast, target sign -0.0016 [-0.0024, -0.0008]; source sign +0.0010 [+0.0006, +0.0015]",
+    "  positive control (model-answer direction): slope +0.2551 per unit norm, larger in absolute value than 95% of shuffled-label probe directions"
+   ]
   }
  },
  "run": "r2_qwen05b",
@@ -44,7 +59,8 @@
   "data",
   "environment",
   "r2.qwen0.5b.adjacency.final.best",
-  "r2.qwen0.5b.adjacency.content_end.best"
+  "r2.qwen0.5b.adjacency.content_end.best",
+  "r2.qwen0.5b.adjacency.final.first50"
  ],
- "total_minutes": 27.1
+ "total_minutes": 35.6
 }

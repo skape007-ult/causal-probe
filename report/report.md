@@ -229,8 +229,9 @@ The first figure shows the Yes−No logit difference the model would produce if 
 | Qwen2.5-1.5B | CLadder | 24/28 | 0.1 | 0.605 [0.580, 0.631] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.508 [0.484, 0.535] | 0.500 | 0.807 | -0.221 | +0.077 [+0.034, +0.115] |
 | Gemma-2-2B | Corr2Cause pool | 18/26 | 1 | 0.863 [0.841, 0.886] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.596 [0.568, 0.623] | 0.499 | 0.790 | +0.071 | +0.061 [+0.035, +0.088] |
 | Gemma-2-2B | CLadder | 20/26 | 1 | 0.626 [0.590, 0.664] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.519 [0.494, 0.548] | 0.499 | 0.812 | -0.194 | +0.099 [+0.038, +0.150] |
+| Qwen2.5-3B | Corr2Cause pool | 27/36 | 1 | 0.862 [0.843, 0.880] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.611 [0.584, 0.637] | 0.497 | 0.795 | +0.071 | +0.059 [+0.034, +0.085] |
 
-<sub>Source: `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/probes_gemma2b_c2c_probe_C1.json`, `results/probes_gemma2b_cladder_C1.json`, `results/probes_qwen0.5b_c2c_probe_C1.json`, `results/probes_qwen0.5b_cladder_C0.1.json`, `results/probes_qwen1.5b_c2c_probe_C0.1.json`, `results/probes_qwen1.5b_cladder_C0.1.json`</sub>
+<sub>Source: `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen3b_c2c_probe.json`, `results/probes_gemma2b_c2c_probe_C1.json`, `results/probes_gemma2b_cladder_C1.json`, `results/probes_qwen0.5b_c2c_probe_C1.json`, `results/probes_qwen0.5b_cladder_C0.1.json`, `results/probes_qwen1.5b_c2c_probe_C0.1.json`, `results/probes_qwen1.5b_cladder_C0.1.json`, `results/probes_qwen3b_c2c_probe_C1.json`</sub>
 
 <sub>Layer index counts the embeddings as 0, so layer l is the output of block l−1. Probe/TF-IDF/prior/random-init columns: report half, scores averaged over 3 seeds. Shuffled/control/selectivity: all items, mean of per-seed accuracies at the selected layer and C.</sub>
 
@@ -251,7 +252,7 @@ Probe accuracy by token position:
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | 0.905 [0.887, 0.922] | 0.499 [0.497, 0.500] | +0.364 [+0.341, +0.387] | -0.042 [-0.061, -0.022] | 0.596 [0.568, 0.623] | – | – |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | 0.623 [0.598, 0.647] | 0.556 [0.528, 0.580] | +0.070 [+0.021, +0.120] | +0.003 [-0.032, +0.038] | 0.519 [0.494, 0.548] | – | – |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_probe.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 Probes decode the gold label from held-out premises at 0.807 [0.784, 0.828], 0.870 [0.850, 0.890] and 0.863 [0.841, 0.886] on the Corr2Cause pool, and at 0.561 [0.534, 0.586], 0.605 [0.580, 0.631] and 0.626 [0.590, 0.664] on CLadder (report half; layer and regularisation chosen on the other half). The controls behave as controls should: shuffled labels give 0.50, and a randomly initialised model gives 0.50 to 0.62. Taken alone, this is the pattern that is usually read as "the model represents the answer".
 
@@ -272,9 +273,10 @@ All scorers on the report half:
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.848 [0.827, 0.868] | 0.859 [0.839, 0.879] | 0.919 [0.902, 0.935] | 0.596 [0.568, 0.623] | 0.507 [0.483, 0.532] |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | 0.527 [0.494, 0.566] | 0.484 [0.462, 0.504] | 0.510 [0.482, 0.541] | – | 0.800 [0.767, 0.839] | 0.519 [0.494, 0.548] | 0.506 [0.464, 0.549] |
 | Gemma-2-2B | Corr2Cause debiased pool | 0.763 [0.739, 0.787] | 0.518 [0.495, 0.541] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.816 [0.792, 0.837] | 0.568 [0.542, 0.593] | 0.494 [0.468, 0.518] |
+| Qwen2.5-3B | Corr2Cause pool | 0.862 [0.843, 0.880] | 0.802 [0.778, 0.826] | 0.699 [0.672, 0.726] | 0.848 [0.827, 0.868] | 0.859 [0.839, 0.879] | 0.919 [0.902, 0.935] | 0.611 [0.584, 0.637] | 0.509 [0.497, 0.522] |
 | Qwen2.5-3B | Corr2Cause debiased pool | 0.765 [0.743, 0.788] | 0.518 [0.495, 0.541] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | 0.816 [0.792, 0.837] | 0.594 [0.568, 0.619] | 0.490 [0.478, 0.501] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_probe.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 Audited criterion (and, for comparison, the pre-registered one as coded):
 
@@ -289,9 +291,10 @@ Audited criterion (and, for comparison, the pre-registered one as coded):
 | Gemma-2-2B | Corr2Cause pool | 0.863 [0.841, 0.886] | structural | 0.919 [0.902, 0.935] | -0.056 [-0.078, -0.033] | -0.020 [-0.039, -0.001] | -0.030 [-0.051, -0.008] | no | no | yes |
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | structural | 0.800 [0.767, 0.839] | -0.174 [-0.220, -0.133] | -0.159 [-0.215, -0.100] | -0.237 [-0.297, -0.185] | no | yes | yes |
 | Gemma-2-2B | Corr2Cause debiased pool | 0.763 [0.739, 0.787] | structural | 0.816 [0.792, 0.837] | -0.053 [-0.081, -0.023] | -0.049 [-0.091, -0.010] | -0.076 [-0.103, -0.050] | no | yes | yes |
+| Qwen2.5-3B | Corr2Cause pool | 0.862 [0.843, 0.880] | structural | 0.919 [0.902, 0.935] | -0.057 [-0.077, -0.038] | -0.039 [-0.064, -0.015] | -0.018 [-0.032, -0.004] | no | no | no (96% gold-Yes) |
 | Qwen2.5-3B | Corr2Cause debiased pool | 0.765 [0.743, 0.788] | structural | 0.816 [0.792, 0.837] | -0.050 [-0.079, -0.020] | -0.039 [-0.080, +0.000] | -0.074 [-0.103, -0.047] | no | yes | no (95% gold-Yes) |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_probe.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
 
 ![confound c2c](../figures/fig5_confound_c2c_probe.png)
 ![confound cladder](../figures/fig5_confound_cladder.png)
@@ -312,8 +315,10 @@ Pre-registered analysis in full (items the model gets wrong):
 | Gemma-2-2B | Corr2Cause pool | calibrated | 541 | 0.51 | 0.870 [0.833, 0.905] | 0.871 [0.832, 0.906] | 0.795 [0.757, 0.828] | 0.771 [0.737, 0.805] | +0.076 [+0.034, +0.115] | +0.100 [+0.053, +0.147] | **yes** | 0.921 [0.894, 0.946] | -0.050 [-0.086, -0.016] |
 | Gemma-2-2B | CLadder | raw | 810 | 0.39 | 0.619 [0.554, 0.680] | 0.617 [0.549, 0.681] | 0.521 [0.468, 0.576] | 0.472 [0.403, 0.532] | +0.096 [+0.012, +0.166] | +0.146 [+0.077, +0.208] | **yes** | 0.793 [0.753, 0.841] | -0.175 [-0.251, -0.110] |
 | Gemma-2-2B | CLadder | calibrated | 810 | 0.50 | 0.606 [0.538, 0.669] | 0.606 [0.536, 0.669] | 0.548 [0.501, 0.602] | 0.479 [0.417, 0.535] | +0.058 [-0.030, +0.129] | +0.127 [+0.061, +0.184] | no | 0.811 [0.770, 0.858] | -0.205 [-0.289, -0.134] |
+| Qwen2.5-3B | Corr2Cause pool | raw | 589 | 0.96 | 0.850 [0.759, 0.920] | 0.866 [0.837, 0.893] | 0.900 [0.870, 0.926] | 0.705 [0.664, 0.741] | -0.034 [-0.071, +0.007] | +0.161 [+0.119, +0.207] | no | 0.961 [0.944, 0.977] | -0.095 [-0.129, -0.063] |
+| Qwen2.5-3B | Corr2Cause pool | calibrated | 474 | 0.51 | 0.828 [0.792, 0.866] | 0.829 [0.793, 0.867] | 0.743 [0.700, 0.784] | 0.776 [0.740, 0.812] | +0.086 [+0.040, +0.138] | +0.053 [+0.004, +0.103] | **yes** | 0.895 [0.863, 0.926] | -0.065 [-0.102, -0.029] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_probe.json`</sub>
 
 Within model-answer strata:
 
@@ -342,8 +347,12 @@ Within model-answer strata:
 | Gemma-2-2B | CLadder | raw | said no | 637 | 0.650 [0.587, 0.709] | 0.530 [0.471, 0.594] | 0.481 [0.427, 0.525] | 0.496 [0.445, 0.542] | +0.120 [+0.047, +0.193] | 0.897 [0.862, 0.935] | -0.246 [-0.313, -0.194] |
 | Gemma-2-2B | CLadder | calibrated | said yes | 812 | 0.697 [0.631, 0.756] | 0.534 [0.474, 0.600] | 0.471 [0.422, 0.522] | 0.555 [0.479, 0.624] | +0.163 [+0.057, +0.248] | 0.856 [0.816, 0.895] | -0.159 [-0.215, -0.100] |
 | Gemma-2-2B | CLadder | calibrated | said no | 827 | 0.661 [0.603, 0.717] | 0.530 [0.475, 0.595] | 0.473 [0.427, 0.511] | 0.501 [0.446, 0.550] | +0.131 [+0.059, +0.196] | 0.898 [0.866, 0.934] | -0.237 [-0.297, -0.185] |
+| Qwen2.5-3B | Corr2Cause pool | raw | said yes | 59 | 0.939 [0.854, 0.997] | 0.867 [0.748, 0.964] | 0.374 [0.235, 0.527] | 0.538 [0.397, 0.703] | +0.073 [-0.001, +0.156] | 0.986 [0.958, 1.000] | -0.046 [-0.127, +0.005] |
+| Qwen2.5-3B | Corr2Cause pool | raw | said no | 1141 | 0.935 [0.919, 0.949] | 0.839 [0.814, 0.864] | 0.746 [0.716, 0.775] | 0.593 [0.565, 0.620] | +0.096 [+0.074, +0.119] | 0.960 [0.946, 0.972] | -0.026 [-0.039, -0.013] |
+| Qwen2.5-3B | Corr2Cause pool | calibrated | said yes | 590 | 0.905 [0.877, 0.931] | 0.752 [0.700, 0.801] | 0.599 [0.549, 0.652] | 0.489 [0.437, 0.538] | +0.153 [+0.107, +0.201] | 0.944 [0.922, 0.963] | -0.039 [-0.064, -0.015] |
+| Qwen2.5-3B | Corr2Cause pool | calibrated | said no | 610 | 0.954 [0.937, 0.969] | 0.894 [0.868, 0.917] | 0.817 [0.784, 0.850] | 0.463 [0.420, 0.503] | +0.060 [+0.039, +0.083] | 0.971 [0.953, 0.986] | -0.018 [-0.032, -0.004] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_qwen3b_c2c_probe.json`</sub>
 
 The same under the original fixed regularisation (probe C = 0.01, TF-IDF C = 1):
 
@@ -361,8 +370,10 @@ The same under the original fixed regularisation (probe C = 0.01, TF-IDF C = 1):
 | Gemma-2-2B | Corr2Cause pool | calibrated | 541 | 0.51 | 0.853 [0.818, 0.886] | 0.854 [0.819, 0.887] | 0.771 [0.737, 0.801] | 0.771 [0.737, 0.805] | +0.083 [+0.044, +0.122] | +0.083 [+0.039, +0.127] | **yes** | 0.921 [0.894, 0.946] | -0.067 [-0.102, -0.035] |
 | Gemma-2-2B | CLadder | raw | 810 | 0.39 | 0.623 [0.569, 0.675] | 0.631 [0.577, 0.683] | 0.498 [0.424, 0.573] | 0.472 [0.403, 0.532] | +0.133 [+0.051, +0.205] | +0.159 [+0.093, +0.233] | **yes** | 0.793 [0.753, 0.841] | -0.162 [-0.227, -0.109] |
 | Gemma-2-2B | CLadder | calibrated | 810 | 0.50 | 0.617 [0.564, 0.669] | 0.617 [0.566, 0.668] | 0.506 [0.443, 0.566] | 0.479 [0.417, 0.535] | +0.111 [+0.032, +0.180] | +0.138 [+0.063, +0.217] | **yes** | 0.811 [0.770, 0.858] | -0.194 [-0.261, -0.140] |
+| Qwen2.5-3B | Corr2Cause pool | raw | 589 | 0.96 | 0.857 [0.768, 0.930] | 0.879 [0.849, 0.907] | 0.823 [0.793, 0.852] | 0.705 [0.664, 0.741] | +0.056 [+0.020, +0.091] | +0.175 [+0.131, +0.220] | **yes** | 0.961 [0.944, 0.977] | -0.081 [-0.115, -0.049] |
+| Qwen2.5-3B | Corr2Cause pool | calibrated | 474 | 0.51 | 0.803 [0.763, 0.843] | 0.804 [0.764, 0.844] | 0.717 [0.679, 0.753] | 0.776 [0.740, 0.812] | +0.086 [+0.044, +0.129] | +0.027 [-0.021, +0.077] | no | 0.895 [0.863, 0.926] | -0.091 [-0.126, -0.056] |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe_fixedC.json`, `results/confound_qwen0.5b_cladder_fixedC.json`, `results/confound_qwen1.5b_c2c_probe_fixedC.json`, `results/confound_qwen1.5b_cladder_fixedC.json`, `results/confound_gemma2b_c2c_probe_fixedC.json`, `results/confound_gemma2b_cladder_fixedC.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe_fixedC.json`, `results/confound_qwen0.5b_cladder_fixedC.json`, `results/confound_qwen1.5b_c2c_probe_fixedC.json`, `results/confound_qwen1.5b_cladder_fixedC.json`, `results/confound_gemma2b_c2c_probe_fixedC.json`, `results/confound_gemma2b_cladder_fixedC.json`, `results/confound_qwen3b_c2c_probe_fixedC.json`</sub>
 
 External check: probe trained on the pool, evaluated on the Corr2Cause test set (15.5% positive; AUROC):
 
@@ -452,7 +463,7 @@ Gold-label probes on the debiased pool (report half; layer and regularisation ch
 | Gemma-2-2B (activations from Kaggle) | 0.763 [0.739, 0.787] | 0.568 [0.542, 0.593] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.195 [+0.163, +0.228] | -0.053 [-0.081, -0.023] | not exported | not exported |
 | Qwen2.5-3B (activations from Kaggle) | 0.765 [0.743, 0.788] | 0.594 [0.568, 0.619] | 0.518 [0.495, 0.541] | 0.816 [0.792, 0.837] | +0.171 [+0.138, +0.205] | -0.050 [-0.079, -0.020] | not exported | not exported |
 
-<sub>Source: `results/confound_<model>_c2c_debiased.json`. For the two models cached on Kaggle only the final-token activations were exported in the first run.</sub>
+<sub>Source: `results/confound_<model>_c2c_debiased.json`. For the two models cached on Kaggle only the final-token activations were exported in the first run. The whole-prompt TF-IDF column is the pre-registered baseline with its regularisation chosen on the selection half and scored on the report half; the same classifier appears with a fixed setting in the ladder table below (0.49) and on all 2,400 items in the benchmark note (0.50). All three are chance.</sub>
 
 **Verdicts under the two criteria, unchanged.** The audited criterion (probe beats the strongest text-only baseline; D19) is **not met** for any of the four models: the probe trails the parsed-feature classifier by -0.183 [-0.214, -0.149] (Qwen2.5-0.5B), -0.063 [-0.094, -0.034] (Qwen2.5-1.5B), -0.053 [-0.081, -0.023] (Gemma-2-2B) and -0.050 [-0.079, -0.020] (Qwen2.5-3B). The three larger models land within a point and a half of one another (0.75 to 0.77): going from 1.5 to 3 billion parameters makes no visible difference. The original pre-registered criterion as coded (D11: against TF-IDF and the template prior, on wrongly answered items) is met for all four models on this pool; as explained in Section 3.4 it does not test the claim, and it is reported, not relied on.
 
@@ -1083,6 +1094,103 @@ Gemma-2-2B, patched on Kaggle with 40 pairs per kind, shows the same thing: mean
 
 A descriptive comparison of three models from two families, not a scaling law. On the original item sets gold-probe accuracy is higher for the two larger models than for Qwen2.5-0.5B, and the probe trails the strongest text baseline for every model. The selected layer lies at relative depth 0.6 to 0.9. On the debiased pool (Section 3.6) the difference between Qwen2.5-0.5B and Qwen2.5-1.5B is larger and is the more informative comparison, since it is not inflated by the hypothesis-string cue.
 
+### 4.4 Is the adjacency information used? (second round)
+
+**Why this experiment.** Section 3.6 left one structured signal in the answers. Whether the two variables named in the hypothesis are *adjacent* (correlated in the premise, and separated by no conditioning set) is linearly readable from every model, and the answers depend on it, with a sign that differs by hypothesis type and by model. AUROC of the answer logit for adjacency, among items that share a hypothesis string (0.5 = no dependence; all 2,400 items):
+
+| Hypothesis type | Qwen2.5-0.5B | Qwen2.5-1.5B | Gemma-2-2B | Qwen2.5-3B |
+|---|---|---|---|---|
+| X directly causes Y | 0.531 [0.489, 0.573] | 0.649 [0.603, 0.693] | 0.420 [0.374, 0.465] | 0.605 [0.560, 0.652] |
+| X causes something else which causes Y | 0.452 [0.394, 0.515] | 0.434 [0.374, 0.496] | 0.439 [0.381, 0.492] | 0.637 [0.579, 0.693] |
+| X is a cause for Y, but not a direct one | 0.570 [0.513, 0.632] | 0.469 [0.409, 0.532] | 0.557 [0.499, 0.619] | 0.582 [0.524, 0.643] |
+| X and Y have a common effect | 0.261 [0.220, 0.302] | 0.381 [0.318, 0.446] | 0.370 [0.315, 0.426] | 0.515 [0.457, 0.573] |
+| X and Y have a common cause | 0.375 [0.305, 0.441] | 0.427 [0.356, 0.496] | 0.309 [0.238, 0.383] | 0.196 [0.136, 0.257] |
+
+<sub>Source: `results/probe_content_<model>_c2c_debiased.json`, key `answers/by_template/<template>/within_string_auroc_for_adjacency`.</sub>
+
+The question: does that dependence run through the linear encoding of adjacency that a probe reads, at the place where it is read?
+
+**Design** (`scripts/17_adjacency_test.py`; evaluation on 100 report-half items per hypothesis type; everything fitted on the selection half). At one site (a layer and a token) three things are done to an item's activation, and the answer is read at the final token:
+
+1. *Translate*: add (for not-adjacent items) or subtract (for adjacent items) the difference between the mean activations of adjacent and not-adjacent items of the same hypothesis type. On average this puts an item where the other class sits.
+2. *Erase*: remove the linear information about adjacency with LEACE, fitted per hypothesis type. Whether the erasure worked is measured, not assumed: a fresh probe is trained on erased activations and tested on erased held-out activations.
+3. *Step along the probe's weight vector*, by the distance between the two classes along it.
+
+Activations are centred by hypothesis string first, so that no direction can encode which hypothesis is being asked. Every operation is repeated with adjacency labels shuffled within hypothesis string (20 shuffles), and the controls are rescaled to the size of the real edit. The summary statistic was fixed before the full-size runs: the **contrast**, the average over hypothesis types whose observed gap excludes zero of (sign of the observed gap) × (effect). If the encoding fully carried the dependence, the contrast would equal the average absolute observed gap, the *full-mediation benchmark*. Sites: the layer where adjacency is best decodable, and the first layer at which it reaches half of that, at the final prompt token and at the last token of the hypothesis.
+
+**History.** This is the second version. The first (`scripts/16_feature_causal.py`) was reviewed by an independent reviewer while it was running on the laptop and before any GPU time was spent on it (Section 6, fourth audit). Its removal arm left adjacency readable at AUROC 0.84, its pooled class-mean direction did not separate the classes for direct-causation hypotheses, and its summary compared a real change with the mean of controls whose signs cancel. Its results are kept in `results/feature_causal_*.json`, are superseded, and are not used. A fifth arm, *transfer*, was added after the first full-size result of the second version, for the reason given below.
+
+| Model | Site (layer) | Items | Adjacency AUROC of a fresh probe, report half: before | …after LEACE erasure | …after removing the probe direction only | …after 5 control erasures (shuffled labels) | AUROC along the probe direction, by template (range) | AUROC along the template's class-mean difference (range) | Size of the erasure edit (units of s) | …control erasures | Self-check: shortcut vs full forward pass (logits) | Max |unsteered − cached| logit difference | SD of the answer logit difference |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | final token, best layer (15/24) | 500 | 0.876 | 0.434 | 0.873 | 0.872 to 0.877 | 0.79 to 0.96 | 0.60 to 0.74 | 0.099 | 0.031 to 0.049 | 0.006 | 0.05 | 0.39 |
+| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | 500 | 0.926 | 0.535 | 0.918 | 0.923 to 0.926 | 0.82 to 0.99 | 0.62 to 0.87 | 0.067 | 0.019 to 0.028 | 0.008 | 0.04 | 0.39 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | 500 | 0.764 | 0.421 | 0.743 | 0.761 to 0.764 | 0.71 to 0.85 | 0.56 to 0.70 | 0.094 | 0.035 to 0.061 | 0.010 | 0.05 | 0.39 |
+
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+
+| Model | Site (layer) | Templates in the contrast | Full-mediation benchmark (mean |observed gap|) | Translation: contrast | …as a share of the benchmark | …controls, same norm (range) | Controls smaller in absolute value (%) | …controls as fitted (range) | Probe direction across the gap: contrast | …controls (range) | Erasure: reduction of the dependence (contrast) | …what full removal would give on these items | …control erasures, same edit size (range) | Controls smaller in absolute value (%) | Positive control: model-answer direction, slope per unit norm (share of controls it exceeds) | Linearity check: small-step / large-step slope, class-mean difference |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | final token, best layer (15/24) | parent, descendant, collider, confounder | 0.112 | +0.110 [+0.109, +0.111] | 0.99 | -0.069 to +0.091 | 100 | -0.025 to +0.039 | -0.0002 [-0.0003, -0.0002] | -0.0007 to +0.0006 | +0.096 | +0.105 | -0.009 to +0.021 | 100 | +1.258 (100%) | 1.00 |
+| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | parent, descendant, collider, confounder | 0.112 | +0.013 [+0.012, +0.014] | 0.11 | -0.021 to +0.011 | 95 | -0.007 to +0.004 | -0.0007 [-0.0008, -0.0006] | -0.0012 to +0.0015 | +0.016 | +0.105 | -0.003 to +0.008 | 100 | +0.209 (100%) | 1.03 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | parent, descendant, collider, confounder | 0.112 | +0.000 [-0.001, +0.001] | 0.00 | -0.025 to +0.019 | 5 | -0.007 to +0.010 | +0.0000 [-0.0000, +0.0000] | -0.0001 to +0.0001 | -0.001 | +0.105 | -0.005 to +0.004 | 75 | +0.255 (95%) | 0.96 |
+
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+
+| Model | Site (layer) | Template | Observed gap in the answer logit, adjacent − not adjacent | Predicted sign | Translation by the class-mean difference: effect towards Yes per move towards adjacent | …20 controls, same norm (range) | Controls smaller in absolute value (%) | Moving across the class gap along the probe direction | …20 controls, same distance (range) | Gap on evaluated items: before | …after erasure | Change in gap | …20 control erasures rescaled to the same edit size (range of change) | Controls smaller in absolute value (%) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | final token, best layer (15/24) | parent | +0.050 [+0.005, +0.096] | + | +0.040 [+0.038, +0.042] | -0.084 to +0.110 | 45 | +0.0009 [+0.0008, +0.0010] | -0.0029 to +0.0028 | +0.097 | +0.071 | -0.026 [-0.034, -0.018] | -0.052 to +0.010 | 95 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | ancestor | -0.042 [-0.098, +0.015] | none | -0.044 [-0.046, -0.043] | -0.101 to +0.094 | 70 | +0.0009 [+0.0008, +0.0009] | -0.0025 to +0.0025 | -0.029 | -0.016 | +0.013 [+0.006, +0.021] | -0.023 to +0.014 | 90 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | descendant | +0.055 [+0.024, +0.084] | + | -0.037 [-0.039, -0.035] | -0.069 to +0.178 | 40 | +0.0005 [+0.0005, +0.0006] | -0.0018 to +0.0019 | +0.041 | +0.061 | +0.020 [+0.013, +0.028] | -0.007 to +0.014 | 100 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | collider | -0.230 [-0.281, -0.177] | − | -0.255 [-0.258, -0.252] | -0.124 to +0.224 | 100 | +0.0011 [+0.0010, +0.0012] | -0.0035 to +0.0043 | -0.312 | -0.065 | +0.247 [+0.207, +0.287] | -0.012 to +0.026 | 100 |
+| Qwen2.5-0.5B | final token, best layer (15/24) | confounder | -0.113 [-0.190, -0.033] | − | -0.183 [-0.185, -0.181] | -0.187 to +0.165 | 95 | +0.0012 [+0.0012, +0.0013] | -0.0032 to +0.0032 | +0.029 | +0.160 | +0.131 [+0.109, +0.153] | -0.032 to +0.078 | 100 |
+| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | parent | +0.050 [+0.005, +0.096] | + | -0.009 [-0.010, -0.008] | -0.027 to +0.041 | 45 | +0.0024 [+0.0023, +0.0026] | -0.0036 to +0.0027 | +0.097 | +0.103 | +0.006 [+0.003, +0.009] | -0.011 to +0.015 | 85 |
+| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | ancestor | -0.042 [-0.098, +0.015] | none | -0.002 [-0.003, -0.001] | -0.025 to +0.030 | 5 | +0.0020 [+0.0019, +0.0021] | -0.0036 to +0.0033 | -0.031 | -0.032 | -0.001 [-0.003, +0.001] | -0.017 to +0.007 | 10 |
+| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | descendant | +0.055 [+0.024, +0.084] | + | -0.003 [-0.004, -0.002] | -0.016 to +0.038 | 20 | +0.0002 [+0.0002, +0.0002] | -0.0018 to +0.0018 | +0.042 | +0.044 | +0.002 [-0.000, +0.005] | -0.005 to +0.002 | 65 |
+| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | collider | -0.230 [-0.281, -0.177] | − | -0.037 [-0.040, -0.035] | -0.046 to +0.053 | 85 | +0.0033 [+0.0031, +0.0035] | -0.0058 to +0.0040 | -0.313 | -0.270 | +0.042 [+0.034, +0.051] | -0.003 to +0.009 | 100 |
+| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | confounder | -0.113 [-0.190, -0.033] | − | -0.026 [-0.028, -0.025] | -0.043 to +0.038 | 80 | +0.0022 [+0.0020, +0.0023] | -0.0045 to +0.0041 | +0.031 | +0.059 | +0.028 [+0.024, +0.032] | -0.005 to +0.017 | 100 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | parent | +0.050 [+0.005, +0.096] | + | +0.005 [+0.003, +0.006] | -0.021 to +0.016 | 15 | -0.0006 [-0.0006, -0.0006] | -0.0015 to +0.0012 | +0.097 | +0.094 | -0.002 [-0.005, +0.000] | -0.006 to +0.007 | 65 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | ancestor | -0.042 [-0.098, +0.015] | none | +0.000 [-0.001, +0.001] | -0.019 to +0.020 | 10 | -0.0005 [-0.0006, -0.0005] | -0.0014 to +0.0011 | -0.029 | -0.032 | -0.002 [-0.004, -0.000] | -0.007 to +0.005 | 50 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | descendant | +0.055 [+0.024, +0.084] | + | +0.013 [+0.011, +0.015] | -0.039 to +0.064 | 35 | -0.0007 [-0.0007, -0.0007] | -0.0013 to +0.0011 | +0.041 | +0.034 | -0.007 [-0.013, -0.002] | -0.006 to +0.006 | 100 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | collider | -0.230 [-0.281, -0.177] | − | +0.020 [+0.016, +0.023] | -0.060 to +0.049 | 65 | -0.0006 [-0.0006, -0.0006] | -0.0016 to +0.0011 | -0.312 | -0.329 | -0.018 [-0.027, -0.009] | -0.019 to +0.013 | 95 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | confounder | -0.113 [-0.190, -0.033] | − | -0.004 [-0.006, -0.001] | -0.042 to +0.022 | 5 | -0.0007 [-0.0007, -0.0007] | -0.0016 to +0.0012 | +0.029 | +0.031 | +0.002 [-0.001, +0.005] | -0.005 to +0.006 | 65 |
+
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+
+![adjacency final](../figures/fig11_adjacency_final.png)
+![adjacency hyp](../figures/fig12_adjacency_end_of_hypothesis.png)
+
+**What the data show (Qwen2.5-0.5B; the other models are added as their GPU runs return).**
+
+1. *The erasure removes the information; removing the probe's direction does not.* At the final token (layer 15) a fresh probe reads adjacency at AUROC 0.876 before and 0.434 after the erasure, and still 0.873 after projecting out the probe's own weight direction. At the end of the hypothesis (layer 13): 0.926, 0.535 and 0.918.
+2. *At the final token, late: the dependence is there, linearly.* Translation gives a contrast of +0.110 [+0.109, +0.111] against a benchmark of 0.112, larger in absolute value than 100% of the 20 size-matched controls (their range: -0.069 to +0.091). Erasure reduces the dependence by +0.096 of the +0.105 that full removal would give (size-matched control erasures: -0.009 to +0.021). Per hypothesis type the effect is outside the controls' range only where the observed gap is large (common effect, common cause); for the three types with small gaps it is not distinguishable from a size-matched random edit.
+3. *That is a statement about where the answer is, not about an adjacency feature.* Near the end of the network the answer is close to a linear function of the final-token activation, so translating by the difference between two classes' mean activations must reproduce the difference between their mean answers, whatever defines the classes. Two checks say this is what happened. The class-mean differences of the five hypothesis types are not one direction: for direct causation it has cosine -0.62 with that for common effects at the earlier layer and is anti-parallel to the other four at the best layer (`adjacency_transfer_summary` below), and each is aligned with the direction along which the answer logit varies. And in the transfer arm, translating an item of one hypothesis type by another type's class difference has an effect that depends only on the type the vector came from (see the matrix below).
+4. *At the final token, four layers earlier: nothing.* At layer 11, where adjacency is only weakly decodable (0.764), the translation contrast is +0.000 [-0.001, +0.001] and the erasure reduction -0.001. The adjacency-dependent part of the answer arrives at the final token between these two layers, which is where the patching of Section 4.2 put the arrival of prompt differences.
+5. *At the end of the hypothesis: a small part of the dependence, specific to the encoding.* Here the answer is not yet formed at the steered token, and whatever is done must be carried forward by later layers. Erasing adjacency at layer 13 reduces the dependence by +0.016 of +0.105 (size-matched control erasures: -0.003 to +0.008): for common-effect hypotheses the gap changes by +0.042 [+0.034, +0.051] and for common-cause hypotheses by +0.028 [+0.024, +0.032], both outside all 20 size-matched controls. Translation gives a contrast of +0.013 [+0.012, +0.014], which 95% of the size-matched controls stay below in absolute value: one control is larger, so translation alone would not carry the claim.
+6. *The probe's weight vector is inert everywhere.* Moving an item across the whole class gap along it changes the answer by about a thousandth of a logit at every site. A read-out direction is chosen to ignore the directions in which activations vary most, so this says little about use; it does mean that the steering nulls of Section 4.1, which used probe weight vectors, were uninformative for the same reason.
+
+| Model | Site (layer) | Off-diagonal contrast with the target template's sign | …with the source template's sign | Full-mediation benchmark | Cosines between the five class-mean differences (range) | Cosine of the direct-causation difference with each of the others |
+|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | -0.002 [-0.002, -0.001] | +0.001 [+0.001, +0.001] | 0.112 | -0.75 to +0.94 | ancestor -0.34 · descendant -0.64 · collider -0.62 · confounder -0.75 |
+
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+
+| Model | Site (layer) | Item's template (target) | Target's observed gap | Vector from: parent | Vector from: ancestor | Vector from: descendant | Vector from: collider | Vector from: confounder |
+|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | parent | +0.050 | +0.005 | +0.004 | +0.009 | +0.013 | -0.010 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | ancestor | -0.042 | +0.006 | +0.000 | +0.002 | +0.007 | -0.012 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | descendant | +0.055 | -0.003 | +0.007 | +0.013 | +0.016 | +0.001 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | collider | -0.230 | +0.004 | +0.002 | +0.018 | +0.020 | -0.005 |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | confounder | -0.113 | +0.001 | +0.002 | +0.012 | +0.014 | -0.004 |
+
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+
+**What may and may not be concluded (Qwen2.5-0.5B).**
+
+- May: this model's answers depend on the adjacency of the queried pair for common-effect and common-cause hypotheses, and about a sixth of that dependence is removed by erasing the linear encoding of adjacency at the last token of the hypothesis, eleven layers before the output, where equally large control erasures do nothing. So some of the information a probe reads there is used downstream. By layer 15 the dependence is present at the final token in linear form.
+- May not: that the model "uses an adjacency feature" in the sense of one reusable variable read by later computation. At the final token the class difference is each hypothesis type's own answer shift; at the end of the hypothesis the evidence is one erasure effect of modest size at one layer in the smallest model.
+- May not: anything about validity. Adjacency is not the correct answer; for this model the dependence has the right sign for common-effect hypotheses and no relation to validity for common-cause ones (Section 3.6).
+- Pre-registration status: the design, the contrast and the expectations were written down before the full-size runs (`notes/log.md`, 13 November, 16:35 to 18:25); the second version of the test and the transfer arm were introduced after seeing results of the first version and of the first site, and each makes the positive reading harder to reach.
+
 ## 5. Tier 3 results
 
 ### 5.1 Sparse-autoencoder features for causal graph type (Gemma-2-2B, CLadder)
@@ -1181,7 +1289,7 @@ Each tier was reviewed by a fresh reviewer agent that received the code, the res
 
 | Finding | Consequence |
 |---|---|
-| The hypothesis string alone predicts the label at 0.86 in the balanced pool; my baselines (whole-prompt TF-IDF, six-template prior) were too weak | Hypothesis-string, question-only and parsed-feature baselines added; "audited criterion" = probe versus strongest text baseline; the one positive verdict was retracted |
+| The hypothesis string alone predicts the label at 0.86 in the balanced pool; my baselines (whole-prompt TF-IDF, six-template prior) were too weak | Hypothesis-string, question-only and parsed-feature baselines added; "audited criterion" = probe versus strongest text baseline; the positive verdict I had logged (Qwen2.5-1.5B on Corr2Cause) was retracted. Which cells pass the pre-registered criterion "as coded" changed when this audit also widened the TF-IDF regularisation grid; the current list is in Section 3.4 |
 | "Accuracy above 0.5 on items the model gets wrong" is not a chance test when those items are mostly one class | Balanced accuracy and class balance reported; criterion flagged not applicable outside 20–80% balance |
 | With model answers nearly independent of the gold label, the wrong-items design reduces to probe versus text baseline | Said plainly; audited criterion is exactly that comparison |
 | On CLadder the probe's signal is present before the question is read | Probe accuracy by token position added |

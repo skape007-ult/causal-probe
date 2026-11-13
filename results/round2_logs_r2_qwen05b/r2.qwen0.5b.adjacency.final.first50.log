@@ -209,3 +209,24 @@ W1113 18:33:37.922000 35569 .venv/lib/python3.12/site-packages/torch/distributed
 [   24s] [timing] 1.16 s/item (224 vectors) -> 9.5 min for the remaining 494 items; 54.6 min left of 55
 [   77s] 50/500
 [  136s] 100/500
+[  197s] 150/500
+[  255s] 200/500
+[  297s] 250/500
+[  337s] 300/500
+[  378s] 350/500
+[  418s] 400/500
+[  459s] 450/500
+[  500s] 500/500
+qwen0.5b/c2c_debiased final_first50: layer 11/24; fresh-probe adjacency AUROC 0.764 -> 0.421 after erasure; self-check 0.0096
+  observational gap : parent +0.050[+0.00,+0.10] non-parent -0.042[-0.10,+0.01] non-child  +0.055[+0.02,+0.08] has_collid -0.230[-0.28,-0.18] has_confou -0.113[-0.19,-0.03]
+  translation effect: parent +0.005 non-parent +0.000 non-child  +0.013 has_collid +0.020 has_confou -0.004 | contrast +0.0004 (benchmark 0.112; controls below: 0.50)
+  probe across gap  : parent -0.0006 non-parent -0.0005 non-child  -0.0007 has_collid -0.0006 has_confou -0.0007 | contrast +0.0000
+  erasure, gap change: parent -0.002 non-parent -0.002 non-child  -0.007 has_collid -0.018 has_confou +0.002 | reduction contrast -0.0014 (full removal +0.105)
+  transfer (rows = item's template, columns = template the vector came from):
+    parent     +0.005 +0.004 +0.009 +0.013 -0.010
+    non-parent +0.006 +0.000 +0.002 +0.007 -0.012
+    non-child  -0.003 +0.007 +0.013 +0.016 +0.001
+    has_collid +0.004 +0.002 +0.018 +0.020 -0.005
+    has_confou +0.001 +0.002 +0.012 +0.014 -0.004
+    off-diagonal contrast, target sign -0.0016 [-0.0024, -0.0008]; source sign +0.0010 [+0.0006, +0.0015]
+  positive control (model-answer direction): slope +0.2551 per unit norm, larger in absolute value than 95% of shuffled-label probe directions

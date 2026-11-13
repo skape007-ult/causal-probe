@@ -424,6 +424,35 @@ def t_answer_bias():
          "Accuracy at best threshold (cross-fitted)", "Reading"], rows, ["answer_bias.json"]))
 
 
+def t_probe_content():
+    rows, rows2, src = [], [], []
+    labs = {"correlated": "the two named variables correlate", "adjacent": "they are adjacent in the skeleton (never separated)",
+            "separable": "some conditioning set separates them", "name_order": "first-named variable is earlier in the alphabet"}
+    for m in MODELS:
+        for tag in ("c2c_debiased", "c2c_probe"):
+            r = load(f"probe_content_{m}_{tag}.json")
+            if not r:
+                continue
+            src.append(f"probe_content_{m}_{tag}.json")
+            for k, v in r["properties"].items():
+                rows.append([LAB[m], DS[tag], r["layer"], labs[k], num(v["majority_rate"]), ci(v["probe"]["final"]["accuracy"]),
+                             ci(v["probe"]["content_end"]["accuracy"]) if "content_end" in v["probe"] else "–",
+                             num(v["gold_accuracy_from_property_alone"])])
+            c = r["complementarity"]; k = c["stacked_probe_plus_parsed"]
+            rows2.append([LAB[m], DS[tag], ci(c["probe_accuracy"]), ci(c["parsed_accuracy"]), ci(k["accuracy"]),
+                          ci(k["minus_parsed_alone_accuracy"], signed=True), num(c["pearson_r_scores"], 2),
+                          f"{c['probe_right_when_parsed_wrong']:.2f} (n = {c['n_parsed_wrong']})",
+                          ci(c["probe_auroc_where_parsed_says_valid"]), ci(c["probe_auroc_where_parsed_says_invalid"])])
+    if rows:
+        write("probe_content", table(
+            ["Model", "Item set", "Layer", "Property read off the prompt by a parser", "Majority rate", "Probe accuracy, final token",
+             "Probe accuracy, end of hypothesis", "Gold-label accuracy from this property alone"], rows, src))
+        write("probe_complementarity", table(
+            ["Model", "Item set", "Gold probe", "Parsed features", "Probe + parsed features (stacked)", "Stacked − parsed alone",
+             "Correlation of the two scores", "Probe right when parsed features are wrong",
+             "Probe AUROC where parsed says valid", "Probe AUROC where parsed says invalid"], rows2, src))
+
+
 if __name__ == "__main__":
     t_behaviour(); t_probes(); t_confound(); t_confound(suffix="_fixedC", name="confound_fixedC"); t_audited(); t_external()
-    t_steering(); t_patching(); t_cross_model(); t_benchmarks(); t_answer_bias()
+    t_steering(); t_patching(); t_cross_model(); t_benchmarks(); t_answer_bias(); t_probe_content()

@@ -1,0 +1,261 @@
+{
+ "model": "qwen1.5b",
+ "tag": "c2c_debiased",
+ "layer": 22,
+ "probe_C": 1.0,
+ "n_report": 1248,
+ "properties": {
+  "correlated": {
+   "frac_positive": 0.9229166666666667,
+   "majority_rate": 0.9229166666666667,
+   "gold_accuracy_from_property_alone": 0.5248397435897436,
+   "probe": {
+    "final": {
+     "accuracy": {
+      "est": 0.9871794871794872,
+      "lo": 0.9799679487179487,
+      "hi": 0.9935897435897436,
+      "n": 1248,
+      "n_groups": 624
+     },
+     "auroc": {
+      "est": 0.9958921801441487,
+      "lo": 0.9916234792888668,
+      "hi": 0.9991161252406422,
+      "n": 1248,
+      "n_groups": 624
+     }
+    },
+    "content_end": {
+     "accuracy": {
+      "est": 0.9855769230769231,
+      "lo": 0.9783653846153846,
+      "hi": 0.9919871794871795,
+      "n": 1248,
+      "n_groups": 624
+     },
+     "auroc": {
+      "est": 0.9938341040703246,
+      "lo": 0.9865254522154159,
+      "hi": 0.9983113975150067,
+      "n": 1248,
+      "n_groups": 624
+     }
+    }
+   }
+  },
+  "adjacent": {
+   "frac_positive": 0.5966666666666667,
+   "majority_rate": 0.5966666666666667,
+   "gold_accuracy_from_property_alone": 0.5392628205128205,
+   "probe": {
+    "final": {
+     "accuracy": {
+      "est": 0.9278846153846154,
+      "lo": 0.9126402243589743,
+      "hi": 0.9423277243589743,
+      "n": 1248,
+      "n_groups": 624
+     },
+     "auroc": {
+      "est": 0.9819519651923214,
+      "lo": 0.9755750888496899,
+      "hi": 0.9874187784045461,
+      "n": 1248,
+      "n_groups": 624
+     }
+    },
+    "content_end": {
+     "accuracy": {
+      "est": 0.9310897435897436,
+      "lo": 0.9158653846153846,
+      "hi": 0.9439102564102564,
+      "n": 1248,
+      "n_groups": 624
+     },
+     "auroc": {
+      "est": 0.9817803557332081,
+      "lo": 0.9748019641421157,
+      "hi": 0.9878258551405114,
+      "n": 1248,
+      "n_groups": 624
+     }
+    }
+   }
+  },
+  "separable": {
+   "frac_positive": 0.4,
+   "majority_rate": 0.6,
+   "gold_accuracy_from_property_alone": 0.5440705128205128,
+   "probe": {
+    "final": {
+     "accuracy": {
+      "est": 0.9326923076923077,
+      "lo": 0.9174679487179487,
+      "hi": 0.9463141025641025,
+      "n": 1248,
+      "n_groups": 624
+     },
+     "auroc": {
+      "est": 0.9811812076981151,
+      "lo": 0.9747829013604252,
+      "hi": 0.9868397358670384,
+      "n": 1248,
+      "n_groups": 624
+     }
+    },
+    "content_end": {
+     "accuracy": {
+      "est": 0.9318910256410257,
+      "lo": 0.9174679487179487,
+      "hi": 0.9447115384615384,
+      "n": 1248,
+      "n_groups": 624
+     },
+     "auroc": {
+      "est": 0.9810990874051313,
+      "lo": 0.9741294837318069,
+      "hi": 0.9871384194549826,
+      "n": 1248,
+      "n_groups": 624
+     }
+    }
+   }
+  },
+  "name_order": {
+   "frac_positive": 1.0,
+   "majority_rate": 1.0,
+   "gold_accuracy_from_property_alone": 0.5,
+   "probe": {
+    "final": {
+     "accuracy": {
+      "est": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 1248,
+      "n_groups": 624
+     },
+     "auroc": {
+      "est": NaN,
+      "lo": NaN,
+      "hi": NaN,
+      "n": 1248,
+      "n_groups": 624
+     }
+    },
+    "content_end": {
+     "accuracy": {
+      "est": 1.0,
+      "lo": 1.0,
+      "hi": 1.0,
+      "n": 1248,
+      "n_groups": 624
+     },
+     "auroc": {
+      "est": NaN,
+      "lo": NaN,
+      "hi": NaN,
+      "n": 1248,
+      "n_groups": 624
+     }
+    }
+   }
+  }
+ },
+ "positions": [
+  "final",
+  "content_end",
+  "premise_end"
+ ],
+ "complementarity": {
+  "pearson_r_scores": 0.593180026127622,
+  "probe_accuracy": {
+   "est": 0.7524038461538461,
+   "lo": 0.7283653846153846,
+   "hi": 0.7740584935897435,
+   "n": 1248,
+   "n_groups": 624
+  },
+  "parsed_accuracy": {
+   "est": 0.8157051282051282,
+   "lo": 0.7916666666666666,
+   "hi": 0.8373397435897436,
+   "n": 1248,
+   "n_groups": 624
+  },
+  "probe_auroc_where_parsed_says_valid": {
+   "est": 0.7686683181002818,
+   "lo": 0.7233128018003616,
+   "hi": 0.8097723962485808,
+   "n": 624,
+   "n_groups": 535
+  },
+  "probe_auroc_where_parsed_says_invalid": {
+   "est": 0.7842316562740241,
+   "lo": 0.7416310082722114,
+   "hi": 0.8245746185255391,
+   "n": 624,
+   "n_groups": 535
+  },
+  "parsed_auroc_where_probe_says_valid": {
+   "est": 0.8776046030947993,
+   "lo": 0.8453625720958095,
+   "hi": 0.9063746387279494,
+   "n": 621,
+   "n_groups": 497
+  },
+  "parsed_auroc_where_probe_says_invalid": {
+   "est": 0.8911821547171865,
+   "lo": 0.8634460159849828,
+   "hi": 0.9169557595198693,
+   "n": 627,
+   "n_groups": 500
+  },
+  "probe_right_when_parsed_wrong": 0.6347826086956522,
+  "n_parsed_wrong": 230,
+  "parsed_right_when_probe_wrong": 0.7281553398058253,
+  "n_probe_wrong": 309,
+  "either_right": 0.9326923076923077,
+  "stacked_probe_plus_parsed": {
+   "accuracy": {
+    "est": 0.8389423076923077,
+    "lo": 0.8173076923076923,
+    "hi": 0.8581730769230769,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "auroc": {
+    "est": 0.924386711045365,
+    "lo": 0.9099629920693623,
+    "hi": 0.9366343842455621,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "minus_parsed_alone_accuracy": {
+    "est": 0.023237179487179516,
+    "lo": 0.006390224358974337,
+    "hi": 0.04006410256410253,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "minus_probe_alone_accuracy": {
+    "est": 0.08653846153846156,
+    "lo": 0.0616786858974359,
+    "hi": 0.11057692307692313,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "mean_weights_probe_parsed": [
+    1.0042062997817993,
+    2.33469295501709
+   ],
+   "parsed_alone_auroc": {
+    "est": 0.907728005834977,
+    "lo": 0.8908271503636588,
+    "hi": 0.9224491879314596,
+    "n": 1248,
+    "n_groups": 624
+   }
+  }
+ }
+}

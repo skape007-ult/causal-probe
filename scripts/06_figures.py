@@ -306,7 +306,7 @@ def fig_steering():
                 ax.text(v * 1.15, i, f"{v:.3g}", va="center", fontsize=7.5, color=INK2)
             ax.set_yticks(range(len(keys)), labs if j == 0 else [""] * len(keys), fontsize=8); ax.invert_yaxis()
             ax.set_xscale("log"); ax.set_xlim(min(vals) / 3, max(vals) * 6)
-            ax.set_title("|change in logit difference| per natural SD along the direction", fontsize=8.5)
+            ax.set_title("|Δ logit difference| per natural SD", fontsize=8.5)
             ax.set_xlabel("logits per SD (log scale)")
         axes[0, 0].set_ylabel("Δ logit difference (positive = more Yes)")
         h, l = axes[0, 0].get_legend_handles_labels()
@@ -329,7 +329,7 @@ def fig_patching():
         for j, m in enumerate(ms):
             r = load(f"patching_{m}.json")
             k = r["kinds"][kind]
-            for i, (key, lab) in enumerate((("pooled_recovery", "clean → corrupt"), ("control_pooled_recovery", "random-donor patch (uninformative)"))):
+            for i, (key, lab) in enumerate((("pooled_recovery", "clean → corrupt"), ("control_pooled_recovery", "random donor, not a control"))):
                 ax = axes[i, j]
                 g = np.array(k[key], float).T                    # [regions, layers]
                 im = ax.imshow(g, aspect="auto", cmap=cmap, norm=TwoSlopeNorm(0, -1, 1), interpolation="nearest")
@@ -337,7 +337,7 @@ def fig_patching():
                 step = max(1, len(r["layers"]) // 8)
                 ax.set_xticks(range(0, len(r["layers"]), step), [r["layers"][t] for t in range(0, len(r["layers"]), step)])
                 ax.grid(False)
-                ax.set_title(f"{MODEL_LAB[m]} · {lab} (n={k['n_pairs'] if i == 0 else k['n_pairs_with_control']} pairs)", fontsize=8.5)
+                ax.set_title(f"{MODEL_LAB[m]} · {lab} (n={k['n_pairs'] if i == 0 else k['n_pairs_with_control']})", fontsize=8.5)
                 if i == 1:
                     ax.set_xlabel("layer patched (0 = embeddings)")
             fig.colorbar(im, ax=axes[:, j], shrink=0.7, label="pooled recovery" if j == len(ms) - 1 else None)

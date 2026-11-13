@@ -11,3 +11,5 @@ checkpoints/
 *.npz
 .DS_Store
 logs/
+kaggle_out/
+kaggle_tmp/

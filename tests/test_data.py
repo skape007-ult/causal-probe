@@ -98,3 +98,17 @@ def test_rename_variables(c2c_test):
         inv = {v: k for k, v in data.RENAME_MAP.items()}
         back = re.sub(r"\b([U-Z])\b", lambda m: inv[m.group(1)], r["context"] + "|" + r["query"])
         assert back == it["context"] + "|" + it["query"]
+
+
+def test_debiased_pool_has_no_hypothesis_shortcut():
+    from collections import Counter
+    pool = data.get_dataset("c2c_debiased")
+    cells = Counter((i["query"], i["label"]) for i in pool)
+    strings = {q for q, _ in cells}
+    assert all(cells[(q, 0)] == cells[(q, 1)] > 0 for q in strings)     # every string exactly 50/50
+    assert len({i["uid"] for i in pool}) == len(pool)
+    tpl = Counter((i["template"], i["label"]) for i in pool)
+    assert all(tpl[(t, 0)] == tpl[(t, 1)] for t in {t for t, _ in tpl})  # hence every template too
+    test_prems = {i["group"] for i in data.load_c2c("test")}
+    assert not ({i["group"] for i in pool} & test_prems)
+    assert [i["uid"] for i in data.get_dataset("c2c_debiased")] == [i["uid"] for i in pool]   # deterministic

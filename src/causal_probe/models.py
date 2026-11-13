@@ -7,20 +7,24 @@ import numpy as np
 import torch
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
-from .config import CACHE, LORA, MODELS, SEED
+from .config import CACHE, LORA, MODELS, QUANT_4BIT, REMOTE_MODELS, SEED
+
+HF_IDS = {**MODELS, **REMOTE_MODELS}
 
 YES_VARIANTS = ["Yes", " Yes", "yes", " yes", "YES", " YES"]
 NO_VARIANTS = ["No", " No", "no", " no", "NO", " NO"]
 
 
 def pick_device() -> str:
+    if torch.cuda.is_available():
+        return "cuda"
     return "mps" if torch.backends.mps.is_available() else "cpu"
 
 
 def load_tokenizer(name: str):
     if name in LORA:
         name = LORA[name][0]
-    tok = AutoTokenizer.from_pretrained(MODELS.get(name, name))
+    tok = AutoTokenizer.from_pretrained(HF_IDS.get(name, name))
     tok.padding_side = "left"  # so position -1 is always the final prompt token
     if tok.pad_token_id is None:
         tok.pad_token = tok.eos_token
@@ -96,12 +100,23 @@ def load_model(name: str, device: str | None = None, dtype=None, random_init: bo
         for p in model.parameters():
             p.requires_grad_(False)
         return model
-    hf_id = MODELS.get(name, name)
+    hf_id = HF_IDS.get(name, name)
     device = device or pick_device()
+    if name in QUANT_4BIT:
+        # 4-bit weights (bitsandbytes NF4, float16 compute). CUDA only; activations and logits
+        # are those of the quantised model, which is a documented limitation. No random-init
+        # control (it would need the full-precision weights in memory).
+        assert device == "cuda" and not random_init, "4-bit models need CUDA and have no random-init control"
+        from transformers import BitsAndBytesConfig
+        q = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.float16)
+        model = AutoModelForCausalLM.from_pretrained(hf_id, quantization_config=q, device_map={"": 0}).eval()
+        for p in model.parameters():
+            p.requires_grad_(False)
+        return model
     if dtype is None:
         dtype = torch.float32 if device == "cpu" else DEFAULT_DTYPE.get(name, torch.float16)
     if disk_embed is None:
-        disk_embed = name in DISK_EMBED and device != "cpu"
+        disk_embed = name in DISK_EMBED and device == "mps"     # only the 8 GB Mac needs it
     if random_init and not disk_embed:
         torch.manual_seed(SEED)
         cfg = AutoConfig.from_pretrained(hf_id)

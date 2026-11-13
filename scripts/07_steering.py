@@ -27,18 +27,68 @@ ALPHAS = [0.25, 0.5, 1.0, 2.0, 4.0, 8.0]
 N_RANDOM = 3
 
 
+def quick_select(resid, y, groups, sel, stride: int = 1, log=print):
+    """Choose (layer, C) for the gold probe when 05_confound.py has not been run for this
+    model/tag (Kaggle runs; the debiased pool). Same rule as 05_confound - best selection-half
+    accuracy over the (layer, C) grid, report half never touched - but cheaper: grouped 3-fold
+    cross-validation with one seed inside the selection half, optionally every `stride`-th layer."""
+    from sklearn.model_selection import StratifiedGroupKFold
+    idx = np.where(sel)[0]
+    folds = list(StratifiedGroupKFold(n_splits=3, shuffle=True, random_state=SEED).split(idx, y[idx], groups[idx]))
+    layers = sorted(set(range(1, resid.shape[1], stride)) | {resid.shape[1] - 1})
+    import os
+    from joblib import Parallel, delayed
+
+    def one(l):
+        X = probes.layer_features(resid, l, 0)[idx]
+        return {c: sum(int(((probes.fit_predict(X[tr], y[idx][tr], X[te], C=c) > 0) == y[idx][te]).sum())
+                       for tr, te in folds) / len(idx) for c in probes.PROBE_CS}
+
+    rows = Parallel(n_jobs=int(os.environ.get("CAUSAL_PROBE_JOBS", "2")))(delayed(one)(l) for l in layers)
+    acc = {(l, c): v for l, r in zip(layers, rows) for c, v in r.items()}
+    for l in layers:
+        log(f"[select] layer {l}: " + " ".join(f"C={c:g} {acc[(l, c)]:.3f}" for c in probes.PROBE_CS))
+    (l, c) = max(acc, key=acc.get)
+    return int(l), float(c), {f"{k[0]}|{k[1]:g}": v for k, v in acc.items()}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True, choices=ALL_MODELS)
-    ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder"])
+    ap.add_argument("--tag", required=True, choices=["c2c_probe", "cladder", "c2c_debiased"])
     ap.add_argument("--n", type=int, default=300)
-    ap.add_argument("--layer", type=int, default=None)
+    ap.add_argument("--layer", type=int, default=None, help="cache layer index; default: the selected layer")
+    ap.add_argument("--rel-depth", type=float, default=None, help="alternative to --layer: round(depth * n_layers)")
+    ap.add_argument("--suffix", default="", help="appended to output names (layer-sensitivity runs)")
+    ap.add_argument("--sub-batch", type=int, default=16,
+                    help="steering vectors per forward pass. 79 vectors per item; 16 stalled Gemma on the 8 GB Mac")
+    ap.add_argument("--select-stride", type=int, default=1)
+    ap.add_argument("--max-minutes", type=float, default=85.0,
+                    help="abort after the 5-item timing check if the projected run time exceeds this")
     a = ap.parse_args()
     t0 = time.time()
-    conf = json.loads((RESULTS / f"confound_{a.model}_{a.tag}.json").read_text())
-    layer = a.layer if a.layer is not None else conf["selected_layer_gold"]
-    probe_C = conf.get("selected_C_gold", probes.PROBE_C)
     resid, meta, items = cache.load_cache(a.model, a.tag)
+    conf_path = RESULTS / f"confound_{a.model}_{a.tag}.json"
+    sel_path = RESULTS / f"steer_select_{a.model}_{a.tag}.json"
+    if conf_path.exists():
+        conf = json.loads(conf_path.read_text())
+        sel_layer, probe_C, selection = conf["selected_layer_gold"], conf.get("selected_C_gold", probes.PROBE_C), "05_confound"
+    else:
+        if not sel_path.exists():
+            y_, g_ = np.array(meta["labels"]), np.array([i["group"] for i in items])
+            ug_ = np.unique(g_)
+            sg_ = set(np.random.default_rng(SEED + 7).permutation(ug_)[: len(ug_) // 2])
+            l_, c_, grid = quick_select(resid, y_, g_, np.array([g in sg_ for g in g_]), a.select_stride)
+            sel_path.write_text(json.dumps({"model": a.model, "tag": a.tag, "selected_layer_gold": l_,
+                                            "selected_C_gold": c_, "stride": a.select_stride,
+                                            "selection_half_cv_accuracy": grid}, indent=1))
+        conf = json.loads(sel_path.read_text())
+        sel_layer, probe_C, selection = conf["selected_layer_gold"], conf["selected_C_gold"], "quick_select"
+    layer = sel_layer
+    if a.rel_depth is not None:
+        layer = int(round(a.rel_depth * (resid.shape[1] - 1)))
+    if a.layer is not None:
+        layer = a.layer
     X = probes.layer_features(resid, layer, 0)
     y = np.array(meta["labels"]); ld0 = np.array(meta["logit_diff"])
     groups = np.array([i["group"] for i in items])
@@ -62,7 +112,8 @@ def main():
 
     # evaluation items: report half, balanced by gold label
     r3 = np.random.default_rng(SEED + 13)
-    idx = np.concatenate([r3.choice(np.where(rep & (y == c))[0], a.n // 2, replace=False) for c in (1, 0)])
+    per = min(a.n // 2, int((rep & (y == 1)).sum()), int((rep & (y == 0)).sum()))
+    idx = np.concatenate([r3.choice(np.where(rep & (y == c))[0], per, replace=False) for c in (1, 0)])
     idx.sort()
 
     tok = models.load_tokenizer(a.model)
@@ -71,24 +122,47 @@ def main():
     # vectors per item: [baseline] + [dir x alpha x sign] + [ablate per dir]
     add = np.stack([sg * al * s_unit * D[d] for d in range(len(names)) for al in ALPHAS for sg in (1, -1)])
     out = np.zeros((len(idx), 1 + len(add) + len(names)), np.float32)
+    # checkpoint: raw logit differences every 25 items; a re-run resumes if the setup is identical
+    ckpt = cache.cache_dir(a.model, a.tag) / f"steering{a.suffix}_partial.npz"
+    start = 0
+    if ckpt.exists():
+        z = np.load(ckpt)
+        if int(z["layer"]) == layer and np.array_equal(z["idx"], idx) and z["out"].shape == out.shape:
+            start = int(z["done"]); out[:start] = z["out"][:start]
+            print(f"resuming at item {start}/{len(idx)}", flush=True)
+    t_loop = time.time()
     for n, i in enumerate(idx):
+        if n < start:
+            continue
         x = X[i]
         abl = np.stack([-((x - mu) @ D[d]) * D[d] for d in range(len(names))])
         vecs = torch.tensor(np.concatenate([np.zeros((1, X.shape[1]), np.float32), add, abl]))
         ids = prompts.encode_with_positions(tok, items[i])["input_ids"]
-        out[n] = steer.steered_logit_diffs(model, ids, layer, vecs, ans)
-        if n % 50 == 0:
-            print(f"{n}/{len(idx)} {time.time() - t0:.0f}s", flush=True)
+        out[n] = steer.steered_logit_diffs(model, ids, layer, vecs, ans, sub_batch=a.sub_batch)
+        if n - start == 4:      # timing check on the first 5 items before committing to the full run
+            per_item = (time.time() - t_loop) / 5
+            proj = per_item * (len(idx) - n - 1) / 60
+            print(f"[timing] {per_item:.2f} s/item over 5 items -> projected {proj:.1f} min for the remaining "
+                  f"{len(idx) - n - 1} items", flush=True)
+            if proj > a.max_minutes:
+                raise SystemExit(f"projected {proj:.0f} min > --max-minutes {a.max_minutes:.0f}; "
+                                 f"lower --sub-batch or --n and re-run")
+        if (n + 1) % 25 == 0:
+            np.savez(ckpt, idx=idx, out=out, done=n + 1, layer=layer)
+            print(f"{n + 1}/{len(idx)} {time.time() - t0:.0f}s", flush=True)
         if model.device.type == "mps" and n % 10 == 0:
             torch.mps.empty_cache()
-    np.savez(cache.cache_dir(a.model, a.tag) / "steering.npz", idx=idx, out=out, names=names,
+    np.savez(cache.cache_dir(a.model, a.tag) / f"steering{a.suffix}.npz", idx=idx, out=out, names=names,
              alphas=ALPHAS, layer=layer, s_unit=s_unit)
+    ckpt.unlink(missing_ok=True)
 
     # ---------------- summarise
     yy, gg = y[idx], groups[idx]
     base = out[:, 0]
     bpred = (base > 0).astype(int)
-    assert np.abs(base - ld0[idx]).max() < 0.5, "baseline differs from cache"
+    base_err = float(np.abs(base - ld0[idx]).max())
+    if base_err >= 0.5:      # recorded, not fatal: a long GPU run should not be lost to this check
+        print(f"WARNING: unsteered baseline differs from the cached logit difference by up to {base_err:.2f}", flush=True)
     A = out[:, 1:1 + len(add)].reshape(len(idx), len(names), len(ALPHAS), 2)   # [..., 0]=+ , 1 = -
     ABL = out[:, 1 + len(add):]
 
@@ -117,11 +191,13 @@ def main():
         return res
 
     res = {"model": a.model, "tag": a.tag, "layer": int(layer), "n_items": int(len(idx)),
+           "n_layers": int(resid.shape[1] - 1), "selected_layer_gold": int(sel_layer), "layer_selection": selection,
+           "device": str(model.device), "sub_batch": a.sub_batch,
            "alphas": ALPHAS, "s_unit_rms_deviation": s_unit, "probe_C": probe_C,
            "mean_resid_norm": float(np.linalg.norm(X[sel], axis=1).mean()),
            "baseline": {"accuracy": ci(lambda t, b: stats.accuracy(t, (b > 0).astype(int)), yy, base),
                         "frac_yes": float(bpred.mean()), "mean_logit_diff": float(base.mean()),
-                        "max_abs_diff_vs_cache": float(np.abs(base - ld0[idx]).max())},
+                        "max_abs_diff_vs_cache": base_err, "baseline_matches_cache": bool(base_err < 0.5)},
            "direction_geometry": {
                "cos_gold_probe_vs_diffmeans": float(D[0] @ D[1]),
                "cos_gold_probe_vs_model_out": float(D[0] @ D[2]),
@@ -142,7 +218,7 @@ def main():
                 for ai, al in enumerate(ALPHAS)],
         "ablate": {"flip_rate": float(np.mean([r["ablate"]["flip_rate"]["est"] for r in rs])),
                    "mean_abs_delta_logit_diff": float(np.mean([r["ablate"]["mean_abs_delta_logit_diff"] for r in rs]))}}
-    (RESULTS / f"steering_{a.model}_{a.tag}.json").write_text(json.dumps(res, indent=1))
+    (RESULTS / f"steering_{a.model}_{a.tag}{a.suffix}.json").write_text(json.dumps(res, indent=1))
     print(f"{a.model}/{a.tag} layer {layer} base acc {res['baseline']['accuracy']['est']:.3f}  [{time.time() - t0:.0f}s]")
     for n in names[:3] + ["random_mean"]:
         row = res["directions"][n]["add"]

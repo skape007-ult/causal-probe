@@ -8,5 +8,9 @@
 | Qwen2.5-1.5B | c2c_test_sub_fewshot | 500 | 0.800 [0.752, 0.856] | 0.804 [0.756, 0.859] | 0.004 | 0.000 |
 | Qwen2.5-1.5B | cladder_sub | 500 | 0.510 [0.475, 0.543] | 0.510 [0.475, 0.543] | 0.000 | 0.000 |
 | Qwen2.5-1.5B | cladder_sub_fewshot | 500 | 0.528 [0.487, 0.565] | 0.530 [0.490, 0.566] | 0.006 | 0.000 |
+| Gemma-2-2B | c2c_test_sub | 100 | 0.580 [0.489, 0.653] | 0.580 [0.489, 0.653] | 0.000 | 0.000 |
+| Gemma-2-2B | c2c_test_sub_fewshot | 100 | 0.510 [0.403, 0.608] | 0.510 [0.403, 0.608] | 0.000 | 0.000 |
+| Gemma-2-2B | cladder_sub | 100 | 0.480 [0.385, 0.576] | 0.400 [0.318, 0.495] | 0.130 | 0.130 |
+| Gemma-2-2B | cladder_sub_fewshot | 100 | 0.420 [0.325, 0.515] | 0.420 [0.325, 0.515] | 0.000 | 0.000 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`</sub>

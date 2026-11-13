@@ -59,6 +59,10 @@ def gen_block(model, tag, y_by_uid, pred_by_uid, group_by_uid):
     if not p.exists():
         return None
     g = json.loads(p.read_text())
+    keep = [k for k, u in enumerate(g["uids"]) if u in y_by_uid]     # all of them, except in --limit smoke tests
+    g = {"uids": [g["uids"][k] for k in keep], "text": [g["text"][k] for k in keep]}
+    if not keep:
+        return None
     parsed = [cache.parse_answer(t) for t in g["text"]]
     y = np.array([y_by_uid[u] for u in g["uids"]])
     lp = np.array([pred_by_uid[u] for u in g["uids"]])
@@ -94,6 +98,9 @@ def main():
         fs_tag = f"{base}_sub_fewshot"
         if (cache.cache_dir(a.model, fs_tag) / "meta.json").exists():
             fs, (fitems, fy, fld, fpred, fgroups) = eval_tag(a.model, fs_tag)
+            if not all(i["uid"] in pb for i in fitems):     # only in --limit smoke tests
+                print(f"{fs_tag}: zero-shot cache does not cover these items; few-shot comparison skipped")
+                continue
             zs_pred = np.array([pb[i["uid"]] for i in fitems])
             fs["zero_shot_same_items"] = metric_block(fy, zs_pred, np.array(
                 [ld[[j["uid"] for j in items].index(i["uid"])] for i in fitems]), fgroups)

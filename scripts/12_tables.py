@@ -231,7 +231,7 @@ def t_audited(models=MODELS):
                 continue
             a = c["all_items"]; ps = c["positions"]
             rows.append([LAB[m], ds_(m, tag), ci(a["gold_probe"]["accuracy"]), ci(ps["content_end"]["accuracy"]),
-                         ci(ps["premise_end"]["accuracy"]), ci(ps["premise_end"]["final_minus_this_accuracy"], signed=True),
+                         ci(ps.get("premise_end", {}).get("accuracy")), ci(ps.get("premise_end", {}).get("final_minus_this_accuracy"), signed=True),
                          ci(ps["content_end"]["final_minus_this_accuracy"], signed=True),
                          ci(a.get("random_init_probe", {}).get("accuracy")), ci(ps["content_end"].get("random_init_accuracy")),
                          ci(ps["content_end"].get("trained_minus_random_init_accuracy"), signed=True)])
@@ -442,6 +442,35 @@ def t_answer_bias():
     write("answer_bias", table(
         ["Model", "Item set", "Prompt", "Items", "Yes-rate", "Accuracy", "Majority-class accuracy", "AUROC of Yes−No logit difference",
          "Accuracy at best threshold (cross-fitted)", "Reading"], rows, ["answer_bias.json"]))
+
+
+def t_within_string():
+    """Do the answers follow the label inside a hypothesis string? (debiased pool; scripts/15_answer_bias.py, eleventh audit F1)"""
+    r = load("answer_bias.json")
+    if not r:
+        return
+    rows = []
+    for m in [m_ for m_ in MODELS if m_ in r]:
+        w = r[m].get("c2c_debiased", {}).get("within_hypothesis_string")
+        if not w:
+            continue
+        c = w["within_string_and_adjacency"]; pp = lambda v: f"{v['permutation_p_two_sided']:.4f}"       # noqa: E731
+        rows.append([LAB[m], ci(r[m]["c2c_debiased"]["auroc"]), ci(w["mean_auroc"]), pp(w["mean_auroc"]),
+                     f"{w['n_strings_with_auroc_above_half']}/{w['n_strings']}"]
+                    + [f"{w['by_type'][t]['est']:.3f}" + ("*" if w["by_type"][t]["lo"] > 0.5 or w["by_type"][t]["hi"] < 0.5 else "") for t in TEMPLATES_T]
+                    + [ci(c), pp(c), " · ".join(f"{c['by_type'][t]['est']:.2f}" for t in TEMPLATES_T), w["reading"]])
+    if rows:
+        write("answers_within_string", table(
+            ["Model", "Pooled AUROC of the answer (all items)", "Mean AUROC within hypothesis string", "Permutation p", "Strings above 0.5"]
+            + [f"Within string, by type: {TSHORT[t]}" for t in TEMPLATES_T]
+            + ["AUROC within string and adjacency of the queried pair", "Permutation p", "…by type (" + ", ".join(TSHORT[t] for t in TEMPLATES_T) + ")", "Reading"],
+            rows, ["answer_bias.json"],
+            notes=["AUROC of the Yes−No logit difference for the gold label. Pooled: over all 2,400 items. Within string: computed inside each of the 48 hypothesis strings "
+                   "(the label is balanced in every string) and averaged. Within string and adjacency: inside cells of (string, queried pair adjacent or not), weighted by the "
+                   "number of valid-invalid pairs; it asks whether the answer follows the label beyond following adjacency.",
+                   "Intervals: premises resampled. Permutation p, two-sided: the two labels of each premise swapped at random; its smallest possible value here is 0.0005. * interval excludes 0.5.",
+                   "These statistics were chosen after the pooled ones had been seen (eleventh audit, F1). The pooled AUROC is insensitive on this pool: the answer differs "
+                   "far more between hypothesis strings than within them, and opposite signs in different hypothesis types cancel."]))
 
 
 def t_probe_content():
@@ -896,5 +925,5 @@ def t_sae():
 
 if __name__ == "__main__":
     t_behaviour(); t_probes(); t_confound(); t_confound(suffix="_fixedC", name="confound_fixedC"); t_audited(); t_external()
-    t_steering(); t_patching(); t_cross_model(); t_benchmarks(); t_answer_bias(); t_probe_content()
+    t_steering(); t_patching(); t_cross_model(); t_benchmarks(); t_answer_bias(); t_within_string(); t_probe_content()
     t_patching_same(); t_settle(); t_adjacency(); t_sae()      # t_feature_causal(): first version of the adjacency test, superseded

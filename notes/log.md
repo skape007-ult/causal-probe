@@ -648,7 +648,7 @@ So: **"beyond all 500" is moderate evidence for a real effect** (9 and 20 times 
 3. *The second question* (the label with the adjacency direction projected out, against 100 controls, p ≤ 0.05; entry of 02:45, point 2) was registered before the run with its reading: a positive answer means "beyond the one linear adjacency direction", a negative answer means nothing. It is reported as a number in the report under that reading and does not change the caveat's wording in RESULTS.md under any outcome.
 4. *The family of comparisons.* The threshold 0.05/24 counts the 24 comparisons that existed when these two arms were chosen (Qwen models only). Gemma's eight arrived this morning, before the settle run's launch and without any influence on which arms it tests. Counted over all 32, the smallest p this test can give (1/501 = 0.0020) is above 0.05/32 = 0.0016. The registered threshold stands; the sentence for the first outcome will say "a correction for the 24 comparisons among which the arm was chosen", and the report will give the 32-comparison figure next to it.
 
-## Sat 2026-11-14 08:36 — Eleventh independent audit: runs B and D (raw report: `notes/audit_runs_b_d_raw.md`). My 7B verdict of 07:56 does not stand as I gave it
+## Sat 2026-11-14 08:34 — Eleventh independent audit: runs B and D (raw report: `notes/audit_runs_b_d_raw.md`). My 7B verdict of 07:56 does not stand as I gave it
 
 The reviewer had the code and the result files, not my reading. No critical finding: every number of the two runs was recomputed from the raw outputs and agrees with the result files and the tables; the ingest is byte-identical to the downloads and overwrote nothing else. Four findings change what the numbers may be taken to mean.
 

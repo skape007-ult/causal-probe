@@ -125,7 +125,7 @@ def fig_lens():
                 ax.fill_between(x, c["lo"][1:], c["hi"][1:], color=col, alpha=0.12, lw=0)
             ax.axhline(0, color=AXIS, lw=1)
             ax.set_title(f"{MODEL_LAB[m]} · {DATASET_LAB[tag]}", fontsize=9)
-            ax.legend(fontsize=7, loc="center left")
+            ax.legend(fontsize=7, loc="lower left" if m == "qwen3b" else "lower right")
             if i == len(tags) - 1:
                 ax.set_xlabel("layer (0 = embeddings)")
             if j == 0:
@@ -419,7 +419,7 @@ def fig_patching_same():
     ms = [m for m in MODELS if (RESULTS / f"patching_{m}_same.json").exists()]
     if not ms:
         return
-    fig, axes = plt.subplots(2, len(ms), figsize=(3.6 * len(ms) + 0.6, 5.6), squeeze=False, sharey="row")
+    fig, axes = plt.subplots(2, len(ms), figsize=(max(3.9 * len(ms) + 0.6, 9.0), 5.8), squeeze=False, sharey="row")
     for j, m in enumerate(ms):
         ch, sm = load(f"patching_{m}.json"), load(f"patching_{m}_same.json")
         for i, (kind, klab) in enumerate((("hyp", "hypothesis differs by one variable"), ("prem", "premise relabelled"))):
@@ -437,7 +437,7 @@ def fig_patching_same():
             ax.axhline(0.5, color=AXIS, lw=0.8)
             ax.set_ylim(-0.1, 1.1)
             ax.set_title(f"{MODEL_LAB[m]} · {klab}", fontsize=8.5)
-            ax.legend(fontsize=7, loc="center left")
+            ax.legend(fontsize=7, loc="upper left")
             if i == 1:
                 ax.set_xlabel("layer patched at the final token (relative depth)")
             if j == 0:

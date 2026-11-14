@@ -59,6 +59,21 @@
     "    off-diagonal contrast, target sign -0.0021 [-0.0027, -0.0015]; source sign +0.0020 [+0.0016, +0.0023]",
     "  positive control (model-answer direction): slope +0.0113 per unit norm, larger in absolute value than 35% of shuffled-label probe directions"
    ]
+  },
+  "r2.qwen0.5b.patch_same": {
+   "ok": true,
+   "minutes": 18.6,
+   "detail": "ok",
+   "log_tail": [
+    "[prem] pair 0/60 523s",
+    "[prem] pair 10/60 613s",
+    "[prem] pair 20/60 737s",
+    "[prem] pair 30/60 835s",
+    "[prem] pair 40/60 934s",
+    "[prem] pair 50/60 1022s",
+    "[prem] n=60 mean delta 0.223 frac>0 0.88; final-position recovery by layer: 0.00 0.01 0.01 0.01 0.01 0.01 0.00 0.07 0.95 0.94 0.98 1.00 1.00",
+    "done 18.4 min"
+   ]
   }
  },
  "run": "r2_qwen05b",
@@ -76,7 +91,27 @@
   "r2.qwen0.5b.adjacency.final.best",
   "r2.qwen0.5b.adjacency.content_end.best",
   "r2.qwen0.5b.adjacency.final.first50",
-  "r2.qwen0.5b.adjacency.content_end.first50"
+  "r2.qwen0.5b.adjacency.content_end.first50",
+  "r2.qwen0.5b.patch_same"
  ],
- "total_minutes": 51.8
+ "total_minutes": 70.4,
+ "models_run": [
+  "qwen0.5b"
+ ],
+ "export": {
+  "positions": [
+   "final",
+   "content_end"
+  ],
+  "bytes_per_cache_dir": {
+   "qwen0.5b/c2c_debiased": 6803060,
+   "qwen0.5b/c2c_probe": 1536649,
+   "qwen0.5b/c2c_test": 408791,
+   "qwen0.5b/cladder": 1101240
+  },
+  "zip_megabytes": {
+   "cache_r2_qwen05b_qwen0.5b.zip": 10.3
+  }
+ },
+ "all_ok": false
 }

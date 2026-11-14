@@ -75,7 +75,7 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
          title="Round 3 / F: Qwen2.5-3B patching on all available pairs",
          what="activation patching on up to 240 label-preserving and 240 label-changing pairs per kind (the pool holds about 230 "
               "and 210) instead of 60, to narrow the interval on their comparison. No component patching, no random-donor control",
-         est="1 to 2.5 hours (to be narrowed with the stage times of run A)"),
+         est="about 2 hours (run A needed 18 minutes for 60 label-preserving pairs)"),
     dict(file="kaggle_r3_patch240_gemma.ipynb", platform="kaggle", run="r3p_gemma", models="gemma2b",
          jobs="patch_same,patch,export", fallback="", token=True, gated="google/gemma-2-2b-it", extra="--n-pairs 240 --no-resid",
          title="Round 3 / F: Gemma-2-2B patching on all available pairs",
@@ -86,7 +86,7 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False, 
          extra="--n-shuf 100 --sites best --control-tags c2c_debiased --no-resid",
          title="Round 3 / G: Qwen2.5-0.5B with 100 control directions",
-         what="ONLY if the 20-control run of this model shows an effect beyond its controls (I will say so after its ingest). The steering "
+         what="for a model whose 20-control run shows an effect at or beyond the edge of its controls (KAGGLE.md, Round 3, says which). The steering "
               "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
               "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
               "20-control run", est="about 1 hour"),
@@ -94,23 +94,23 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False, 
          extra="--n-shuf 100 --sites best --control-tags c2c_debiased --no-resid",
          title="Round 3 / G: Qwen2.5-1.5B with 100 control directions",
-         what="ONLY if the 20-control run of this model shows an effect beyond its controls (I will say so after its ingest). The steering "
+         what="for a model whose 20-control run shows an effect at or beyond the edge of its controls (KAGGLE.md, Round 3, says which). The steering "
               "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
               "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
-              "20-control run", est="1.5 to 2 hours"),
+              "20-control run", est="about 2 hours (scaled from the 20-control run: 9 and 11 minutes per site)"),
     dict(file="kaggle_r3_controls100_qwen3b.ipynb", platform="kaggle", run="r3c_qwen3b", models="qwen3b",
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False, 
          extra="--n-shuf 100 --sites best --control-tags c2c_debiased --no-resid",
          title="Round 3 / G: Qwen2.5-3B with 100 control directions",
-         what="ONLY if the 20-control run of this model shows an effect beyond its controls (I will say so after its ingest). The steering "
+         what="for a model whose 20-control run shows an effect at or beyond the edge of its controls (KAGGLE.md, Round 3, says which). The steering "
               "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
               "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
-              "20-control run", est="2.5 to 4.5 hours"),
+              "20-control run", est="about 3 hours (scaled from the 20-control run: 11 and 18 minutes per site)"),
     dict(file="kaggle_r3_controls100_gemma.ipynb", platform="kaggle", run="r3c_gemma", models="gemma2b",
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=True, gated="google/gemma-2-2b-it",
          extra="--n-shuf 100 --sites best --control-tags c2c_debiased --no-resid",
          title="Round 3 / G: Gemma-2-2B with 100 control directions",
-         what="ONLY if the 20-control run of this model shows an effect beyond its controls (I will say so after its ingest). The steering "
+         what="for a model whose 20-control run shows an effect at or beyond the edge of its controls (KAGGLE.md, Round 3, says which). The steering "
               "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
               "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
               "20-control run", est="2.5 to 4.5 hours"),

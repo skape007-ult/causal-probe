@@ -341,6 +341,18 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 
 **Cost.** The 1.5B run is repeated (about 1.25 GPU hours). No result changes; `cdb08d7` and `6d9ce8d` run the same experiments.
 
+### D32. Round 3: depth on the three claims, no new claim (Fri 13 Nov, 23:00; user's go-ahead)
+
+**Context.** GPU quota stopped being the limit; two concurrent sessions and Sunday 10:00 are. The user asked what would most strengthen the three headline claims and approved four things.
+
+**Decision, in priority order.** (1) Finish the four-model interventions (Qwen 1.5B rerun, Gemma-2-2B; Qwen 3B and the 7B behaviour check are running or next). (2) The probe comparison for Qwen 7B on the debiased pool, on the laptop, from the 7B run's download. (3) Gemma-2-9B, behaviour and debiased-pool activations only: a second family above 7B for the scope of claims 2 and 3. (4) Patching on all available pairs (about 210 to 230 per kind instead of 60) for Qwen 3B and Gemma-2-2B. (5) 100 shuffled-label control directions instead of 20, only for models whose 20-control run shows something beyond its controls.
+
+**Why Gemma-2-9B and not another 7B model.** The licence and token are the ones already in use; it gives the Gemma family a second size as Qwen has four; and its fit on two T4s can be written down: 9.24 billion parameters at 2 bytes are 17.2 GiB, the loader places at most 9 GiB on the first card and 13 GiB on the second, and each card has 14.5 GiB. (My first version assumed 15 GiB cards and a 14 GiB limit; the check built on that would have refused every real T4. The seventh audit caught it from the first Kaggle run's own record.) The notebook checks this from the Hub's own numbers before downloading and skips itself if it does not hold. Not chosen: a 4-bit load (it is then a different model), Mistral-7B (another licence to accept, no advantage).
+
+**Why the final cell no longer raises (the user's point).** I did not know whether Kaggle keeps the output of a version whose last cell failed. A check that can destroy what it checks is worse than none. It now writes `STATUS.txt` and the ingest refuses anything that is not `OK`.
+
+**Cut-offs.** Nothing launched after Saturday 18:00. Nothing unaudited into `RESULTS.md` after Sunday 08:00; a run that misses that is reported as run but not audited, outside `RESULTS.md`, or left out.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.

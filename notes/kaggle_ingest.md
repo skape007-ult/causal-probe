@@ -145,3 +145,20 @@ checks that the run's commit lies between the first round-2 pin and the current 
 come from an older version of the analysis; after ingesting, the statistics are recomputed here from the raw arrays
 (`17_adjacency_test.py --analyse-only` per site). Follow-up runs use the run names `r2b_qwen3b`, `r2b_qwen15b`, `r2b_gemma`.
 A smoke test (`SMOKE_TEST = True`) writes under `<run>_tiny` and is refused by the ingest.
+
+## 7. STATUS.txt (notebooks pinned to `041f11e` or later)
+
+The last cell of every notebook writes `STATUS.txt` into the output directory and a copy into the results archive
+(`results/round2_output_status_<run>.txt`). Put `STATUS.txt` into `kaggle_in/<run>/` with the zip files (if it is
+forgotten, the copy inside the archive is used).
+
+| First line | Meaning | What the ingest does |
+|---|---|---|
+| `OK` | every expected archive is in the kept output directory and the runner reached its export step | continues with the usual checks (commit, stages) |
+| `FAILED` | an archive is missing, empty or misplaced, or the runner was cut short; the reasons follow | refuses. `--ignore-status` ingests what is there (say why in the log); `--allow-partial` alone does not |
+| `SKIPPED` | the run decided not to run (Gemma-2-9B preflight: no access, not enough GPU memory, disk); the reason follows | refuses: there is nothing to ingest |
+| file missing | the last cell did not run, or the run is from a notebook that did not write one | refuses if the run's commit has the STATUS cell; accepts with a note for earlier pins (A at `cdb08d7`, C at `6d9ce8d`) |
+
+Round-3 runs (`r3_gemma9b`, `r3p_*`, `r3c_*`) are ingested with the same command, `--run <run>`. Their result files
+carry suffixes (`_n240`, `_c100`) and never replace round-2 files.
+

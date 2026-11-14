@@ -118,7 +118,120 @@
    },
    "best_threshold_acc_in_sample": 0.51375,
    "best_threshold_in_sample": -0.7405242919921875,
-   "reading": "at chance (AUROC CI includes 0.5)"
+   "reading": "at chance (AUROC CI includes 0.5)",
+   "within_hypothesis_string": {
+    "mean_auroc": {
+     "est": 0.5057333333333333,
+     "lo": 0.4871762863729812,
+     "hi": 0.5233634246010224,
+     "permutation_p_two_sided": 0.5442278860569715,
+     "null_mean": 0.4998786063579672,
+     "null_sd": 0.009165810237940613
+    },
+    "n_strings": 48,
+    "n_strings_with_auroc_above_half": 26,
+    "by_type": {
+     "has_collider": {
+      "est": 0.58592,
+      "lo": 0.5374431793037661,
+      "hi": 0.6303604649939425,
+      "permutation_p_two_sided": 0.0004997501249375312,
+      "null_mean": 0.5002925670302198,
+      "null_sd": 0.024651702720325894,
+      "n_strings": 10
+     },
+     "has_confounder": {
+      "est": 0.4648000000000001,
+      "lo": 0.4008955036181068,
+      "hi": 0.5349909198818182,
+      "permutation_p_two_sided": 0.2913543228385807,
+      "null_mean": 0.5001094225523638,
+      "null_sd": 0.03325440998229186,
+      "n_strings": 6
+     },
+     "non-child descendant": {
+      "est": 0.4488888888888889,
+      "lo": 0.3977986898591471,
+      "hi": 0.5020346746564075,
+      "permutation_p_two_sided": 0.054972513743128434,
+      "null_mean": 0.4999296786820675,
+      "null_sd": 0.026614792333951226,
+      "n_strings": 9
+     },
+     "non-parent ancestor": {
+      "est": 0.44533333333333336,
+      "lo": 0.3922549456404469,
+      "hi": 0.49641263294838295,
+      "permutation_p_two_sided": 0.04547726136931534,
+      "null_mean": 0.49947643973849687,
+      "null_sd": 0.02723941806379079,
+      "n_strings": 9
+     },
+     "parent": {
+      "est": 0.5413714285714286,
+      "lo": 0.4997942049791178,
+      "hi": 0.5814661285890526,
+      "permutation_p_two_sided": 0.03698150924537731,
+      "null_mean": 0.49970970241292617,
+      "null_sd": 0.020543532677985598,
+      "n_strings": 14
+     }
+    },
+    "within_string_and_adjacency": {
+     "est": 0.48552493896058596,
+     "lo": 0.45787106383407217,
+     "hi": 0.5137069275342214,
+     "permutation_p_two_sided": 0.13543228385807096,
+     "null_mean": 0.4998444229512194,
+     "null_sd": 0.009704845680190075,
+     "by_type": {
+      "has_collider": {
+       "est": 0.5203336809176226,
+       "lo": 0.4595624782959513,
+       "hi": 0.5781655276624001,
+       "permutation_p_two_sided": 0.43778110944527737,
+       "null_mean": 0.5007204879817639,
+       "null_sd": 0.02568727384525905
+      },
+      "has_confounder": {
+       "est": 0.46973486743371684,
+       "lo": 0.396413756550492,
+       "hi": 0.5503566883158321,
+       "permutation_p_two_sided": 0.3893053473263368,
+       "null_mean": 0.4993564075947514,
+       "null_sd": 0.035101133220986576
+      },
+      "non-child descendant": {
+       "est": 0.48263642806520196,
+       "lo": 0.4222294692128292,
+       "hi": 0.54400711902331,
+       "permutation_p_two_sided": 0.5282358820589705,
+       "null_mean": 0.4996970676576627,
+       "null_sd": 0.028040865818446312
+      },
+      "non-parent ancestor": {
+       "est": 0.42366412213740456,
+       "lo": 0.35775325961990423,
+       "hi": 0.4912468835273562,
+       "permutation_p_two_sided": 0.00849575212393803,
+       "null_mean": 0.49940153459323827,
+       "null_sd": 0.028846629813404995
+      },
+      "parent": {
+       "est": 0.5739130434782609,
+       "lo": 0.45961199536923253,
+       "hi": 0.6734060735664585,
+       "permutation_p_two_sided": 0.0004997501249375312,
+       "null_mean": 0.4998052985198998,
+       "null_sd": 0.021280470784246257
+      }
+     },
+     "share_of_items_in_cells_with_both_labels": 0.8370833333333333
+    },
+    "valid_item_above_invalid_item_of_the_same_premise": 0.515,
+    "reading": "at chance within hypothesis string",
+    "note": "chosen after the pooled statistics had been seen (eleventh audit, F1); n_boot 1000 premise resamples, 2000 permutations"
+   }
   },
   "cladder": {
    "mode": "zero-shot",
@@ -400,7 +513,120 @@
    },
    "best_threshold_acc_in_sample": 0.51875,
    "best_threshold_in_sample": -4.224793434143066,
-   "reading": "at chance (AUROC CI includes 0.5)"
+   "reading": "at chance (AUROC CI includes 0.5)",
+   "within_hypothesis_string": {
+    "mean_auroc": {
+     "est": 0.5072333333333333,
+     "lo": 0.4901082589389029,
+     "hi": 0.5246619887516644,
+     "permutation_p_two_sided": 0.41879060469765117,
+     "null_mean": 0.5000101046513232,
+     "null_sd": 0.009157993120716548
+    },
+    "n_strings": 48,
+    "n_strings_with_auroc_above_half": 22,
+    "by_type": {
+     "has_collider": {
+      "est": 0.49983999999999995,
+      "lo": 0.44542276794549956,
+      "hi": 0.5509911920570356,
+      "permutation_p_two_sided": 0.9955022488755623,
+      "null_mean": 0.4997275848015106,
+      "null_sd": 0.026338235395844248,
+      "n_strings": 10
+     },
+     "has_confounder": {
+      "est": 0.4421333333333333,
+      "lo": 0.37476900600678315,
+      "hi": 0.5106754682521939,
+      "permutation_p_two_sided": 0.08595702148925537,
+      "null_mean": 0.4999125568937158,
+      "null_sd": 0.03337951399266689,
+      "n_strings": 6
+     },
+     "non-child descendant": {
+      "est": 0.4295111111111111,
+      "lo": 0.37476312725677635,
+      "hi": 0.4806470169480563,
+      "permutation_p_two_sided": 0.010994502748625687,
+      "null_mean": 0.4998673896056864,
+      "null_sd": 0.027058155702660954,
+      "n_strings": 9
+     },
+     "non-parent ancestor": {
+      "est": 0.4492444444444445,
+      "lo": 0.39865871395463204,
+      "hi": 0.5021847483412349,
+      "permutation_p_two_sided": 0.06746626686656672,
+      "null_mean": 0.5001063171291951,
+      "null_sd": 0.027643419259716424,
+      "n_strings": 9
+     },
+     "parent": {
+      "est": 0.6276571428571429,
+      "lo": 0.5908297727172369,
+      "hi": 0.6653198630560411,
+      "permutation_p_two_sided": 0.0004997501249375312,
+      "null_mean": 0.5002836052337272,
+      "null_sd": 0.021165005980523583,
+      "n_strings": 14
+     }
+    },
+    "within_string_and_adjacency": {
+     "est": 0.43590861527729335,
+     "lo": 0.4061022081239186,
+     "hi": 0.46175833866310056,
+     "permutation_p_two_sided": 0.0004997501249375312,
+     "null_mean": 0.5000817377707194,
+     "null_sd": 0.009543041614860175,
+     "by_type": {
+      "has_collider": {
+       "est": 0.43899895724713245,
+       "lo": 0.37605028438469495,
+       "hi": 0.49820018837341046,
+       "permutation_p_two_sided": 0.019490254872563718,
+       "null_mean": 0.49944793683456756,
+       "null_sd": 0.02667521165895501
+      },
+      "has_confounder": {
+       "est": 0.4462231115557779,
+       "lo": 0.3576111841408759,
+       "hi": 0.5284474117961511,
+       "permutation_p_two_sided": 0.127936031984008,
+       "null_mean": 0.4999826385046845,
+       "null_sd": 0.035352312150781454
+      },
+      "non-child descendant": {
+       "est": 0.42274982282069457,
+       "lo": 0.3544081692328625,
+       "hi": 0.48799329000306885,
+       "permutation_p_two_sided": 0.005997001499250375,
+       "null_mean": 0.499987416932155,
+       "null_sd": 0.028054292578032325
+      },
+      "non-parent ancestor": {
+       "est": 0.4083969465648855,
+       "lo": 0.3380411728570994,
+       "hi": 0.47145107267652053,
+       "permutation_p_two_sided": 0.001999000499750125,
+       "null_mean": 0.5000654770611765,
+       "null_sd": 0.029303437670509153
+      },
+      "parent": {
+       "est": 0.5052173913043478,
+       "lo": 0.39236329335221737,
+       "hi": 0.609878923467123,
+       "permutation_p_two_sided": 0.7991004497751124,
+       "null_mean": 0.5006934139176529,
+       "null_sd": 0.02169192796269323
+      }
+     },
+     "share_of_items_in_cells_with_both_labels": 0.8370833333333333
+    },
+    "valid_item_above_invalid_item_of_the_same_premise": 0.5166666666666667,
+    "reading": "at chance within hypothesis string",
+    "note": "chosen after the pooled statistics had been seen (eleventh audit, F1); n_boot 1000 premise resamples, 2000 permutations"
+   }
   },
   "cladder": {
    "mode": "zero-shot",
@@ -682,7 +908,120 @@
    },
    "best_threshold_acc_in_sample": 0.5108333333333334,
    "best_threshold_in_sample": 1.6616582870483398,
-   "reading": "at chance (AUROC CI includes 0.5)"
+   "reading": "at chance (AUROC CI includes 0.5)",
+   "within_hypothesis_string": {
+    "mean_auroc": {
+     "est": 0.4732,
+     "lo": 0.4550217009509648,
+     "hi": 0.49115240743544036,
+     "permutation_p_two_sided": 0.0024987506246876563,
+     "null_mean": 0.4998334963310883,
+     "null_sd": 0.009182107745980269
+    },
+    "n_strings": 48,
+    "n_strings_with_auroc_above_half": 23,
+    "by_type": {
+     "has_collider": {
+      "est": 0.56,
+      "lo": 0.5097806474632354,
+      "hi": 0.6076856379669328,
+      "permutation_p_two_sided": 0.014992503748125937,
+      "null_mean": 0.5000387051800561,
+      "null_sd": 0.024849903088476562,
+      "n_strings": 10
+     },
+     "has_confounder": {
+      "est": 0.5074666666666666,
+      "lo": 0.44010254639557156,
+      "hi": 0.5709443039610846,
+      "permutation_p_two_sided": 0.8305847076461769,
+      "null_mean": 0.4991586786730992,
+      "null_sd": 0.034247274319319086,
+      "n_strings": 6
+     },
+     "non-child descendant": {
+      "est": 0.4821333333333333,
+      "lo": 0.4317513665058426,
+      "hi": 0.5293154752327943,
+      "permutation_p_two_sided": 0.5182408795602199,
+      "null_mean": 0.4997591882337332,
+      "null_sd": 0.026856228937183806,
+      "n_strings": 9
+     },
+     "non-parent ancestor": {
+      "est": 0.47964444444444454,
+      "lo": 0.4278325861460482,
+      "hi": 0.5303140275003106,
+      "permutation_p_two_sided": 0.4522738630684658,
+      "null_mean": 0.49882337200693805,
+      "null_sd": 0.02734261851704412,
+      "n_strings": 9
+     },
+     "parent": {
+      "est": 0.3866285714285714,
+      "lo": 0.34845657565148747,
+      "hi": 0.4242308207957139,
+      "permutation_p_two_sided": 0.0004997501249375312,
+      "null_mean": 0.5006732612776459,
+      "null_sd": 0.021369553475712233,
+      "n_strings": 14
+     }
+    },
+    "within_string_and_adjacency": {
+     "est": 0.46651552145099406,
+     "lo": 0.43447385226310026,
+     "hi": 0.4966131380803185,
+     "permutation_p_two_sided": 0.0004997501249375312,
+     "null_mean": 0.4998289902148724,
+     "null_sd": 0.009941152892399517,
+     "by_type": {
+      "has_collider": {
+       "est": 0.49391727493917276,
+       "lo": 0.43062457974172225,
+       "hi": 0.5554352230162791,
+       "permutation_p_two_sided": 0.8030984507746127,
+       "null_mean": 0.5000967675862709,
+       "null_sd": 0.026193908772972577
+      },
+      "has_confounder": {
+       "est": 0.5222611305652827,
+       "lo": 0.4416216736278538,
+       "hi": 0.5927277874106768,
+       "permutation_p_two_sided": 0.544727636181909,
+       "null_mean": 0.49920546951476535,
+       "null_sd": 0.036168241644618564
+      },
+      "non-child descendant": {
+       "est": 0.5056697377746279,
+       "lo": 0.43566017508321786,
+       "hi": 0.5696596371618601,
+       "permutation_p_two_sided": 0.8390804597701149,
+       "null_mean": 0.499620631185554,
+       "null_sd": 0.028184958971000068
+      },
+      "non-parent ancestor": {
+       "est": 0.433587786259542,
+       "lo": 0.37006303196806384,
+       "hi": 0.49652122654122927,
+       "permutation_p_two_sided": 0.018490754622688656,
+       "null_mean": 0.4988637473072098,
+       "null_sd": 0.028788476013457846
+      },
+      "parent": {
+       "est": 0.28,
+       "lo": 0.19236383003224322,
+       "hi": 0.3732200360742003,
+       "permutation_p_two_sided": 0.0004997501249375312,
+       "null_mean": 0.5007399711182955,
+       "null_sd": 0.022389970109444508
+      }
+     },
+     "share_of_items_in_cells_with_both_labels": 0.8370833333333333
+    },
+    "valid_item_above_invalid_item_of_the_same_premise": 0.5083333333333333,
+    "reading": "below chance within hypothesis string",
+    "note": "chosen after the pooled statistics had been seen (eleventh audit, F1); n_boot 1000 premise resamples, 2000 permutations"
+   }
   },
   "cladder": {
    "mode": "zero-shot",
@@ -964,7 +1303,120 @@
    },
    "best_threshold_acc_in_sample": 0.5158333333333334,
    "best_threshold_in_sample": -22.413002967834473,
-   "reading": "at chance (AUROC CI includes 0.5)"
+   "reading": "at chance (AUROC CI includes 0.5)",
+   "within_hypothesis_string": {
+    "mean_auroc": {
+     "est": 0.5114666666666666,
+     "lo": 0.49081138490090986,
+     "hi": 0.530414603333616,
+     "permutation_p_two_sided": 0.24737631184407796,
+     "null_mean": 0.5002209982826066,
+     "null_sd": 0.009911927690023631
+    },
+    "n_strings": 48,
+    "n_strings_with_auroc_above_half": 28,
+    "by_type": {
+     "has_collider": {
+      "est": 0.56464,
+      "lo": 0.5132178480317042,
+      "hi": 0.6145171756526829,
+      "permutation_p_two_sided": 0.012993503248375811,
+      "null_mean": 0.5004860141208016,
+      "null_sd": 0.025405682749810532,
+      "n_strings": 10
+     },
+     "has_confounder": {
+      "est": 0.4146666666666667,
+      "lo": 0.3525988857870565,
+      "hi": 0.47958797233031686,
+      "permutation_p_two_sided": 0.014992503748125937,
+      "null_mean": 0.5000529088894682,
+      "null_sd": 0.03398870815552403,
+      "n_strings": 6
+     },
+     "non-child descendant": {
+      "est": 0.4444444444444444,
+      "lo": 0.39335615765420245,
+      "hi": 0.49805883516582256,
+      "permutation_p_two_sided": 0.03648175912043978,
+      "null_mean": 0.49951279383556285,
+      "null_sd": 0.0272958877637521,
+      "n_strings": 9
+     },
+     "non-parent ancestor": {
+      "est": 0.5063111111111112,
+      "lo": 0.45350425475419825,
+      "hi": 0.5570403472846531,
+      "permutation_p_two_sided": 0.823088455772114,
+      "null_mean": 0.5002764920416924,
+      "null_sd": 0.02748371014070862,
+      "n_strings": 9
+     },
+     "parent": {
+      "est": 0.5613714285714286,
+      "lo": 0.5212628822336952,
+      "hi": 0.5999687346384678,
+      "permutation_p_two_sided": 0.0034982508745627187,
+      "null_mean": 0.5005233392946423,
+      "null_sd": 0.021064570148100415,
+      "n_strings": 14
+     }
+    },
+    "within_string_and_adjacency": {
+     "est": 0.5106382978723404,
+     "lo": 0.4773472537637837,
+     "hi": 0.5409548919052093,
+     "permutation_p_two_sided": 0.3103448275862069,
+     "null_mean": 0.500191506867482,
+     "null_sd": 0.01057922861858967,
+     "by_type": {
+      "has_collider": {
+       "est": 0.6239137990962809,
+       "lo": 0.561725732985155,
+       "hi": 0.6818229364777482,
+       "permutation_p_two_sided": 0.0004997501249375312,
+       "null_mean": 0.5007084392281307,
+       "null_sd": 0.026559142366940954
+      },
+      "has_confounder": {
+       "est": 0.4212106053026513,
+       "lo": 0.3449331957283414,
+       "hi": 0.4985167014252749,
+       "permutation_p_two_sided": 0.02948525737131434,
+       "null_mean": 0.49979496560672515,
+       "null_sd": 0.03629723631012626
+      },
+      "non-child descendant": {
+       "est": 0.46881644223954644,
+       "lo": 0.4019745998556903,
+       "hi": 0.5391936956652335,
+       "permutation_p_two_sided": 0.2868565717141429,
+       "null_mean": 0.499464560314409,
+       "null_sd": 0.028785892792113233
+      },
+      "non-parent ancestor": {
+       "est": 0.5599236641221375,
+       "lo": 0.49471479489647424,
+       "hi": 0.6269569889775368,
+       "permutation_p_two_sided": 0.043478260869565216,
+       "null_mean": 0.4997631998647901,
+       "null_sd": 0.028983884500958942
+      },
+      "parent": {
+       "est": 0.3730434782608696,
+       "lo": 0.2710303476059961,
+       "hi": 0.4814387819143254,
+       "permutation_p_two_sided": 0.0004997501249375312,
+       "null_mean": 0.500812008297536,
+       "null_sd": 0.021739608840723332
+      }
+     },
+     "share_of_items_in_cells_with_both_labels": 0.8370833333333333
+    },
+    "valid_item_above_invalid_item_of_the_same_premise": 0.52,
+    "reading": "at chance within hypothesis string",
+    "note": "chosen after the pooled statistics had been seen (eleventh audit, F1); n_boot 1000 premise resamples, 2000 permutations"
+   }
   },
   "cladder": {
    "mode": "zero-shot",
@@ -1246,7 +1698,120 @@
    },
    "best_threshold_acc_in_sample": 0.53125,
    "best_threshold_in_sample": -19.935157775878906,
-   "reading": "at chance (AUROC CI includes 0.5)"
+   "reading": "at chance (AUROC CI includes 0.5)",
+   "within_hypothesis_string": {
+    "mean_auroc": {
+     "est": 0.5490666666666667,
+     "lo": 0.5302225421781909,
+     "hi": 0.5693023264518784,
+     "permutation_p_two_sided": 0.0004997501249375312,
+     "null_mean": 0.4994694127285161,
+     "null_sd": 0.010453324924998389
+    },
+    "n_strings": 48,
+    "n_strings_with_auroc_above_half": 33,
+    "by_type": {
+     "has_collider": {
+      "est": 0.48704000000000003,
+      "lo": 0.43699685894983237,
+      "hi": 0.5353438442149392,
+      "permutation_p_two_sided": 0.6111944027986007,
+      "null_mean": 0.4990098116556868,
+      "null_sd": 0.024658019243991938,
+      "n_strings": 10
+     },
+     "has_confounder": {
+      "est": 0.5674666666666667,
+      "lo": 0.500069092872645,
+      "hi": 0.6307391316904182,
+      "permutation_p_two_sided": 0.03548225887056472,
+      "null_mean": 0.4998530459612622,
+      "null_sd": 0.032820959817866195,
+      "n_strings": 6
+     },
+     "non-child descendant": {
+      "est": 0.6492444444444444,
+      "lo": 0.6006274351988756,
+      "hi": 0.7009005575130106,
+      "permutation_p_two_sided": 0.0004997501249375312,
+      "null_mean": 0.4994365219042384,
+      "null_sd": 0.02705608264140161,
+      "n_strings": 9
+     },
+     "non-parent ancestor": {
+      "est": 0.672711111111111,
+      "lo": 0.6204146852813328,
+      "hi": 0.7199194729257944,
+      "permutation_p_two_sided": 0.0004997501249375312,
+      "null_mean": 0.4993378608419516,
+      "null_sd": 0.02721748756050135,
+      "n_strings": 9
+     },
+     "parent": {
+      "est": 0.44160000000000005,
+      "lo": 0.40099000475336966,
+      "hi": 0.48255254457548363,
+      "permutation_p_two_sided": 0.004997501249375313,
+      "null_mean": 0.4997389981377588,
+      "null_sd": 0.021622848178109944,
+      "n_strings": 14
+     }
+    },
+    "within_string_and_adjacency": {
+     "est": 0.589117544471573,
+     "lo": 0.5596562077407492,
+     "hi": 0.6200803689731484,
+     "permutation_p_two_sided": 0.0004997501249375312,
+     "null_mean": 0.4993975099933165,
+     "null_sd": 0.01142174411022922,
+     "by_type": {
+      "has_collider": {
+       "est": 0.5366701425095586,
+       "lo": 0.4772709744603511,
+       "hi": 0.5939704542231665,
+       "permutation_p_two_sided": 0.1539230384807596,
+       "null_mean": 0.49846181571159615,
+       "null_sd": 0.025632813941633387
+      },
+      "has_confounder": {
+       "est": 0.5572786393196598,
+       "lo": 0.47423697542189386,
+       "hi": 0.6434776466006876,
+       "permutation_p_two_sided": 0.09645177411294353,
+       "null_mean": 0.49953089635608916,
+       "null_sd": 0.034858645259673526
+      },
+      "non-child descendant": {
+       "est": 0.6396172927002126,
+       "lo": 0.5735690056810858,
+       "hi": 0.7010999189138433,
+       "permutation_p_two_sided": 0.0004997501249375312,
+       "null_mean": 0.4996150924351393,
+       "null_sd": 0.029109461508935147
+      },
+      "non-parent ancestor": {
+       "est": 0.6423664122137405,
+       "lo": 0.5731394443166837,
+       "hi": 0.7037096101730248,
+       "permutation_p_two_sided": 0.0004997501249375312,
+       "null_mean": 0.49945448465852516,
+       "null_sd": 0.029254497936806786
+      },
+      "parent": {
+       "est": 0.5304347826086957,
+       "lo": 0.4272558789327476,
+       "hi": 0.6370831068269628,
+       "permutation_p_two_sided": 0.17641179410294852,
+       "null_mean": 0.49982833871858384,
+       "null_sd": 0.022185953901991223
+      }
+     },
+     "share_of_items_in_cells_with_both_labels": 0.8370833333333333
+    },
+    "valid_item_above_invalid_item_of_the_same_premise": 0.5358333333333334,
+    "reading": "above chance within hypothesis string",
+    "note": "chosen after the pooled statistics had been seen (eleventh audit, F1); n_boot 1000 premise resamples, 2000 permutations"
+   }
   },
   "cladder": {
    "mode": "zero-shot",

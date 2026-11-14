@@ -679,7 +679,7 @@ The reviewer had the code and the result files, not my reading. No critical find
 
 **Also since the last entry.** The 7B probe ladder finished on the laptop (probe 0.784 [0.762, 0.806] at the final token, layer 19; +0.046 [+0.026, +0.065] over the hand parse and +0.014 [+0.004, +0.026] over the strongest text-only model, the first model for which the second interval clearly excludes zero; expectation of Friday 23:00 for a larger model: between the lookup and the hand parse, increment below 0.02: met). The ladder figure failed on a model without a random-initialisation run, the same silent failure as on Friday; fixed, and its caption no longer says the models' answers "are at chance on this pool" without "pooled". The proposed RESULTS page (three claims, cut to about 1,160 words from a first draft of 1,700; the page it replaces has 840) is with an independent wording audit together with the nine stale items.
 
-## Sat 2026-11-14 09:03 — Settle run, Qwen 1.5B (`r3s_qwen15b`): ingested; first reading against the rule fixed beforehand (NOT YET AUDITED)
+## Sat 2026-11-14 09:01 — Settle run, Qwen 1.5B (`r3s_qwen15b`): ingested; first reading against the rule fixed beforehand (NOT YET AUDITED)
 
 Download in `kaggle_out/Qwen2.5-1.5B`; pin `e336431`, status OK, 42.6 min, every configuration complete (nothing shortened or dropped). The unsteered pass reproduces the cache to 0.053 logits. Split 0 at the site reproduces the 20-control run's slope exactly (−0.251).
 

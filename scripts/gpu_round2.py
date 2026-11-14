@@ -32,9 +32,10 @@ Jobs (each applies to every model in --models, in this order):
   feature       the first version of that test (scripts/16_feature_causal.py), superseded after the
                 code review; kept so that its results can be reproduced
   settle        one steering arm that ranked first among 20 controls at the end of the hypothesis on the debiased pool:
-                independent draws of the direction (other halves of the blocks), controls that keep adjacency, the
-                adjacency direction itself, neighbouring layers, smaller steps (scripts/07d_steering_settle.py;
-                --settle-arm names the direction of the primary test)
+                the direction refitted on the mirror half of the blocks and tested against 500 controls that have
+                both balances of the gold label (threshold 0.05/24), the label beyond adjacency, the adjacency direction
+                itself, neighbouring layers, smaller steps (scripts/07d_steering_settle.py; --settle-arm names the
+                direction of the primary test)
   Options that change the size of the intervention jobs (round 3; the output names get a suffix, so that these
   runs never replace the round-2 results):
     --n-shuf 100       100 shuffled-label control directions instead of 20 in controls, controls_hyp, adjacency
@@ -236,8 +237,8 @@ def main():
         if have_cache:
             if "settle" in jobs:
                 stage(f"r2.{M}.settle", "scripts/07d_steering_settle.py", "--model", M, "--arm", a.settle_arm, "--sub-batch", "16",
-                      *(["--n", "10", "--n-shuf", "6", "--n-other", "4", "--n-splits", "3", "--max-minutes", "20", "--allow-new-site"] if a.tiny
-                        else ["--max-minutes", "75"]), minutes=88)
+                      *(["--n", "10", "--n-primary", "12", "--n-shuf", "6", "--n-other", "4", "--n-splits", "3", "--max-minutes", "20", "--allow-new-site"] if a.tiny
+                        else ["--max-minutes", "100"]), minutes=115)
             ctags = [t_ for t_ in a.control_tags.split(",") if t_]
             # 07c runs 1 + 2 x (3 + 100 isotropic + 2 x n_shuf) vectors per item: the time limits grow with that number
             kc = (103 + 2 * a.n_shuf) / 143

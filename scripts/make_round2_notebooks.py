@@ -118,18 +118,20 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
     dict(file="kaggle_r3_settle_qwen3b.ipynb", platform="kaggle", run="r3s_qwen3b", models="qwen3b",
          jobs="cache,settle,export", fallback="", token=False, extra="--settle-arm gold_diffmeans --no-resid",
          title="Round 3 / H: Qwen2.5-3B, the steering arm that ranked first among 20 controls",
-         what="at the last token of the hypothesis on the debiased pool, layer 25: the gold difference of class means refitted on other "
-              "halves of the blocks and steered on the rest (primary test: the mirror image of the original split, one-sided, against "
-              "100 controls shuffled within hypothesis string); controls that keep the association of the label with adjacency; the "
-              "adjacency direction itself; two neighbouring layers; smaller steps. The original split is rerun with 100 controls, "
-              "so this run contains the 100-control answer for this arm", est="about 1.5 hours (17 minutes of cache, about 50 of steering)"),
+         what="at the last token of the hypothesis on the debiased pool, layer 25: the gold difference of class means refitted on the "
+              "mirror half of the blocks and tested once, one-sided, against 500 controls that have both balances of the gold label "
+              "(within hypothesis string and within premise); threshold 0.05/24, because the arm was chosen as the most extreme of 24 "
+              "comparisons. Also: the label beyond adjacency, the adjacency direction itself, two neighbouring layers, smaller steps, "
+              "and the original split with 100 controls. Test and threshold were written down before the run (notes/log.md, 14 Nov)",
+         est="about 1.5 hours (17 minutes of cache, about 55 of fitting and steering)"),
     dict(file="kaggle_r3_settle_qwen1.5b.ipynb", platform="kaggle", run="r3s_qwen15b", models="qwen1.5b",
          jobs="cache,settle,export", fallback="", token=False, extra="--settle-arm gold_probe --no-resid",
          title="Round 3 / H: Qwen2.5-1.5B, the steering arm that ranked first among 20 controls",
          what="at the last token of the hypothesis on the debiased pool, layer 19: the gold probe direction (which had a negative slope, "
-              "larger in absolute value than all 20 controls) refitted on other halves of the blocks and steered on the rest (primary "
-              "test: the mirror image of the original split, one-sided in that sign, against 100 controls); controls that keep "
-              "adjacency; the adjacency direction; two neighbouring layers; smaller steps", est="about 1 hour"),
+              "larger in absolute value than all 20 controls) refitted on the mirror half of the blocks and tested once, one-sided in "
+              "that sign, against 500 probe directions for labellings with both balances of the gold label; threshold 0.05/24. Also: "
+              "controls shuffled within adjacency cells, the adjacency direction, two neighbouring layers, smaller steps",
+         est="about 1 hour"),
 ]
 
 

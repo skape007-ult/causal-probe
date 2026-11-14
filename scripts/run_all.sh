@@ -50,6 +50,9 @@ for M in qwen0.5b qwen1.5b gemma2b qwen3b qwen7b-4bit; do
     done
   done
 done
+for M in qwen0.5b qwen1.5b gemma2b qwen3b; do          # label-changing vs label-preserving patching pairs, within template
+  if [ -e "$CACHE_DIR/$M/patching.npz" ] && [ -e "$CACHE_DIR/$M/patching_same.npz" ]; then $PY scripts/08b_patching_by_template.py --model "$M"; fi
+done
 $PY scripts/15_answer_bias.py
 $PY scripts/09_cross_model.py
 $PY scripts/12_tables.py

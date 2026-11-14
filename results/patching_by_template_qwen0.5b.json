@@ -1,0 +1,233 @@
+{
+ "model": "qwen0.5b",
+ "kinds": {
+  "hyp": {
+   "templates_in_both_kinds": [
+    "has_collider",
+    "has_confounder",
+    "non-child descendant",
+    "non-parent ancestor",
+    "parent"
+   ],
+   "by_template": {
+    "child": {
+     "label_changing": {
+      "n_pairs": 0,
+      "mean_abs_D": null
+     },
+     "label_preserving": {
+      "n_pairs": 8,
+      "mean_abs_D": 0.30658555030822754
+     }
+    },
+    "has_collider": {
+     "label_changing": {
+      "n_pairs": 9,
+      "mean_abs_D": 0.2746446397569444
+     },
+     "label_preserving": {
+      "n_pairs": 17,
+      "mean_abs_D": 0.2192213395062615
+     }
+    },
+    "has_confounder": {
+     "label_changing": {
+      "n_pairs": 5,
+      "mean_abs_D": 0.2501564025878906
+     },
+     "label_preserving": {
+      "n_pairs": 2,
+      "mean_abs_D": 0.14905261993408203
+     }
+    },
+    "non-child descendant": {
+     "label_changing": {
+      "n_pairs": 4,
+      "mean_abs_D": 0.10085344314575195
+     },
+     "label_preserving": {
+      "n_pairs": 6,
+      "mean_abs_D": 0.09517701466878255
+     }
+    },
+    "non-parent ancestor": {
+     "label_changing": {
+      "n_pairs": 4,
+      "mean_abs_D": 0.28597402572631836
+     },
+     "label_preserving": {
+      "n_pairs": 6,
+      "mean_abs_D": 0.29485607147216797
+     }
+    },
+    "parent": {
+     "label_changing": {
+      "n_pairs": 38,
+      "mean_abs_D": 0.2615244012129934
+     },
+     "label_preserving": {
+      "n_pairs": 21,
+      "mean_abs_D": 0.24710155668712797
+     }
+    }
+   },
+   "standardised_over_common_templates": {
+    "weights": {
+     "has_collider": 9,
+     "has_confounder": 2,
+     "non-child descendant": 4,
+     "non-parent ancestor": 4,
+     "parent": 21
+    },
+    "mean_abs_D_label_changing": {
+     "est": 0.2502859215987356,
+     "lo": 0.2010042542055848,
+     "hi": 0.3051301233238563
+    },
+    "mean_abs_D_label_preserving": {
+     "est": 0.22550905826045015,
+     "lo": 0.16785215202221088,
+     "hi": 0.2988787215494163
+    },
+    "preserving_minus_changing": {
+     "est": -0.024776863338285438,
+     "lo": -0.10528174737321634,
+     "hi": 0.0611903207033879
+    },
+    "ratio_preserving_over_changing": 0.9010057650065979
+   },
+   "unstandardised": {
+    "mean_abs_D_label_changing": 0.25346368153889975,
+    "mean_abs_D_label_preserving": 0.233448060353597,
+    "mean_D_label_changing": {
+     "est": 0.00863183339436849,
+     "lo": -0.06010017197462557,
+     "hi": 0.07810038560902031,
+     "n": 60,
+     "n_groups": 43
+    },
+    "mean_D_label_preserving": {
+     "est": 0.0836610476175944,
+     "lo": 0.013229008263976105,
+     "hi": 0.15689326260082587,
+     "n": 60,
+     "n_groups": 50
+    }
+   }
+  },
+  "prem": {
+   "templates_in_both_kinds": [
+    "has_collider",
+    "has_confounder",
+    "non-child descendant",
+    "non-parent ancestor",
+    "parent"
+   ],
+   "by_template": {
+    "child": {
+     "label_changing": {
+      "n_pairs": 0,
+      "mean_abs_D": null
+     },
+     "label_preserving": {
+      "n_pairs": 8,
+      "mean_abs_D": 0.29175853729248047
+     }
+    },
+    "has_collider": {
+     "label_changing": {
+      "n_pairs": 9,
+      "mean_abs_D": 0.29381243387858075
+     },
+     "label_preserving": {
+      "n_pairs": 17,
+      "mean_abs_D": 0.23113194633932674
+     }
+    },
+    "has_confounder": {
+     "label_changing": {
+      "n_pairs": 5,
+      "mean_abs_D": 0.3274822235107422
+     },
+     "label_preserving": {
+      "n_pairs": 2,
+      "mean_abs_D": 0.052013397216796875
+     }
+    },
+    "non-child descendant": {
+     "label_changing": {
+      "n_pairs": 4,
+      "mean_abs_D": 0.022292137145996094
+     },
+     "label_preserving": {
+      "n_pairs": 6,
+      "mean_abs_D": 0.1232290267944336
+     }
+    },
+    "non-parent ancestor": {
+     "label_changing": {
+      "n_pairs": 4,
+      "mean_abs_D": 0.1672811508178711
+     },
+     "label_preserving": {
+      "n_pairs": 6,
+      "mean_abs_D": 0.13649845123291016
+     }
+    },
+    "parent": {
+     "label_changing": {
+      "n_pairs": 38,
+      "mean_abs_D": 0.23943097967850535
+     },
+     "label_preserving": {
+      "n_pairs": 21,
+      "mean_abs_D": 0.30476161411830355
+     }
+    }
+   },
+   "standardised_over_common_templates": {
+    "weights": {
+     "has_collider": 9,
+     "has_confounder": 2,
+     "non-child descendant": 4,
+     "non-parent ancestor": 4,
+     "parent": 21
+    },
+    "mean_abs_D_label_changing": {
+     "est": 0.22714050192581983,
+     "lo": 0.18106735699260848,
+     "hi": 0.28267159670706865
+    },
+    "mean_abs_D_label_preserving": {
+     "est": 0.24057795300203208,
+     "lo": 0.19222906482571328,
+     "hi": 0.28925961530709166
+    },
+    "preserving_minus_changing": {
+     "est": 0.013437451076212248,
+     "lo": -0.05346967674470416,
+     "hi": 0.07614447633340929
+    },
+    "ratio_preserving_over_changing": 1.0591592030583814
+   },
+   "unstandardised": {
+    "mean_abs_D_label_changing": 0.2356398900349935,
+    "mean_abs_D_label_preserving": 0.23876161575317384,
+    "mean_D_label_changing": {
+     "est": 0.022833569844563802,
+     "lo": -0.040430362502234175,
+     "hi": 0.08959625227360432,
+     "n": 60,
+     "n_groups": 43
+    },
+    "mean_D_label_preserving": {
+     "est": 0.22343956629435222,
+     "lo": 0.17349448574000392,
+     "hi": 0.26844724437646694,
+     "n": 60,
+     "n_groups": 50
+    }
+   }
+  }
+ }
+}

@@ -175,6 +175,15 @@ def main():
     else:
         got = env.get("git_commit") or ""
         okc = bool(commit) and got.startswith(commit[:7]) and commit.startswith(got[:7])
+        older_pin = False
+        if a.run and not okc and got:
+            # round-2 notebooks were re-pinned several times on 13 Nov; a run from an earlier round-2 pin is valid
+            # (its raw outputs are re-analysed here) as long as that commit lies between the first round-2 pin and HEAD
+            anc = lambda x, y: subprocess.run(["git", "merge-base", "--is-ancestor", x, y], cwd=ROOT).returncode == 0   # noqa: E731
+            older_pin = okc = anc("3c7b87d", got) and anc(got, "HEAD")
+            if older_pin:
+                notes.append(f"run used an earlier round-2 pin ({got[:7]}); current pin is {str(commit)[:7]}")
+                print(f"  note: run used the earlier round-2 pin {got[:7]} (current: {str(commit)[:7]}); accepted, raw outputs are re-analysed locally")
         print(f"  run used commit {got[:12] or '?'}; expected {str(commit)[:12]}  -> {'ok' if okc else 'MISMATCH'}")
         print(f"  torch {env.get('torch')}, transformers {env.get('transformers')}, GPU {env.get('gpus')}")
         if not okc:
@@ -193,7 +202,12 @@ def main():
             sys.exit("ERROR: this is the output of a smoke test (SMOKE_TEST = True; a few items per stage). It is never ingested.")
         want = notebook_setting(a.run, "JOBS")
         if want is not None and sorted(status.get("jobs", [])) != sorted(want.split(",")):
-            problems.append(f"the run executed jobs {status.get('jobs')} but its notebook lists {want.split(',')}")
+            msg = f"the run executed jobs {status.get('jobs')}; its notebook now lists {want.split(',')}"
+            got_c = (zjson(f"results/round2_environment_{a.run}.json") or {}).get("git_commit") or ""
+            if commit and got_c.startswith(commit[:7]):
+                problems.append(msg)
+            else:
+                notes.append(msg + " (earlier pin)"); print("  note: " + msg + " (the run is from an earlier pin)")
     else:
         exp = expected_stages(not a.no_gemma, large, bool(large) and large in QUANT_4BIT)
     missing, failed = [], []

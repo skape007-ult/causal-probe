@@ -1,20 +1,20 @@
-| Model | Pair kind | Pairs | n | of which Yes/Yes, No/No | Mean D = LD(original) − LD(edited) | Mean |D| | Mean |D|: Yes/Yes, No/No | First layer with ≥ 0.5 recovery at final token (on the layers both runs have) | …as relative depth |
-|---|---|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | hyp | label changes (Yes → No) | 60 | – | +0.009 [-0.060, +0.078] | 0.253 | – | 16 | 0.67 |
-| Qwen2.5-0.5B | hyp | label preserved | 60 | 31 / 29 | +0.084 [+0.012, +0.156] | 0.233 | 0.219 / 0.249 | 16 | 0.67 |
-| Qwen2.5-0.5B | prem | label changes (Yes → No) | 60 | – | +0.023 [-0.042, +0.090] | 0.236 | – | 16 | 0.67 |
-| Qwen2.5-0.5B | prem | label preserved | 60 | 31 / 29 | +0.223 [+0.173, +0.270] | 0.239 | 0.264 / 0.212 | 16 | 0.67 |
-| Qwen2.5-1.5B | hyp | label changes (Yes → No) | 40 | – | -0.088 [-0.420, +0.267] | 1.110 | – | 18 | 0.64 |
-| Qwen2.5-1.5B | hyp | label preserved | 60 | 31 / 29 | +0.409 [+0.087, +0.731] | 0.994 | 1.267 / 0.703 | 18 | 0.64 |
-| Qwen2.5-1.5B | prem | label changes (Yes → No) | 40 | – | -0.087 [-0.424, +0.269] | 1.055 | – | 18 | 0.64 |
-| Qwen2.5-1.5B | prem | label preserved | 60 | 31 / 29 | -0.022 [-0.258, +0.190] | 0.686 | 0.787 / 0.577 | 18 | 0.64 |
-| Gemma-2-2B | hyp | label changes (Yes → No) | 40 | – | -0.054 [-0.433, +0.392] | 1.208 | – | 16 | 0.62 |
-| Gemma-2-2B | hyp | label preserved | 60 | 31 / 29 | -0.298 [-0.655, +0.041] | 1.026 | 1.071 / 0.978 | 16 | 0.62 |
-| Gemma-2-2B | prem | label changes (Yes → No) | 40 | – | -0.062 [-0.346, +0.262] | 0.928 | – | 16 | 0.62 |
-| Gemma-2-2B | prem | label preserved | 60 | 31 / 29 | -0.218 [-0.460, +0.026] | 0.724 | 0.735 / 0.712 | 16 | 0.62 |
-| Qwen2.5-3B | hyp | label changes (Yes → No) | 60 | – | +0.673 [-0.022, +1.376] | 1.884 | – | 26 | 0.72 |
-| Qwen2.5-3B | hyp | label preserved | 60 | 31 / 29 | +1.003 [+0.149, +1.886] | 2.643 | 2.899 / 2.370 | 26 | 0.72 |
-| Qwen2.5-3B | prem | label changes (Yes → No) | 60 | – | +0.002 [-0.593, +0.580] | 1.875 | – | 26 | 0.72 |
-| Qwen2.5-3B | prem | label preserved | 60 | 31 / 29 | +0.379 [-0.376, +1.065] | 1.947 | 1.916 / 1.981 | 26 | 0.72 |
+| Model | Pair kind | Pairs | n | of which Yes/Yes, No/No | Mean D = LD(original) − LD(edited) | Mean |D| | Mean |D|: Yes/Yes, No/No | First layer with ≥ 0.5 recovery at final token (on the layers both runs have) | …as relative depth | Within hypothesis type: mean |D| label-preserved minus label-changing |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | hyp | label changes (Yes → No) | 60 | – | +0.009 [-0.060, +0.078] | 0.253 | – | 16 | 0.67 | – |
+| Qwen2.5-0.5B | hyp | label preserved | 60 | 31 / 29 | +0.084 [+0.012, +0.156] | 0.233 | 0.219 / 0.249 | 16 | 0.67 | -0.025 [-0.105, +0.061] |
+| Qwen2.5-0.5B | prem | label changes (Yes → No) | 60 | – | +0.023 [-0.042, +0.090] | 0.236 | – | 16 | 0.67 | – |
+| Qwen2.5-0.5B | prem | label preserved | 60 | 31 / 29 | +0.223 [+0.173, +0.270] | 0.239 | 0.264 / 0.212 | 16 | 0.67 | +0.013 [-0.053, +0.076] |
+| Qwen2.5-1.5B | hyp | label changes (Yes → No) | 40 | – | -0.088 [-0.420, +0.267] | 1.110 | – | 18 | 0.64 | – |
+| Qwen2.5-1.5B | hyp | label preserved | 60 | 31 / 29 | +0.409 [+0.087, +0.731] | 0.994 | 1.267 / 0.703 | 18 | 0.64 | +0.053 [-0.348, +0.493] |
+| Qwen2.5-1.5B | prem | label changes (Yes → No) | 40 | – | -0.087 [-0.424, +0.269] | 1.055 | – | 18 | 0.64 | – |
+| Qwen2.5-1.5B | prem | label preserved | 60 | 31 / 29 | -0.022 [-0.258, +0.190] | 0.686 | 0.787 / 0.577 | 18 | 0.64 | -0.366 [-0.722, -0.033] |
+| Gemma-2-2B | hyp | label changes (Yes → No) | 40 | – | -0.054 [-0.433, +0.392] | 1.208 | – | 16 | 0.62 | – |
+| Gemma-2-2B | hyp | label preserved | 60 | 31 / 29 | -0.298 [-0.655, +0.041] | 1.026 | 1.071 / 0.978 | 16 | 0.62 | -0.318 [-0.871, +0.192] |
+| Gemma-2-2B | prem | label changes (Yes → No) | 40 | – | -0.062 [-0.346, +0.262] | 0.928 | – | 16 | 0.62 | – |
+| Gemma-2-2B | prem | label preserved | 60 | 31 / 29 | -0.218 [-0.460, +0.026] | 0.724 | 0.735 / 0.712 | 16 | 0.62 | -0.320 [-0.735, +0.027] |
+| Qwen2.5-3B | hyp | label changes (Yes → No) | 60 | – | +0.673 [-0.022, +1.376] | 1.884 | – | 26 | 0.72 | – |
+| Qwen2.5-3B | hyp | label preserved | 60 | 31 / 29 | +1.003 [+0.149, +1.886] | 2.643 | 2.899 / 2.370 | 26 | 0.72 | +0.970 [+0.095, +1.949] |
+| Qwen2.5-3B | prem | label changes (Yes → No) | 60 | – | +0.002 [-0.593, +0.580] | 1.875 | – | 26 | 0.72 | – |
+| Qwen2.5-3B | prem | label preserved | 60 | 31 / 29 | +0.379 [-0.376, +1.065] | 1.947 | 1.916 / 1.981 | 26 | 0.72 | +0.177 [-0.573, +0.917] |
 
 <sub>Source: `results/patching_qwen0.5b_same.json`, `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b_same.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b_same.json`, `results/patching_gemma2b.json`, `results/patching_qwen3b_same.json`, `results/patching_qwen3b.json`</sub><br><sub>Mean |D| here is not standardised by hypothesis template; the two kinds of pair have different template mixes. The comparison within template is in `results/patching_by_template_<model>.json` (report 4.2).</sub><br><sub>Where a model has 40 label-changing pairs (Qwen2.5-1.5B: an earlier run on the laptop; Gemma-2-2B: the first GPU run), they are a different draw from the 60 label-preserving pairs of the same model, with a different mix of hypothesis types.</sub>

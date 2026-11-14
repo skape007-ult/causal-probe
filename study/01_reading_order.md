@@ -181,10 +181,20 @@ After that hour you should be able to say these five sentences from memory.
 
 ---
 
-## To be added when round 2 is in
+## Session 6 (added 13 November). Round 2: how an intervention result goes wrong, twice
 
-- Qwen 3B and 7B behaviour
-- Steering at the end-of-hypothesis token with matched controls
-- Label-preserving patching pairs
-- The adjacency causal test
-- The SAE tier
+*Read:* report section 4.2 from "Label-preserving pairs"; section 4.1 from "Steering at the end of the hypothesis"; section 4.4 in full; section 5; then `notes/log.md` entries of 13 November from 16:35 to the end, in order. EXPLAINER primer entries "Label-preserving minimal pair", "Where you intervene matters", "Observational versus interventional evidence for a feature"; questions 36 to 43.
+
+*Ideas to come away with:*
+- An intervention that "works" at a place where the output is already a linear function of the activation shows where the output is, not what it is computed from.
+- A control has to be able to fail. For each control in section 4.4, say what it would have shown if the claim were false.
+- Averages hide effects of opposite sign. Look at each hypothesis type before any summary number.
+
+*Figures:* `fig10_patching_label_preserving.png` (compare the two |D| values in the legends, not the curves); `fig11_adjacency_final.png` and `fig12_adjacency_end_of_hypothesis.png` (are the dots outside the grey bars? In which panels? Does the middle row follow the top row?).
+
+*Self-test:* Explain to someone why the first summary of the adjacency test ("a sixth of the dependence, beyond all controls") was wrong, without looking. Then answer study questions 45 to 47.
+
+## Still to be added
+
+- Qwen 3B, Qwen 1.5B and Gemma 2B: matched steering controls, label-preserving pairs, the adjacency test
+- Qwen 7B behaviour

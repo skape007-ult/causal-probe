@@ -184,10 +184,35 @@ It can move in one direction only. A stronger text baseline makes "the activatio
 
 ---
 
-## To be added when round 2 is in
+## Round 2 (added 13 November; Qwen 0.5B results, the larger models are added as their GPU runs return)
 
-- Qwen 3B and 7B behaviour
-- Steering at the end-of-hypothesis token with matched controls
-- Label-preserving patching pairs
-- The adjacency causal test
-- The SAE tier
+These eight questions are at levels 3 and 4. Read report sections 4.1 (last paragraphs), 4.2 (label-preserving pairs), 4.4 and 5 first, and EXPLAINER questions 36 to 43.
+
+**41. What is a label-preserving minimal pair, and what did it show?**
+Two prompts that differ by the same kind of small edit as an ordinary minimal pair (one variable letter), but have the same correct answer. For Qwen 0.5B the answer logit moves as much across such a pair as across a pair whose correct answer changes: within hypothesis type the difference in |D| is {{patching_by_template_qwen0.5b.json|kinds/hyp/standardised_over_common_templates/preserving_minus_changing|signedci}} for hypothesis edits and {{patching_by_template_qwen0.5b.json|kinds/prem/standardised_over_common_templates/preserving_minus_changing|signedci}} for premise relabellings. The sign of the movement follows which letter is asked about: {{patching_by_template_qwen0.5b.json|kinds/prem/signed_D_by_direction_of_letter_change/label_changing_later_letter|signedci}} when a letter is replaced by a later one, {{patching_by_template_qwen0.5b.json|kinds/prem/signed_D_by_direction_of_letter_change/label_changing_earlier_letter|signedci}} when by an earlier one, whatever happens to the label. So the model responds to the edit and not to validity. Evidence: report 4.2; `results/patching_by_template_qwen0.5b.json`.
+
+**42. The patching curves for the two kinds of pair look identical. Is that the evidence?**
+No. Recovery is normalised by each pair's own difference D, so it is 1 at the changed tokens in early layers and 1 at the final token in late layers for *any* two prompts. Identical curves are what every hypothesis predicts. The evidence is behavioural: the size and sign of D (question 41). The independent reviewer made this point before the result existed, which is the only reason it is not in the list of things I got wrong.
+
+**43. I first explained the +0.22 mean D of the label-preserving premise pairs as "letters out of alphabetical order". What was wrong with that?**
+The pair builder keeps each unordered pair once, and the way it does that keeps only edits to a *later* letter. So the label-preserving set is one-sided by construction. The label-changing set has both directions, and there the earlier-letter half moves the answer the other way; a relabelled premise is "out of order" in both halves, so order cannot be the cause. Lesson: before explaining a number, check how the items behind it were selected.
+
+**44. Why does the debiased pool need steering controls shuffled *within hypothesis string*?**
+On that pool the correct answer is balanced inside every hypothesis string. A label shuffled over the whole pool is not: by chance it is a little more "yes" for some strings than for others. A direction fitted to it therefore picks up some of the difference between strings, and the answer depends strongly on the string. Such controls are a wider family than the real direction belongs to. With controls shuffled within string, the gold difference of means at the end of the hypothesis is larger than {{steering_controls_qwen0.5b_c2c_debiased_hyp.json|real/gold_diffmeans/versus/shuffled_diffmeans/percentile_of_abs_slope_per_s|pct}} of them; with the global shuffle it had looked larger than all 20.
+
+**45. State the adjacency result for Qwen 0.5B in two sentences that you could defend.**
+At the answer position from layer 15 of 24 the within-question answer is a linear function of the activation (held-out R² {{adjacency_qwen0.5b_c2c_debiased_final_best.json|audit5/within_string_answer_linearly_predictable/held_out_r2|num2}}), and for common-effect hypotheses the part of the answer that goes with adjacency can be moved and removed there beyond every control (gap {{adjacency_qwen0.5b_c2c_debiased_final_best.json|audit5/gaps_on_evaluated_items_within_string/by_template/has_collider/gap_before|signed}} → {{adjacency_qwen0.5b_c2c_debiased_final_best.json|audit5/gaps_on_evaluated_items_within_string/by_template/has_collider/gap_after_erasure|signed}}). At the end of the hypothesis the same intervention is not distinguishable from a random direction of the same size, and nowhere is there evidence of an "adjacency" variable that later layers read.
+
+**46. That result was stated wrongly twice. Reconstruct both errors.**
+First version of the experiment: the "removal" never checked that adjacency was gone (a probe still read it at 0.84), one direction did not separate the classes for the most important hypothesis type, and a real change was compared with the mean of controls whose signs cancel. Second version, first summary: erasure and translation were counted as two lines of evidence although the erasure moves each item along the same vector as the translation; the control eraser was fitted to shuffled labels, so the amount it moved an item was unrelated to adjacency and it could not change the gap between the classes whatever its direction did; and the summary multiplied each change by a predicted sign from other items, which counted a gap moving away from zero as a reduction. See EXPLAINER question 38 and `notes/log.md` (13 November, 18:10 and 20:10).
+
+**47. What is a "control that cannot fail", and how do you recognise one before running it?**
+A control whose result is fixed by its construction, whatever the truth is. Three examples from this project: whole-prompt TF-IDF on the original pool (it dilutes the one cue that matters); single-input classifiers on the debiased pool (at 0.50 by design); an eraser fitted to shuffled labels (it cannot change a gap between the real classes). The test: write down what the control would show if your hypothesis were false. If the answer is "the same as if it were true", it is not a control.
+
+**48. What does the SAE tier show, and why does it bear so little weight?**
+In Gemma 2B the sparse features most associated with a type of causal graph are mostly not specific to it, and removing them shifts the answer somewhat more than removing three sets of matched random features in four of five cases. The dictionaries reconstruct most of each activation but leave {{sae_features.json|layers/12/positions/premise_end/reconstruction/fraction_variance_unexplained|pct}} of what differs *between items* unexplained at block 12, three random sets are too few (one of them moves the answer more than any selected set), and the run used a different draw of the CLadder sample. Evidence: report section 5.
+
+## Still to be added
+
+- Qwen 3B, Qwen 1.5B and Gemma 2B: matched steering controls, label-preserving pairs, the adjacency test
+- Qwen 7B behaviour

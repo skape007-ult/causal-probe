@@ -192,7 +192,8 @@ def main():
                 notes.append(f"run used an earlier round-2 pin ({got[:7]}); current pin is {str(commit)[:7]}")
                 if anc("bab7d1b", got):
                     changed = subprocess.run(["git", "diff", "--name-only", got, "HEAD", "--", "src", "scripts/07c_steering_controls.py",
-                                              "scripts/17_adjacency_test.py", "scripts/08_patching.py", "scripts/02_behaviour.py"],
+                                              "scripts/17_adjacency_test.py", "scripts/08_patching.py", "scripts/02_behaviour.py", "scripts/01_build_cache.py",
+                                              "scripts/15_answer_bias.py", "scripts/gpu_round2.py", "scripts/07d_steering_settle.py", "scripts/preflight_model.py"],
                                              cwd=ROOT, capture_output=True, text=True).stdout.split()
                     print(f"  note: run used the earlier round-2 pin {got[:7]} (current: {str(commit)[:7]}); accepted. That pin already has the "
                           f"within-string controls and the complete adjacency analysis. Model and stage code changed since then: "
@@ -359,7 +360,7 @@ def main():
         print(f"  not taken from the run: {n} (computed over all models; recompute it here with {AGGREGATES[n]})")
     for c in conflicts:
         print(f"  CONFLICT: {c} exists locally in a different version; the run's copy saved as {c}.kaggle (compare and keep the right one)")
-    report.update(results_written=new, conflicts=conflicts)
+    report.update(results_written=new, conflicts=conflicts, aggregates_not_taken_from_the_run=aggregates)
 
     # ------------------------------------------------------------------ 5. caches
     print("== 5. extracting caches ==")
@@ -424,7 +425,7 @@ def main():
         print("== 7. regenerating answer-bias report, tables, figures, documents ==")
         import os
         env2 = dict(os.environ, OMP_NUM_THREADS="2", PYTHONPATH=str(ROOT / "src"))
-        for script in ("15_answer_bias.py", "12_tables.py", "06_figures.py", "13_build_docs.py"):
+        for script in ("15_answer_bias.py", "07e_steering_multiplicity.py", "12_tables.py", "06_figures.py", "13_build_docs.py"):
             r = subprocess.run([PY, f"scripts/{script}"], cwd=ROOT, env=env2, capture_output=True, text=True)
             print(f"  {script:22s} {'ok' if r.returncode == 0 else 'FAILED'}")
             if r.returncode != 0:

@@ -639,7 +639,8 @@ def t_patching_same():
              "Mean |D|: Yes/Yes, No/No", "First layer with ≥ 0.5 recovery at final token (on the layers both runs have)", "…as relative depth"], rows, src,
             notes=["Mean |D| here is not standardised by hypothesis template; the two kinds of pair have different template mixes. The comparison within template is in "
                    "`results/patching_by_template_<model>.json` (report 4.2).",
-                   "The label-changing pairs of Qwen2.5-1.5B (40) are from an earlier run on the laptop and are a different draw from the 60 of the other runs."]))
+                   "Where a model has 40 label-changing pairs (Qwen2.5-1.5B: an earlier run on the laptop; Gemma-2-2B: the first GPU run), they are a different draw "
+                   "from the 60 label-preserving pairs of the same model, with a different mix of hypothesis types."]))
 
 
 FEATURE_SITES = (("adj_final_best", "final token, best layer"), ("adj_hyp_best", "end of hypothesis, best layer"),
@@ -734,7 +735,7 @@ def rng_(c, d=3):
 
 def t_adjacency():
     """The corrected adjacency test (round 2, scripts/17_adjacency_test.py), with the readouts added after the fifth audit."""
-    r1, r2, r3, src = [], [], [], []
+    r1, r2, r3, src, dead = [], [], [], [], []
     for m in MODELS:
         for site, slab in ADJ_SITES:
             r = load(f"adjacency_{m}_c2c_debiased_{site}.json")
@@ -764,7 +765,9 @@ def t_adjacency():
             tc = r["translation"]["contrast"]; v = a5["translation_contrast_under_other_sign_choices"]
             un = v["uniform_sign_adjacent_towards_no"]; mg = a5["gaps_on_evaluated_items_within_string"]["mean_absolute_gap_all_five_templates"]
             mo = r["steps"]["model_out"]["per_unit_norm_from_large_step"]
-            r3.append([LAB[m], where, ", ".join(TSHORT[g] for g in r["templates_in_contrast"]) or "none", num(r["full_mediation_benchmark"]),
+            if mo["vs_controls"]["share_of_controls_smaller_in_absolute_value"] < 1:
+                dead.append(f"{LAB[m]}, {where}")
+            r3.append([LAB[m], where + (" ◊" if dead and dead[-1] == f"{LAB[m]}, {where}" else ""), ", ".join(TSHORT[g] for g in r["templates_in_contrast"]) or "none", num(r["full_mediation_benchmark"]),
                        num(tc["est"], 3, signed=True), rng_(tc["vs_controls_norm_matched"]),
                        f"{100 * tc['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
                        num(un["value"], 3, signed=True), f"{100 * un['share_of_controls_smaller_in_absolute_value']:.0f}",
@@ -843,7 +846,9 @@ def t_adjacency():
                "+0.891, above all 20 controls; end of hypothesis +0.047, 70% of controls smaller; Qwen2.5-1.5B +0.357, 85%, and +0.055, 60%).",
                "No interval is given for the reduction of the mean absolute gap: a bootstrap over items inflates absolute gaps and is biased for this statistic. "
                "The reference is the distribution over the fair controls.",
-               "Where the positive control does not exceed its controls (the earlier-layer sites), a null result for the other directions says nothing.",
+               "◊ At these sites the positive control (a step along the model-answer direction) does not exceed all 20 of its controls: "
+               + ("; ".join(dead) if dead else "none") + ". Nothing added there moves the answer reliably, so the other columns of such a row are not a test: "
+               "a zero is not a null result, and a high percentile of a contrast of a thousandth of a logit is not an effect (eleventh audit, F3).",
                "Erasure and translation are one measurement (the erasure effect is minus a per-item coefficient times the translation effect), not two confirmations."]))
 
 

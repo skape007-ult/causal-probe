@@ -1,10 +1,73 @@
 # Progress (read this first after a restart)
 
+## MORNING STATUS, Saturday 14 November (written 01:45; nothing was started that needs your input)
+
+**In one line.** Qwen 3B and Qwen 1.5B are ingested and audited. One steering result beats its 20 controls and is undecided. `RESULTS.md` is unchanged. A run designed to decide it is ready for you to launch or not.
+
+### 1. What the audit of the Qwen 3B and 1.5B results found (eighth audit, `notes/audit_round2_runs_raw.md`)
+
+Every new number was recomputed from the raw outputs and agrees. On the Qwen 3B steering result (gold difference of class means at the end of the hypothesis, +0.74 logits per unit of s, larger than all 20 controls), your four questions:
+
+| Question | Answer |
+|---|---|
+| Is it real? | As computed, yes. All 150 items, 13 blocks and 48 hypothesis strings have the sign. |
+| One arm among many? | Yes: 1 of 12 comparisons on the debiased pool (24 in all). 0.57 first ranks expected by chance, 2 observed (probability 0.11). No arm survives correction. |
+| Does it replicate? | Not at rank 1 anywhere: 5th of 21 at the final token of the same model; 10th and 5th at the same token in the other two models; 4th and 15th on the original pool. The sign repeats in all 12 arms. |
+| Does it survive the within-string shuffle? | Yes; the auditor regenerated the controls and confirmed they are within-string and matched. |
+
+Further: the direction is loaded on adjacency (cosine 0.69 with the adjacency contrast of direct-causation items), not on the model's answer, and is worth 0.02 logits at natural scale (the answer logit has mean −15). **Verdict: undecided between chance and a modest real effect of an adjacency-loaded direction; not evidence about validity. 100 controls would not settle it.**
+
+Elsewhere: the adjacency test repeats the Qwen 0.5B picture in both models (a located answer shift at the final token, beyond all controls in Qwen 3B; nothing from translation or erasure at the end of the hypothesis). The audit corrected two readings and four table labels; those are applied.
+
+A claims pass on the report and README then found 43 + 9 sentences that were stale or too wide now that three models have rows (8 contradicted by a result file). All fixed. Two things it found that nobody had reported: the "sign follows position, not validity" pattern of the label-preserving patching pairs holds for Qwen 0.5B only; and in Qwen 1.5B one arm of the adjacency test at the end of the hypothesis is borderline outside its controls.
+
+### 2. Not changed, waiting for you
+
+- **`RESULTS.md`.** Claim 3 is still worded for one model. Proposed rewording, evidence for and against, three options: **`notes/claim3_proposed_rewording.md`**. Nine smaller stale items in `RESULTS.md` are listed in `notes/claims_pass_14nov_raw.md`, list C.
+- **Report Section 8** is still empty.
+
+### 3. Ready to launch (all on repo `main`; first code cell shows `COMMIT = "df7313e…"`)
+
+| Notebook | Hours | HF secret | My recommendation |
+|---|---|---|---|
+| `notebooks/kaggle_r3_settle_qwen3b.ipynb` | about 1.5 | no | **Run first, if you want claim 3 decided before packaging.** See caveat below. |
+| `notebooks/kaggle_r3_settle_qwen1.5b.ipynb` | about 1 | no | Second. Same test for the Qwen 1.5B arm. |
+| `notebooks/kaggle_r3_gemma9b.ipynb` | 2 – 3.5 (ends in about 15 min if it cannot run) | **yes**, with the licence of `google/gemma-2-9b-it` accepted | Yes. |
+| `notebooks/kaggle_r3_patch240_qwen3b.ipynb` | about 2 | no | Yes. |
+| `notebooks/kaggle_r3_patch240_gemma.ipynb` | 1 – 2.5 | **yes** | Yes. |
+| `notebooks/kaggle_r3_controls100_qwen3b.ipynb` (and `_qwen1.5b`, `_qwen0.5b`, `_gemma`) | 1 – 3 | Gemma only | **No longer recommended**: the audit showed 100 controls on the same split decide nothing. Ready if you want them anyway. |
+
+**Caveat on the settle run.** Its test and threshold are written down before any run (`notes/log.md`, "AMENDED pre-registration"). It is the *second* version: an independent review of the first (ninth audit, `notes/audit_settle_code_raw.md`) showed my first design would have announced a replication in 57% of cases with nothing real behind it. The second version is tested with a stand-in for the model and its control families are checked to be calibrated, but **nobody except me has reviewed the second version, and it has never run on a GPU.** If you prefer, say so and I will have it reviewed before you launch.
+
+### 4. What I need from you
+
+1. **B (Qwen 7B) and D (Gemma) zips** in `kaggle_in/r2_qwen7b/` and `kaggle_in/r2_gemma/` (or `kaggle_out/<run>/` as you did last night; either works). Both were launched from pin `6d9ce8d`: they write no `STATUS.txt`, which the ingest accepts. **B has a known weak point at that pin:** if 4-bit loading failed and it fell back to two GPUs, the cache stage will show FAILED (a bug fixed one commit later). Then rerun `notebooks/kaggle_r2_qwen7b.ipynb` from the current repo; nothing from the failed run needs keeping.
+2. **Your decision on claim 3**: option A, B or C in `notes/claim3_proposed_rewording.md`.
+3. **Whether to launch the settle run** (and whether you want it reviewed again first).
+
+### 5. What I am unsure about
+
+- Whether "No intervention shows…" is honest wording while one arm at p = 1/21 among 12 is perfectly consistent across items. I think yes; it is your call (the note says why).
+- The settle run's second version (see the caveat). Its primary test asks a lot: beyond all 500 controls. If the true effect is modest it will not pass, and the result will read "reproducible, no more than selection explains". That is the honest outcome for a modest effect, but it means the run may not change the wording of claim 3 at all.
+- Nothing involving two GPUs (B's fallback, Gemma-2-9B) has ever run. The Gemma-2-9B notebook checks itself and skips cleanly if it cannot run.
+- The laptop could not hold a model last night without swapping (even Qwen 0.5B on CPU), so every laptop test of new GPU code used a stand-in for the model. The 7B probe ladder, when B arrives, is CPU-only analysis and should be fine.
+- `scripts/run_all.sh` has not been run end to end since the second round; that is a packaging item for Sunday.
+
+### 6. Things I got wrong overnight (all corrected, all in the log)
+
+- My first reaction to the Qwen 3B result was to prepare 100 controls. The audit showed that would decide nothing.
+- My first settle design could not have told a real effect from a reproducible artefact. Caught by review before any run.
+- A commit message claimed a log entry that was not in it (a step failed half-way). Added in the next commit.
+- The figure script had been failing silently since Friday evening; two figures were stale for Qwen 3B. Fixed and checked.
+- Several timestamps in my notes were guesses and ran ahead of the clock. Corrected where I found them.
+
+---
+
 Repo root: this directory. Venv: `.venv` (uv, Python 3.12). Run things as `.venv/bin/python scripts/...`.
 
 **Compute rules (user instruction, Fri 13 Nov):** this 8 GB laptop does light work only: CPU analysis on existing caches, figures, writing, and Qwen 0.5B/1.5B GPU jobs one at a time. `OMP_NUM_THREADS=2`, background jobs under `nice`, stop any job that pushes memory into swap. **No Gemma model passes on this machine. Do not run `scripts/queue_night.sh`.** Gemma interventions, the SAE tier and the larger model run on Kaggle (`KAGGLE.md`), launched by the user.
 
-Last updated: Fri 2026-11-13 23:30 (Toronto).
+Last updated: Sat 2026-11-14 01:45 (Toronto). The section above is current; the sections below are from Friday night and are kept for the restart instructions.
 
 **Scope (user, Fri 16:25):** the scope freeze is lifted; push the science until Sunday 10:00, then package (decision D27). Heavy runs on Kaggle and Colab, launched by the user.
 

@@ -84,6 +84,7 @@ def main():
     ap.add_argument("--sites", default="all", choices=["all", "best"], help="adjacency sites: all four, or the two best-layer sites")
     ap.add_argument("--control-tags", default="c2c_debiased,c2c_probe", help="item sets for the steering controls")
     ap.add_argument("--n-pairs", type=int, default=60, help="patching pairs per kind (patch, patch_same)")
+    ap.add_argument("--cache-tags", default="c2c_probe,c2c_debiased", help="item sets the cache job builds")
     ap.add_argument("--settle-arm", default="gold_diffmeans", choices=["gold_diffmeans", "gold_probe"], help="direction of the primary test of the settle job")
     ap.add_argument("--no-resid", action="store_true", help="export no activations (logits and raw intervention outputs only)")
     a = ap.parse_args()
@@ -224,12 +225,12 @@ def main():
         # ------------------------------------------------------------ cache for the interventions
         have_cache = True
         if "cache" in jobs:
-            have_cache = stage(f"r2.{M}.cache", "scripts/01_build_cache.py", "--model", M, "--tags", "c2c_probe,c2c_debiased",
+            have_cache = stage(f"r2.{M}.cache", "scripts/01_build_cache.py", "--model", M, "--tags", a.cache_tags,
                                "--no-gen", "--max-minutes", "50", minutes=58)
             if not have_cache and M in fallback and status["stages"].get(f"r2.{M}.cache", {}).get("minutes", 99) < 12:
                 status["planned"].remove(f"r2.{M}.cache")        # replaced by the fallback model's stage
                 M = fallback[M]
-                have_cache = stage(f"r2.{M}.cache", "scripts/01_build_cache.py", "--model", M, "--tags", "c2c_probe,c2c_debiased",
+                have_cache = stage(f"r2.{M}.cache", "scripts/01_build_cache.py", "--model", M, "--tags", a.cache_tags,
                                    "--no-gen", "--max-minutes", "50", minutes=58)
         models_run.append(M)
         n_c = ["--n", "10"] if a.tiny else ["--n", "150"]

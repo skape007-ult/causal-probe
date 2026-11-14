@@ -331,6 +331,16 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 *The 7B rule (user, same message):* if Qwen 7B is at chance on the debiased pool, the conclusion is stated with its scope (models up to that size, these benchmarks, linear probes), the write-up is finished and no further experiments are proposed. If it is above chance, work stops and a plan with GPU hours goes to the user before any more quota is used.
 *Would change it:* a headline claim failing an audit; then it leaves the page.
 
+### D31. Output directory chosen by platform, checked at both ends of every notebook (Fri 13 Nov, 22:15; after a lost run)
+
+**What happened.** The Qwen 1.5B notebook, written for Colab, was run on Kaggle. Kaggle also has a `/content` folder, so the notebook wrote its archives there; Kaggle keeps only `/kaggle/working`. A finished 72-minute run was lost.
+
+**Decision.** Every notebook detects the platform (Kaggle first), writes to `/kaggle/working/kaggle_out` or `/content/out`, refuses in its first cell to run if that is not a kept location, and ends with a cell that lists the output and raises if an expected archive is missing. One notebook per run now works on either platform.
+
+**Alternatives.** Keep separate Kaggle and Colab notebooks and document which to use where: that is what failed. Copy the archives to both locations: hides the question instead of answering it.
+
+**Cost.** The 1.5B run is repeated (about 1.25 GPU hours). No result changes; `cdb08d7` and `6d9ce8d` run the same experiments.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.

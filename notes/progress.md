@@ -4,15 +4,16 @@ Repo root: this directory. Venv: `.venv` (uv, Python 3.12). Run things as `.venv
 
 **Compute rules (user instruction, Fri 13 Nov):** this 8 GB laptop does light work only: CPU analysis on existing caches, figures, writing, and Qwen 0.5B/1.5B GPU jobs one at a time. `OMP_NUM_THREADS=2`, background jobs under `nice`, stop any job that pushes memory into swap. **No Gemma model passes on this machine. Do not run `scripts/queue_night.sh`.** Gemma interventions, the SAE tier and the larger model run on Kaggle (`KAGGLE.md`), launched by the user.
 
-Last updated: Fri 2026-11-13 20:30 (Toronto).
+Last updated: Fri 2026-11-13 22:20 (Toronto).
 
 **Scope (user, Fri 16:25):** the scope freeze is lifted; push the science until Sunday 10:00, then package (decision D27). Heavy runs on Kaggle and Colab, launched by the user.
 
-## Where things stand (Fri 21:15)
+## Where things stand (Fri 22:20)
 
 | Piece | State |
 |---|---|
-| GPU runs launched by the user | **A (`r2_qwen3b`) and C (`r2_qwen15b`) from pin `5c31791`**, Fri evening. B (7B behaviour) and D (Gemma): user told to launch from the current pin `cdb08d7`. Follow-ups A2/C2/D2 (`*_r2b_*`, pin `cdb08d7`: cache, controls, controls_hyp, adjacency, export) after the main run of each model |
+| GPU runs launched by the user | **A (`r2_qwen3b`) from pin `cdb08d7`** (user's correction, Fri 22:00; so follow-up A2 is NOT needed) and **B (`r2_qwen7b`) from `cdb08d7`**: both write to `/kaggle/working`, output kept. **C (`r2_qwen15b`) ran on Kaggle from the Colab notebook and lost its output** (`/content/out`; log 22:15, D31): to be rerun from `notebooks/kaggle_r2_qwen1.5b.ipynb`, pin `6d9ce8d`, about 1.25 h, replaces C and C2. **D (Gemma)**: user will launch from pin `6d9ce8d` when a slot is free. Quota is no longer a limit (user, Fri 22:10): limits are 2 concurrent sessions and Sunday 10:00 |
+| Notebooks | All re-pinned to `6d9ce8d`: platform-chosen output directory (`/kaggle/working/kaggle_out` or `/content/out`), first-cell check, last cell lists the output and raises if an archive is missing (`scripts/notebook_cells.py`, `tests/test_notebook_cells.py`). Not yet seen running on Kaggle |
 | Consolidation (D30) | `RESULTS.md` (from `report/RESULTS_template.md`) = top of README; report appendix A–D; fig13. Audited (sixth audit, `notes/audit_consolidation_raw.md`) and corrected |
 | Laptop | **Nothing running.** All Qwen 0.5B round-2 work done; Qwen 3B and Gemma analysis done |
 | Audits | Six done and logged. Not audited: the wording changes made in response to the sixth |

@@ -185,7 +185,7 @@ After that hour you should be able to say these five sentences from memory.
 
 ## Session 6 (added 13 November). Round 2: how an intervention result goes wrong, twice
 
-*Read:* report section 4.2 from "Label-preserving pairs"; section 4.1 from "Steering at the end of the hypothesis"; section 4.4 in full; section 5; then `notes/log.md` entries of 13 November from 16:35 to the end, in order. EXPLAINER primer entries "Label-preserving minimal pair", "Where you intervene matters", "Observational versus interventional evidence for a feature"; questions 36 to 43.
+*Read:* report section 4.2 from "Label-preserving pairs"; section 4.1 from "Steering at the end of the hypothesis"; section 4.4 in full; Appendix C (SAE); then `notes/log.md` entries of 13 November from 16:35 to the end, in order. EXPLAINER primer entries "Label-preserving minimal pair", "Where you intervene matters", "Observational versus interventional evidence for a feature"; questions 36 to 43.
 
 *Ideas to come away with:*
 - An intervention that "works" at a place where the output is already a linear function of the activation shows where the output is, not what it is computed from.

@@ -11,7 +11,7 @@ The same page as a file: `RESULTS.md`. How the story unfolded, in plain language
 ## Further results (not headline claims)
 
 - **Behaviour.** All four models answer both benchmarks at or near chance; part of that is answer bias, and the bias-free ranking score is near 0.5 as well (table below).
-- **Patching.** A change of one variable in the prompt reaches the answer position at about 60% of the network's depth (three models). The answer logit moves as much when the edit leaves the correct answer unchanged as when it changes it, and its sign follows which variable letter is asked about (Qwen2.5-0.5B so far): this locates where a prompt difference arrives, not where a judgement is made.
+- **Patching.** A change of one variable in the prompt reaches the answer position at about 60% of the network's depth (three models). The answer logit moves as much when the edit leaves the correct answer unchanged as when it changes it, and its sign follows where the queried variable stands in the premise, not validity (Qwen2.5-0.5B so far): this locates where a prompt difference arrives, not where a judgement is made.
 - **In the report's appendix:** logit lens, cross-model comparison, sparse-autoencoder features, attribution patching of components.
 
 ## What was pre-registered, what passed, what was retracted

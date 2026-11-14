@@ -548,8 +548,8 @@ def STEER_NOTES():
                    f"on the debiased pool {d['expected_rank_1_by_chance']:.2f} expected, {d['n_rank_1_in_absolute_slope']} observed ({d['p_at_least_this_many_rank_1']:.3f}). "
                    "No single first rank survives a correction for the number of comparisons (`results/steering_controls_multiplicity.json`).")
     out.append("The interval on a slope is over items; it does not describe the comparison with the controls, whose uncertainty is the draw of the direction and of 20 controls.")
-    out.append("‡ Per natural SD the comparison is not matched for probe directions: a probe fitted to a decodable label has 1.0 to 5.5 times the natural SD of probes "
-               "fitted to shuffled labels, whatever its causal role, so a high percentile in these two columns can come from the spread alone.")
+    out.append("‡ Per natural SD the comparison is not matched for probe directions: a gold-label probe has 1.0 to 5.5 times the natural SD of probes "
+               "fitted to shuffled labels (a model-answer probe 5 to 110 times), whatever its causal role, so a high percentile in these two columns can come from the spread alone.")
     out.append("§ On the original pool the control labels are shuffled over the whole item set, and the gold label is mostly a property of the hypothesis string "
                "(63% of its variance on the selection half lies between strings). The controls carry no string information, so these rows compare "
                "'gold label and which hypothesis is asked' with noise and cannot be read as evidence about validity.")

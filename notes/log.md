@@ -534,3 +534,22 @@ The auditor was given code and result files only (no notes, no report text) and 
 **Also done tonight.** The whole probe comparison for Qwen 3B, rerun on the activations that run A rebuilt, reproduces the committed result file exactly (every number; only the run time differs). So claim 2's numbers for that model do not depend on which GPU session built the cache.
 
 **Not done, deliberately.** `RESULTS.md` is unchanged (the user's instruction). The proposed rewording of claim 3, with the evidence for and against, is in `notes/claim3_proposed_rewording.md`.
+
+## Sat 2026-11-14 01:22 — Claims pass on the report and the README after the eighth audit (raw report: `notes/claims_pass_14nov_raw.md`)
+
+A fresh agent checked every checkable sentence of `report/report.md`, `README.md` and `RESULTS.md` against the result files and tables. 43 items in the report, 9 in the README, 9 in `RESULTS.md`. Eight sentences were contradicted by a result file; the rest were stale ("so far", "one model"), scoped too widely, or inconsistent between places. All report and README items are fixed; **the nine `RESULTS.md` items are not applied** (the user's instruction) and are listed in the raw report under "RESULTS.md (not to be edited tonight; for the owner)".
+
+**Contradicted by a result file, and by whom they were written:**
+1. Summary item 5 said the gold difference of means moves the answer "about as much as" shuffled-label ones on the debiased pool: false for Qwen 3B at the end of the hypothesis (first of 21). Written before that run; not updated by me when I revised Section 4.
+2. "The model-answer direction exceeds all controls in every case": in one of 12 comparisons it is second of 21 (Qwen 0.5B, original pool, end of the hypothesis). My sentence, never true since that row existed.
+3. "Per natural SD the gold probe exceeds all 20 controls in two rows": it is five of six original-pool rows now, and the column is not a matched comparison. The count was the sixth audit's, for a smaller table.
+4. Two sentences said the Qwen 1.5B debiased-pool controls were still shuffled globally (Sections 4.1 and 7). They have been within-string since the ingest.
+5. "They could not exclude a label effect of 0.2 logits": the intervals exclude ±0.2; what they cannot exclude is about 0.1. A hand-typed number of mine.
+6. "Every column of the transfer matrix has one sign" (Qwen 3B): two cells are within 0.01 of zero on the other side. Written tonight.
+7. "The probe-step arm at seven sites": four adjacency sites; the seven are stages including steering. Written tonight.
+
+**Two things the pass found that neither I nor the eighth audit had reported.**
+- *The "sign follows the position of the variable, not validity" pattern of the label-preserving pairs is a Qwen 0.5B result.* The same analysis is in the result files of the two larger models and does not repeat: for premise relabellings in Qwen 1.5B the label-changing pairs have D = −0.747 [−1.258, −0.266] and the label-preserving ones −0.022 [−0.259, +0.194]. The summary, the README and Section 4.2 stated the pattern without a model. **Fixed**: scoped to Qwen 0.5B, the other two models' numbers added.
+- *At the end of the hypothesis in Qwen 1.5B the third arm of the adjacency test (a step along the adjacency probe's weight vector) is outside its controls*: −0.028 per unit of norm, larger in absolute value than 95% of 20 controls and below all of them in signed value; about a hundredth of a logit across the class gap. I had written "nothing exceeds its controls" for that site. **Fixed**: "neither the translation nor the erasure", and the arm is reported with the same borderline standing as the Qwen 0.5B contrast.
+
+**Pattern.** Most of the 43 were sentences that were true when written for one or two models and became wrong when rows for more models appeared under them. Revising a section by adding paragraphs for the new models, as I did tonight, leaves every older universal sentence standing. The pass that finds them has to read the old text against the new tables, which is what the agent did and I had not.

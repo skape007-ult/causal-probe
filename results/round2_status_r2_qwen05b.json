@@ -47,7 +47,7 @@
   },
   "r2.qwen0.5b.adjacency.content_end.first50": {
    "ok": true,
-   "minutes": 16.1,
+   "minutes": 15.1,
    "detail": "ok",
    "log_tail": [
     "  transfer (rows = item's template, columns = template the vector came from):",
@@ -125,9 +125,10 @@
   "r2.qwen0.5b.controls_hyp.c2c_probe",
   "r2.qwen0.5b.adjacency.final.best",
   "r2.qwen0.5b.adjacency.content_end.best",
-  "r2.qwen0.5b.adjacency.final.first50"
+  "r2.qwen0.5b.adjacency.final.first50",
+  "r2.qwen0.5b.adjacency.content_end.first50"
  ],
- "total_minutes": 30.6,
+ "total_minutes": 45.7,
  "models_run": [
   "qwen0.5b"
  ],
@@ -137,13 +138,13 @@
    "content_end"
   ],
   "bytes_per_cache_dir": {
-   "qwen0.5b/c2c_debiased": 6843060,
+   "qwen0.5b/c2c_debiased": 7195060,
    "qwen0.5b/c2c_probe": 1536649,
    "qwen0.5b/c2c_test": 408791,
    "qwen0.5b/cladder": 1101240
   },
   "zip_megabytes": {
-   "cache_r2_qwen05b_qwen0.5b.zip": 10.3
+   "cache_r2_qwen05b_qwen0.5b.zip": 10.7
   }
  },
  "all_ok": false

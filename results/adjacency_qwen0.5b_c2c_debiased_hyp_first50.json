@@ -2320,6 +2320,8 @@
   "note": "effect towards Yes, per move towards adjacent, of translating an item of the row's template by the class-mean difference of the column's template. A shared adjacency feature read in a template-specific way predicts a positive target-sign contrast; class differences that are each template's own answer shift predict a positive source-sign contrast."
  },
  "audit5": {
+  "fair_control_measured_directly": true,
+  "fair_control_direct_vs_extrapolated_r": 0.36627289119411793,
   "erasure_is_translation": {
    "pearson_r_observed_vs_minus_coefficient_times_translation": 0.5490276849431514,
    "regression_slope": 0.7102479228615375,
@@ -2337,23 +2339,23 @@
      "fair_controls_change_in_absolute_gap": {
       "value": -0.007076749347505115,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.45,
-      "share_of_controls_below": 0.5,
-      "control_min": -0.013218315317049367,
-      "control_max": 0.008537131491107727,
-      "control_mean": -0.0043671173806777135,
-      "control_sd": 0.006520943514840949,
+      "share_of_controls_smaller_in_absolute_value": 0.6,
+      "share_of_controls_below": 0.25,
+      "control_min": -0.008509089995403674,
+      "control_max": 0.010966284745404509,
+      "control_mean": -0.0019118055356602977,
+      "control_sd": 0.006001856135137134,
       "outside_control_range": false
      },
      "fair_controls_change_in_signed_gap": {
       "value": -0.007076749347505115,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.45,
-      "share_of_controls_below": 0.5,
-      "control_min": -0.013218315317049367,
-      "control_max": 0.008537131491107727,
-      "control_mean": -0.0043671173806777135,
-      "control_sd": 0.006520943514840949,
+      "share_of_controls_smaller_in_absolute_value": 0.6,
+      "share_of_controls_below": 0.25,
+      "control_min": -0.008509089995403674,
+      "control_max": 0.010966284745404509,
+      "control_mean": -0.0019118055356602977,
+      "control_sd": 0.006001856135137134,
       "outside_control_range": false
      }
     },
@@ -2365,23 +2367,23 @@
      "fair_controls_change_in_absolute_gap": {
       "value": -0.002495441234931728,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.55,
-      "share_of_controls_below": 0.2,
-      "control_min": -0.004888226260758868,
-      "control_max": 0.0061630961234018095,
-      "control_mean": 0.0009471726196559754,
-      "control_sd": 0.002817634056289652,
+      "share_of_controls_smaller_in_absolute_value": 0.5,
+      "share_of_controls_below": 0.15,
+      "control_min": -0.003967729951969506,
+      "control_max": 0.0075996058327810895,
+      "control_mean": 0.001163092971478815,
+      "control_sd": 0.00314151623386159,
       "outside_control_range": false
      },
      "fair_controls_change_in_signed_gap": {
       "value": 0.002495441234931728,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.55,
-      "share_of_controls_below": 0.8,
-      "control_min": -0.0061630961234018095,
-      "control_max": 0.004888226260758868,
-      "control_mean": -0.0009471726196559754,
-      "control_sd": 0.002817634056289652,
+      "share_of_controls_smaller_in_absolute_value": 0.5,
+      "share_of_controls_below": 0.85,
+      "control_min": -0.0075996058327810895,
+      "control_max": 0.003967729951969506,
+      "control_mean": -0.001163092971478815,
+      "control_sd": 0.00314151623386159,
       "outside_control_range": false
      }
     },
@@ -2394,22 +2396,22 @@
       "value": 0.00018518715308454142,
       "n_controls": 20,
       "share_of_controls_smaller_in_absolute_value": 0.0,
-      "share_of_controls_below": 0.65,
-      "control_min": -0.008541466260398756,
-      "control_max": 0.0072613288500676665,
-      "control_mean": -0.0011888486698630129,
-      "control_sd": 0.00498784105583151,
+      "share_of_controls_below": 0.75,
+      "control_min": -0.007744907281596387,
+      "control_max": 0.006409329039289383,
+      "control_mean": -0.0021327461010564497,
+      "control_sd": 0.003157917633332098,
       "outside_control_range": false
      },
      "fair_controls_change_in_signed_gap": {
       "value": 0.00018518715308454142,
       "n_controls": 20,
       "share_of_controls_smaller_in_absolute_value": 0.0,
-      "share_of_controls_below": 0.65,
-      "control_min": -0.008541466260398756,
-      "control_max": 0.0072613288500676665,
-      "control_mean": -0.0011888486698630129,
-      "control_sd": 0.00498784105583151,
+      "share_of_controls_below": 0.75,
+      "control_min": -0.007744907281596387,
+      "control_max": 0.006409329039289383,
+      "control_mean": -0.0021327461010564497,
+      "control_sd": 0.003157917633332098,
       "outside_control_range": false
      }
     },
@@ -2421,23 +2423,23 @@
      "fair_controls_change_in_absolute_gap": {
       "value": -0.003873364635245513,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.25,
-      "share_of_controls_below": 0.45,
-      "control_min": -0.014916983112901294,
-      "control_max": 0.013498535404683765,
-      "control_mean": -0.000442416403387752,
-      "control_sd": 0.009031770708932555,
+      "share_of_controls_smaller_in_absolute_value": 0.4,
+      "share_of_controls_below": 0.35,
+      "control_min": -0.00905403535832805,
+      "control_max": 0.012800551469994537,
+      "control_mean": 0.0005158288138253336,
+      "control_sd": 0.006957593556232224,
       "outside_control_range": false
      },
      "fair_controls_change_in_signed_gap": {
       "value": 0.003873364635245513,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.25,
-      "share_of_controls_below": 0.55,
-      "control_min": -0.013498535404683765,
-      "control_max": 0.014916983112901294,
-      "control_mean": 0.000442416403387752,
-      "control_sd": 0.009031770708932555,
+      "share_of_controls_smaller_in_absolute_value": 0.4,
+      "share_of_controls_below": 0.65,
+      "control_min": -0.012800551469994537,
+      "control_max": 0.00905403535832805,
+      "control_mean": -0.0005158288138253336,
+      "control_sd": 0.006957593556232224,
       "outside_control_range": false
      }
     },
@@ -2449,24 +2451,24 @@
      "fair_controls_change_in_absolute_gap": {
       "value": -0.004528202267612599,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.9,
-      "share_of_controls_below": 0.05,
-      "control_min": -0.004604032580263614,
-      "control_max": 0.005412583251969619,
-      "control_mean": 0.00043506795571806917,
-      "control_sd": 0.002821454792970073,
-      "outside_control_range": false
+      "share_of_controls_smaller_in_absolute_value": 1.0,
+      "share_of_controls_below": 0.0,
+      "control_min": -0.004501025623004252,
+      "control_max": 0.0027017397193713766,
+      "control_mean": -0.0007210934774791776,
+      "control_sd": 0.0019490836638209183,
+      "outside_control_range": true
      },
      "fair_controls_change_in_signed_gap": {
       "value": 0.004528202267612599,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.9,
-      "share_of_controls_below": 0.95,
-      "control_min": -0.005412583251969619,
-      "control_max": 0.004604032580263614,
-      "control_mean": -0.00043506795571806917,
-      "control_sd": 0.002821454792970073,
-      "outside_control_range": false
+      "share_of_controls_smaller_in_absolute_value": 1.0,
+      "share_of_controls_below": 1.0,
+      "control_min": -0.0027017397193713766,
+      "control_max": 0.004501025623004252,
+      "control_mean": 0.0007210934774791776,
+      "control_sd": 0.0019490836638209183,
+      "outside_control_range": true
      }
     }
    },
@@ -2483,12 +2485,12 @@
      "vs_fair_controls": {
       "value": 0.0038232822743196754,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.8,
-      "share_of_controls_below": 0.8,
-      "control_min": -0.0028570937945146535,
-      "control_max": 0.007710076683229358,
-      "control_mean": 0.0013908286245525986,
-      "control_sd": 0.00274624508521505,
+      "share_of_controls_smaller_in_absolute_value": 0.9,
+      "share_of_controls_below": 0.9,
+      "control_min": -0.002918567670064473,
+      "control_max": 0.00650952784538622,
+      "control_mean": 0.0010624540750926435,
+      "control_sd": 0.002435809052240959,
       "outside_control_range": false
      }
     }
@@ -2506,12 +2508,12 @@
      "vs_fair_controls": {
       "value": 0.0035577140664420914,
       "n_controls": 20,
-      "share_of_controls_smaller_in_absolute_value": 0.85,
-      "share_of_controls_below": 0.85,
-      "control_min": -0.002697702655876988,
-      "control_max": 0.005382086294054733,
-      "control_mean": 0.0009232283757109022,
-      "control_sd": 0.002301594215285096,
+      "share_of_controls_smaller_in_absolute_value": 0.95,
+      "share_of_controls_below": 0.95,
+      "control_min": -0.002681138427152424,
+      "control_max": 0.004779166277651126,
+      "control_mean": 0.0006173446657783716,
+      "control_sd": 0.002089021423321364,
       "outside_control_range": false
      }
     }
@@ -2673,5 +2675,145 @@
   },
   "n_translation_effects_towards_no": 4
  },
- "minutes_gpu": 15.913295400142669
+ "translation_split_by_answer_direction": {
+  "by_template": {
+   "parent": {
+    "along_answer_predictive_direction": {
+     "est": 0.0005800056457519531,
+     "lo": -0.0009680438608226209,
+     "hi": 0.002128122495145214,
+     "n": 100,
+     "n_groups": 98
+    },
+    "remainder": {
+     "est": 0.010598125457763672,
+     "lo": 0.00901550568786322,
+     "hi": 0.012152166357730447,
+     "n": 100,
+     "n_groups": 98
+    },
+    "whole_translation": {
+     "est": 0.009478569030761719,
+     "lo": 0.007924423824648759,
+     "hi": 0.010911217765006006,
+     "n": 100,
+     "n_groups": 98
+    },
+    "norm_over_s": {
+     "along": 0.009117332001482913,
+     "remainder": 0.06413574256821498
+    }
+   },
+   "non-parent ancestor": {
+    "along_answer_predictive_direction": {
+     "est": 0.0011272048950195313,
+     "lo": -0.00023599682432232476,
+     "hi": 0.0023821583083181667,
+     "n": 100,
+     "n_groups": 99
+    },
+    "remainder": {
+     "est": -0.010140037536621094,
+     "lo": -0.011674149521020657,
+     "hi": -0.008594131715369947,
+     "n": 100,
+     "n_groups": 99
+    },
+    "whole_translation": {
+     "est": -0.0096923828125,
+     "lo": -0.011339740045142897,
+     "hi": -0.008110080158009248,
+     "n": 100,
+     "n_groups": 99
+    },
+    "norm_over_s": {
+     "along": 0.0057775324971438115,
+     "remainder": 0.061320292185675376
+    }
+   },
+   "non-child descendant": {
+    "along_answer_predictive_direction": {
+     "est": -0.00041233062744140626,
+     "lo": -0.0017949863355986926,
+     "hi": 0.0009559299431595148,
+     "n": 100,
+     "n_groups": 97
+    },
+    "remainder": {
+     "est": -0.0014822578430175781,
+     "lo": -0.0028597765342861996,
+     "hi": -0.00018059979177544234,
+     "n": 100,
+     "n_groups": 97
+    },
+    "whole_translation": {
+     "est": -0.0018287277221679687,
+     "lo": -0.0032300555237484807,
+     "hi": -0.0005266780853271485,
+     "n": 100,
+     "n_groups": 97
+    },
+    "norm_over_s": {
+     "along": 0.010488545654829986,
+     "remainder": 0.11914413208999058
+    }
+   },
+   "has_collider": {
+    "along_answer_predictive_direction": {
+     "est": 0.0006063461303710937,
+     "lo": -0.0005476557291471041,
+     "hi": 0.0018700193147174634,
+     "n": 100,
+     "n_groups": 95
+    },
+    "remainder": {
+     "est": -0.007407360076904297,
+     "lo": -0.008681773945749718,
+     "hi": -0.006010629446536249,
+     "n": 100,
+     "n_groups": 95
+    },
+    "whole_translation": {
+     "est": -0.005393829345703125,
+     "lo": -0.006552300698978385,
+     "hi": -0.00410777630616358,
+     "n": 100,
+     "n_groups": 95
+    },
+    "norm_over_s": {
+     "along": 0.01480507216564179,
+     "remainder": 0.1352001924425671
+    }
+   },
+   "has_confounder": {
+    "along_answer_predictive_direction": {
+     "est": 0.0016528129577636718,
+     "lo": 0.0005500565914689852,
+     "hi": 0.0028072967206883787,
+     "n": 100,
+     "n_groups": 96
+    },
+    "remainder": {
+     "est": -0.005633468627929687,
+     "lo": -0.0069973954333663445,
+     "hi": -0.0042669878721581225,
+     "n": 100,
+     "n_groups": 96
+    },
+    "whole_translation": {
+     "est": -0.004828681945800781,
+     "lo": -0.006127670533729322,
+     "hi": -0.0036104241779872353,
+     "n": 100,
+     "n_groups": 96
+    },
+    "norm_over_s": {
+     "along": 0.0157105809672838,
+     "remainder": 0.10130191522965243
+    }
+   }
+  },
+  "note": "the class-mean difference split into its component along the direction from which the within-string answer is linearly predicted at this site (ridge, selection half) and the rest. If the class difference acts only as an answer shift, the effect sits in the first component; if adjacency information that is not yet answer-like is used, in the second."
+ },
+ "minutes_gpu": 14.85308655500412
 }

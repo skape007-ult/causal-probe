@@ -34,6 +34,7 @@ import argparse
 import json
 import os
 import time
+import zlib
 
 import numpy as np
 import torch
@@ -185,8 +186,8 @@ def build(X, F, y, t, strs, grp, tm, mcal, C, k, arm, role, n_primary, n_shuf, n
     add("gold_diffmeans", dom(Xf, yf))
     g, c_ = probe_dir(Xf, yf, C); add("gold_probe", g); conv["gold_probe"] = c_
     m, c_ = probe_dir(Xf, mcal[F], C); add("model_out", m); conv["model_out"] = c_
-    if role == "original":
-        for v in iso[:N_ISO]:
+    if role != "other":                    # also in the primary configuration: the ratio of the rms slopes of control and isotropic
+        for v in iso[:N_ISO]:              # directions says how anisotropic the response is, which the reading of the test depends on
             add("isotropic", steer.unit(v))
     # (1) labels shuffled within hypothesis string (the 20-control run's family)
     n_ws = n_shuf if role in ("primary", "original") else n_other
@@ -209,10 +210,22 @@ def build(X, F, y, t, strs, grp, tm, mcal, C, k, arm, role, n_primary, n_shuf, n
         cell = np.array([f"{a}|{b}" for a, b in zip(sf, tf)])
         rng_c = np.random.default_rng(SEED + 202 + 1000 * k)
         ybar = cell_mean(yf.astype(float), cell)
-        add("gold_beyond_adjacency", steer.unit((yf - ybar) @ Xc))
+        tbar = cell_mean(tf.astype(float), sf)
+        a_dir = steer.unit((tf - tbar) @ Xc)                       # the within-string adjacency direction of this fitting half
+
+        def perp(v):                                               # the same vector without its component along that direction
+            return steer.unit(v - (v @ a_dir) * a_dir)
+        g_res = (yf - ybar) @ Xc
+        add("gold_beyond_adjacency", steer.unit(g_res))
+        # The residual label is orthogonal to adjacency over items, but its image in activation space is not orthogonal to
+        # the image of adjacency (cosine about 0.57), and a response to adjacency alone makes it stand out (tenth audit, F3).
+        # The version with the adjacency direction projected out is the one the second question of the decision rule uses.
+        add("gold_beyond_adjacency_orth", perp(g_res))
         wc = [shuffle_within(yf, cell, rng_c) for _ in range(n_shuf)]
-        for lab in (wc if kind == "diffmeans" else wc[:n_other]):
+        for lab in wc:
             add("within_cell_residual", steer.unit((lab - ybar) @ Xc))
+        for lab in wc:
+            add("within_cell_residual_orth", perp((lab - ybar) @ Xc))
         if kind == "probe":             # for probe directions the within-cell family is calibrated as it is
             dirs, share = probe_dirs(Xf, wc, C)
             conv["within_cell_probe_share_converged"] = share
@@ -220,9 +233,8 @@ def build(X, F, y, t, strs, grp, tm, mcal, C, k, arm, role, n_primary, n_shuf, n
                 add("within_cell_probe", d)
         # (4) the adjacency direction itself
         par = tmf == "parent"
-        tbar = cell_mean(tf.astype(float), sf)
         add("adjacency_parent_diffmeans", dom(Xf[par], tf[par]))
-        add("adjacency_within_string", steer.unit((tf - tbar) @ Xc))
+        add("adjacency_within_string", a_dir)
         rng_a = np.random.default_rng(SEED + 303 + 1000 * k)
         for _ in range(n_other):
             ts = shuffle_within(tf, sf, rng_a)
@@ -251,6 +263,8 @@ def rank_stats(real, ctrl, real_sd=None, ctrl_sd=None):
     if real_sd is not None:
         r["abs_rank_per_natural_sd"] = int(1 + (np.abs(ctrl * ctrl_sd) > abs(real * real_sd)).sum())
         r["natural_sd_over_s"] = float(real_sd); r["natural_sd_controls_median"] = float(np.median(ctrl_sd))
+        r["abs_rank_per_natural_sd_note"] = ("a size, not a test: for probe directions the real direction has about twice the natural SD of every "
+                                             "control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)")
     return r
 
 
@@ -262,7 +276,8 @@ def one_sided_p(real, ctrl, sign):
 MATCH = {"gold_diffmeans": ("premise_balanced_diffmeans", "within_string_diffmeans"),
          "gold_probe": ("premise_balanced_probe", "within_string_probe", "within_cell_probe"),
          "gold_beyond_adjacency": ("within_cell_residual",),
-         "model_out": ("within_string_probe", "premise_balanced_probe"),
+         "gold_beyond_adjacency_orth": ("within_cell_residual_orth",),
+         "model_out": ("within_string_probe", "premise_balanced_probe"),      # positive control only: these are not matched controls for it
          "adjacency_parent_diffmeans": ("adjacency_parent_shuffled",),
          "adjacency_within_string": ("adjacency_within_string_shuffled",)}
 
@@ -300,6 +315,21 @@ def summarise(fam, slopes, own_sd, gap_s, small, tm_items, slope_items):
             r["slope_per_s_at_smaller_steps"] = small[name]
         out["real"][name] = r
     return out
+
+
+def second_question(fam, slopes, sign):
+    """Does the label beyond adjacency stand out? Fixed before the run: the residual-label direction with the adjacency direction
+    projected out, against its controls built the same way, one-sided in the arm's sign, 'stands out' = p <= 0.05."""
+    j = np.where(fam == "gold_beyond_adjacency_orth")[0]
+    c = slopes[fam == "within_cell_residual_orth"]
+    if not len(j) or len(c) < 2:
+        return None
+    r = float(slopes[int(j[0])])
+    pv = one_sided_p(r, c, sign)
+    return {"direction": "gold_beyond_adjacency_orth", "controls": "within_cell_residual_orth", "n_controls": int(len(c)), "slope": r,
+            "z_vs_controls": float((r - c.mean()) / c.std(ddof=1)), "p_one_sided_in_the_arms_sign": pv, "stands_out": bool(pv <= 0.05),
+            "what_it_can_show": "a positive result: the label has an effect beyond the one linear adjacency direction (not beyond graph structure in general). "
+                                "A null result shows nothing: the comparison has little power at the observed size, and a fifth of the items sit in single-class cells."}
 
 
 def config_slopes(p):
@@ -367,7 +397,7 @@ def main():
         cols = np.concatenate([np.zeros((1, D.shape[1]), np.float32)] + [s * al * s_unit * D[j][None] for j, al in alphas for s in (1.0, -1.0)])
         key = f"{k}_{l}"
         plan.append(dict(split=k, layer=l, role=role, key=key, fam=fam, D=D, alphas=alphas, conv=conv, s_unit=s_unit, own_sd=own_sd, gap_s=gap_s,
-                         idx=idx, vecs=cols, check=float(np.abs(cols).sum())))
+                         idx=idx, vecs=cols, check=float(zlib.crc32(np.ascontiguousarray(cols).tobytes()))))
         saved.update({f"D_{key}": D.astype(np.float16), f"fam_{key}": fam, f"alphas_{key}": np.array(alphas, np.float64), f"own_sd_{key}": own_sd,
                       f"gap_s_{key}": gap_s, f"s_unit_{key}": s_unit, f"idx_{key}": idx})
         log(f"split {k} layer {l} ({role}): {len(D)} directions, {len(cols)} vectors per item, {len(idx)} items; converged: "
@@ -395,14 +425,22 @@ def main():
     while ci < len(plan):
         p = plan[ci]; key = p["key"]
         if f"out_{key}" in done and done[f"out_{key}"].shape == (len(p["idx"]), len(p["vecs"])) and np.array_equal(done.get(f"idx_{key}"), p["idx"]) \
-                and abs(float(done.get(f"check_{key}", -1)) - p["check"]) < 1e-4 * p["check"]:
+                and float(done.get(f"check_{key}", -1)) == p["check"]:
             p["out"] = done[f"out_{key}"]
             log(f"split {p['split']} layer {p['layer']}: taken from the partial file")
             ci += 1
             continue
         out = np.zeros((len(p["idx"]), len(p["vecs"])), np.float32)
         vecs = torch.tensor(p["vecs"])
+        n_start = 0
+        if f"rows_{key}" in done and float(done.get(f"rowcheck_{key}", -1)) == p["check"] and done[f"rows_{key}"].shape[1] == out.shape[1] \
+                and np.array_equal(done.get(f"rowidx_{key}"), p["idx"]):
+            n_start = len(done[f"rows_{key}"]); out[:n_start] = done[f"rows_{key}"]
+            log(f"split {p['split']} layer {p['layer']}: resuming at item {n_start}")
+        stop_at = None
         for n_, i in enumerate(p["idx"]):
+            if n_ < n_start:
+                continue
             enc = prompts.encode_with_positions(tok, items[i])
             out[n_] = steer.steered_logit_diffs(model, enc["input_ids"], p["layer"], vecs, ans, sub_batch=a.sub_batch, pos=enc["pos"][POSITION])
             w_done += ntok[i] * len(p["vecs"])
@@ -416,9 +454,23 @@ def main():
                     dropped.append([q["split"], q["layer"], q["role"]])
                     rest -= work(q)
                     log(f"[timing] dropping split {q['split']} layer {q['layer']} ({q['role']}) to fit the time limit")
-                if ci == 0 and n_ == 5 and per_w * work(p, p["idx"][n_ + 1:]) / 60 > 0.95 * left:
-                    raise SystemExit("the primary configuration alone does not fit the time limit: lower --n-primary")
+                if len(plan) == ci + 1 and per_w * work(p, p["idx"][n_ + 1:]) / 60 > 0.95 * left:
+                    # even this configuration alone does not fit: keep the items that do, instead of ending with nothing
+                    cum = np.cumsum(ntok[p["idx"][n_ + 1:]] * len(p["vecs"])) * per_w / 60
+                    stop_at = n_ + 1 + int((cum <= 0.9 * left).sum())
+                    log(f"[timing] this configuration does not fit: stopping after item {stop_at} of {len(p['idx'])}")
+            if (n_ + 1) % 10 == 0:              # rows done so far, so that a session that dies inside a configuration leaves them
+                done[f"rows_{key}"] = out[:n_ + 1]; done[f"rowidx_{key}"] = p["idx"]; done[f"rowcheck_{key}"] = p["check"]
+                tmp = part.with_name(part.name + ".tmp.npz")
+                np.savez(tmp, **done); os.replace(tmp, part)
+            if stop_at is not None and n_ + 1 >= stop_at:
+                break
+        if stop_at is not None:
+            p["idx"] = p["idx"][:stop_at]; out = out[:stop_at]
+            p["shortened_to_items"] = int(stop_at)
         p["out"] = out
+        for k_ in (f"rows_{key}", f"rowidx_{key}", f"rowcheck_{key}"):
+            done.pop(k_, None)
         done[f"out_{key}"] = out; done[f"idx_{key}"] = p["idx"]; done[f"check_{key}"] = p["check"]
         tmp = part.with_name(part.name + ".tmp.npz")
         np.savez(tmp, **done); os.replace(tmp, part)
@@ -451,7 +503,7 @@ def main():
                                    "n_controls": len(ctrl_small[fam_c][al_])} for al_, v_ in small[k_].items()}
         tm_items = tm[p["idx"]] if p["role"] != "other" else None
         s = summarise(fam, slopes, p["own_sd"], p["gap_s"], small, tm_items, slope_items)
-        s.update(split=p["split"], layer=p["layer"], role=p["role"], n_items=int(len(p["idx"])), s_unit=p["s_unit"], fitting_notes=p["conv"],
+        s.update(split=p["split"], layer=p["layer"], role=p["role"], n_items=int(len(p["idx"])), shortened_to_items=p.get("shortened_to_items"), s_unit=p["s_unit"], fitting_notes=p["conv"],
                  fitting_half={0: "selection half (the original split)", 1: "report half (mirror image of the original split)"}.get(p["split"], "random half of the blocks"),
                  baseline_max_abs_diff_vs_cache=float(np.abs(out[:, 0] - ld0[p["idx"]]).max()))
         res["configs"].append(s)
@@ -470,6 +522,11 @@ def main():
                 "smallest_p_this_many_controls_can_give": 1 / (1 + len(c)),
                 **{k_: v_ for k_, v_ in rank_stats(slopes[j], c, p["own_sd"][j], p["own_sd"][fam == cf]).items() if k_ != "slope"},
                 "p_one_sided_vs_within_string_controls": one_sided_p(slopes[j], slopes[fam == f"within_string_{kind}"], sign),
+                "second_question_the_label_beyond_adjacency": second_question(fam, slopes, sign),
+                "how_to_read": {"beyond_all_controls": "moderate evidence for a label-specific effect: under a label-free response this happens in about 3% of runs "
+                                                       "if that response is isotropic and in 1 to 12% under the anisotropy the 20-control run allows",
+                                "between_the_threshold_and_0.05": "evidence for neither account: about as likely with a real effect of the observed size as without",
+                                "above_0.05": "moderate evidence against an effect of the observed size"},
                 "note": "The direction of this split is not an independent draw: the gold direction fitted on the two halves is nearly one vector. "
                         "p <= 0.05 here means only that this direction's slope is reproducibly in the tail of its controls, which choosing the most "
                         "extreme of 24 comparisons would produce by itself; the threshold for that choice is 0.05/24.",
@@ -501,11 +558,14 @@ def main():
             print(f"  split {e['split']} layer {e['layer']} ({e['role']}): {a.arm} slope {e['slope']:+.3f}, vs {v['n_controls']} premise-balanced controls z {v['z_vs_controls']:+.2f}, "
                   f"signed rank {v['signed_rank_1_is_most_positive']}/{v['n_controls'] + 1}, one-sided p {v['p_one_sided']:.3f}")
     for c in res["configs"][:2]:
-        b_ = c["real"].get("gold_beyond_adjacency", {}).get("versus", {}).get("within_cell_residual")
+        b_ = c["real"].get("gold_beyond_adjacency_orth", {}).get("versus", {}).get("within_cell_residual_orth")
         w_ = c["real"]["gold_probe"]["versus"].get("within_cell_probe")
         if b_:
-            print(f"  split {c['split']}: the label beyond adjacency (label minus its string-and-adjacency cell mean): slope {b_['slope']:+.3f}, z {b_['z_vs_controls']:+.2f} "
-                  f"against {b_['n_controls']} controls shuffled within cells" + (f"; gold probe against {w_['n_controls']} within-cell probes z {w_['z_vs_controls']:+.2f}" if w_ else ""))
+            print(f"  split {c['split']}: the label beyond adjacency, adjacency direction projected out: slope {b_['slope']:+.3f}, z {b_['z_vs_controls']:+.2f} "
+                  f"against {b_['n_controls']} controls built the same way" + (f" (descriptive: gold probe against {w_['n_controls']} within-cell probes z {w_['z_vs_controls']:+.2f})" if w_ else ""))
+    if res.get("primary_test", {}).get("second_question_the_label_beyond_adjacency"):
+        q = res["primary_test"]["second_question_the_label_beyond_adjacency"]
+        print(f"SECOND QUESTION (split 1): one-sided p = {q['p_one_sided_in_the_arms_sign']:.3f} against {q['n_controls']} controls: {'stands out' if q['stands_out'] else 'does not stand out'}")
 
 
 if __name__ == "__main__":

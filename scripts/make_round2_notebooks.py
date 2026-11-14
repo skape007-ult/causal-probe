@@ -116,16 +116,16 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
               "20-control run", est="2.5 to 4.5 hours"),
     # ---------------- after the eighth audit (Sat 14 Nov): what would decide the one steering arm that stood out
     dict(file="kaggle_r3_settle_qwen3b.ipynb", platform="kaggle", run="r3s_qwen3b", models="qwen3b",
-         jobs="cache,settle,export", fallback="", token=False, extra="--settle-arm gold_diffmeans --no-resid",
+         jobs="cache,settle,export", fallback="", token=False, extra="--settle-arm gold_diffmeans --cache-tags c2c_debiased --no-resid",
          title="Round 3 / H: Qwen2.5-3B, the steering arm that ranked first among 20 controls",
          what="at the last token of the hypothesis on the debiased pool, layer 25: the gold difference of class means refitted on the "
               "mirror half of the blocks and tested once, one-sided, against 500 controls that have both balances of the gold label "
               "(within hypothesis string and within premise); threshold 0.05/24, because the arm was chosen as the most extreme of 24 "
               "comparisons. Also: the label beyond adjacency, the adjacency direction itself, two neighbouring layers, smaller steps, "
               "and the original split with 100 controls. Test and threshold were written down before the run (notes/log.md, 14 Nov)",
-         est="about 1.5 hours (17 minutes of cache, about 55 of fitting and steering)"),
+         est="about 1.5 hours (about 10 minutes of cache, about 65 of fitting and steering)"),
     dict(file="kaggle_r3_settle_qwen1.5b.ipynb", platform="kaggle", run="r3s_qwen15b", models="qwen1.5b",
-         jobs="cache,settle,export", fallback="", token=False, extra="--settle-arm gold_probe --no-resid",
+         jobs="cache,settle,export", fallback="", token=False, extra="--settle-arm gold_probe --cache-tags c2c_debiased --no-resid",
          title="Round 3 / H: Qwen2.5-1.5B, the steering arm that ranked first among 20 controls",
          what="at the last token of the hypothesis on the debiased pool, layer 19: the gold probe direction (which had a negative slope, "
               "larger in absolute value than all 20 controls) refitted on the mirror half of the blocks and tested once, one-sided in "

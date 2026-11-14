@@ -26,7 +26,7 @@ from .config import CACHE, K_SHOTS, POSITIONS, SEED
 # activation memory pushes it into swap (measured: B=1 0.6 s/item, B=4 2.6-6 s/batch).
 TOKEN_BUDGET = {"qwen0.5b": 6000, "qwen1.5b": 3500, "gemma2b": 1}
 # On a CUDA GPU with ~15 GB (Kaggle T4 / P100) every model here can take a real batch.
-CUDA_TOKEN_BUDGET = {"qwen0.5b": 16000, "qwen1.5b": 12000, "gemma2b": 6000, "qwen3b": 6000, "qwen7b-4bit": 4000}
+CUDA_TOKEN_BUDGET = {"qwen0.5b": 16000, "qwen1.5b": 12000, "gemma2b": 6000, "qwen3b": 6000, "qwen7b-4bit": 4000, "qwen7b": 4000, "gemma9b": 3000}
 
 
 def token_budget(model_name: str, device=None) -> int:

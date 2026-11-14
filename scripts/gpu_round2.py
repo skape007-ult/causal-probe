@@ -10,6 +10,10 @@ refreshed after every stage.
   python scripts/gpu_round2.py --run test --models qwen0.5b --jobs ... --tiny --out <dir>     # local smoke test
 
 Jobs (each applies to every model in --models, in this order):
+  preflight     can this model run here at all? (scripts/preflight_model.py: access to the weights, GPU memory,
+                disk; then a real load and 16 items through the cache code.) If not, the model is skipped with
+                the reason in the status file, the remaining jobs are not attempted for it, and the notebook's
+                last cell writes SKIPPED into STATUS.txt. Used for Gemma-2-9B on two T4s.
   behaviour     per-item answer logits on the debiased pool, the official Corr2Cause test set, CLadder
                 and the original probe pool (in that order, resumable), then the answer-bias report.
                 For a model that has no behaviour numbers yet (the 7B check).
@@ -27,6 +31,16 @@ Jobs (each applies to every model in --models, in this order):
                 at 50% of the best layer's excess AUROC): scripts/17_adjacency_test.py
   feature       the first version of that test (scripts/16_feature_causal.py), superseded after the
                 code review; kept so that its results can be reproduced
+  Options that change the size of the intervention jobs (round 3; the output names get a suffix, so that these
+  runs never replace the round-2 results):
+    --n-shuf 100       100 shuffled-label control directions instead of 20 in controls, controls_hyp, adjacency
+                       (files ..._c100). The sites are those of the 20-control run (the selection files are shared).
+    --sites best       adjacency at the two best-layer sites only
+    --control-tags c2c_debiased   steering controls on the debiased pool only
+    --n-pairs 240      patch and patch_same on up to 240 pairs per kind instead of 60 (files ..._n240), activation
+                       patching only, no random-donor control. The pool holds about 210 label-changing and 230
+                       label-preserving pairs per kind at most.
+    --no-resid         export per-item logits and raw intervention outputs only, not the activations
   export        cache_<run>_<model>.zip: debiased-pool activations at the final and end-of-hypothesis
                 tokens, per-item logits, and the raw logit differences of every intervention
 """
@@ -45,7 +59,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
 T0 = time.time()
-JOBS = ["behaviour", "cache", "controls", "controls_hyp", "patch", "patch_same", "adjacency", "feature", "export"]
+JOBS = ["preflight", "behaviour", "cache", "controls", "controls_hyp", "patch", "patch_same", "adjacency", "feature", "export"]
 SITES = [("final", "best"), ("content_end", "best"), ("final", "first90"), ("content_end", "first90")]      # first version (feature)
 SITES2 = [("final", "best"), ("content_end", "best"), ("final", "first50"), ("content_end", "first50")]    # adjacency
 
@@ -61,12 +75,20 @@ def main():
     ap.add_argument("--skip", default="", help="comma-separated stage-name prefixes to skip")
     ap.add_argument("--stage-minutes", type=float, default=60.0)
     ap.add_argument("--export-positions", default="final,content_end")
+    ap.add_argument("--n-shuf", type=int, default=20, help="shuffled-label control directions (controls, controls_hyp, adjacency)")
+    ap.add_argument("--sites", default="all", choices=["all", "best"], help="adjacency sites: all four, or the two best-layer sites")
+    ap.add_argument("--control-tags", default="c2c_debiased,c2c_probe", help="item sets for the steering controls")
+    ap.add_argument("--n-pairs", type=int, default=60, help="patching pairs per kind (patch, patch_same)")
+    ap.add_argument("--no-resid", action="store_true", help="export no activations (logits and raw intervention outputs only)")
     a = ap.parse_args()
     jobs = [j for j in a.jobs.split(",") if j]
     assert all(j in JOBS for j in jobs), jobs
     if a.tiny:                      # a smoke test never shares markers, status, result or selection files with a real run
         a.run = a.run + "_tiny"
         os.environ["CAUSAL_PROBE_RESULTS"] = str(Path(os.environ.get("CAUSAL_PROBE_RESULTS", ROOT / "results")) / "_tiny")
+        # ... nor the activation cache: a 64-item cache left by a smoke test would be found "already complete" by the real
+        # run in the same session, and its numbers would carry the real run's name (seventh audit, F6)
+        os.environ["CAUSAL_PROBE_CACHE"] = str(Path(os.environ.get("CAUSAL_PROBE_CACHE", ROOT / "cache")) / "_tiny")
     fallback = dict(p.split(":") for p in a.fallback.split(",") if p)
 
     sys.path.insert(0, str(ROOT / "src"))
@@ -82,11 +104,18 @@ def main():
     logs = RESULTS / f"round2_logs_{a.run}"; logs.mkdir(exist_ok=True)
     marks = CACHE / f"_round2_markers_{a.run}"; marks.mkdir(parents=True, exist_ok=True)
     status_path = RESULTS / f"round2_status_{a.run}.json"
+
+    def save_status():        # written through a temporary file: a half-written status would stop the notebook's summary cell
+        tmp = status_path.with_name(status_path.name + ".tmp")
+        tmp.write_text(json.dumps(status, indent=1))
+        os.replace(tmp, status_path)
     status = json.loads(status_path.read_text()) if status_path.exists() else {"stages": {}}
     for k in ("export", "all_ok", "finished"):      # only this invocation may declare the run finished
         status.pop(k, None)
-    status.update(run=a.run, models=a.models.split(","), jobs=jobs, tiny=a.tiny, planned=[])
-    status_path.write_text(json.dumps(status, indent=1))
+    status.pop("skipped", None)
+    status.update(run=a.run, models=a.models.split(","), jobs=jobs, tiny=a.tiny, planned=[],
+                  options={"n_shuf": a.n_shuf, "sites": a.sites, "control_tags": a.control_tags, "n_pairs": a.n_pairs, "no_resid": a.no_resid})
+    save_status()
     skip = [s for s in a.skip.split(",") if s]
     env = dict(os.environ, PYTHONPATH=str(ROOT / "src") + os.pathsep + os.environ.get("PYTHONPATH", ""),
                TOKENIZERS_PARALLELISM="false")
@@ -97,7 +126,7 @@ def main():
                 if f.is_file() and f.stat().st_size < 20e6:
                     z.write(f, Path("results") / f.relative_to(RESULTS))
 
-    def stage(name: str, *cmd: str, minutes: float | None = None, optional: bool = False) -> bool:
+    def stage(name: str, *cmd: str, minutes: float | None = None, optional: bool = False, env_extra: dict | None = None) -> bool:
         if not optional:
             status["planned"].append(name)
         if any(name.startswith(s) for s in skip):
@@ -111,7 +140,7 @@ def main():
         log = logs / f"{name}.log"
         try:
             with open(log, "a") as lf:
-                p = subprocess.run([PY, *cmd], cwd=ROOT, env=env, stdout=lf, stderr=subprocess.STDOUT,
+                p = subprocess.run([PY, *cmd], cwd=ROOT, env={**env, **(env_extra or {})}, stdout=lf, stderr=subprocess.STDOUT,
                                    timeout=(minutes or a.stage_minutes) * 60)
             ok, why = p.returncode == 0, f"exit code {p.returncode}"
         except subprocess.TimeoutExpired:
@@ -120,7 +149,7 @@ def main():
         tail = log.read_text(errors="replace").strip().splitlines()[-8:]
         status["stages"][name] = {"ok": ok, "minutes": round(mins, 1), "detail": "ok" if ok else why, "log_tail": tail}
         status["total_minutes"] = round((time.time() - T0) / 60, 1)
-        status_path.write_text(json.dumps(status, indent=1))
+        save_status()
         print(f"[{'ok' if ok else 'FAILED: ' + why}] {name}  {mins:.1f} min", flush=True)
         for line in tail:
             print("        | " + line[:200], flush=True)
@@ -136,8 +165,32 @@ def main():
     # the smoke test builds the two caches in full (the selection/report split needs whole blocks);
     # only the number of items each intervention stage runs is reduced
     models_run = []
+    cs = "" if a.n_shuf == 20 else f"_c{a.n_shuf}"            # suffix of runs with another number of control directions
+    ps = "" if a.n_pairs == 60 else f"_n{a.n_pairs}"          # suffix of runs with another number of patching pairs
     for M0 in a.models.split(","):
         M = M0
+        # ------------------------------------------------------------ preflight: can this model run here?
+        if "preflight" in jobs:
+            t_pre = time.time() - 1
+            ok = stage(f"r2.{M}.preflight.resources", "scripts/preflight_model.py", "--model", M, "--check", "resources", minutes=6)
+            # the load check writes 16 items to a scratch cache, never to the cache the real stages use
+            ok = ok and stage(f"r2.{M}.preflight.load", "scripts/preflight_model.py", "--model", M, "--check", "load", minutes=50,
+                              env_extra={"CAUSAL_PROBE_CACHE": str(CACHE / "_preflight")})
+            if not ok:
+                pf = RESULTS / f"preflight_{M}.json"
+                try:                                   # the file may be missing, half-written, or left by an earlier attempt
+                    rec_ = json.loads(pf.read_text()) if pf.exists() and pf.stat().st_mtime >= t_pre else {}
+                except Exception:
+                    rec_ = {}
+                why = rec_.get("verdict")
+                bad = [n_ for n_ in (f"r2.{M}.preflight.resources", f"r2.{M}.preflight.load") if not status["stages"].get(n_, {"ok": True})["ok"]]
+                if not why or rec_.get("ok"):          # the check crashed, timed out or was skipped before writing a verdict of its own
+                    why = (f"preflight stage {bad[0]} did not finish ({status['stages'][bad[0]].get('detail', '?')}); see its log" if bad
+                           else "the preflight was not run (skipped with SKIP_STAGES, or stopped): without it this model is not attempted")
+                status.setdefault("skipped", {})[M] = why
+                save_status()
+                print("\n" + "!" * 100 + f"\nSKIPPING {M}: {why}\n" + "!" * 100, flush=True)
+                continue
         # ------------------------------------------------------------ behaviour (new model)
         if "behaviour" in jobs:
             tags = "c2c_debiased,c2c_test,cladder,c2c_probe"
@@ -159,7 +212,7 @@ def main():
             status["stages"][f"r2.{M}.behaviour.cache"] = {"ok": bool(ok), "minutes": round(sum(v["minutes"] for v in parts), 1),
                                                            "detail": "ok" if ok else "not finished after %d parts" % len(parts),
                                                            "log_tail": parts[-1]["log_tail"] if parts else []}
-            status_path.write_text(json.dumps(status, indent=1))
+            save_status()
             # report whatever was cached, also after a timeout (the debiased pool comes first)
             stage(f"r2.{M}.behaviour.report", "scripts/15_answer_bias.py", minutes=10)
         # ------------------------------------------------------------ cache for the interventions
@@ -176,33 +229,47 @@ def main():
         n_c = ["--n", "10"] if a.tiny else ["--n", "150"]
         stride = ["--select-stride", "6" if a.tiny else "2"]
         if have_cache:
+            ctags = [t_ for t_ in a.control_tags.split(",") if t_]
+            # 07c runs 1 + 2 x (3 + 100 isotropic + 2 x n_shuf) vectors per item: the time limits grow with that number
+            kc = (103 + 2 * a.n_shuf) / 143
+            new_site = ["--allow-new-site"] if a.tiny else []          # a smoke test has no 20-control result to agree with
+            c_extra = ["--n-shuf", str(a.n_shuf), "--out-suffix", cs, *new_site] if cs else []
             if "controls" in jobs:
-                for tag in ("c2c_debiased", "c2c_probe"):
-                    stage(f"r2.{M}.controls.{tag}", "scripts/07c_steering_controls.py", "--model", M, "--tag", tag,
-                          "--sub-batch", "16", "--max-minutes", "30", *stride, *n_c, minutes=40)
+                for tag in ctags:
+                    stage(f"r2.{M}.controls{cs}.{tag}", "scripts/07c_steering_controls.py", "--model", M, "--tag", tag,
+                          "--sub-batch", "16", "--max-minutes", f"{30 * kc:.0f}", *stride, *n_c, *c_extra, minutes=30 * kc + 10)
             if "controls_hyp" in jobs:
-                for tag in ("c2c_debiased", "c2c_probe"):
-                    stage(f"r2.{M}.controls_hyp.{tag}", "scripts/07c_steering_controls.py", "--model", M, "--tag", tag,
-                          "--position", "content_end", "--sub-batch", "16", "--max-minutes", "50", *stride, *n_c, minutes=58)
+                for tag in ctags:
+                    stage(f"r2.{M}.controls_hyp{cs}.{tag}", "scripts/07c_steering_controls.py", "--model", M, "--tag", tag,
+                          "--position", "content_end", "--sub-batch", "16", "--max-minutes", f"{50 * kc:.0f}", *stride, *n_c, *c_extra,
+                          minutes=50 * kc + 8)
             if "adjacency" in jobs:
-                for pos, spec in SITES2:
-                    stage(f"r2.{M}.adjacency.{pos}.{spec}", "scripts/17_adjacency_test.py", "--model", M, "--position", pos,
-                          "--layer-spec", spec, "--sub-batch", "16", "--max-minutes", "55",
+                # with more controls each item costs more; the script shortens itself to a template-balanced prefix that
+                # fits --max-minutes and records how many items it ran
+                a_min = 55 if not cs else 110
+                for pos, spec in (SITES2 if a.sites == "all" else SITES2[:2]):
+                    stage(f"r2.{M}.adjacency{cs}.{pos}.{spec}", "scripts/17_adjacency_test.py", "--model", M, "--position", pos,
+                          "--layer-spec", spec, "--sub-batch", "16", "--max-minutes", str(a_min),
                           *(["--per-template", "24", "--n-shuf", "3", "--select-stride", "6"] if a.tiny
-                            else ["--per-template", "100", "--select-stride", "1"]), minutes=65)
+                            else ["--per-template", "100", "--select-stride", "1", "--n-shuf", str(a.n_shuf)]),
+                          *(["--suffix", cs, *new_site] if cs else []), minutes=a_min + 12)
             if "feature" in jobs:
                 for pos, spec in SITES:
                     stage(f"r2.{M}.feature.{pos}.{spec}", "scripts/16_feature_causal.py", "--model", M, "--position", pos,
                           "--layer-spec", spec, "--sub-batch", "16", "--max-minutes", "45",
                           *(["--per-template", "4", "--n-shuf", "3", "--n-iso", "2", "--select-stride", "6"] if a.tiny
                             else ["--per-template", "100", "--select-stride", "1"]), minutes=70)   # fitting ~130 probes on CPU comes first
-        pp = ["--n-pairs", "6", "--layer-stride", "6", "--batch", "4"] if a.tiny else ["--n-pairs", "60", "--layer-stride", "2", "--batch", "8"]
+        pp = ["--n-pairs", "6", "--layer-stride", "6", "--batch", "4"] if a.tiny else ["--n-pairs", str(a.n_pairs), "--layer-stride", "2", "--batch", "8"]
+        p_min = 40 if not ps else min(175, 40 * a.n_pairs / 60 + 15)     # no checkpoint inside 08_patching.py: the limit must hold the whole stage
         if "patch_same" in jobs:
-            stage(f"r2.{M}.patch_same", "scripts/08_patching.py", "--model", M, "--label-mode", "same", "--suffix", "_same",
-                  "--skip-components", *pp, minutes=40)
-        if "patch" in jobs:
+            stage(f"r2.{M}.patch_same{ps}", "scripts/08_patching.py", "--model", M, "--label-mode", "same", "--suffix", "_same" + ps,
+                  "--skip-components", *pp, minutes=p_min)
+        if "patch" in jobs and not ps:
             stage(f"r2.{M}.patch", "scripts/08_patching.py", "--model", M, *pp,
                   *(["--n-comp-pairs", "4"] if a.tiny else ["--n-comp-pairs", "20"]), minutes=50)
+        elif "patch" in jobs:       # larger pair count: activation patching only, no random-donor control (both exist in the 60-pair run)
+            stage(f"r2.{M}.patch{ps}", "scripts/08_patching.py", "--model", M, "--suffix", ps, "--skip-components", "--no-donor-control",
+                  *pp, minutes=p_min)
 
     # ------------------------------------------------------------------ export
     sizes, zsizes = {}, {}
@@ -213,7 +280,7 @@ def main():
             d = C.cache_dir(M, tag)
             if not (d / "meta.json").exists():
                 continue
-            full = tag == "c2c_debiased" and "export" in jobs
+            full = tag == "c2c_debiased" and "export" in jobs and not a.no_resid
             meta = json.loads((d / "meta.json").read_text())
             sizes[f"{M}/{tag}"] = C.export_cache(M, tag, exp, False, tuple(p for p in pos if p in meta["positions"]) if full else ("final",),
                                                  with_resid=full)
@@ -235,7 +302,7 @@ def main():
     status["total_minutes"] = round((time.time() - T0) / 60, 1)
     status["all_ok"] = all(status["stages"].get(n, {}).get("ok", False) for n in status["planned"])
     status["finished"] = True
-    status_path.write_text(json.dumps(status, indent=1))
+    save_status()
     zip_small()
     print("\n================ summary ================")
     for k in status["planned"]:

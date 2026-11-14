@@ -30,9 +30,12 @@ REMOTE_MODELS = {
     "qwen3b": "Qwen/Qwen2.5-3B-Instruct",
     "qwen7b-4bit": "Qwen/Qwen2.5-7B-Instruct",     # loaded in 4-bit (bitsandbytes), CUDA only
     "qwen7b": "Qwen/Qwen2.5-7B-Instruct",          # float16 spread over two 16 GB GPUs (fallback if 4-bit fails)
+    "gemma9b": "google/gemma-2-9b-it",             # float16 over two 16 GB GPUs; gated (same licence as gemma-2-2b-it)
 }
 QUANT_4BIT = {"qwen7b-4bit"}
-MULTI_GPU = {"qwen7b"}                              # too large for one 16 GB GPU in float16
+MULTI_GPU = {"qwen7b", "gemma9b"}                   # too large for one 16 GB GPU in float16
+# Parameter counts in billions, from the model cards. Half precision takes 2 bytes per parameter.
+PARAMS_B = {"qwen0.5b": 0.494, "qwen1.5b": 1.54, "gemma2b": 2.61, "qwen3b": 3.09, "qwen7b-4bit": 7.62, "qwen7b": 7.62, "gemma9b": 9.24}
 
 # LoRA fine-tuned variants: short name -> (base model short name, adapter directory).
 CHECKPOINTS = ROOT / "checkpoints"

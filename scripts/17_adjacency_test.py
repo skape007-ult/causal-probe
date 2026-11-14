@@ -666,8 +666,12 @@ def main():
     ap.add_argument("--select-stride", type=int, default=1)
     ap.add_argument("--max-minutes", type=float, default=45.0)
     ap.add_argument("--analyse-only", action="store_true")
+    ap.add_argument("--suffix", default="", help="appended to the site name in the output files, e.g. _c100 for a run with "
+                                                 "--n-shuf 100 (layer selection is shared with the run without it)")
+    ap.add_argument("--allow-new-site", action="store_true", help="with --suffix: do not require the result of the run without the suffix (smoke tests)")
     a = ap.parse_args()
-    a.site = f"{'hyp' if a.position == 'content_end' else 'final'}_{a.layer_spec}"
+    a.base_site = f"{'hyp' if a.position == 'content_end' else 'final'}_{a.layer_spec}"
+    a.site = a.base_site + a.suffix
     t0 = time.time()
 
     def log(msg):
@@ -682,6 +686,16 @@ def main():
     sel = data.selection_mask(items); rep = ~sel
     layer, C, layer_info = choose_layer(a, resid, items, sel, t, pi, log)
     raw_path = cache.cache_dir(a.model, a.tag) / f"steering_adjacency_{a.site}.npz"
+    if a.suffix and not a.allow_new_site and not a.analyse_only:
+        # a run with more controls must sit at the site of the run it refines (seventh audit, F8)
+        base_json = RESULTS / f"adjacency_{a.model}_{a.tag}_{a.base_site}.json"
+        if not base_json.exists():
+            raise SystemExit(f"{base_json.name} is not in this checkout: a '{a.suffix}' run must use the site of the run without the suffix. "
+                             "Ingest that run and re-pin the notebook first (or pass --allow-new-site).")
+        base_layer = int(json.loads(base_json.read_text())["layer"])
+        if base_layer != layer:
+            raise SystemExit(f"site mismatch: {base_json.name} is at layer {base_layer}, the selection here gives layer {layer}")
+        log(f"same site as {base_json.name}: layer {layer}")
     if a.layer_spec != "best" and layer == layer_info["best_layer"]:
         log(f"site {a.site}: the selected layer equals the best layer ({layer}); nothing to add, skipping")
         return
@@ -757,15 +771,28 @@ def main():
             proj = per_item * (len(idx) - n_)
             log(f"[timing] {per_item:.2f} s/item ({K} vectors) -> {proj / 60:.1f} min for the remaining {len(idx) - n_} items; "
                 f"{budget / 60:.1f} min left of {a.max_minutes:.0f}")
-            if proj > budget:
-                keep = n_ + int(budget / per_item)
+            if proj > 0.85 * budget:
+                # six items are a poor estimate (prompts differ fivefold in length; one earlier run ended 34% above it):
+                # plan for 85% of the time left, and look at the clock again at every checkpoint below
+                keep = n_ + int(0.85 * budget / per_item)
+                keep -= keep % len(TEMPLATES)               # idx goes round-robin over templates: a multiple keeps the balance
                 if keep < 100:
                     raise SystemExit("fewer than 100 items would fit the time limit")
-                log(f"[timing] shortening the run to the first {keep} items (balanced over templates)")
-                idx, out, norms, shortened = idx[:keep], out[:keep], norms[:keep], True
+                if keep < len(idx):
+                    log(f"[timing] shortening the run to the first {keep} items (balanced over templates)")
+                    idx, out, norms, shortened = idx[:keep], out[:keep], norms[:keep], True
         if n_ % 50 == 0:
             save_ckpt(n_)
             log(f"{n_}/{len(idx)}")
+            if n_ < len(idx) and n_ > start:
+                per_item = (time.time() - t_loop) / (n_ - start)
+                left = a.max_minutes * 60 - (time.time() - t0)
+                if per_item * (len(idx) - n_) > left:      # the plan no longer fits: keep what fits, or stop here
+                    keep = max(n_, n_ + int(0.85 * left / per_item))
+                    keep -= (keep - n_) % len(TEMPLATES)
+                    log(f"[timing] {per_item:.2f} s/item so far, {left / 60:.1f} min left: ending at item {keep} instead of {len(idx)}")
+                    idx, out, norms, shortened = idx[:keep], out[:keep], norms[:keep], True
+                    save_ckpt(n_)
         if model.device.type == "mps" and n_ % 5 == 0:
             torch.mps.empty_cache()
     np.savez(raw_path, idx=idx, out=out, norms=norms, layer=layer, n_layers=resid.shape[1] - 1, C=C, n_shuf=a.n_shuf,

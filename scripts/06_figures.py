@@ -17,9 +17,9 @@ MODELS = {**MODELS, **REMOTE_MODELS}     # models run on Kaggle appear once thei
 
 INK, INK2, MUTED, GRID, AXIS, SURF = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#fcfcfb"
 MODEL_COL = {"qwen0.5b": "#2a78d6", "qwen1.5b": "#eb6834", "gemma2b": "#1baf7a", "qwen0.5b-lora": "#6250d6",
-             "qwen3b": "#8a5a00", "qwen7b-4bit": "#7a3fb0", "qwen7b": "#7a3fb0"}
+             "qwen3b": "#8a5a00", "qwen7b-4bit": "#7a3fb0", "qwen7b": "#7a3fb0", "gemma9b": "#c2255c"}
 MODEL_LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B",
-             "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)", "qwen7b": "Qwen2.5-7B"}
+             "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)", "qwen7b": "Qwen2.5-7B", "gemma9b": "Gemma-2-9B"}
 SERIES = {  # probe targets and controls: fixed hue + line style
     "gold": ("#2a78d6", "-", "gold-label probe"),
     "model_out": ("#eb6834", "-", "model-output probe"),

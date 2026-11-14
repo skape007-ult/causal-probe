@@ -24,5 +24,11 @@
 | Qwen2.5-3B | non-child descendant | 450 | 0.444 [0.390, 0.499] | 0.467 | 0.421 | 0.582 [0.524, 0.643] | -0.191 [-0.288, -0.089] | 0.817 [0.775, 0.855] |
 | Qwen2.5-3B | non-parent ancestor | 450 | 0.506 [0.447, 0.564] | 0.473 | 0.528 | 0.637 [0.579, 0.693] | +0.027 [-0.074, +0.119] | 0.774 [0.727, 0.820] |
 | Qwen2.5-3B | parent: "X directly causes Y" | 700 | 0.561 [0.517, 0.609] | 0.555 | 0.563 | 0.605 [0.560, 0.652] | +0.211 [+0.136, +0.284] | 0.920 [0.896, 0.942] |
+| Qwen2.5-7B (4-bit) | all templates | 2400 | 0.549 [0.526, 0.571] | – | – | – | +0.123 [+0.089, +0.160] | – |
+| Qwen2.5-7B (4-bit) | has_collider | 500 | 0.487 [0.435, 0.538] | 0.481 | 0.499 | 0.561 [0.500, 0.618] | -0.035 [-0.118, +0.047] | 0.772 [0.728, 0.814] |
+| Qwen2.5-7B (4-bit) | has_confounder | 300 | 0.567 [0.502, 0.633] | 0.624 | 0.519 | 0.478 [0.408, 0.556] | +0.197 [+0.096, +0.293] | 0.795 [0.737, 0.851] |
+| Qwen2.5-7B (4-bit) | non-child descendant | 450 | 0.649 [0.598, 0.703] | 0.637 | 0.655 | 0.441 [0.379, 0.502] | +0.357 [+0.267, +0.442] | 0.824 [0.784, 0.865] |
+| Qwen2.5-7B (4-bit) | non-parent ancestor | 450 | 0.673 [0.621, 0.726] | 0.694 | 0.669 | 0.333 [0.282, 0.388] | +0.434 [+0.360, +0.510] | 0.818 [0.773, 0.857] |
+| Qwen2.5-7B (4-bit) | parent: "X directly causes Y" | 700 | 0.442 [0.395, 0.485] | 0.426 | 0.435 | 0.439 [0.391, 0.486] | -0.017 [-0.094, +0.055] | 0.930 [0.906, 0.951] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>

@@ -568,8 +568,21 @@ In this pool a classifier that sees only the hypothesis, or only the premise, is
 | Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.040 [-0.068, -0.013] |
 | Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.050 [-0.081, -0.022] |
 | Qwen2.5-3B | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.100 [-0.127, -0.073] |
+| Qwen2.5-7B (4-bit) | — | **Gold-label probe, final token, layer 19** | 0.784 [0.762, 0.806] | 0.863 [0.844, 0.881] | — |
+| Qwen2.5-7B (4-bit) | (a0) single-input control: 0.50 by construction | Hypothesis-string prior | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.284 [+0.262, +0.306] |
+| Qwen2.5-7B (4-bit) | (a0) single-input control: 0.50 by construction | Bag-of-words, premise only | 0.500 [0.500, 0.500] | 0.500 [0.500, 0.500] | +0.284 [+0.262, +0.306] |
+| Qwen2.5-7B (4-bit) | (a0) single-input control: 0.50 by construction | Bag-of-words, whole prompt (linear) | 0.489 [0.460, 0.516] | 0.514 [0.481, 0.545] | +0.295 [+0.259, +0.332] |
+| Qwen2.5-7B (4-bit) | (a0) single-input control: 0.50 by construction | Probe trained on shuffled labels (20 shuffles) | 0.500 ± 0.015 (max 0.529) | – | – |
+| Qwen2.5-7B (4-bit) | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: premise-level counts | 0.593 [0.565, 0.619] | 0.619 [0.588, 0.650] | +0.191 [+0.160, +0.220] |
+| Qwen2.5-7B (4-bit) | (a) shallow confound control: interaction, nothing bound to the queried variables | Per template: bag-of-words of the premise | 0.659 [0.630, 0.688] | 0.706 [0.676, 0.736] | +0.124 [+0.091, +0.155] |
+| Qwen2.5-7B (4-bit) | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statement counts for each queried variable separately | 0.743 [0.717, 0.768] | 0.819 [0.795, 0.843] | +0.041 [+0.012, +0.067] |
+| Qwen2.5-7B (4-bit) | (b) structure-aware text reference: binds premise statements to the queried variables | Per template: statements naming the queried pair (lookup) | 0.765 [0.741, 0.786] | 0.834 [0.811, 0.855] | +0.018 [-0.011, +0.049] |
+| Qwen2.5-7B (4-bit) | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–2-grams (no parser) | 0.742 [0.717, 0.767] | 0.821 [0.797, 0.844] | +0.042 [+0.014, +0.071] |
+| Qwen2.5-7B (4-bit) | (b) structure-aware text reference: binds premise statements to the queried variables | Per hypothesis string: bag of premise 1–4-grams (no parser) | 0.805 [0.784, 0.827] | 0.885 [0.866, 0.904] | -0.022 [-0.048, +0.004] |
+| Qwen2.5-7B (4-bit) | (b) structure-aware text reference: binds premise statements to the queried variables | Hand-written parse, all features (gradient boosting) | 0.816 [0.792, 0.837] | 0.908 [0.891, 0.922] | -0.032 [-0.063, -0.005] |
+| Qwen2.5-7B (4-bit) | (b) structure-aware text reference: binds premise statements to the queried variables | Hand parse stacked with per-string 4-grams (strongest text-only model here) | 0.865 [0.845, 0.884] | 0.944 [0.931, 0.955] | -0.082 [-0.107, -0.057] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
 
 For Qwen2.5-1.5B the final-token probe (0.752 [0.728, 0.774] accuracy, AUROC 0.829 [0.807, 0.850]) is above every control in group (a): the strongest is the per-template bag-of-words of the premise (0.659 [0.630, 0.688]; probe minus control +0.093 [+0.060, +0.125]). Within group (b) it is indistinguishable from the per-template lookup of statements naming the pair (0.765 [0.741, 0.786]; difference -0.013 [-0.045, +0.016]) and from per-variable statement counts (0.743 [0.717, 0.768]), and below the per-string 4-gram model (0.805 [0.784, 0.827]), the hand parse (0.816 [0.792, 0.837]) and their stack (0.865 [0.845, 0.884]). "Shallow" and "structure-aware" are ends of a continuum, and the probe sits where the binding starts: at the level of looking up what the premise says about the two queried variables.
 
@@ -585,8 +598,9 @@ Robustness of the headline number:
 | Qwen2.5-1.5B | 0.752 | 0.736 / 0.741 / 0.754 | 0.498 ± 0.013 | 0.708 [0.684, 0.730] |
 | Gemma-2-2B | 0.763 | 0.746 / 0.754 / 0.759 | 0.500 ± 0.016 | 0.712 [0.687, 0.736] |
 | Qwen2.5-3B | 0.765 | 0.754 / 0.754 / 0.763 | 0.499 ± 0.014 | 0.714 [0.690, 0.736] |
+| Qwen2.5-7B (4-bit) | 0.784 | 0.783 / 0.773 / 0.778 | 0.500 ± 0.015 | 0.746 [0.723, 0.768] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
 
 The reported accuracy is an ensemble over three fold assignments; single assignments are one to two points lower for Qwen2.5-1.5B, and up to two points lower for Gemma-2-2B and Qwen2.5-3B (table). The text baselines gain less from the same averaging, so "level with the per-template lookup" holds for the ensemble; a single probe is up to two or three points below it. A probe trained on the selection half only (half the data) scores lower still. The shuffled-label null is centred on 0.50 with a standard deviation of about 0.013.
 
@@ -604,8 +618,10 @@ Nested logistic stacking: for every outer fold, the text model's score and the p
 | Gemma-2-2B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.874 [0.855, 0.891] | +0.009 [-0.002, +0.019] | +0.003 [+0.001, +0.006] | +0.007 [+0.000, +0.014] |
 | Qwen2.5-3B | hand-written parse | 0.817 [0.794, 0.840] | 0.850 [0.829, 0.869] | +0.033 [+0.018, +0.047] | +0.022 [+0.016, +0.029] | +0.020 [+0.008, +0.031] |
 | Qwen2.5-3B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.874 [0.856, 0.893] | +0.009 [+0.000, +0.018] | +0.004 [+0.002, +0.007] | +0.005 [-0.002, +0.012] |
+| Qwen2.5-7B (4-bit) | hand-written parse | 0.817 [0.794, 0.840] | 0.863 [0.842, 0.881] | +0.046 [+0.026, +0.065] | +0.024 [+0.016, +0.032] | +0.032 [+0.019, +0.044] |
+| Qwen2.5-7B (4-bit) | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.880 [0.862, 0.897] | +0.014 [+0.004, +0.026] | +0.005 [+0.002, +0.008] | +0.012 [+0.003, +0.020] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
 
 For Qwen2.5-1.5B the probe adds +0.022 [+0.005, +0.038] accuracy (AUROC +0.017 [+0.010, +0.024]) to the hand-written parse, and -0.001 [-0.010, +0.008] to the strongest text-only model. For Qwen2.5-0.5B: +0.009 [-0.002, +0.018] and +0.002 [-0.003, +0.008]. For Gemma-2-2B: +0.034 [+0.021, +0.048] over the hand parse and +0.009 [-0.002, +0.019] over the strongest text-only model; for Qwen2.5-3B: +0.033 [+0.018, +0.047] and +0.009 [+0.000, +0.018]. So the activations of the three larger models hold two to three points' worth of validity information that this particular hand parse lacks. Over the strongest text-only model the gain is zero for Qwen2.5-1.5B and about one point, with an interval that reaches zero, for Gemma-2-2B and Qwen2.5-3B. In AUROC the gain over the strongest text-only model is small and its interval excludes zero for the three larger models (+0.003 [+0.001, +0.005], +0.003 [+0.001, +0.006], +0.004 [+0.002, +0.007]; Qwen2.5-0.5B +0.000 [-0.000, +0.001]). So the activations of the larger models hold a little that this text model lacks; "nothing beyond text" would overstate it, and so would "a hidden answer".
 
@@ -653,8 +669,17 @@ A probe for each binary property a parser reads off the item, at the layer the g
 | Qwen2.5-3B | many correlation statements (≥ median) | 0.59 | 1.000 [1.000, 1.000] | 0.497 ± 0.023 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 | Qwen2.5-3B | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.503 ± 0.024 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 | Qwen2.5-3B | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.998, 1.000] | 0.508 ± 0.018 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-7B (4-bit) | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.986 [0.980, 0.990] | 0.496 ± 0.021 | – | – | 0.682 [0.653, 0.712] | 0.899 [0.883, 0.916] | – | 0.539 |
+| Qwen2.5-7B (4-bit) | queried pair correlates | 0.92 | 0.996 [0.993, 0.999] | 0.436 ± 0.051 | – | – | 0.946 [0.927, 0.961] | 0.988 [0.974, 0.996] | – | 0.525 |
+| Qwen2.5-7B (4-bit) | pair has a common neighbour | 0.83 | 0.872 [0.849, 0.893] | 0.485 ± 0.036 | – | – | 0.749 [0.713, 0.786] | 0.828 [0.800, 0.857] | – | 0.553 |
+| Qwen2.5-7B (4-bit) | a common neighbour lies in a separating set | 0.70 | 0.964 [0.954, 0.973] | 0.503 ± 0.022 | – | – | 0.718 [0.686, 0.748] | 0.871 [0.848, 0.892] | – | 0.506 |
+| Qwen2.5-7B (4-bit) | a common neighbour lies in no separating set | 0.84 | 0.949 [0.932, 0.963] | 0.508 ± 0.021 | – | – | 0.799 [0.770, 0.826] | 0.864 [0.839, 0.890] | – | 0.510 |
+| Qwen2.5-7B (4-bit) | premise has six variables | 0.97 | 1.000 [1.000, 1.000] | 0.485 ± 0.066 | – | – | 1.000 [0.999, 1.000] | 1.000 [0.999, 1.000] | – | 0.500 |
+| Qwen2.5-7B (4-bit) | many correlation statements (≥ median) | 0.59 | 1.000 [1.000, 1.000] | 0.504 ± 0.023 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-7B (4-bit) | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.501 ± 0.023 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-7B (4-bit) | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.999, 1.000] | 0.514 ± 0.024 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
 
 "The queried pair is adjacent in the skeleton" is decodable from Qwen2.5-1.5B at AUROC 0.980 [0.974, 0.986], against 0.619 [0.589, 0.649] from the random-init copy at the same layer (0.647 at its best layer), 0.682 [0.653, 0.712] from text without binding, and 0.562 [0.528, 0.592] at the end of the premise, where the model cannot yet know which pair is asked about. A text model with per-variable statement counts and no pair lookup already reaches 0.899 [0.883, 0.916] for this property, so most of what the probe reads requires binding statements to each queried variable; the excess over that (+0.081 [+0.066, +0.097]) is what points to the pair being bound. For Qwen2.5-0.5B the same property is decodable at 0.892 [0.874, 0.909] (random-init 0.656 [0.625, 0.687]; per-variable text 0.899 [0.883, 0.916]). Premise-level counts are perfectly decodable from every source, including the random-init model and the end of the premise, and say nothing about computation. "The pair correlates" is nearly as decodable without any binding (it is true for 92% of items). Shuffled-label nulls for rare properties sit a little below 0.5; that is a property of shuffling an imbalanced label, confirmed over repeated shuffles.
 
@@ -698,8 +723,16 @@ The gold probe's AUROC computed only over valid/invalid pairs that fall in the s
 | Qwen2.5-3B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.845 [0.826, 0.866] | 0.798 [0.771, 0.826] |
 | Qwen2.5-3B | quintiles of the hand-parse score | 5 | 0.818 | 0.845 [0.826, 0.866] | 0.756 [0.720, 0.791] |
 | Qwen2.5-3B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.845 [0.826, 0.866] | 0.656 [0.605, 0.708] |
+| Qwen2.5-7B (4-bit) | hypothesis template | 5 | 0.500 | 0.863 [0.844, 0.881] | 0.871 [0.850, 0.889] |
+| Qwen2.5-7B (4-bit) | pair adjacent in skeleton | 2 | 0.539 | 0.863 [0.844, 0.881] | 0.857 [0.836, 0.877] |
+| Qwen2.5-7B (4-bit) | pair correlated | 2 | 0.525 | 0.863 [0.844, 0.881] | 0.857 [0.838, 0.877] |
+| Qwen2.5-7B (4-bit) | pair has a common neighbour | 2 | 0.553 | 0.863 [0.844, 0.881] | 0.863 [0.843, 0.882] |
+| Qwen2.5-7B (4-bit) | template × adjacent × common neighbour | 20 | 0.760 | 0.863 [0.844, 0.881] | 0.795 [0.760, 0.828] |
+| Qwen2.5-7B (4-bit) | hand parse's prediction (2 strata) | 2 | 0.817 | 0.863 [0.844, 0.881] | 0.806 [0.776, 0.834] |
+| Qwen2.5-7B (4-bit) | quintiles of the hand-parse score | 5 | 0.818 | 0.863 [0.844, 0.881] | 0.751 [0.712, 0.788] |
+| Qwen2.5-7B (4-bit) | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.863 [0.844, 0.881] | 0.644 [0.589, 0.694] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
 
 It does not fall inside strata of any single parsed property, which is expected because no single property predicts the label in this pool. It does fall inside strata of text-derived *scores*: for Qwen2.5-1.5B from 0.829 [0.807, 0.850] overall to 0.723 [0.683, 0.761] within quintiles of the hand-parse score and to 0.607 [0.550, 0.664] within 25 cells of two text scores; for Qwen2.5-0.5B to 0.500 [0.446, 0.566]; for Gemma-2-2B and Qwen2.5-3B to 0.661 [0.603, 0.715] and 0.656 [0.605, 0.708]. Most of the probe's signal is shared with what text models extract; what is left over is above chance in the three larger models and not distinguishable between them.
 
@@ -733,8 +766,14 @@ Pooled over all items the answers are at chance (AUROC 0.510 [0.488, 0.532] for 
 | Qwen2.5-3B | non-child descendant | 450 | 0.444 [0.390, 0.499] | 0.467 | 0.421 | 0.582 [0.524, 0.643] | -0.191 [-0.288, -0.089] | 0.817 [0.775, 0.855] |
 | Qwen2.5-3B | non-parent ancestor | 450 | 0.506 [0.447, 0.564] | 0.473 | 0.528 | 0.637 [0.579, 0.693] | +0.027 [-0.074, +0.119] | 0.774 [0.727, 0.820] |
 | Qwen2.5-3B | parent: "X directly causes Y" | 700 | 0.561 [0.517, 0.609] | 0.555 | 0.563 | 0.605 [0.560, 0.652] | +0.211 [+0.136, +0.284] | 0.920 [0.896, 0.942] |
+| Qwen2.5-7B (4-bit) | all templates | 2400 | 0.549 [0.526, 0.571] | – | – | – | +0.123 [+0.089, +0.160] | – |
+| Qwen2.5-7B (4-bit) | has_collider | 500 | 0.487 [0.435, 0.538] | 0.481 | 0.499 | 0.561 [0.500, 0.618] | -0.035 [-0.118, +0.047] | 0.772 [0.728, 0.814] |
+| Qwen2.5-7B (4-bit) | has_confounder | 300 | 0.567 [0.502, 0.633] | 0.624 | 0.519 | 0.478 [0.408, 0.556] | +0.197 [+0.096, +0.293] | 0.795 [0.737, 0.851] |
+| Qwen2.5-7B (4-bit) | non-child descendant | 450 | 0.649 [0.598, 0.703] | 0.637 | 0.655 | 0.441 [0.379, 0.502] | +0.357 [+0.267, +0.442] | 0.824 [0.784, 0.865] |
+| Qwen2.5-7B (4-bit) | non-parent ancestor | 450 | 0.673 [0.621, 0.726] | 0.694 | 0.669 | 0.333 [0.282, 0.388] | +0.434 [+0.360, +0.510] | 0.818 [0.773, 0.857] |
+| Qwen2.5-7B (4-bit) | parent: "X directly causes Y" | 700 | 0.442 [0.395, 0.485] | 0.426 | 0.435 | 0.439 [0.391, 0.486] | -0.017 [-0.094, +0.055] | 0.930 [0.906, 0.951] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
 
 For "X directly causes Y" hypotheses, Qwen2.5-1.5B's answer logit does track validity (0.628 [0.581, 0.673]; similar in both halves of the data) and correlates with the probe's score (+0.359 [+0.283, +0.425]). For the two indirect-causation templates and for confounders it is weakly *anti*-correlated with validity, and for colliders flat. Summed over templates these cancel. So it is not accurate to say the model's answers ignore what the probe reads: for the simplest relation they use it in the right direction, and for others in the wrong one. This breakdown is post hoc over five templates; the direct-causation effect for Qwen2.5-1.5B is about five standard errors.
 

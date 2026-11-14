@@ -4,24 +4,27 @@ Repo root: this directory. Venv: `.venv` (uv, Python 3.12). Run things as `.venv
 
 **Compute rules (user instruction, Fri 13 Nov):** this 8 GB laptop does light work only: CPU analysis on existing caches, figures, writing, and Qwen 0.5B/1.5B GPU jobs one at a time. `OMP_NUM_THREADS=2`, background jobs under `nice`, stop any job that pushes memory into swap. **No Gemma model passes on this machine. Do not run `scripts/queue_night.sh`.** Gemma interventions, the SAE tier and the larger model run on Kaggle (`KAGGLE.md`), launched by the user.
 
-Last updated: Fri 2026-11-13 22:20 (Toronto).
+Last updated: Sat 2026-11-14 00:10 (Toronto).
 
 **Scope (user, Fri 16:25):** the scope freeze is lifted; push the science until Sunday 10:00, then package (decision D27). Heavy runs on Kaggle and Colab, launched by the user.
 
-## Where things stand (Fri 22:20)
+## Where things stand (Sat 00:10)
 
 | Piece | State |
 |---|---|
-| GPU runs launched by the user | **A (`r2_qwen3b`) from pin `cdb08d7`** (user's correction, Fri 22:00; so follow-up A2 is NOT needed) and **B (`r2_qwen7b`) from `cdb08d7`**: both write to `/kaggle/working`, output kept. **C (`r2_qwen15b`) ran on Kaggle from the Colab notebook and lost its output** (`/content/out`; log 22:15, D31): to be rerun from `notebooks/kaggle_r2_qwen1.5b.ipynb`, pin `6d9ce8d`, about 1.25 h, replaces C and C2. **D (Gemma)**: user will launch from pin `6d9ce8d` when a slot is free. Quota is no longer a limit (user, Fri 22:10): limits are 2 concurrent sessions and Sunday 10:00 |
-| Notebooks | All re-pinned to `6d9ce8d`: platform-chosen output directory (`/kaggle/working/kaggle_out` or `/content/out`), first-cell check, last cell lists the output and raises if an archive is missing (`scripts/notebook_cells.py`, `tests/test_notebook_cells.py`). Not yet seen running on Kaggle |
-| Consolidation (D30) | `RESULTS.md` (from `report/RESULTS_template.md`) = top of README; report appendix A–D; fig13. Audited (sixth audit, `notes/audit_consolidation_raw.md`) and corrected |
-| Laptop | **Nothing running.** All Qwen 0.5B round-2 work done; Qwen 3B and Gemma analysis done |
-| Audits | Six done and logged. Not audited: the wording changes made in response to the sixth |
-| Ingest | Fixed after the sixth audit: compares with the commit the run used; refuses smoke-test archives; conflicts saved as `<file>.kaggle` |
+| GPU runs (launched by the user, two at a time) | **Running:** A (`r2_qwen3b`, pin `cdb08d7`; output at the top level of Kaggle's Output tab; no follow-up needed) and the Qwen 1.5B rerun (`r2_qwen15b`, pin `6d9ce8d`; replaces the lost C and C2). **Next, in the user's order:** B (`r2_qwen7b`, behaviour), D (`r2_gemma`), then round 3: E (`r3_gemma9b`), F (`r3p_qwen3b`, `r3p_gemma`: patching on all pairs), G (`r3c_*`: 100 control directions; 0.5B any time; the others only after their 20-control run is ingested and shows something beyond its controls, and only after re-pinning: a 100-control run refuses to start without the 20-control result in its checkout). All notebooks pinned to `08d99b1`. Table with files, pins and hours: `KAGGLE.md`, "Round 3" |
+| Cut-offs (user, D32) | Nothing launched after **Sat 18:00**. Nothing unaudited into `RESULTS.md` after **Sun 08:00**. Packaging from Sun 10:00, final push by Sun 14:00 |
+| Notebooks | Platform-chosen output directory; first cell stops on a missing secret, refused access to gated weights, or too few GPUs; last cell writes `STATUS.txt` (OK / FAILED / SKIPPED) and never raises; ingest refuses a run without OK (`--ignore-status` overrides). `scripts/notebook_cells.py`, `tests/test_notebook_cells.py` |
+| Two-GPU path | `ResidCollector` fixed for models split over two GPUs (`041f11e`). **Never run on CUDA.** First real test: the preflight of E, or B's fallback |
+| 7B probe ladder on the laptop | **On hold until the user brings B's zips** (user, Fri 22:45). Then `./scripts/run_debiased.sh qwen7b-4bit 2` (or `qwen7b` if the fallback ran) and `05b` |
+| Analysis still to write for round 3 | `08b_patching_by_template.py` reads only the 60-pair files (needs a suffix option for `_n240`); tables and figures do not read `_c100` / `_n240` files yet. Do this when the first such run arrives, then audit |
+| Seventh audit (round-3 code) | Done, applied in `08d99b1` (log Sat 00:05; raw report `notes/audit_round3_code_raw.md`). One critical (memory check would have refused real T4s), eight major. Nothing of round 3 has run on CUDA |
+| Consolidation (D30) | `RESULTS.md` = top of README; audited (sixth audit) and corrected. Not audited: the rewording after the sixth audit |
+| Laptop | CPU only while Kaggle runs go (user). Smoke tests of round 3 ran on CPU with Qwen 0.5B; the swap watchdog stopped one batch of them, the stages were then run one at a time |
 
 ## The user's instructions for arriving runs (Fri 20:40)
 
-1. Ingest and validate (`scripts/kaggle_ingest.py --run <run>`; runs from earlier pins are accepted with a note), then for that model: `17_adjacency_test.py --analyse-only` per site (positions final and content_end; layer-spec best and first50), `08b_patching_by_template.py`, `05b_probe_content.py` if the cache gained the end-of-hypothesis token, `12_tables.py`, `06_figures.py`, `13_build_docs.py`. Report in a few lines what it shows.
+1. Ingest and validate (`scripts/kaggle_ingest.py --run <run>`; runs from earlier pins are accepted with a note). **For runs pinned at `bab7d1b` or later (all current ones) do NOT re-run `17_adjacency_test.py --analyse-only` on the laptop: the run's own JSON already has every readout and was computed on the activations the interventions used; a laptop re-analysis of Qwen 1.5B would mix the laptop's activations with Kaggle's outputs.** Only for a run from an older pin: `17_adjacency_test.py --analyse-only` per site (positions final and content_end; layer-spec best and first50), `08b_patching_by_template.py`, `05b_probe_content.py` if the cache gained the end-of-hypothesis token, `12_tables.py`, `06_figures.py`, `13_build_docs.py`. Report in a few lines what it shows.
 2. **7B rule (D30):** at chance on the debiased pool → state the scope (models up to 7B, these benchmarks, linear probes), finish the write-up, propose no further experiments. Above chance → stop, give a plan with GPU hours, use no more quota until the user answers.
 3. Independent audit on anything new before it goes into `RESULTS.md`.
 4. If a run fails: fix the notebook, give the new commit, say what can be reused.

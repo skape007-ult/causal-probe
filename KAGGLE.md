@@ -145,8 +145,9 @@ cost the others. All four are thin wrappers around `scripts/gpu_round2.py`.
 | **C** `notebooks/kaggle_r2_qwen1.5b.ipynb` (Colab: `colab_r2_qwen1.5b.ipynb`, the same run) | Kaggle, T4 x2 (or Colab, T4) | none | Qwen 1.5B: matched steering controls at both tokens, adjacency causal test with all its arms at four sites, label-preserving patching pairs. One run; no follow-up needed | about 1.25 h (72 min measured on Kaggle, 13 Nov) |
 | **D** `notebooks/kaggle_r2_gemma.ipynb` | Kaggle, T4 x2 | `HF_TOKEN` secret | Gemma 2B: matched steering controls at both tokens, adjacency causal test, label-preserving patching pairs | 2.5 – 4 h |
 
-**Updated Fri 22:15 (pinned commit `6d9ce8d`). This is the version to launch.** What changed since `cdb08d7` is only where
-the output goes and how that is checked; the experiments are identical.
+**Updated Fri 23:10 (see the table under "Round 3" for the current pin of every notebook).** What changed since `cdb08d7` in
+the round-2 notebooks is where the output goes, how that is checked, and a fix for models split over two GPUs; the experiments
+are identical. Runs from `6d9ce8d` (output-path fix, last cell raises instead of writing `STATUS.txt`) are valid.
 
 *What happened.* The Qwen 1.5B notebook was written for Colab and chose its output directory by testing whether `/content`
 exists. Kaggle's image has a `/content` folder too. Run on Kaggle, the notebook finished all 12 stages in 72 minutes and wrote
@@ -160,14 +161,17 @@ to `kaggle_out/` was wrong, because I had assumed `/content` does not exist on K
    works on either platform.
 2. The same cell stops at once, before any GPU time is spent, if that directory is not under the path the platform keeps or
    cannot be written. The runner (`scripts/gpu_round2.py`) refuses to start on Kaggle with any other output directory.
-3. **The last cell lists the output directory with sizes and raises `OUTPUT CHECK FAILED` if an expected archive is missing,
-   empty, or in the wrong place, or if the runner never reached its export step.** Expected are `results_<run>.zip`, every
-   archive the runner recorded, and one `cache_<run>_<model>.zip` per model whose cache stage succeeded. If you see that
-   message, the cell has just listed what exists: save it by hand before closing the session. (I do not know for certain that
-   Kaggle keeps the output of a version whose last cell raised; I believe it does. The check only raises when something
-   is missing anyway.)
+3. **The last cell lists the output directory with sizes, writes `STATUS.txt` into it and prints a banner. It never
+   raises** (changed at pin `041f11e`, on the user's instruction: whether Kaggle keeps the output of a version whose last
+   cell failed is not known, so nothing may depend on it). First line of `STATUS.txt`: `OK`, `FAILED` (followed by the
+   list of problems: an expected archive missing, empty or misplaced, or the runner never reached its export step) or
+   `SKIPPED` (the run decided not to run; the reason follows). Expected are `results_<run>.zip`, every archive the runner
+   recorded, and one `cache_<run>_<model>.zip` per model whose cache stage succeeded. A copy of the status is inside the
+   results archive. **Download `STATUS.txt` together with the zip files.** The ingest refuses a run from such a notebook
+   unless the status says `OK` for that run; `--ignore-status` overrides this, `--allow-partial` does not.
 4. The Hugging Face token is read from the platform's own Secrets (attached per notebook, see step 4 above). The Gemma
-   notebooks stop in the first cell without it.
+   notebooks stop in the first cell without it, and also if Hugging Face refuses that token access to the gated weights
+   (one small request, before anything is installed).
 
 *Notebooks already launched.* A (Qwen 3B) and B (Qwen 7B) are Kaggle notebooks and wrote to `/kaggle/working` in every
 version, so their output is kept; their zips are at the top level of the Output tab, not in `kaggle_out`. **A was run from
@@ -264,3 +268,107 @@ and through the notebook's own cells with the real runner in smoke mode on the l
 (`tests/test_notebook_cells.py`); on Kaggle itself they have not run yet. The first cell of the next
 run shows the result within a minute: it must print `platform: kaggle | archives will be written to
 /kaggle/working/kaggle_out`.
+
+---
+
+# Round 3 (Fri 13 Nov, late): depth on the three headline claims
+
+Decision D32 in `EXPLAINER.md`. Quota is no longer the limit; two concurrent sessions and Sunday 10:00 are.
+**Nothing is launched after Saturday 18:00 (Toronto).** Every notebook below is one *Save & Run All*, writes its
+archives and `STATUS.txt` to `/kaggle/working/kaggle_out`, and is pinned to commit `08d99b1` (shown in its first
+code cell).
+
+| | Notebook | Run folder in `kaggle_in/` | HF secret | GPU hours | When |
+|---|---|---|---|---|---|
+| B | `notebooks/kaggle_r2_qwen7b.ipynb` | `r2_qwen7b` | no | 1.5 – 3 | now |
+| C | `notebooks/kaggle_r2_qwen1.5b.ipynb` | `r2_qwen15b` | no | about 1.25 | running (pin `6d9ce8d`) |
+| D | `notebooks/kaggle_r2_gemma.ipynb` | `r2_gemma` | **yes** | 2.5 – 4 | next free slot |
+| E | `notebooks/kaggle_r3_gemma9b.ipynb` | `r3_gemma9b` | **yes** (licence of `google/gemma-2-9b-it` accepted) | 2 – 3.5; ends within about 15 minutes if it cannot run | after D |
+| F | `notebooks/kaggle_r3_patch240_qwen3b.ipynb` | `r3p_qwen3b` | no | 1 – 2.5 | any time |
+| F | `notebooks/kaggle_r3_patch240_gemma.ipynb` | `r3p_gemma` | **yes** | 1 – 2.5 | any time |
+| G | `notebooks/kaggle_r3_controls100_qwen0.5b.ipynb` | `r3c_qwen05b` | no | about 1 | any time (the borderline result exists for this model) |
+| G | `notebooks/kaggle_r3_controls100_qwen1.5b.ipynb` | `r3c_qwen15b` | no | 1.5 – 2 | only if I say so after C is ingested |
+| G | `notebooks/kaggle_r3_controls100_qwen3b.ipynb` | `r3c_qwen3b` | no | 2.5 – 4.5 | only if I say so after A is ingested |
+| G | `notebooks/kaggle_r3_controls100_gemma.ipynb` | `r3c_gemma` | **yes** | 2.5 – 4.5 | only if I say so after D is ingested |
+
+The G notebooks for Qwen 1.5B, 3B and Gemma use the sites of the 20-control run, which are recorded in result files
+that only exist in the repository after that run is ingested. I re-pin those three notebooks then. **Launched
+earlier they stop in their first intervention stage** (about ten minutes in, after the install and the cache), with
+the message that the 20-control result is not in the checkout.
+
+## E: Gemma-2-9B on two T4s, and how the notebook decides whether to run
+
+*Why it should fit.* The Hub lists 9,241,705,984 parameters in four half-precision files of 17.2 GiB (18.5 GB)
+together. A Kaggle T4 reports 15.6 GB, which is 14.5 GiB (`results/kaggle_environment.json`, first run), not the
+15 GiB I first assumed. The loader (`models.multi_gpu_caps_gib`) lets at most 9 GiB of weights onto the first card,
+which also holds the inputs, and 13 GiB onto the second: 22 GiB of room for 17.2 GiB. The independent review computed
+the placement transformers makes under these limits, without loading weights: 8.35 GiB on the first card (embedding
+and 18 layers) and 8.86 GiB on the second (24 layers and the final norm). The activations of one batch (at most
+3,000 tokens) are well under 2 GiB per card. The download goes to `/kaggle/temp`; the preflight asks for the
+download plus 12 GiB of free disk.
+
+*What I have not been able to test.* Anything with two GPUs. On Friday night I found by reading that the activation
+collector would have failed on a model split over two cards (fixed in `041f11e`), and the review found that my
+first version of the memory check would have refused real T4s every time (it assumed 15 GiB cards; fixed). The
+review traced the rest of the two-GPU path through the cache code by reading and found no other place where two
+devices meet. None of this has run on CUDA. That is what the checks are for:
+
+1. **First cell (seconds, nothing installed):** the `HF_TOKEN` secret is attached; Hugging Face grants that token
+   access to `google/gemma-2-9b-it` (one small request); two GPUs are present. Otherwise the cell stops with the
+   instruction (attach the secret / accept the licence / set Accelerator to GPU T4 x2).
+2. **Runner, stage `preflight.resources` (about a minute after the install):** the real size of the weights from the
+   Hub, the real memory of the two GPUs, the per-GPU limits, free disk for the download.
+3. **Runner, stage `preflight.load` (download plus about five minutes):** the model is loaded exactly as the real
+   stages load it, and 16 items of the debiased pool go through the real cache code into a scratch cache. Reported:
+   where the weights were placed, peak memory per GPU, seconds per item, the first logit differences.
+4. If 2 or 3 fails, the model is **skipped**: no further stage runs, the summary prints the reason between lines of
+   exclamation marks, `STATUS.txt` says `SKIPPED` with the reason, and the session ends normally. Send me the reason.
+   (`SKIP_STAGES` cannot bypass the preflight; to run without it, remove `preflight` from `JOBS`.)
+5. Not covered by 16 items: whether every one of the 9,000 items stays finite in half precision. If one does not, the
+   cache stage stops with "non-finite activations" at the same place on every retry: loud, and the items cached up
+   to there are reported.
+
+The run itself is the same as B's: answer logits on the debiased pool, the official test set, CLadder and the original
+pool (in that order, resumable in 50-minute parts), then the export of the debiased-pool activations. The probe
+comparison runs on the laptop from the download.
+
+## F: patching on all available pairs
+
+`--n-pairs 240` asks for 240 pairs per kind; the pool of premises with at most five variables holds about 210
+label-changing and 230 label-preserving pairs, so that is what runs (the result files record the number). Activation
+patching only: no component patching and no random-donor control, both of which exist in the 60-pair runs. Results:
+`patching_<model>_n240.json` and `patching_<model>_same_n240.json`; the 60-pair files are not touched. The 60 pairs
+are a subset of the larger set, but the mix differs (label-preserving: 31 of 60 are Yes/Yes pairs, 89 of 231 in the
+larger set), so the two files are compared within hypothesis template and by common label, not pooled. There is no
+checkpoint inside the patching script, so each of the two stages has a limit of 175 minutes; I will narrow the time
+estimate when the 60-pair stage times of runs A and D are in.
+
+## G: 100 control directions
+
+`--n-shuf 100 --sites best --control-tags c2c_debiased`: the steering controls on the debiased pool at both tokens
+and the adjacency test at the two best-layer sites, with 100 shuffled-label directions instead of 20. Results:
+`steering_controls_<model>_c2c_debiased[_hyp]_c100.json`, `adjacency_<model>_c2c_debiased_{final,hyp}_best_c100.json`.
+An adjacency item costs 1,126 forward passes instead of 259; each site has 110 minutes and shortens itself to a
+prefix of items balanced over hypothesis templates if it would not fit (the result file records how many it ran).
+It plans for 85% of its time and looks at the clock again every 50 items. **A 100-control run refuses to start unless
+the 20-control result of the same model and site is in its checkout, and it must select the same layer**: that is why
+the notebooks for Qwen 1.5B, 3B and Gemma can only run after I have ingested the 20-control run and re-pinned them.
+The Qwen 0.5B results are already in the repository, so its notebook can run now.
+
+## What is tested and what is not (round 3)
+
+Tested on the laptop, CPU only, Qwen 0.5B, a few items per stage through the runner: the preflight on a model that
+runs; the preflight on Gemma-2-9B (it must skip itself: no token, no CUDA) and the `SKIPPED` status that follows; the
+100-control steering stage at the final token. The swap watchdog stopped the rest of that batch (two models were in
+memory at once), and a model load on its own was stopped again, so the remaining pieces were tested without a model:
+the adjacency script end to end with 100 and with 20 shuffles on a stand-in whose answer is a linear function of the
+added vector (identical real-direction numbers, as they must be), its refusal to start without the 20-control result,
+and its mid-run time check with items that turn out slower than the first estimate. **Not run on the laptop:** the
+end-of-hypothesis steering stage with 100 controls (same script as the final-token stage) and the patching options
+(two more arguments to a script that is otherwise unchanged). Independent review: `notes/audit_round3_code_raw.md`.
+Unit tests
+(`tests/test_notebook_cells.py`): `STATUS.txt` in every state, the ingest's refusal, the access check against a fake
+server, the GPU count. One live request without a token confirmed that Hugging Face answers a public repository with
+a redirect and the gated Gemma repositories with 401. **Not tested:** two GPUs, the gated download with a real token,
+Kaggle's disk, and every run time above.
+

@@ -87,7 +87,7 @@ only at the very end. So a run that is cut short leaves:
 |---|---|
 | `results.zip` only, no `cache_*.zip` | The run did not reach the export step (time-out or crash). JSON results of every finished stage are in the zip: Gemma steering, the larger model's behaviour, lens and steering, whatever completed. The larger model's activations are **not** available, so its probe analysis cannot run. |
 | `results.zip` and all cache zips, but step 3 shows `FAILED` lines | The run finished; individual stages failed and the rest ran. The failed stage's log is in the zip under `results/kaggle_logs/<stage>.log`. |
-| Nothing in Output | The version did not save its output. Check that the run was started with "Save & Run All (Commit)"; I do not know for certain whether Kaggle keeps `/kaggle/working` when a commit run hits the 12-hour limit. |
+| Nothing in Output | The version did not save its output. (1) The archives were written outside `/kaggle/working`: this happened on 13 Nov with the Colab notebook run on Kaggle, pins up to `cdb08d7`; from `6d9ce8d` the first cell prevents it and the last cell reports it. (2) Check that the run was started with "Save & Run All (Commit)"; I do not know for certain whether Kaggle keeps `/kaggle/working` when a commit run hits the 12-hour limit. |
 
 In a partial `results.zip`, `results/kaggle_run_status.json` has no `"export"` and no `"all_ok"`
 key, and the stages that never started are simply absent from `"stages"`.

@@ -19,7 +19,7 @@ requirements, and calls `scripts/kaggle_run.py`. That script runs these stages i
 | random-init cache | larger model | Control activations from an untrained copy | (export) |
 | patching | gemma-2-2b-it | Activation and attribution patching on 40 minimal pairs | `results/patching_gemma2b.json` |
 | SAE | gemma-2-2b-it | Gemma Scope features by causal graph type, then feature ablation | `results/sae_features.json`, `results/sae_ablation.json`, `results/sae_top_examples.md` |
-| export | both | Zips (below) | `/kaggle/working/*.zip` |
+| export | both | Zips (below) | `/kaggle/working/kaggle_out/*.zip` |
 
 It does **not** run probes or text baselines for the larger model. Those run on the laptop from
 the downloaded cache, with the same scripts as the other models.
@@ -42,6 +42,11 @@ stages after it. A summary table is printed at the end and saved in
 4. **Secret.** Add-ons → Secrets → Add a new secret. Label: `HF_TOKEN`. Value: the token from
    step 1. Tick the checkbox that attaches it to this notebook. The notebook reads it from Kaggle
    Secrets into an environment variable and never prints or stores it.
+   **A secret is attached per notebook.** The secret itself is stored once in your account, but every
+   new or imported notebook starts with nothing attached: open Add-ons → Secrets in *that* notebook
+   and tick `HF_TOKEN`. A notebook without it prints "No HF_TOKEN secret is attached to this
+   notebook". The Gemma notebooks then stop in their first code cell; the Qwen notebooks continue
+   (the Qwen weights are public), so for them the message is harmless.
 5. **Optional 15-minute dry run.** In the first code cell set `SMOKE_TEST = True` and run the
    cells interactively (Run All). It pushes a few dozen items through every stage. If the summary
    shows every stage `ok`, set it back to `False`.
@@ -49,7 +54,7 @@ stages after it. A summary table is printed at the end and saved in
    output*. You can close the browser; the run continues on Kaggle.
 7. **Wait.** Estimated 3 to 4 hours on a T4 (see the breakdown below). Kaggle's limit is 12 hours
    per run and 30 GPU-hours per week.
-8. **Download.** Open the finished version → Output. Download:
+8. **Download.** Open the finished version → Output → folder `kaggle_out`. Download:
    - `results.zip` (a few MB): every JSON result, the logs and the status file.
    - `cache_qwen3b.zip` (about 1.2 GB): final-token residuals of the trained model for the three
      probe sets, plus per-item logits and generated answers for the other item sets.
@@ -137,10 +142,39 @@ cost the others. All four are thin wrappers around `scripts/gpu_round2.py`.
 |---|---|---|---|---|
 | **A** `notebooks/kaggle_r2_qwen3b.ipynb` | Kaggle, T4 x2 | none | Qwen 3B: matched steering controls (final token and end of hypothesis), adjacency causal test at four sites, label-preserving and label-changing patching pairs | 3 – 4.5 h |
 | **B** `notebooks/kaggle_r2_qwen7b.ipynb` | Kaggle, T4 x2 | none | Qwen 7B behaviour only: answer logits on the debiased pool, the official test set, CLadder and the original pool (in that order) | 1.5 – 3 h |
-| **C** `notebooks/colab_r2_qwen1.5b.ipynb` | Colab, T4 | none | Qwen 1.5B: end-of-hypothesis steering controls, adjacency causal test, label-preserving patching pairs | 1.5 – 3 h |
+| **C** `notebooks/kaggle_r2_qwen1.5b.ipynb` (Colab: `colab_r2_qwen1.5b.ipynb`, the same run) | Kaggle, T4 x2 (or Colab, T4) | none | Qwen 1.5B: matched steering controls at both tokens, adjacency causal test with all its arms at four sites, label-preserving patching pairs. One run; no follow-up needed | about 1.25 h (72 min measured on Kaggle, 13 Nov) |
 | **D** `notebooks/kaggle_r2_gemma.ipynb` | Kaggle, T4 x2 | `HF_TOKEN` secret | Gemma 2B: matched steering controls at both tokens, adjacency causal test, label-preserving patching pairs | 2.5 – 4 h |
 
-**Updated Fri 20:20 (commit `cdb08d7`). This is the version to launch.** Earlier pins (`4d6afe5`, `5c31791`, `bab7d1b`) remain usable: their raw outputs are re-analysed on the laptop with the corrected analysis, and the ingest accepts them. Compared with this version they lack some of the following: two small arms of the adjacency test; steering controls shuffled within hypothesis string on the debiased pool (fifth audit); and the runner hardening (a smoke test kept under its own run name, an explicit finished flag), which I reported as done at 18:10 and which was in fact only applied in this commit. An independent review of the round-2 code
+**Updated Fri 22:15 (pinned commit `6d9ce8d`). This is the version to launch.** What changed since `cdb08d7` is only where
+the output goes and how that is checked; the experiments are identical.
+
+*What happened.* The Qwen 1.5B notebook was written for Colab and chose its output directory by testing whether `/content`
+exists. Kaggle's image has a `/content` folder too. Run on Kaggle, the notebook finished all 12 stages in 72 minutes and wrote
+its two archives to `/content/out`; Kaggle keeps only `/kaggle/working`, so they were lost. My note that such a run would write
+to `kaggle_out/` was wrong, because I had assumed `/content` does not exist on Kaggle and had not checked.
+
+*What every notebook does now* (`scripts/notebook_cells.py`, tested in `tests/test_notebook_cells.py`):
+
+1. The first code cell detects the platform, Kaggle first (the `KAGGLE_KERNEL_RUN_TYPE` variable or a `/kaggle` folder), and
+   writes the archives to `/kaggle/working/kaggle_out` on Kaggle and `/content/out` on Colab. Either notebook file therefore
+   works on either platform.
+2. The same cell stops at once, before any GPU time is spent, if that directory is not under the path the platform keeps or
+   cannot be written. The runner (`scripts/gpu_round2.py`) refuses to start on Kaggle with any other output directory.
+3. **The last cell lists the output directory with sizes and raises `OUTPUT CHECK FAILED` if an expected archive is missing,
+   empty, or in the wrong place, or if the runner never reached its export step.** Expected are `results_<run>.zip`, every
+   archive the runner recorded, and one `cache_<run>_<model>.zip` per model whose cache stage succeeded. If you see that
+   message, the cell has just listed what exists: save it by hand before closing the session. (I do not know for certain that
+   Kaggle keeps the output of a version whose last cell raised; I believe it does. The check only raises when something
+   is missing anyway.)
+4. The Hugging Face token is read from the platform's own Secrets (attached per notebook, see step 4 above). The Gemma
+   notebooks stop in the first cell without it.
+
+*Notebooks already launched.* A (Qwen 3B) and B (Qwen 7B) are Kaggle notebooks and wrote to `/kaggle/working` in every
+version, so their output is kept; their zips are at the top level of the Output tab, not in `kaggle_out`. **A was run from
+`cdb08d7`, which already contains the fifth audit's corrections, so its follow-up A2 is not needed.** The rerun of C from this
+commit likewise replaces both the original C and its follow-up C2.
+
+Earlier pins (`4d6afe5`, `5c31791`, `bab7d1b`) remain usable: their raw outputs are re-analysed on the laptop with the corrected analysis, and the ingest accepts them. Compared with this version they lack some of the following: two small arms of the adjacency test; steering controls shuffled within hypothesis string on the debiased pool (fifth audit); and the runner hardening (a smoke test kept under its own run name, an explicit finished flag), which I reported as done at 18:10 and which was in fact only applied in this commit. An independent review of the round-2 code
 (`notes/audit_round2_code_raw.md`) found that the first version of the adjacency test could not
 answer its question (its "removal" left the information readable; one of its two directions did
 not separate the classes for "X directly causes Y" hypotheses). Notebooks A, C and D now run the
@@ -151,8 +185,8 @@ does only the corrected adjacency test:
 
 | Follow-up | For | Where | Token | Estimated GPU time |
 |---|---|---|---|---|
-| `notebooks/kaggle_r2b_qwen3b_adjacency.ipynb` | A launched from a pin before `cdb08d7` | Kaggle T4 x2 | none | 1.5 – 2.5 h |
-| `notebooks/colab_r2b_qwen1.5b_adjacency.ipynb` | C launched from a pin before `cdb08d7` | Colab T4 (or Kaggle) | none | 1.5 – 2 h |
+| `notebooks/kaggle_r2b_qwen3b_adjacency.ipynb` | A launched from a pin before `cdb08d7` (**not the case: A ran from `cdb08d7`; skip**) | Kaggle T4 x2 | none | 1.5 – 2.5 h |
+| `notebooks/colab_r2b_qwen1.5b_adjacency.ipynb` | C launched from a pin before `cdb08d7` (**not needed: C is rerun from `6d9ce8d`**) | Colab T4 or Kaggle | none | about 1 h |
 | `notebooks/kaggle_r2b_gemma_adjacency.ipynb` | D launched from a pin before `cdb08d7` | Kaggle T4 x2 | `HF_TOKEN` | 1.5 – 2.5 h |
 
 Each follow-up reruns, at the current pin, the steering controls at both tokens (on the debiased pool with labels shuffled within hypothesis string) and the adjacency test with all its arms. It does not repeat the patching. Launch it after the main run of that model has finished, so that the two do not compete for quota.
@@ -183,12 +217,13 @@ is reported, and the debiased pool comes first.
 
 ## Steps
 
-**Kaggle (A, B, D).** As for the first notebook: *Create → New Notebook → File → Import
+**Kaggle (A, B, C, D).** As for the first notebook: *Create → New Notebook → File → Import
 Notebook*, upload the `.ipynb`, set **Accelerator = GPU T4 x2** and **Internet = On**, attach the
-`HF_TOKEN` secret for notebook D only, then *Save Version → Save & Run All (Commit)*. If Kaggle
+`HF_TOKEN` secret (Add-ons → Secrets, per notebook; required for D, optional for the others), then
+*Save Version → Save & Run All (Commit)*. The archives are in the Output tab under `kaggle_out/`. If Kaggle
 lets you run two GPU sessions at once, start A and B together; otherwise A first.
 
-**Colab (C).** Open <https://colab.research.google.com>, *File → Upload notebook*, choose
+**Colab (C, only if you prefer it to Kaggle).** Open <https://colab.research.google.com>, *File → Upload notebook*, choose
 `notebooks/colab_r2_qwen1.5b.ipynb`. *Runtime → Change runtime type → T4 GPU*. *Runtime → Run
 all*. Keep the tab open until the last cell finishes: a free Colab session ends when the tab is
 closed or left idle, and its files are deleted. The last cell downloads the zip files through the
@@ -224,4 +259,8 @@ Tested on the laptop with Qwen 0.5B: every stage of `scripts/gpu_round2.py` in s
 through the same command the notebooks issue; the steering shortcut at the end-of-hypothesis token
 against a full forward pass (`tests/test_steer.py`); the ingest on the smoke-test output. Not
 tested: anything that needs CUDA (4-bit loading, two-GPU placement), the Colab secrets and
-download cells, and run times.
+download cells, and run times. The platform choice and the final output check are tested as functions
+and through the notebook's own cells with the real runner in smoke mode on the laptop
+(`tests/test_notebook_cells.py`); on Kaggle itself they have not run yet. The first cell of the next
+run shows the result within a minute: it must print `platform: kaggle | archives will be written to
+/kaggle/working/kaggle_out`.

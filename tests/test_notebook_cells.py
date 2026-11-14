@@ -2,7 +2,8 @@
 
 Background (notes/log.md, 13 Nov 22:00): a notebook written for Colab was run on Kaggle, whose image also has a
 /content folder; it wrote its archives to /content/out, which Kaggle does not keep. These tests run the cells'
-own code, including that case, and check that the final cell fails when an archive is missing.
+own code, including that case, and check that the final cell reports a missing archive in STATUS.txt without raising,
+and that the ingest refuses a run whose STATUS.txt is missing or not OK.
 """
 import json
 import os
@@ -107,19 +108,40 @@ def test_round2_notebook_cells_end_to_end(clean_env, capsys):
     for z in (f"results_{run}.zip", f"cache_{run}_qwen1.5b.zip"):
         _zip(Path(ns["WORK"]) / z)
     exec(summary, ns); exec(download, ns); exec(final, ns)
+    work = Path(ns["WORK"])
     assert ns["expected"] == [f"results_{run}.zip", f"cache_{run}_qwen1.5b.zip"] and ns["problems"] == []
     assert "OUTPUT CHECK PASSED" in capsys.readouterr().out
-    # the activation archive is not there: the last cell must raise
-    (Path(ns["WORK"]) / f"cache_{run}_qwen1.5b.zip").unlink()
-    exec(summary, ns)
-    with pytest.raises(RuntimeError, match="OUTPUT CHECK FAILED"):
-        exec(final, ns)
-    # the runner never reached its export step: also a failure, even with the small archive present
+    st = (work / "STATUS.txt").read_text().splitlines()
+    assert st[0] == "OK" and f"run: {run}" in st and "commit: " + "0" * 40 in st and "problems: none" in st
+    member = f"results/round2_output_status_{run}.txt"
+    with zipfile.ZipFile(work / f"results_{run}.zip") as z:               # the copy that travels inside the results archive
+        assert z.read(member).decode().splitlines()[0] == "OK" and "results/x.json" in z.namelist()
+    # the activation archive is not there: the last cell must NOT raise; it writes FAILED and says so loudly
+    (work / f"cache_{run}_qwen1.5b.zip").unlink()
+    exec(summary, ns); exec(final, ns)
+    out = capsys.readouterr().out
+    assert "OUTPUT CHECK FAILED" in out and "!" * 100 in out and ns["OUTPUT_STATE"] == "FAILED"
+    st = (work / "STATUS.txt").read_text()
+    assert st.splitlines()[0] == "FAILED" and "expected archive is missing" in st and "MISSING" in st
+    with zipfile.ZipFile(work / f"results_{run}.zip") as z:               # the copy was replaced, not duplicated
+        assert z.namelist().count(member) == 1 and z.read(member).decode().splitlines()[0] == "FAILED"
+    # the runner never reached its export step: also FAILED, even with the small archive present
+    _zip(work / f"cache_{run}_qwen1.5b.zip")
     status.pop("finished")
     (clean_env / "repo" / "results" / f"round2_status_{run}.json").write_text(json.dumps(status))
-    exec(summary, ns)
-    with pytest.raises(RuntimeError, match="did not reach its export step"):
-        exec(final, ns)
+    exec(summary, ns); exec(final, ns)
+    assert ns["OUTPUT_STATE"] == "FAILED" and "did not reach its export step" in (work / "STATUS.txt").read_text()
+    # a run that skipped itself (no access to the model, too little GPU memory): SKIPPED, with the reason
+    status.update(finished=True, models_run=[], skipped={"gemma9b": "needs 2 GPUs, found 1"}, export={"zip_megabytes": {}})
+    status["stages"] = {}
+    (clean_env / "repo" / "results" / f"round2_status_{run}.json").write_text(json.dumps(status))
+    exec(summary, ns); exec(final, ns)
+    st = (work / "STATUS.txt").read_text()
+    assert st.splitlines()[0] == "SKIPPED" and "needs 2 GPUs, found 1" in st and "RUN SKIPPED" in capsys.readouterr().out
+    # and the check survives its own failure (an unwritable output directory) without raising
+    ns["WORK"] = str(clean_env / "does" / "not" / "exist")
+    exec(final, ns)
+    assert ns["OUTPUT_STATE"] == "FAILED"
 
 
 @pytest.mark.skipif(os.path.isdir("/kaggle") or os.path.isdir("/content"), reason="written for a machine that is neither Kaggle nor Colab")
@@ -140,9 +162,62 @@ def test_every_notebook_ends_with_the_output_check():
     assert len(nbs) >= 9
     for p in nbs:
         cells = _cells(json.loads(p.read_text()))
-        assert "OUTPUT CHECK FAILED" in cells[-1] and "raise RuntimeError" in cells[-1], p.name
+        assert "OUTPUT CHECK FAILED" in cells[-1] and "STATUS.txt" in cells[-1] and "raise " not in cells[-1], p.name
         assert "choose_dirs(os.environ, os.path.isdir)" in cells[1], p.name
         assert '"/content/out" if' not in "".join(cells) and 'WORK = "/kaggle/working" if' not in "".join(cells), p.name
         for i, c in enumerate(cells):
             compile(c, f"{p.name}:cell{i}", "exec")
     assert callable(make_kaggle_notebook.main)
+
+
+# ---------------------------------------------------------------- the ingest and STATUS.txt
+def _fake_run(d: Path, run: str, commit: str, status_in_zip: str | None = None):
+    d.mkdir(parents=True)
+    with zipfile.ZipFile(d / f"results_{run}.zip", "w") as z:
+        z.writestr(f"results/round2_environment_{run}.json", json.dumps({"git_commit": commit}))
+        z.writestr(f"results/round2_status_{run}.json", json.dumps(
+            {"run": run, "jobs": ["export"], "planned": ["data"], "stages": {"data": {"ok": True, "minutes": 0.1, "detail": "ok"}},
+             "models_run": [], "export": {"zip_megabytes": {}}, "finished": True, "total_minutes": 1}))
+        if status_in_zip is not None:
+            z.writestr(f"results/round2_output_status_{run}.txt", status_in_zip)
+
+
+def _ingest(monkeypatch, d: Path, run: str, writes_status: bool, *extra):
+    import subprocess
+
+    import kaggle_ingest
+    real = kaggle_ingest.git_blob
+    monkeypatch.setattr(kaggle_ingest, "git_blob", lambda c, path: (b"STATUS.txt" if writes_status else b"old cells")
+                        if path == "scripts/notebook_cells.py" else real(c, path))
+    monkeypatch.setattr(sys, "argv", ["kaggle_ingest.py", "--run", run, "--dir", str(d), "--dry-run", *extra])
+    with pytest.raises(SystemExit) as e:
+        kaggle_ingest.main()
+    return e.value.code
+
+
+def test_ingest_refuses_missing_or_bad_status(tmp_path, monkeypatch, capsys):
+    import subprocess
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parents[1], text=True).strip()
+    run = "r9_statustest"
+    ok = f"OK\nrun: {run}\ncommit: {head}\nproblems: none\n"
+    # OK beside the archives: validation passes (dry run exits 0)
+    _fake_run(tmp_path / "a", run, head); (tmp_path / "a" / "STATUS.txt").write_text(ok)
+    assert _ingest(monkeypatch, tmp_path / "a", run, True) == 0
+    # OK only as the copy inside the results archive: passes
+    _fake_run(tmp_path / "b", run, head, status_in_zip=ok)
+    assert _ingest(monkeypatch, tmp_path / "b", run, True) == 0
+    # missing, from a notebook that writes it: refused
+    _fake_run(tmp_path / "c", run, head)
+    assert "STATUS.txt is missing" in str(_ingest(monkeypatch, tmp_path / "c", run, True))
+    # missing, from a notebook that predates it: accepted with a note
+    assert _ingest(monkeypatch, tmp_path / "c", run, False) == 0 and "did not write STATUS.txt" in capsys.readouterr().out
+    # FAILED, SKIPPED, empty, or another run's file: refused
+    for i, txt in enumerate([f"FAILED\nrun: {run}\nproblems:\n  - expected archive is missing: x.zip\n",
+                             f"SKIPPED\nrun: {run}\nproblems:\n  - the run skipped itself: needs 2 GPUs\n", "",
+                             f"OK\nrun: r2_other\n"]):
+        _fake_run(tmp_path / f"d{i}", run, head); (tmp_path / f"d{i}" / "STATUS.txt").write_text(txt)
+        msg = str(_ingest(monkeypatch, tmp_path / f"d{i}", run, True))
+        assert msg.startswith("ERROR") and ("not OK" in msg or "another run" in msg), msg
+    # --allow-partial does not override it; --ignore-status does, and says so
+    assert str(_ingest(monkeypatch, tmp_path / "d0", run, True, "--allow-partial")).startswith("ERROR")
+    assert _ingest(monkeypatch, tmp_path / "d0", run, True, "--ignore-status") == 0 and "OVERRIDDEN" in capsys.readouterr().out

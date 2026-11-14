@@ -137,6 +137,7 @@ def main():
     ap.add_argument("--large", default="qwen3b", help="larger model that was run; 'none' if LARGE_MODEL was None")
     ap.add_argument("--no-gemma", action="store_true", help="the run had RUN_GEMMA = False")
     ap.add_argument("--allow-partial", action="store_true")
+    ap.add_argument("--ignore-status", action="store_true", help="ingest although STATUS.txt is missing or not OK (not implied by --allow-partial)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--no-fold", action="store_true", help="extract only; do not regenerate tables/figures/documents")
     a = ap.parse_args()
@@ -191,6 +192,44 @@ def main():
         if not okc:
             problems.append(f"code commit mismatch: run used {got[:12]}, expected {str(commit)[:12]}")
         report["environment"] = env
+
+    # ------------------------------------------------------------------ 2b. output status
+    # Notebooks from the commit that introduced it end by writing STATUS.txt into the output directory (first line OK,
+    # FAILED or SKIPPED) and a copy into the results archive. A run from such a notebook is refused unless it says OK.
+    if a.run:
+        print("== 2b. output status (STATUS.txt) ==")
+        got_c = ((env or {}).get("git_commit") or "")
+        writes_status = bool(re.fullmatch(r"[0-9a-f]{40}", got_c)) and b"STATUS.txt" in (git_blob(got_c, "scripts/notebook_cells.py") or b"")
+        member = f"results/round2_output_status_{a.run}.txt"
+        if (src / "STATUS.txt").is_file():
+            st_txt, st_from = (src / "STATUS.txt").read_text(errors="replace"), "STATUS.txt"
+        elif member in names:
+            st_txt, st_from = R.read(member).decode(errors="replace"), member + " (copy inside the results archive)"
+        else:
+            st_txt, st_from = None, None
+        report["output_status"] = None if st_txt is None else st_txt.splitlines()[0].strip() if st_txt.strip() else ""
+        refuse = None
+        if st_txt is None:
+            if writes_status:
+                refuse = (f"STATUS.txt is missing: not in {src.name}/ and no copy in the results archive. The notebook at this commit "
+                          "writes it in its last cell, so the last cell did not run or the output is incomplete.")
+            else:
+                notes.append("run predates STATUS.txt (its notebook did not write one); accepted without it")
+                print("  note: this run is from a commit whose notebook did not write STATUS.txt; accepted without it")
+        else:
+            lines = [l.strip() for l in st_txt.splitlines() if l.strip()]
+            state = lines[0] if lines else ""
+            run_line = next((l for l in lines if l.startswith("run:")), "run: ?")
+            print(f"  {st_from}: {state or '(empty)'} | {run_line}")
+            if run_line.split(":", 1)[1].strip() != a.run:
+                refuse = f"STATUS.txt belongs to another run ({run_line}); expected run: {a.run}"
+            elif state != "OK":
+                refuse = f"STATUS.txt says {state or '(empty)'}, not OK:\n    " + "\n    ".join(lines[1:])
+        if refuse and not a.ignore_status:
+            sys.exit("ERROR: " + refuse + "\nNothing was changed. (--ignore-status overrides this check; say in the log why.)")
+        if refuse:
+            notes.append("STATUS.txt check overridden with --ignore-status: " + refuse.splitlines()[0])
+            print("  OVERRIDDEN (--ignore-status): " + refuse.splitlines()[0])
 
     # ------------------------------------------------------------------ 3. stages
     print("== 3. stages ==")

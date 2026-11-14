@@ -25,3 +25,14 @@ qwen0.5b/c2c_debiased hyp_best: layer 13/24; fresh-probe adjacency AUROC 0.926 -
   probe across gap  : parent +0.0024 non-parent +0.0020 non-child  +0.0002 has_collid +0.0033 has_confou +0.0022 | contrast -0.0007
   erasure, gap change: parent +0.006 non-parent -0.001 non-child  +0.002 has_collid +0.042 has_confou +0.028 | reduction contrast +0.0156 (full removal +0.105)
   positive control (model-answer direction): slope +0.2090 per unit norm, larger in absolute value than 100% of shuffled-label probe directions
+[    0s] site hyp_best: layer 13, C 0.1, selection-half AUROC 0.914
+[    1s] [leace] lambda 0.0001 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.017
+[    1s] [leace] lambda 0.001 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.018
+[    1s] [leace] lambda 0.01 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.019
+[    1s] [leace] lambda 0.1 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.019
+[    1s] adjacency AUROC of a fresh probe on the report half: 0.926 before, 0.535 after LEACE, 0.918 after removing the probe direction only
+[    2s] directions fitted (44 step directions, 21 translations, 21 erasers)
+W1113 19:26:21.449000 39424 .venv/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights:   0%|          | 1/290 [00:00<04:24,  1.09it/s]Loading weights: 100%|██████████| 290/290 [00:00<00:00, 314.41it/s]
+[    8s] self-check, shortcut vs full forward pass: max |difference| 0.0077 logits; unsteered vs cache 0.0081
+[   17s] [timing] 1.58 s/item (224 vectors) -> 13.0 min for the remaining 494 items; 54.7 min left of 55

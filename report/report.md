@@ -1125,7 +1125,7 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | final token, best layer (15/24) | parent, descendant, collider, confounder | 0.112 | +0.110 | -0.069 to +0.091 | 100 | +0.096 | 100 | 4/5 | 0.102 → 0.070 | +0.032 [-0.010, +0.077] | 75 | +1.258 (100%) |
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | parent, descendant, collider, confounder | 0.112 | +0.013 | -0.021 to +0.011 | 95 | +0.016 | 95 | 5/5 | 0.102 → 0.097 | +0.005 [-0.000, +0.015] | 55 | +0.209 (100%) |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | parent, descendant, collider, confounder | 0.112 | +0.000 | -0.025 to +0.019 | 5 | -0.007 | 55 | 1/5 | 0.102 → 0.102 | -0.000 [-0.006, +0.002] | 5 | +0.255 (95%) |
-| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent, descendant, collider, confounder | 0.112 | +0.004 | -0.003 to +0.010 | 80 | +0.002 | 40 | 4/5 | 0.102 → 0.099 | +0.004 [-0.001, +0.005] | 85 | +0.011 (35%) |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent, descendant, collider, confounder | 0.112 | +0.004 | -0.003 to +0.010 | 80 | +0.002 | 40 | 4/5 | 0.102 → 0.099 | +0.004 [-0.001, +0.005] | 95 | +0.011 (35%) |
 
 <sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
 
@@ -1146,11 +1146,11 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | descendant | +0.055 [+0.024, +0.084] | +0.013 [+0.011, +0.015] | -0.039 to +0.064 | 35 | +0.054 | +0.041 | -0.013 | -0.045 to +0.026 | 50 | -0.0007 [-0.0007, -0.0007] |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | collider | -0.230 [-0.281, -0.177] | +0.020 [+0.016, +0.023] | -0.060 to +0.049 | 65 | -0.263 | -0.280 | +0.016 | -0.046 to +0.037 | 65 | -0.0006 [-0.0006, -0.0006] |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | confounder | -0.113 [-0.190, -0.033] | -0.004 [-0.006, -0.001] | -0.042 to +0.022 | 5 | -0.011 | -0.010 | -0.002 | -0.011 to +0.010 | 5 | -0.0007 [-0.0007, -0.0007] |
-| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent | +0.050 [+0.005, +0.096] | +0.009 [+0.008, +0.011] | -0.014 to +0.016 | 45 | +0.077 | +0.070 | -0.007 | -0.013 to +0.009 | 45 | +0.0001 [+0.0001, +0.0001] |
-| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | ancestor | -0.042 [-0.098, +0.015] | -0.010 [-0.011, -0.008] | -0.010 to +0.013 | 90 | -0.105 | -0.103 | -0.002 | -0.005 to +0.006 | 55 | +0.0001 [+0.0001, +0.0001] |
-| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | descendant | +0.055 [+0.024, +0.084] | -0.002 [-0.003, -0.001] | -0.010 to +0.010 | 30 | +0.056 | +0.056 | +0.000 | -0.009 to +0.007 | 0 | -0.0000 [-0.0000, -0.0000] |
-| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | collider | -0.230 [-0.281, -0.177] | -0.005 [-0.007, -0.004] | -0.016 to +0.016 | 40 | -0.264 | -0.260 | -0.004 | -0.015 to +0.013 | 25 | +0.0000 [+0.0000, +0.0000] |
-| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | confounder | -0.113 [-0.190, -0.033] | -0.005 [-0.006, -0.004] | -0.008 to +0.008 | 65 | -0.010 | -0.005 | -0.005 | -0.005 to +0.005 | 90 | -0.0000 [-0.0000, +0.0000] |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent | +0.050 [+0.005, +0.096] | +0.009 [+0.008, +0.011] | -0.014 to +0.016 | 45 | +0.077 | +0.070 | -0.007 | -0.009 to +0.011 | 60 | +0.0001 [+0.0001, +0.0001] |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | ancestor | -0.042 [-0.098, +0.015] | -0.010 [-0.011, -0.008] | -0.010 to +0.013 | 90 | -0.105 | -0.103 | -0.002 | -0.004 to +0.008 | 50 | +0.0001 [+0.0001, +0.0001] |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | descendant | +0.055 [+0.024, +0.084] | -0.002 [-0.003, -0.001] | -0.010 to +0.010 | 30 | +0.056 | +0.056 | +0.000 | -0.008 to +0.006 | 0 | -0.0000 [-0.0000, -0.0000] |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | collider | -0.230 [-0.281, -0.177] | -0.005 [-0.007, -0.004] | -0.016 to +0.016 | 40 | -0.264 | -0.260 | -0.004 | -0.009 to +0.013 | 40 | +0.0000 [+0.0000, +0.0000] |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | confounder | -0.113 [-0.190, -0.033] | -0.005 [-0.006, -0.004] | -0.008 to +0.008 | 65 | -0.010 | -0.005 | -0.005 | -0.005 to +0.003 | 100 | -0.0000 [-0.0000, +0.0000] |
 
 <sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
 

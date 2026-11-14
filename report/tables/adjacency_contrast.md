@@ -1,7 +1,7 @@
 | Model | Site (layer) | Templates in the pre-specified contrast | Full-mediation benchmark (mean |observed gap|) | Translation: pre-specified contrast | …20 random directions of the same size (range) | Controls smaller in absolute value (%) | Same with one sign for all types (adjacent → No) | Controls smaller (%) | Translation effects towards No | Mean absolute gap on evaluated items, before → after erasure | Reduction (interval over items) | Fair controls smaller in absolute value (%) | Positive control: model-answer direction, slope per unit norm (share of controls it exceeds) |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | final token, best layer (15/24) | parent, descendant, collider, confounder | 0.112 | +0.110 | -0.069 to +0.091 | 100 | +0.096 | 100 | 4/5 | 0.102 → 0.070 | +0.032 [-0.010, +0.077] | 75 | +1.258 (100%) |
-| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | parent, descendant, collider, confounder | 0.112 | +0.013 | -0.021 to +0.011 | 95 | +0.016 | 95 | 5/5 | 0.102 → 0.097 | +0.005 [-0.000, +0.015] | 60 | +0.209 (100%) |
+| Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | parent, descendant, collider, confounder | 0.112 | +0.013 | -0.021 to +0.011 | 95 | +0.016 | 95 | 5/5 | 0.102 → 0.097 | +0.005 [-0.000, +0.015] | 55 | +0.209 (100%) |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | parent, descendant, collider, confounder | 0.112 | +0.000 | -0.025 to +0.019 | 5 | -0.007 | 55 | 1/5 | 0.102 → 0.102 | -0.000 [-0.006, +0.002] | 10 | +0.255 (95%) |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent, descendant, collider, confounder | 0.112 | +0.004 | -0.003 to +0.010 | 80 | +0.002 | 40 | 4/5 | 0.102 → 0.099 | +0.004 [-0.001, +0.005] | 85 | +0.011 (35%) |
 

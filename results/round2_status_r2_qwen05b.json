@@ -17,7 +17,7 @@
   },
   "r2.qwen0.5b.adjacency.content_end.best": {
    "ok": true,
-   "minutes": 16.0,
+   "minutes": 11.6,
    "detail": "ok",
    "log_tail": [
     "  transfer (rows = item's template, columns = template the vector came from):",
@@ -123,9 +123,10 @@
   "r2.qwen0.5b.controls.c2c_probe",
   "r2.qwen0.5b.controls_hyp.c2c_debiased",
   "r2.qwen0.5b.controls_hyp.c2c_probe",
-  "r2.qwen0.5b.adjacency.final.best"
+  "r2.qwen0.5b.adjacency.final.best",
+  "r2.qwen0.5b.adjacency.content_end.best"
  ],
- "total_minutes": 11.7,
+ "total_minutes": 23.3,
  "models_run": [
   "qwen0.5b"
  ],

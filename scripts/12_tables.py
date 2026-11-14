@@ -664,11 +664,12 @@ def t_patching_same():
     """Label-changing vs label-preserving minimal pairs (round 2)."""
     import numpy as np
     rows, src = [], []
-    for m in MODELS:
-        ch, sm = load(f"patching_{m}.json"), load(f"patching_{m}_same.json")
+    for m, sfx in [(m_, x_) for m_ in MODELS for x_ in ("", "_n240")]:
+        ch, sm = load(f"patching_{m}{sfx}.json"), load(f"patching_{m}_same{sfx}.json")
         if not sm:
             continue
-        src += [f"patching_{m}_same.json"] + ([f"patching_{m}.json"] if ch else [])
+        src += [f"patching_{m}_same{sfx}.json"] + ([f"patching_{m}{sfx}.json"] if ch else [])
+        bt = load(f"patching_by_template_{m}{sfx}.json")
         for kind in ("hyp", "prem"):
             for lab, r in (("label changes (Yes → No)", ch), ("label preserved", sm)):
                 if not r:
@@ -679,15 +680,18 @@ def t_patching_same():
                 common = set(r["layers"]) & set((sm if r is ch else ch or sm)["layers"])
                 first = next((r["layers"][i] for i, v in enumerate(fin) if v >= 0.5 and r["layers"][i] in common), None)
                 byl = k.get("by_common_label", {})
-                rows.append([LAB[m], kind, lab, k["n_pairs"],
+                wt = (bt or {}).get("kinds", {}).get(kind, {}).get("standardised_over_common_templates", {}).get("preserving_minus_changing")
+                rows.append([LAB[m] + (" (all available pairs)" if sfx else ""), kind, lab, k["n_pairs"],
                              " / ".join(str(byl[c]["n_pairs"]) for c in ("1", "0") if c in byl) or "–",
                              ci(b["mean_delta"], signed=True), num(b["mean_abs_delta"]),
                              " / ".join(num(byl[c]["mean_abs_delta"]) for c in ("1", "0") if c in byl) or "–",
-                             first if first is not None else "–", f"{first / r['layers'][-1]:.2f}" if first is not None else "–"])
+                             first if first is not None else "–", f"{first / r['layers'][-1]:.2f}" if first is not None else "–",
+                             ci(wt, signed=True) if (wt and r is sm) else "–"])
     if rows:
         write("patching_label_preserving", table(
             ["Model", "Pair kind", "Pairs", "n", "of which Yes/Yes, No/No", "Mean D = LD(original) − LD(edited)", "Mean |D|",
-             "Mean |D|: Yes/Yes, No/No", "First layer with ≥ 0.5 recovery at final token (on the layers both runs have)", "…as relative depth"], rows, src,
+             "Mean |D|: Yes/Yes, No/No", "First layer with ≥ 0.5 recovery at final token (on the layers both runs have)", "…as relative depth",
+             "Within hypothesis type: mean |D| label-preserved minus label-changing"], rows, src,
             notes=["Mean |D| here is not standardised by hypothesis template; the two kinds of pair have different template mixes. The comparison within template is in "
                    "`results/patching_by_template_<model>.json` (report 4.2).",
                    "Where a model has 40 label-changing pairs (Qwen2.5-1.5B: an earlier run on the laptop; Gemma-2-2B: the first GPU run), they are a different draw "

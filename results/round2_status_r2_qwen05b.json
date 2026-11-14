@@ -74,6 +74,36 @@
     "[prem] n=60 mean delta 0.223 frac>0 0.88; final-position recovery by layer: 0.00 0.01 0.01 0.01 0.01 0.01 0.00 0.07 0.95 0.94 0.98 1.00 1.00",
     "done 18.4 min"
    ]
+  },
+  "r2.qwen0.5b.controls.c2c_debiased": {
+   "ok": true,
+   "minutes": 2.0,
+   "detail": "ok",
+   "log_tail": [
+    "",
+    "Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]",
+    "Loading weights:   0%|          | 1/290 [00:01<04:55,  1.02s/it]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 290/290 [00:01<00:00, 280.61it/s]",
+    "[timing] projected 2.9 min for the remaining 145 items",
+    "gold_probe      slope -0.229/s | vs isotropic: percentile 0.88 | vs shuffled_probe: percentile 0.75, x1.3 its median",
+    "gold_diffmeans  slope +0.150/s | vs isotropic: percentile 0.63 | vs shuffled_diffmeans: percentile 0.70, x1.9 its median",
+    "model_out       slope +0.524/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x3.0 its median"
+   ]
+  },
+  "r2.qwen0.5b.controls_hyp.c2c_debiased": {
+   "ok": true,
+   "minutes": 4.0,
+   "detail": "ok",
+   "log_tail": [
+    "",
+    "Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]",
+    "Loading weights:   0%|          | 1/290 [00:00<04:01,  1.20it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 290/290 [00:00<00:00, 343.40it/s]",
+    "[timing] projected 5.8 min for the remaining 145 items",
+    "gold_probe      slope +0.095/s | vs isotropic: percentile 0.61 | vs shuffled_probe: percentile 0.45, x1.0 its median",
+    "gold_diffmeans  slope +0.287/s | vs isotropic: percentile 0.99 | vs shuffled_diffmeans: percentile 0.80, x2.7 its median",
+    "model_out       slope +0.756/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x7.6 its median"
+   ]
   }
  },
  "run": "r2_qwen05b",
@@ -81,20 +111,19 @@
   "qwen0.5b"
  ],
  "jobs": [
-  "adjacency",
-  "patch_same"
+  "controls",
+  "controls_hyp",
+  "adjacency"
  ],
  "tiny": false,
  "planned": [
   "data",
   "environment",
-  "r2.qwen0.5b.adjacency.final.best",
-  "r2.qwen0.5b.adjacency.content_end.best",
-  "r2.qwen0.5b.adjacency.final.first50",
-  "r2.qwen0.5b.adjacency.content_end.first50",
-  "r2.qwen0.5b.patch_same"
+  "r2.qwen0.5b.controls.c2c_debiased",
+  "r2.qwen0.5b.controls.c2c_probe",
+  "r2.qwen0.5b.controls_hyp.c2c_debiased"
  ],
- "total_minutes": 25.2,
+ "total_minutes": 6.0,
  "models_run": [
   "qwen0.5b"
  ],

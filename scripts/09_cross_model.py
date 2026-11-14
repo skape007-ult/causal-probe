@@ -74,14 +74,23 @@ def main():
             _, meta, items = cache.load_cache(m, tag)
             groups = np.array([i["group"] for i in items])
             rep = ~data.selection_mask(items)
-            sc[m] = (oof["y"][rep], oof["gold"][:, out["models"][m]["datasets"][tag]["selected_layer"]].mean(0)[rep], groups[rep])
+            uid = np.array(meta["uids"])
+            sc[m] = (oof["y"][rep], oof["gold"][:, out["models"][m]["datasets"][tag]["selected_layer"]].mean(0)[rep], groups[rep], uid[rep])
         for i in range(len(ms)):
             for j in range(i + 1, len(ms)):
                 if ms[i] in sc and ms[j] in sc:
-                    y, a_, g = sc[ms[i]]; _, b_, _ = sc[ms[j]]
-                    out["pairwise"][f"{tag}:{ms[j]}_minus_{ms[i]}"] = stats.bootstrap_ci(
+                    y, a_, g, u1 = sc[ms[i]]; y2, b_, _, u2 = sc[ms[j]]
+                    # pair the two models item by item, by item id. Models cached on different machines
+                    # can hold different draws of the CLadder sample (decision D28): use the shared items.
+                    pos2 = {u: k for k, u in enumerate(u2)}
+                    k1 = np.array([k for k, u in enumerate(u1) if u in pos2], int)
+                    k2 = np.array([pos2[u1[k]] for k in k1], int)
+                    assert (y[k1] == y2[k2]).all(), "labels of paired items differ"
+                    r = stats.bootstrap_ci(
                         lambda yy, s1, s2: stats.accuracy(yy, (s2 > 0).astype(int)) - stats.accuracy(yy, (s1 > 0).astype(int)),
-                        (y, a_, b_), g)
+                        (y[k1], a_[k1], b_[k2]), g[k1])
+                    r["n_items_paired"] = int(len(k1)); r["n_items_each"] = [int(len(u1)), int(len(u2))]
+                    out["pairwise"][f"{tag}:{ms[j]}_minus_{ms[i]}"] = r
     (RESULTS / "cross_model.json").write_text(json.dumps(out, indent=1))
     for m, row in out["models"].items():
         for tag, d in row["datasets"].items():

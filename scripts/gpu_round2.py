@@ -64,6 +64,8 @@ def main():
     a = ap.parse_args()
     jobs = [j for j in a.jobs.split(",") if j]
     assert all(j in JOBS for j in jobs), jobs
+    if a.tiny:                      # a smoke test never shares markers, status or output names with a real run
+        a.run = a.run + "_tiny"
     fallback = dict(p.split(":") for p in a.fallback.split(",") if p)
 
     sys.path.insert(0, str(ROOT / "src"))
@@ -76,7 +78,10 @@ def main():
     marks = CACHE / f"_round2_markers_{a.run}"; marks.mkdir(parents=True, exist_ok=True)
     status_path = RESULTS / f"round2_status_{a.run}.json"
     status = json.loads(status_path.read_text()) if status_path.exists() else {"stages": {}}
+    for k in ("export", "all_ok", "finished"):      # only this invocation may declare the run finished
+        status.pop(k, None)
     status.update(run=a.run, models=a.models.split(","), jobs=jobs, tiny=a.tiny, planned=[])
+    status_path.write_text(json.dumps(status, indent=1))
     skip = [s for s in a.skip.split(",") if s]
     env = dict(os.environ, PYTHONPATH=str(ROOT / "src") + os.pathsep + os.environ.get("PYTHONPATH", ""),
                TOKENIZERS_PARALLELISM="false")
@@ -159,7 +164,8 @@ def main():
         if "cache" in jobs:
             have_cache = stage(f"r2.{M}.cache", "scripts/01_build_cache.py", "--model", M, "--tags", "c2c_probe,c2c_debiased",
                                "--no-gen", "--max-minutes", "50", minutes=58)
-            if not have_cache and M in fallback and status["stages"][f"r2.{M}.cache"]["minutes"] < 12:
+            if not have_cache and M in fallback and status["stages"].get(f"r2.{M}.cache", {}).get("minutes", 99) < 12:
+                status["planned"].remove(f"r2.{M}.cache")        # replaced by the fallback model's stage
                 M = fallback[M]
                 have_cache = stage(f"r2.{M}.cache", "scripts/01_build_cache.py", "--model", M, "--tags", "c2c_probe,c2c_debiased",
                                    "--no-gen", "--max-minutes", "50", minutes=58)
@@ -170,7 +176,7 @@ def main():
             if "controls" in jobs:
                 for tag in ("c2c_debiased", "c2c_probe"):
                     stage(f"r2.{M}.controls.{tag}", "scripts/07c_steering_controls.py", "--model", M, "--tag", tag,
-                          "--sub-batch", "16", *stride, *n_c, minutes=40)
+                          "--sub-batch", "16", "--max-minutes", "30", *stride, *n_c, minutes=40)
             if "controls_hyp" in jobs:
                 for tag in ("c2c_debiased", "c2c_probe"):
                     stage(f"r2.{M}.controls_hyp.{tag}", "scripts/07c_steering_controls.py", "--model", M, "--tag", tag,
@@ -225,6 +231,7 @@ def main():
     status["export"] = {"positions": list(pos), "bytes_per_cache_dir": sizes, "zip_megabytes": zsizes}
     status["total_minutes"] = round((time.time() - T0) / 60, 1)
     status["all_ok"] = all(status["stages"].get(n, {}).get("ok", False) for n in status["planned"])
+    status["finished"] = True
     status_path.write_text(json.dumps(status, indent=1))
     zip_small()
     print("\n================ summary ================")

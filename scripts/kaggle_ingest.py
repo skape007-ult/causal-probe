@@ -209,7 +209,9 @@ def main():
                 print(f"            | {line[:160]}")
         else:
             print(f"  ok      {s['minutes']:6.1f} min  {name}")
-    finished = bool(status.get("finished")) if a.run else "export" in status
+    # runs made from notebooks pinned before commit with the explicit flag do not write "finished"; for those the
+    # presence of the export record is accepted, as for the first run
+    finished = bool(status.get("finished", "export" in status))
     print(f"  run reached the export step: {'yes' if finished else 'NO (the run was cut short)'}; "
           f"total {status.get('total_minutes', '?')} min")
     if a.run:

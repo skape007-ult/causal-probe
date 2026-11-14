@@ -556,6 +556,59 @@ def STEER_NOTES():
     return out
 
 
+def t_settle():
+    """The held-out test of the two steering arms that ranked first of 21 (scripts/07d_steering_settle.py). The three outcomes
+    and what each is taken to mean were fixed before the run (notes/log.md, 14 Nov 01:40, 02:45 and 08:00)."""
+    rows, src = [], []
+    for m in MODELS:
+        r = load(f"steering_settle_{m}_c2c_debiased_hyp.json")
+        if not r:
+            continue
+        src.append(f"steering_settle_{m}_c2c_debiased_hyp.json")
+        pt = r["primary_test"]; q = pt.get("second_question_the_label_beyond_adjacency") or {}
+        c0 = next((c for c in r["configs"] if c.get("role") == "primary"), {})
+        iso = (c0.get("families") or {}).get("isotropic") or {}
+        p_ = pt["p_one_sided"]; nc = pt["n_controls"]
+        if p_ <= 1 / (nc + 1) + 1e-12 and p_ <= pt["threshold_for_the_most_extreme_of_24_comparisons"]:
+            outcome = f"beyond all {nc} controls"
+        elif p_ > 0.05:
+            outcome = "p > 0.05"
+        else:
+            outcome = "in between"
+        cut = []
+        if c0.get("shortened_to_items"):
+            cut.append(f"primary configuration shortened to {c0['shortened_to_items']} items")
+        if r.get("configurations_dropped_for_time"):
+            cut.append(f"{len(r['configurations_dropped_for_time'])} other configurations dropped for time")
+        rows.append([LAB[m], {"gold_probe": "gold-label probe weights", "gold_diffmeans": "gold difference of class means"}[r["arm"]],
+                     f"{r['layer']}/{r['n_layers']}", num(r["slopes_in_the_20_control_run"][r["arm"]], signed=True), c0.get("n_items", "–"),
+                     num(pt["slope"], signed=True), nc, f"{num(pt['control_mean'], signed=True)} ± {num(pt['control_sd'])}",
+                     f"{num(pt['control_min'], signed=True)} to {num(pt['control_max'], signed=True)}",
+                     f"{pt['z_vs_controls']:+.2f}", f"{p_:.4f}", f"{pt['threshold_for_the_most_extreme_of_24_comparisons']:.4f}", f"**{outcome}**",
+                     (f"{num(iso['min'], signed=True)} to {num(iso['max'], signed=True)}" if iso else "–"),
+                     (f"{num(q['slope'], signed=True)}; p {q['p_one_sided_in_the_arms_sign']:.3f} against {q['n_controls']} controls: "
+                      f"{'stands out' if q['stands_out'] else 'does not stand out'}" if q else "–"),
+                     "; ".join(cut) or "complete"])
+    if not rows:
+        return
+    notes = ["One test per model, fixed before the run: the direction that ranked first of 21 is refitted on the other half of the data, steered on 150 items it was not "
+             "fitted on, and compared, one-sided in the sign it had before, with control directions of the same kind fitted to labellings that keep both balances of the "
+             "gold label (half valid within every hypothesis string; one valid and one invalid item per premise). p = (1 + controls at least as extreme) / (controls + 1).",
+             "The refitted direction is not an independent draw (cosine 0.84 with the first one for Qwen2.5-3B, 0.53 for Qwen2.5-1.5B), so the slope coming out again shows nothing; the comparison with the controls is the test.",
+             "How often each outcome occurs, computed before the run for the arm as it was chosen (beyond all 500 / in between / p > 0.05). Nothing label-specific: "
+             "3% / 51% / 46% for Qwen2.5-3B and 2% / 26% / 72% for Qwen2.5-1.5B. A real effect of the size first observed: 25% / 67% / 9% and 48% / 44% / 8%. "
+             "**The outcome in between is evidence for neither account.** The first row of figures assumes a response to label-free directions that is the same in all directions; "
+             "with the unevenness the first run allows, 1 to 12% (`notes/audit_settle_code2_raw.md`).",
+             "The threshold counts the 24 comparisons that existed when the two arms were chosen. Over all 32 comparisons now in the steering-controls table it would be 0.0016, "
+             "below the smallest p that 500 controls can give (0.0020).",
+             "Second question (registered with its reading): the label with the adjacency direction projected out, against 100 controls from labels shuffled within "
+             "(hypothesis string, adjacency) cells. 'Stands out' (p ≤ 0.05) means an effect beyond the one linear adjacency direction, not beyond graph structure; 'does not stand out' means nothing (little power)."]
+    write("steering_settle", table(
+        ["Model", "Direction tested", "Layer", "Slope in the 20-control run", "Items steered", "Slope with the direction refitted on the other half", "Controls",
+         "Controls: mean ± SD", "Controls: range", "z against controls", "p (one-sided)", "Threshold (0.05/24)", "Outcome", "20 isotropic directions at the same site (range)",
+         "Second question: the label beyond adjacency (slope; p)", "Run"], rows, src, notes))
+
+
 def t_patching_same():
     """Label-changing vs label-preserving minimal pairs (round 2)."""
     import numpy as np
@@ -839,4 +892,4 @@ def t_sae():
 if __name__ == "__main__":
     t_behaviour(); t_probes(); t_confound(); t_confound(suffix="_fixedC", name="confound_fixedC"); t_audited(); t_external()
     t_steering(); t_patching(); t_cross_model(); t_benchmarks(); t_answer_bias(); t_probe_content()
-    t_patching_same(); t_adjacency(); t_sae()      # t_feature_causal(): first version of the adjacency test, superseded
+    t_patching_same(); t_settle(); t_adjacency(); t_sae()      # t_feature_causal(): first version of the adjacency test, superseded

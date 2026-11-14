@@ -1,0 +1,49 @@
+{
+ "dir": "kaggle_out/Qwen2.5-1.5B",
+ "expected_commit": "e336431bbcf3eee973c559c9feed137c23d0b1ff",
+ "environment": {
+  "python": "3.12.3",
+  "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+  "torch": "2.15.0+cu132",
+  "transformers": "5.22.2",
+  "sklearn": "1.9.1",
+  "numpy": "2.5.4",
+  "cuda": true,
+  "gpus": [
+   "Tesla T4",
+   "Tesla T4"
+  ],
+  "gpu_memory_gb": [
+   15.6,
+   15.6
+  ],
+  "sae_lens": "6.55.4",
+  "peft": "0.21.2",
+  "bitsandbytes": "not available (ModuleNotFoundError)",
+  "accelerate": "1.15.0",
+  "git_commit": "e336431bbcf3eee973c559c9feed137c23d0b1ff"
+ },
+ "output_status": "OK",
+ "missing": [],
+ "failed": [],
+ "run_finished": true,
+ "notes": [],
+ "results_written": [
+  "results/round2_environment_r3s_qwen15b.json",
+  "results/round2_logs_r3s_qwen15b/data.log",
+  "results/round2_logs_r3s_qwen15b/environment.log",
+  "results/round2_logs_r3s_qwen15b/r2.qwen1.5b.cache.log",
+  "results/round2_logs_r3s_qwen15b/r2.qwen1.5b.settle.log",
+  "results/round2_output_status_r3s_qwen15b.txt",
+  "results/round2_status_r3s_qwen15b.json",
+  "results/steering_settle_qwen1.5b_c2c_debiased_hyp.json"
+ ],
+ "conflicts": [],
+ "aggregates_not_taken_from_the_run": [
+  "results/answer_bias.json",
+  "results/cross_model.json",
+  "results/steering_controls_multiplicity.json"
+ ],
+ "caches_loaded": [],
+ "problems": []
+}

@@ -129,6 +129,10 @@ Accuracy alone cannot tell "no information" from "information hidden by a bias t
 | Qwen2.5-7B (4-bit) | Corr2Cause pool | zero-shot | 2400 | 0.09 | 0.496 [0.485, 0.508] | 0.500 | 0.594 [0.572, 0.618] | 0.601 [0.582, 0.620] | informative (AUROC CI above 0.5) |
 | Qwen2.5-7B (4-bit) | Corr2Cause debiased pool | zero-shot | 2400 | 0.07 | 0.506 [0.496, 0.517] | 0.500 | 0.514 [0.490, 0.536] | 0.525 [0.505, 0.543] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-7B (4-bit) | CLadder | zero-shot | 3000 | 0.49 | 0.544 [0.520, 0.568] | 0.500 | 0.570 [0.541, 0.601] | 0.534 [0.511, 0.555] | informative (AUROC CI above 0.5) |
+| Gemma-2-9B | Corr2Cause test | zero-shot | 1162 | 0.02 | 0.842 [0.803, 0.888] | 0.845 | 0.553 [0.496, 0.602] | 0.842 [0.800, 0.893] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-9B | Corr2Cause pool | zero-shot | 2400 | 0.01 | 0.505 [0.501, 0.508] | 0.500 | 0.574 [0.552, 0.597] | 0.598 [0.578, 0.619] | informative (AUROC CI above 0.5) |
+| Gemma-2-9B | Corr2Cause debiased pool | zero-shot | 2400 | 0.01 | 0.507 [0.503, 0.512] | 0.500 | 0.512 [0.490, 0.535] | 0.517 [0.502, 0.531] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-9B | CLadder | zero-shot | 3000 | 0.75 | 0.566 [0.546, 0.586] | 0.500 | 0.598 [0.569, 0.626] | 0.555 [0.536, 0.575] | informative (AUROC CI above 0.5) |
 
 <sub>Source: `results/answer_bias.json`</sub><br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>
 
@@ -143,8 +147,11 @@ Reading. On the original Corr2Cause sets the logit difference is weakly informat
 | Gemma-2-2B | 0.492 [0.468, 0.515] | 0.473 [0.455, 0.491] | 0.0025 | 23/48 | 0.387* | 0.480 | 0.482 | 0.560* | 0.507 | 0.467 [0.434, 0.497] | 0.0005 | 0.28 · 0.43 · 0.51 · 0.49 · 0.52 | below chance within hypothesis string |
 | Qwen2.5-3B | 0.507 [0.484, 0.530] | 0.511 [0.491, 0.530] | 0.2474 | 28/48 | 0.561* | 0.506 | 0.444* | 0.565* | 0.415* | 0.511 [0.477, 0.541] | 0.3103 | 0.37 · 0.56 · 0.47 · 0.62 · 0.42 | at chance within hypothesis string |
 | Qwen2.5-7B (4-bit) | 0.514 [0.490, 0.536] | 0.549 [0.530, 0.569] | 0.0005 | 33/48 | 0.442* | 0.673* | 0.649* | 0.487 | 0.567* | 0.589 [0.560, 0.620] | 0.0005 | 0.53 · 0.64 · 0.64 · 0.54 · 0.56 | above chance within hypothesis string |
+| Gemma-2-9B | 0.512 [0.490, 0.535] | 0.542 [0.522, 0.560] | 0.0010 | 31/48 | 0.616* | 0.437* | 0.548 | 0.473 | 0.634* | 0.541 [0.511, 0.570] | 0.0010 | 0.71 · 0.40 · 0.54 · 0.56 · 0.60 | above chance within hypothesis string |
 
 <sub>Source: `results/answer_bias.json`</sub><br><sub>AUROC of the Yes−No logit difference for the gold label. Pooled: over all 2,400 items. Within string: computed inside each of the 48 hypothesis strings (the label is balanced in every string) and averaged. Within string and adjacency: inside cells of (string, queried pair adjacent or not), weighted by the number of valid-invalid pairs; it asks whether the answer follows the label beyond following adjacency.</sub><br><sub>Intervals: premises resampled. Permutation p, two-sided: the two labels of each premise swapped at random; its smallest possible value here is 0.0005. * interval excludes 0.5.</sub><br><sub>These statistics were chosen after the pooled ones had been seen (eleventh audit, F1). The pooled AUROC is insensitive on this pool: the answer differs far more between hypothesis strings than within them, and opposite signs in different hypothesis types cancel.</sub>
+
+*(The Gemma-2-9B rows of this table and of the table above come from a run ingested on 14 November at 16:45. They are not yet audited, and the text below does not cover them.)*
 
 Reading. For the four smaller models the mean AUROC within string is at chance, or below it for Gemma-2-2B (0.506 [0.487, 0.523], 0.507 [0.490, 0.525], 0.473 [0.455, 0.491], 0.511 [0.491, 0.530]), with deviations in both directions by hypothesis type. With adjacency held fixed none of the four is above chance and two are below (0.486 [0.458, 0.514], 0.436 [0.406, 0.462], 0.467 [0.434, 0.497], 0.511 [0.477, 0.541]): these answers do not follow validity inside a string. What they depend on is adjacency, with signs that differ by hypothesis type (Section 4.4), and for Qwen2.5-1.5B and Gemma-2-2B they run against the label once adjacency is held fixed.
 

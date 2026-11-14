@@ -7,48 +7,43 @@ Do small open-weight language models internally represent the correct answer to 
 
 **Question.** When small language models answer formal causal-reasoning questions wrongly, is the correct answer nevertheless linearly readable from their activations, and is it used?
 
-**Run:** Qwen2.5-0.5B, 1.5B, 3B and Gemma-2-2B on Corr2Cause and CLadder: probes against text-only baselines, steering, patching. Qwen2.5-7B (4-bit): answers, and probes on the debiased pool. Fifteen reviews by fresh reviewer agents; those of results were given code and files, not my reading. Numbers are from `results/*.json`; details and all caveats are in `report/report.md`.
+**Run:** Qwen2.5-0.5B, 1.5B, 3B and Gemma-2-2B on Corr2Cause and CLadder: probes against text-only baselines, steering, patching. Qwen2.5-7B (4-bit): answers, and probes on the debiased pool. Fifteen reviews by fresh reviewer agents; those of results were given code and files, not the conclusions. Numbers are from `results/*.json`; details and all caveats are in `report/report.md`.
+
+**Not in this page:** Gemma-2-9B (returned 14 Nov, under audit); the held-out test of the Qwen2.5-3B case and patching on all available pairs for Qwen2.5-3B (launched 14 Nov).
 
 ## Three headline claims
 
 **1. A probe's accuracy for the correct answer means nothing until it is compared with what the text alone gives away.**
 - *Number:* on the official Corr2Cause test split (21 premises) a classifier that sees only the hypothesis, never the premise, reaches AUROC 0.895 [0.863, 0.919]. Gold-label probes are below the strongest text-only classifier in all eight model × benchmark cells.
-- *Figure:* four of the eight cells. *Checked by* audits 1 and 6.
-
-![probe vs text](figures/fig5_confound_c2c_probe.png)
+- *Figure:* [probe against text, four of the eight cells](figures/fig5_confound_c2c_probe.png).
 
 **2. With every single-input shortcut removed, a probe on the activations of the models from 1.5B to 7B is about as accurate as a lookup of the premise statements about the two queried variables, and less accurate than a hand-written parse; ranked across all items at once, the models' answers are at chance.**
-- *Number:* on the debiased pool Qwen2.5-3B's probe scores 0.765 [0.743, 0.788], the lookup 0.765, a hand-written parse 0.816; its answers have AUROC 0.507 [0.484, 0.530]. Qwen2.5-7B: probe 0.784 [0.762, 0.806] (its gain over the parse-plus-4-gram text model, +0.014 [+0.004, +0.026], does not survive a correction over the five models and shrinks to +0.008 [+0.000, +0.018] when that text model is tuned); answers 0.514 [0.490, 0.536].
-- *Caveats:* equal accuracy is not equal content (probe and text models are right on partly different items). Inside a hypothesis string the four smaller models' answers do not follow validity (AUROC 0.47 to 0.51); they depend on adjacency of the queried pair. The 7B model's follow validity on average, weakly, and go against it for direct-causation hypotheses (0.442): AUROC within string 0.549 [0.530, 0.569]; the valid item of a premise gets the higher answer logit in 53.6% of premises (Qwen2.5-3B: 52.0%).
-- *Checked by* audits 3, 5, 6, 11 and 14.
+- *Number:* on the debiased pool Qwen2.5-3B's probe scores 0.765 [0.743, 0.788], the lookup 0.765, a hand-written parse 0.816; its answers have AUROC 0.507 [0.484, 0.530]. Qwen2.5-7B: probe 0.784 [0.762, 0.806]; answers 0.514 [0.490, 0.536].
+- *Caveats:* inside a hypothesis string the four smaller models' answers do not follow validity (AUROC 0.47 to 0.51); they depend on adjacency of the queried pair. The 7B model's follow validity on average, weakly, and go against it for direct-causation hypotheses (0.442): AUROC within string 0.549 [0.530, 0.569]; the valid item of a premise gets the higher answer logit in 53.6% of premises (Qwen2.5-3B: 52.0%).
 
 ![ladder](figures/fig13_debiased_ladder.png)
 
 **3. No intervention shows that what a probe reads is what the answer is computed from.**
 - *Number:* steering along a gold-label direction was compared with 20 matched control directions 32 times (four models, two item pools, two tokens, two kinds of direction). The gold direction exceeds all its controls in 4, where chance gives 1.52; on the debiased pool in 3 of 16 (0.76). None survives a correction for multiple comparisons, and with 20 controls none could.
-- *The four:* Qwen2.5-3B, end of the hypothesis, class-mean difference (+0.738; about half of it is the adjacency contrast of direct-causation hypotheses, so it cannot separate validity from adjacency; +0.023 logits at natural scale): undecided. Qwen2.5-1.5B, same token, probe direction (-0.251: towards "valid" lowers Yes): in a test fixed beforehand, with the direction refitted on the other half of the data, it kept its sign at under half the size (-0.112) and lay inside its 500 controls (p = 0.12). Gemma-2-2B, answer position, probe direction (+0.475; first by 3%, not robust): undecided. Qwen2.5-0.5B, original pool, answer position, class-mean difference (+0.865; weaker controls): undecided.
-- *Caveats:* taken together the gold class-mean differences do rank above their controls (mean rank 6.44 of 21; 11 expected). At the answer position on the debiased pool that is the answers' own within-question correlation with the label read back (three of four models) and does not show that validity is used; at the end of the hypothesis it is unexplained. Shifting items along the encoding of adjacency at the end of the hypothesis is outside its 20 controls in Qwen2.5-0.5B only (+0.013 of a possible 0.112, a push towards No for every hypothesis type); Gemma-2-2B's layer there responds to nothing. At the answer position the same shift moves the answer (beyond all controls in two of four models), and a given shift acts the same way on items of every hypothesis type, so it locates the answer.
-- *Checked by* audits 2, 4, 5, 6, 8, 11 and 15.
+- *The four:* Qwen2.5-3B, end of the hypothesis, class-mean difference (+0.738); Qwen2.5-1.5B, same token, probe direction (-0.251; inside its 500 controls in a test fixed beforehand, p = 0.12); Gemma-2-2B, answer position, probe direction (+0.475, first by 3%); Qwen2.5-0.5B, original pool, class-mean difference (+0.865). Three are undecided and one was not confirmed.
+- *Caveats:* taken together the gold class-mean differences do rank above their controls (mean rank 6.44 of 21; 11 expected). At the answer position on the debiased pool that is the answers' own within-question correlation with the label read back (three of four models) and does not show that validity is used; at the end of the hypothesis it is unexplained. Shifting items along the encoding of adjacency before the answer position is outside its controls in one of four models ([figure](figures/fig12_adjacency_end_of_hypothesis.png)); at the answer position it moves the answer the same way for every hypothesis type, which locates the answer.
 
-![adjacency](figures/fig12_adjacency_end_of_hypothesis.png)
+*Checked by:* claim 1, audits 1 and 6; claim 2, audits 3, 5, 6, 11 and 14; claim 3, audits 2, 4, 5, 6, 8, 11 and 15.
 
-## What we retracted, and why
+## What was retracted, and why
 
 | Claim as first made | What was wrong | Caught by |
 |---|---|---|
 | "Qwen2.5-1.5B represents the answer but doesn't say it" | Baselines too weak: the hypothesis string alone predicts 86% of labels | Audit 1 |
-| "The gold-probe direction is inert; the model-output direction flips answers"; "patching shows where the answer is formed" | One sign shown, three random directions, steps far beyond natural scale; patching shows where a prompt difference arrives | Audit 2 |
-| "The probe beats the shallow controls and adds nothing to the parser"; "the answers do not express what the probe reads" | Controls at 50% by construction, an insensitive test; opposite signs by hypothesis type cancel | Audit 3 |
+| "The gold-probe direction is inert; the model-output direction flips answers" | One sign shown, three random directions, steps far beyond natural scale | Audit 2 |
 | Two adjacency experiments: "erasing adjacency removes a sixth of the dependence, beyond all 20 controls" | The first "removal" left the property readable; the second used a control that could not fail | Audits 4 and 5 |
-| "A pre-specified contrast"; "steering stays within the range of its controls" | Signs were read from the evaluated items too; false for three of the four models once both gold directions are counted | Audit 8 |
-| Eight bugs that reached a result or a run | `notes/log.md` | Ingest check, own review, audits 4 and 6 |
 
-More, including three of 14 November (first ranks read as chance; "the 7B model answers at chance"; an untuned "strongest text-only model"), are in report Section 6.
+The other retractions, each with the review that caught it, are in report Section 6.
 
 ## Limitations
 
-- Interventions on models of up to 3 billion parameters whose answers do not follow validity. The 7B model follows it weakly, was run in 4-bit quantisation, and was not intervened on (a test was costed and not run; report Section 9). Two benchmarks; linear probes. Nothing here says what a model that can do the task would show.
-- Claim 3: four models, three of one family; at most one responding layer per model at the end of the hypothesis; an erasure that removes about half of the readable adjacency on held-out items. "No intervention shows" is not "unused".
+- Interventions on models of up to 3 billion parameters whose answers do not follow validity. The 7B model follows it weakly, was run in 4-bit quantisation, and was not intervened on. Two benchmarks; linear probes. Nothing here says what a model that can do the task would show.
+- Claim 3: four models, three of one family. "No intervention shows" is not "unused".
 - The stronger baselines, the debiased pool, the within-string statistics and every corrected analysis were introduced after seeing results; the pre-registered analysis is reported next to them (report Section 3.4).
 
 The same page as a file: `RESULTS.md`. How the story unfolded, in plain language: `EXPLAINER.md`, "Start here".
@@ -104,6 +99,10 @@ Behaviour, separating bias from chance:
 | Qwen2.5-7B (4-bit) | Corr2Cause pool | zero-shot | 2400 | 0.09 | 0.496 [0.485, 0.508] | 0.500 | 0.594 [0.572, 0.618] | 0.601 [0.582, 0.620] | informative (AUROC CI above 0.5) |
 | Qwen2.5-7B (4-bit) | Corr2Cause debiased pool | zero-shot | 2400 | 0.07 | 0.506 [0.496, 0.517] | 0.500 | 0.514 [0.490, 0.536] | 0.525 [0.505, 0.543] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-7B (4-bit) | CLadder | zero-shot | 3000 | 0.49 | 0.544 [0.520, 0.568] | 0.500 | 0.570 [0.541, 0.601] | 0.534 [0.511, 0.555] | informative (AUROC CI above 0.5) |
+| Gemma-2-9B | Corr2Cause test | zero-shot | 1162 | 0.02 | 0.842 [0.803, 0.888] | 0.845 | 0.553 [0.496, 0.602] | 0.842 [0.800, 0.893] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-9B | Corr2Cause pool | zero-shot | 2400 | 0.01 | 0.505 [0.501, 0.508] | 0.500 | 0.574 [0.552, 0.597] | 0.598 [0.578, 0.619] | informative (AUROC CI above 0.5) |
+| Gemma-2-9B | Corr2Cause debiased pool | zero-shot | 2400 | 0.01 | 0.507 [0.503, 0.512] | 0.500 | 0.512 [0.490, 0.535] | 0.517 [0.502, 0.531] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-9B | CLadder | zero-shot | 3000 | 0.75 | 0.566 [0.546, 0.586] | 0.500 | 0.598 [0.569, 0.626] | 0.555 [0.536, 0.575] | informative (AUROC CI above 0.5) |
 
 <sub>Source: `results/answer_bias.json`</sub><br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>
 

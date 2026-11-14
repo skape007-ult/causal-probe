@@ -1,0 +1,26 @@
+[select] layer 1: C=0.01 0.523 C=0.1 0.559 C=1 0.551
+[select] layer 3: C=0.01 0.546 C=0.1 0.584 C=1 0.589
+[select] layer 5: C=0.01 0.567 C=0.1 0.608 C=1 0.613
+[select] layer 7: C=0.01 0.621 C=0.1 0.661 C=1 0.688
+[select] layer 9: C=0.01 0.644 C=0.1 0.674 C=1 0.686
+[select] layer 11: C=0.01 0.621 C=0.1 0.665 C=1 0.670
+[select] layer 13: C=0.01 0.624 C=0.1 0.653 C=1 0.663
+[select] layer 15: C=0.01 0.618 C=0.1 0.648 C=1 0.674
+[select] layer 17: C=0.01 0.626 C=0.1 0.661 C=1 0.671
+[select] layer 19: C=0.01 0.634 C=0.1 0.701 C=1 0.703
+[select] layer 21: C=0.01 0.660 C=0.1 0.694 C=1 0.701
+[select] layer 23: C=0.01 0.683 C=0.1 0.717 C=1 0.731
+[select] layer 25: C=0.01 0.701 C=0.1 0.745 C=1 0.729
+[select] layer 27: C=0.01 0.701 C=0.1 0.734 C=1 0.714
+[select] layer 29: C=0.01 0.690 C=0.1 0.720 C=1 0.724
+[select] layer 31: C=0.01 0.666 C=0.1 0.695 C=1 0.699
+[select] layer 33: C=0.01 0.657 C=0.1 0.690 C=1 0.710
+[select] layer 35: C=0.01 0.649 C=0.1 0.667 C=1 0.692
+[select] layer 36: C=0.01 0.661 C=0.1 0.681 C=1 0.685
+site: content_end, layer 25, C 0.1 (quick_select)
+143 directions fitted [88s]
+Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<05:24,  1.33it/s]Loading weights:  23%|██▎       | 101/434 [00:00<00:02, 158.03it/s]Loading weights:  35%|███▌      | 154/434 [00:01<00:01, 165.55it/s]Loading weights:  44%|████▍     | 191/434 [00:01<00:01, 169.70it/s]Loading weights:  51%|█████     | 221/434 [00:01<00:01, 160.39it/s]Loading weights:  56%|█████▋    | 245/434 [00:01<00:01, 160.63it/s]Loading weights:  62%|██████▏   | 267/434 [00:01<00:01, 161.34it/s]Loading weights:  67%|██████▋   | 291/434 [00:01<00:00, 175.56it/s]Loading weights:  72%|███████▏  | 312/434 [00:02<00:00, 178.53it/s]Loading weights:  77%|███████▋  | 333/434 [00:02<00:00, 169.41it/s]Loading weights:  81%|████████  | 352/434 [00:02<00:00, 165.53it/s]Loading weights:  86%|████████▋ | 375/434 [00:02<00:00, 160.00it/s]Loading weights:  90%|█████████ | 392/434 [00:02<00:00, 160.39it/s]Loading weights:  95%|█████████▍| 412/434 [00:02<00:00, 155.95it/s]Loading weights: 100%|██████████| 434/434 [00:02<00:00, 155.31it/s]
+[timing] projected 7.0 min for the remaining 145 items
+gold_probe      slope -0.080/s | vs isotropic: percentile 0.29 | vs shuffled_probe: percentile 0.25, x0.4 its median
+gold_diffmeans  slope +0.738/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 1.00, x2.3 its median
+model_out       slope +0.810/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x3.7 its median

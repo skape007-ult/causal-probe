@@ -120,7 +120,7 @@
 **Ideas to come away with.**
 
 - *The unit of a push matters.* Vectors are scaled by s, the root-mean-square distance of an activation from the layer's mean activation. Along the gold probe's weight direction, one unit of s is about 63 natural standard deviations for Qwen2.5-1.5B on the original pool and about 280 on the debiased pool. "We pushed hard and little happened" and "we pushed a realistic amount" are different statements.
-- *A control must be of the same kind as the thing tested.* The gold probe direction is compared with 20 probe directions fitted to shuffled labels. The share of those controls with a smaller slope, in absolute size, is 20% and 85% (original pool, 0.5B and 1.5B) and 75% and 65% (debiased pool). The report's wording is "within the range of label-free directions of the same kind". With twenty controls and one site the experiment "neither shows nor excludes a causal role".
+- *A control must be of the same kind as the thing tested.* The gold probe direction is compared with 20 probe directions fitted to shuffled labels. The share of those controls with a smaller slope, in absolute size, is 20% and 80% (original pool, 0.5B and 1.5B) and 75% and 45% (debiased pool). The report's wording is "within the range of label-free directions of the same kind". With twenty controls and one site the experiment "neither shows nor excludes a causal role".
 - *Patching found a route, not a decision.* The models do not prefer the valid member of a pair: the mean difference in answer score between the two prompts is +0.009 [-0.060, +0.078] for Qwen2.5-0.5B. So the heat-maps show where *any* prompt difference reaches the final token.
 
 **Figures.**

@@ -1,0 +1,18 @@
+Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<04:26,  1.63it/s]Loading weights:  23%|██▎       | 99/434 [00:00<00:01, 174.60it/s]Loading weights:  33%|███▎      | 142/434 [00:00<00:01, 181.48it/s]Loading weights:  40%|████      | 175/434 [00:01<00:01, 174.45it/s]Loading weights:  46%|████▋     | 201/434 [00:01<00:01, 170.98it/s]Loading weights:  52%|█████▏    | 224/434 [00:01<00:01, 167.09it/s]Loading weights:  56%|█████▌    | 244/434 [00:01<00:01, 157.32it/s]Loading weights:  62%|██████▏   | 267/434 [00:01<00:01, 164.56it/s]Loading weights:  67%|██████▋   | 291/434 [00:01<00:00, 163.55it/s]Loading weights:  71%|███████   | 309/434 [00:02<00:00, 166.55it/s]Loading weights:  75%|███████▌  | 327/434 [00:02<00:00, 158.21it/s]Loading weights:  81%|████████  | 351/434 [00:02<00:00, 171.03it/s]Loading weights:  85%|████████▌ | 369/434 [00:02<00:00, 164.81it/s]Loading weights:  89%|████████▉ | 387/434 [00:02<00:00, 156.25it/s]Loading weights:  93%|█████████▎| 403/434 [00:02<00:00, 156.31it/s]Loading weights:  98%|█████████▊| 425/434 [00:02<00:00, 169.20it/s]Loading weights: 100%|██████████| 434/434 [00:02<00:00, 159.37it/s]
+[hyp] pair 0/60 29s
+[hyp] pair 10/60 140s
+[hyp] pair 20/60 213s
+[hyp] pair 30/60 312s
+[hyp] pair 40/60 405s
+[hyp] pair 50/60 517s
+[hyp] n=60 mean delta 0.673 frac>0 0.60; final-position recovery by layer: 0.00 -0.00 -0.00 0.00 0.00 0.00 0.00 0.00 -0.00 -0.00 -0.01 0.03 0.12 0.73 0.92 0.98 0.98 0.98 1.00
+[hyp] components: top ['L20H14', 'L18H9', 'L23H1', 'L19H13', 'MLP24', 'L24H5', 'MLP31', 'MLP19', 'MLP30', 'L26H3'] pearson 0.99
+[prem] pair 0/60 676s
+[prem] pair 10/60 811s
+[prem] pair 20/60 902s
+[prem] pair 30/60 1024s
+[prem] pair 40/60 1138s
+[prem] pair 50/60 1276s
+[prem] n=60 mean delta 0.002 frac>0 0.52; final-position recovery by layer: -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.01 0.03 0.12 0.77 0.92 0.97 0.98 0.98 1.00
+[prem] components: top ['MLP19', 'MLP24', 'L19H13', 'L23H1', 'L20H14', 'MLP31', 'MLP30', 'L26H3', 'L24H5', 'MLP20'] pearson 0.99
+done 23.9 min

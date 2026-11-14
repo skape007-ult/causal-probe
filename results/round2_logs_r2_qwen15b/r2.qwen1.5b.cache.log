@@ -1,0 +1,22 @@
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<03:31,  1.59it/s]Loading weights:  47%|████▋     | 159/338 [00:00<00:00, 278.59it/s]Loading weights:  68%|██████▊   | 231/338 [00:01<00:00, 274.19it/s]Loading weights:  83%|████████▎ | 282/338 [00:01<00:00, 273.32it/s]Loading weights:  96%|█████████▌| 324/338 [00:01<00:00, 282.81it/s]Loading weights: 100%|██████████| 338/338 [00:01<00:00, 243.49it/s]
+[cache] qwen1.5b/c2c_probe chunk 1/10 11.91 items/s
+[cache] qwen1.5b/c2c_probe chunk 2/10 12.79 items/s
+[cache] qwen1.5b/c2c_probe chunk 3/10 12.65 items/s
+[cache] qwen1.5b/c2c_probe chunk 4/10 12.26 items/s
+[cache] qwen1.5b/c2c_probe chunk 5/10 11.63 items/s
+[cache] qwen1.5b/c2c_probe chunk 6/10 11.58 items/s
+[cache] qwen1.5b/c2c_probe chunk 7/10 11.14 items/s
+[cache] qwen1.5b/c2c_probe chunk 8/10 11.03 items/s
+[cache] qwen1.5b/c2c_probe chunk 9/10 11.05 items/s
+[cache] qwen1.5b/c2c_probe chunk 10/10 10.93 items/s
+[cache] qwen1.5b/c2c_debiased chunk 1/10 9.98 items/s
+[cache] qwen1.5b/c2c_debiased chunk 2/10 10.29 items/s
+[cache] qwen1.5b/c2c_debiased chunk 3/10 10.40 items/s
+[cache] qwen1.5b/c2c_debiased chunk 4/10 10.59 items/s
+[cache] qwen1.5b/c2c_debiased chunk 5/10 10.67 items/s
+[cache] qwen1.5b/c2c_debiased chunk 6/10 10.65 items/s
+[cache] qwen1.5b/c2c_debiased chunk 7/10 10.63 items/s
+[cache] qwen1.5b/c2c_debiased chunk 8/10 10.58 items/s
+[cache] qwen1.5b/c2c_debiased chunk 9/10 10.55 items/s
+[cache] qwen1.5b/c2c_debiased chunk 10/10 10.49 items/s
+done in 8.4 min

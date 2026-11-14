@@ -1,0 +1,16 @@
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<01:19,  4.24it/s]Loading weights:  22%|██▏       | 76/338 [00:00<00:00, 277.25it/s]Loading weights:  35%|███▍      | 118/338 [00:00<00:00, 285.29it/s]Loading weights:  46%|████▌     | 154/338 [00:00<00:00, 272.11it/s]Loading weights:  55%|█████▌    | 186/338 [00:00<00:00, 269.83it/s]Loading weights:  65%|██████▍   | 219/338 [00:00<00:00, 273.88it/s]Loading weights:  74%|███████▎  | 249/338 [00:00<00:00, 275.30it/s]Loading weights:  82%|████████▏ | 278/338 [00:01<00:00, 274.95it/s]Loading weights:  91%|█████████ | 307/338 [00:01<00:00, 249.38it/s]Loading weights: 100%|██████████| 338/338 [00:01<00:00, 257.46it/s]
+[hyp] pair 0/60 17s
+[hyp] pair 10/60 45s
+[hyp] pair 20/60 82s
+[hyp] pair 30/60 109s
+[hyp] pair 40/60 137s
+[hyp] pair 50/60 162s
+[hyp] n=60 mean delta 0.409 frac>0 0.60; final-position recovery by layer: 0.00 -0.01 -0.01 -0.00 -0.00 -0.01 -0.00 -0.00 0.02 0.62 0.82 0.92 0.98 1.00 1.00
+[prem] pair 0/60 195s
+[prem] pair 10/60 229s
+[prem] pair 20/60 274s
+[prem] pair 30/60 308s
+[prem] pair 40/60 343s
+[prem] pair 50/60 374s
+[prem] n=60 mean delta -0.022 frac>0 0.45; final-position recovery by layer: 0.01 0.00 0.01 0.01 0.01 0.01 0.00 0.00 0.02 0.62 0.83 0.94 0.99 1.00 1.00
+done 6.7 min

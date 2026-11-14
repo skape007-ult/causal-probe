@@ -1,0 +1,160 @@
+{
+ "model": "qwen1.5b",
+ "tag": "c2c_probe",
+ "position": "content_end",
+ "layer": 17,
+ "layer_selection": "quick_select",
+ "n_layers": 28,
+ "probe_C": 1.0,
+ "alpha": 1.0,
+ "s_unit": 12.247529983520508,
+ "control_labels_shuffled": "over the whole item set",
+ "n_items": 150,
+ "baseline_max_abs_diff_vs_cache": 0.04840660095214844,
+ "families": {
+  "isotropic": {
+   "abs_slope_per_s": {
+    "n": 100,
+    "median": 0.3067643642425537,
+    "p90": 0.8615054488182068,
+    "max": 1.6537055969238281,
+    "rms": 0.5151519775390625
+   },
+   "abs_slope_per_own_sd": {
+    "n": 100,
+    "median": 0.007818176411092281,
+    "p90": 0.02367696538567543,
+    "max": 0.045022137463092804,
+    "rms": 0.014042067341506481
+   },
+   "own_sd_over_s_median": 0.024495769292116165,
+   "frac_sign_consistent_directions": 0.47
+  },
+  "shuffled_probe": {
+   "abs_slope_per_s": {
+    "n": 20,
+    "median": 0.34032726287841797,
+    "p90": 0.6296451091766357,
+    "max": 0.8481561541557312,
+    "rms": 0.4275876581668854
+   },
+   "abs_slope_per_own_sd": {
+    "n": 20,
+    "median": 0.000904426327906549,
+    "p90": 0.0017214069375768304,
+    "max": 0.0020572009962052107,
+    "rms": 0.0011127734323963523
+   },
+   "own_sd_over_s_median": 0.002582311164587736,
+   "frac_sign_consistent_directions": 0.5
+  },
+  "shuffled_diffmeans": {
+   "abs_slope_per_s": {
+    "n": 20,
+    "median": 0.7844678163528442,
+    "p90": 1.694132685661316,
+    "max": 2.506636142730713,
+    "rms": 1.1233025789260864
+   },
+   "abs_slope_per_own_sd": {
+    "n": 20,
+    "median": 0.3125690221786499,
+    "p90": 0.7724847793579102,
+    "max": 1.186148762702942,
+    "rms": 0.4896835684776306
+   },
+   "own_sd_over_s_median": 0.3843527138233185,
+   "frac_sign_consistent_directions": 0.7
+  }
+ },
+ "real": {
+  "gold_probe": {
+   "slope_per_s": {
+    "est": 0.6934795379638672,
+    "lo": 0.6503183141350746,
+    "hi": 0.7385035693645478,
+    "n": 150,
+    "n_groups": 96
+   },
+   "own_sd_over_s": 0.014280560426414013,
+   "slope_per_own_sd": 0.009903277270495892,
+   "frac_items_positive_slope": 1.0,
+   "versus": {
+    "isotropic": {
+     "percentile_of_abs_slope_per_s": 0.81,
+     "ratio_to_median_abs_slope_per_s": 2.2606263160705566,
+     "ratio_to_max_abs_slope_per_s": 0.41934889554977417,
+     "percentile_of_abs_slope_per_own_sd": 0.61,
+     "ratio_to_median_abs_slope_per_own_sd": 1.2666990756988525
+    },
+    "shuffled_probe": {
+     "percentile_of_abs_slope_per_s": 0.95,
+     "ratio_to_median_abs_slope_per_s": 2.037684440612793,
+     "ratio_to_max_abs_slope_per_s": 0.8176319599151611,
+     "percentile_of_abs_slope_per_own_sd": 1.0,
+     "ratio_to_median_abs_slope_per_own_sd": 10.949789047241211
+    }
+   },
+   "matched_control_family": "shuffled_probe"
+  },
+  "gold_diffmeans": {
+   "slope_per_s": {
+    "est": 0.5016843676567078,
+    "lo": 0.45053717121481895,
+    "hi": 0.5523097515106201,
+    "n": 150,
+    "n_groups": 96
+   },
+   "own_sd_over_s": 0.4794681668281555,
+   "slope_per_own_sd": 0.24054162204265594,
+   "frac_items_positive_slope": 0.94,
+   "versus": {
+    "isotropic": {
+     "percentile_of_abs_slope_per_s": 0.72,
+     "ratio_to_median_abs_slope_per_s": 1.6354058980941772,
+     "ratio_to_max_abs_slope_per_s": 0.30336976051330566,
+     "percentile_of_abs_slope_per_own_sd": 1.0,
+     "ratio_to_median_abs_slope_per_own_sd": 30.7669734954834
+    },
+    "shuffled_diffmeans": {
+     "percentile_of_abs_slope_per_s": 0.3,
+     "ratio_to_median_abs_slope_per_s": 0.6395217776298523,
+     "ratio_to_max_abs_slope_per_s": 0.20014242827892303,
+     "percentile_of_abs_slope_per_own_sd": 0.45,
+     "ratio_to_median_abs_slope_per_own_sd": 0.7695631980895996
+    }
+   },
+   "matched_control_family": "shuffled_diffmeans"
+  },
+  "model_out": {
+   "slope_per_s": {
+    "est": 3.714487314224243,
+    "lo": 3.534863030910492,
+    "hi": 3.8957997262477875,
+    "n": 150,
+    "n_groups": 96
+   },
+   "own_sd_over_s": 0.056798480451107025,
+   "slope_per_own_sd": 0.21097725629806519,
+   "frac_items_positive_slope": 1.0,
+   "versus": {
+    "isotropic": {
+     "percentile_of_abs_slope_per_s": 1.0,
+     "ratio_to_median_abs_slope_per_s": 12.108602523803711,
+     "ratio_to_max_abs_slope_per_s": 2.2461602687835693,
+     "percentile_of_abs_slope_per_own_sd": 1.0,
+     "ratio_to_median_abs_slope_per_own_sd": 26.98548126220703
+    },
+    "shuffled_probe": {
+     "percentile_of_abs_slope_per_s": 1.0,
+     "ratio_to_median_abs_slope_per_s": 10.914458274841309,
+     "ratio_to_max_abs_slope_per_s": 4.379485607147217,
+     "percentile_of_abs_slope_per_own_sd": 1.0,
+     "ratio_to_median_abs_slope_per_own_sd": 233.27191162109375
+    }
+   },
+   "matched_control_family": "shuffled_probe"
+  }
+ },
+ "minutes": 4.3
+}

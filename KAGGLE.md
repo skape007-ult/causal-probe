@@ -275,21 +275,56 @@ run shows the result within a minute: it must print `platform: kaggle | archives
 
 Decision D32 in `EXPLAINER.md`. Quota is no longer the limit; two concurrent sessions and Sunday 10:00 are.
 **Nothing is launched after Saturday 18:00 (Toronto).** Every notebook below is one *Save & Run All*, writes its
-archives and `STATUS.txt` to `/kaggle/working/kaggle_out`, and is pinned to commit `08d99b1` (shown in its first
+archives and `STATUS.txt` to `/kaggle/working/kaggle_out`, and is pinned to commit `df7313e` (shown in its first
 code cell).
 
-| | Notebook | Run folder in `kaggle_in/` | HF secret | GPU hours | When |
+| | Notebook | Run folder in `kaggle_in/` | HF secret | GPU hours | State (Sat 14 Nov, morning) |
 |---|---|---|---|---|---|
-| B | `notebooks/kaggle_r2_qwen7b.ipynb` | `r2_qwen7b` | no | 1.5 – 3 | now |
-| C | `notebooks/kaggle_r2_qwen1.5b.ipynb` | `r2_qwen15b` | no | about 1.25 | running (pin `6d9ce8d`) |
-| D | `notebooks/kaggle_r2_gemma.ipynb` | `r2_gemma` | **yes** | 2.5 – 4 | next free slot |
-| E | `notebooks/kaggle_r3_gemma9b.ipynb` | `r3_gemma9b` | **yes** (licence of `google/gemma-2-9b-it` accepted) | 2 – 3.5; ends within about 15 minutes if it cannot run | after D |
-| F | `notebooks/kaggle_r3_patch240_qwen3b.ipynb` | `r3p_qwen3b` | no | 1 – 2.5 | any time |
-| F | `notebooks/kaggle_r3_patch240_gemma.ipynb` | `r3p_gemma` | **yes** | 1 – 2.5 | any time |
-| G | `notebooks/kaggle_r3_controls100_qwen0.5b.ipynb` | `r3c_qwen05b` | no | about 1 | any time (the borderline result exists for this model) |
-| G | `notebooks/kaggle_r3_controls100_qwen1.5b.ipynb` | `r3c_qwen15b` | no | 1.5 – 2 | only if I say so after C is ingested |
-| G | `notebooks/kaggle_r3_controls100_qwen3b.ipynb` | `r3c_qwen3b` | no | 2.5 – 4.5 | only if I say so after A is ingested |
-| G | `notebooks/kaggle_r3_controls100_gemma.ipynb` | `r3c_gemma` | **yes** | 2.5 – 4.5 | only if I say so after D is ingested |
+| A | `notebooks/kaggle_r2_qwen3b.ipynb` | `r2_qwen3b` | no | 2.3 (measured) | **done, ingested, audited** |
+| C | `notebooks/kaggle_r2_qwen1.5b.ipynb` | `r2_qwen15b` | no | 1.2 (measured) | **done, ingested, audited** |
+| B | `notebooks/kaggle_r2_qwen7b.ipynb` | `r2_qwen7b` | no | 1.5 – 3 | launched Fri night from pin `6d9ce8d` (see the note on B below) |
+| D | `notebooks/kaggle_r2_gemma.ipynb` | `r2_gemma` | **yes** | 2.5 – 4 | launched Fri night from pin `6d9ce8d` |
+| **H** | `notebooks/kaggle_r3_settle_qwen3b.ipynb` | `r3s_qwen3b` | no | about 1.5 | **your decision; my recommendation is to run it.** Designed to decide the Qwen 3B steering arm; test and threshold fixed in advance; second version, not re-reviewed |
+| H | `notebooks/kaggle_r3_settle_qwen1.5b.ipynb` | `r3s_qwen15b` | no | about 1 | the same for the Qwen 1.5B arm (gold probe, negative slope) |
+| E | `notebooks/kaggle_r3_gemma9b.ipynb` | `r3_gemma9b` | **yes** (licence of `google/gemma-2-9b-it` accepted) | 2 – 3.5; ends within about 15 minutes if it cannot run | ready |
+| F | `notebooks/kaggle_r3_patch240_qwen3b.ipynb` | `r3p_qwen3b` | no | about 2 | ready |
+| F | `notebooks/kaggle_r3_patch240_gemma.ipynb` | `r3p_gemma` | **yes** | 1 – 2.5 | ready |
+| G | `notebooks/kaggle_r3_controls100_qwen3b.ipynb` | `r3c_qwen3b` | no | about 3 | ready, **no longer recommended** (the audit: 100 controls on the same split refine one percentile and decide nothing; H contains the 100-control answer for the arm in question) |
+| G | `notebooks/kaggle_r3_controls100_qwen1.5b.ipynb` | `r3c_qwen15b` | no | about 2 | ready, not recommended (same reason) |
+| G | `notebooks/kaggle_r3_controls100_qwen0.5b.ipynb` | `r3c_qwen05b` | no | about 1 | ready, low priority (places the borderline end-of-hypothesis contrast of Qwen 0.5B among 100 controls) |
+| G | `notebooks/kaggle_r3_controls100_gemma.ipynb` | `r3c_gemma` | **yes** | 2.5 – 4.5 | not before D is ingested (it stops early otherwise) |
+
+**Note on B.** B was launched from the notebook pinned to `6d9ce8d`. That version first tries to load Qwen 7B in 4-bit; if that works,
+the run is fine. If 4-bit loading failed and it fell back to float16 over two GPUs, the cache stage will have failed at its first
+batch (the collector bug fixed in `041f11e`), the summary will show `FAILED` for `r2.qwen7b.behaviour.cache` and there will be no
+activation archive. In that case rerun B from the current notebook; nothing from the failed run needs keeping. Runs from `6d9ce8d`
+write no `STATUS.txt`; the ingest accepts them without it.
+
+## H: the settle run (added Sat 14 Nov after the eighth audit; second version after the ninth)
+
+Two steering comparisons at the end of the hypothesis ranked first among 21 (Qwen 3B: gold difference of class means, +0.74 per s;
+Qwen 1.5B: gold probe weights, −0.25 per s). The eighth audit found each undecided between a chance first rank (they are 2 of 12
+comparisons on that pool, 24 in all) and a modest real effect, and found that more controls on the same split would not decide it.
+`scripts/07d_steering_settle.py` is the run designed to decide it. Its first version was reviewed before it ran (ninth audit,
+`notes/audit_settle_code_raw.md`) and three of its comparisons would not have meant what I had written; this is the second version.
+
+- **Primary test:** the direction refitted on the mirror half of the 25 blocks and steered on 150 items of the other half, one-sided
+  in the sign of the first run, against **500** control directions fitted to labellings that have both balances of the gold label
+  (half valid within every hypothesis string; one valid and one invalid item per premise).
+- **Threshold 0.05/24** (the real slope beyond all 500 controls), because this arm was picked as the most extreme of 24. A p between
+  that and 0.05 means only that the direction's slope is reproducibly in the tail of its controls, which picking the most extreme of
+  24 produces by itself: refitting on the other half gives nearly the same vector (cosine 0.84 for Qwen 3B), so it is not a new draw.
+- The label beyond adjacency (the label minus its mean in its string-and-adjacency cell) against 100 controls built the same way;
+  the adjacency direction itself; two neighbouring layers; smaller steps; the original split with 100 controls of each kind.
+- The primary configuration runs first, and the directions are saved before the model loads, so a run that is cut short still
+  leaves the primary test or at least everything needed to read what was computed.
+
+Test and threshold are in `notes/log.md` ("Ninth independent audit ... and the AMENDED pre-registration"). What each outcome would do
+to the wording of claim 3 is in `notes/claim3_proposed_rewording.md`, option C. The script refuses to start unless the 20-control
+result of the model is in its checkout (it is, from pin df7313e on). **What has and has not been tested:** end to end with a stand-in
+for the model (both arms, smoke configuration, resume from a partial file); every control family checked to be calibrated under a
+response unrelated to any label (exact computation on the Qwen 3B and Qwen 1.5B activations); **not** run on a GPU, and the second
+version has **not** been reviewed again by anyone but me.
 
 The G notebooks for Qwen 1.5B, 3B and Gemma use the sites of the 20-control run, which are recorded in result files
 that only exist in the repository after that run is ingested. I re-pin those three notebooks then. **Launched

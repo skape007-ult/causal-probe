@@ -64,8 +64,9 @@ def main():
     a = ap.parse_args()
     jobs = [j for j in a.jobs.split(",") if j]
     assert all(j in JOBS for j in jobs), jobs
-    if a.tiny:                      # a smoke test never shares markers, status or output names with a real run
+    if a.tiny:                      # a smoke test never shares markers, status, result or selection files with a real run
         a.run = a.run + "_tiny"
+        os.environ["CAUSAL_PROBE_RESULTS"] = str(Path(os.environ.get("CAUSAL_PROBE_RESULTS", ROOT / "results")) / "_tiny")
     fallback = dict(p.split(":") for p in a.fallback.split(",") if p)
 
     sys.path.insert(0, str(ROOT / "src"))
@@ -125,10 +126,8 @@ def main():
         return ok
 
     stage("data", "scripts/download_data.py", minutes=30)
-    if stage("environment", "scripts/kaggle_env.py", minutes=10):
-        src = RESULTS / "kaggle_environment.json"
-        if src.exists():
-            shutil.copyfile(src, RESULTS / f"round2_environment_{a.run}.json")
+    # the environment record goes to a per-run file; results/kaggle_environment.json stays the first Kaggle run's record
+    stage("environment", "scripts/kaggle_env.py", "--out", f"round2_environment_{a.run}.json", minutes=10)
 
     # the smoke test builds the two caches in full (the selection/report split needs whole blocks);
     # only the number of items each intervention stage runs is reduced

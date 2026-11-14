@@ -176,14 +176,16 @@ def main():
         got = env.get("git_commit") or ""
         okc = bool(commit) and got.startswith(commit[:7]) and commit.startswith(got[:7])
         older_pin = False
-        if a.run and not okc and got:
+        if a.run and not okc and re.fullmatch(r"[0-9a-f]{40}", got or ""):
             # round-2 notebooks were re-pinned several times on 13 Nov; a run from an earlier round-2 pin is valid
             # (its raw outputs are re-analysed here) as long as that commit lies between the first round-2 pin and HEAD
             anc = lambda x, y: subprocess.run(["git", "merge-base", "--is-ancestor", x, y], cwd=ROOT).returncode == 0   # noqa: E731
             older_pin = okc = anc("3c7b87d", got) and anc(got, "HEAD")
             if older_pin:
                 notes.append(f"run used an earlier round-2 pin ({got[:7]}); current pin is {str(commit)[:7]}")
-                print(f"  note: run used the earlier round-2 pin {got[:7]} (current: {str(commit)[:7]}); accepted, raw outputs are re-analysed locally")
+                print(f"  note: run used the earlier round-2 pin {got[:7]} (current: {str(commit)[:7]}); accepted. Its result JSONs come from an older "
+                      f"analysis: re-run the analysis steps listed in notes/kaggle_ingest.md. Its steering controls on the debiased pool (07c) "
+                      f"cannot be re-analysed into the within-string version; they need the follow-up run.")
         print(f"  run used commit {got[:12] or '?'}; expected {str(commit)[:12]}  -> {'ok' if okc else 'MISMATCH'}")
         print(f"  torch {env.get('torch')}, transformers {env.get('transformers')}, GPU {env.get('gpus')}")
         if not okc:
@@ -198,7 +200,7 @@ def main():
         exp = status.get("planned", [])
         if not exp:
             problems.append(f"results/round2_status_{a.run}.json is missing or lists no planned stages (wrong folder, or the run never started)")
-        if status.get("tiny") or a.run.endswith("_tiny"):
+        if status.get("tiny") or a.run.endswith("_tiny") or any(re.search(r"round2_status_.*_tiny\.json$", n) for n in names):
             sys.exit("ERROR: this is the output of a smoke test (SMOKE_TEST = True; a few items per stage). It is never ingested.")
         want = notebook_setting(a.run, "JOBS")
         if want is not None and sorted(status.get("jobs", [])) != sorted(want.split(",")):
@@ -255,6 +257,9 @@ def main():
 
     # ------------------------------------------------------------------ 4. results
     print("== 4. extracting results.zip (only files the run created or changed) ==")
+    run_commit = ((env or {}).get("git_commit") or "") if env else ""
+    if not re.fullmatch(r"[0-9a-f]{40}", run_commit or ""):
+        run_commit = commit
     new, skipped, conflicts = [], 0, []
     for n in sorted(names):
         if n.endswith("/") or not n.startswith("results/"):
@@ -263,19 +268,23 @@ def main():
                       or n.startswith("results/kaggle_logs/")):
             continue                           # round-1 records; this run's own are round2_*_<run>
         blob = R.read(n)
-        if commit and git_blob(commit, n) == blob:
-            skipped += 1                       # unchanged copy of a file from the pinned commit
+        # Compare with the commit the RUN used (not the current pin): the zip holds results/ as of that commit. Comparing
+        # with a newer pin would take every file changed locally since for "changed by the run" and overwrite it with a
+        # stale copy (sixth audit, F5).
+        base = git_blob(run_commit, n) if run_commit else None
+        if base is not None and base == blob:
+            skipped += 1                       # unchanged copy of a file from the commit the run used
             continue
         dst = RESULTS / Path(n).relative_to("results")
-        if dst.exists() and dst.read_bytes() != blob and git_blob(commit, n) is not None and git_blob("HEAD", n) != git_blob(commit, n):
-            conflicts.append(n)                # changed both by the run and locally since the pin
+        if dst.exists() and dst.read_bytes() != blob and (base is None or dst.read_bytes() != base):
+            conflicts.append(n)                # the run wrote it, and the local copy is neither the run's base nor the run's result
             dst = dst.with_name(dst.name + ".kaggle")
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_bytes(blob)
         new.append(n)
     print(f"  wrote {len(new)} files, skipped {skipped} unchanged")
     for c in conflicts:
-        print(f"  CONFLICT: {c} was changed both on Kaggle and locally; Kaggle's copy saved as {c}.kaggle")
+        print(f"  CONFLICT: {c} exists locally in a different version; the run's copy saved as {c}.kaggle (compare and keep the right one)")
     report.update(results_written=new, conflicts=conflicts)
 
     # ------------------------------------------------------------------ 5. caches

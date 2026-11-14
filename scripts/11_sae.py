@@ -104,8 +104,8 @@ def stage_features():
            "n_discovery": int(disc.sum()), "n_eval": int(evl.sum()), "structures": STRUCTS, "layers": {}}
     md = ["# SAE features: top-activating examples\n",
           "Features were selected on nonsense stories 0-4 (AUROC for one graph type vs the rest) and are shown with "
-          "their held-out AUROC on nonsense stories 5-9. 'My reading' is a human-style label written after looking at "
-          "the examples; 'unclear' is used freely.\n"]
+          "their held-out AUROC on nonsense stories 5-9. No interpretive labels are attached here; readings of individual features are in the report (Appendix C) "
+          "and are the author's.\n"]
     rng = np.random.default_rng(SEED)
     for block in SAE_LAYERS:
         sae = load_sae(block)

@@ -5,7 +5,9 @@ Kaggle's image also has a /content folder, so the notebook wrote its archives to
 only /kaggle/working after "Save & Run All", and 72 minutes of GPU output were lost. Every notebook now
   1. chooses its output directory by platform (Kaggle is tested first),
   2. checks before any GPU time is spent that this directory is under the path the platform keeps,
-  3. ends with a cell that lists the output directory and raises if an expected archive is not there.
+  3. ends with a cell that lists the output directory, writes STATUS.txt (OK / FAILED / SKIPPED) into it and prints a banner.
+     It does not raise: whether Kaggle keeps the output of a version whose last cell failed is not known, so the
+     check must not depend on it. scripts/kaggle_ingest.py refuses a run whose STATUS.txt is missing or not OK.
 tests/test_notebook_cells.py runs these cells' functions, including the case that went wrong.
 """
 
@@ -82,13 +84,17 @@ else:
     print("not on Colab: nothing to do in this cell")
 '''
 
-# Needs: os, PLATFORM, WORK, PERSIST, under(), expected (list of archive names), not_finished (str or "").
+# Needs: os, PLATFORM, WORK, PERSIST, under(), COMMIT, RUN (the run's name), expected (list of archive names),
+# not_finished (str or ""), skipped (str or ""). Defines OUTPUT_STATE.
 FINAL_CHECK = '''
 # ---- final check: are the archives where this platform keeps them? --------------
-import zipfile
+# Writes STATUS.txt into the output directory (first line: OK, FAILED or SKIPPED), prints a banner, and ends normally:
+# it never raises, because a version whose last cell failed might not keep its output. The ingest on the laptop
+# refuses a run whose STATUS.txt is missing or does not say OK.
+import datetime, zipfile
 
 def check_outputs(work, persist, expected):
-    """List the output directory with sizes. Returns the list of problems (empty: all expected archives are in place)."""
+    \"\"\"List the output directory with sizes. Returns the list of problems (empty: all expected archives are in place).\"\"\"
     problems, total = [], 0
     print("output directory:", work)
     for root, _, fs in sorted(os.walk(work)):
@@ -108,15 +114,57 @@ def check_outputs(work, persist, expected):
             problems.append("expected archive is empty or not a zip file: " + p)
     return problems
 
-problems = ([not_finished] if not_finished else []) + check_outputs(WORK, PERSIST, expected)
-if problems:
-    print("\\n" + "!" * 100)
-    print("OUTPUT CHECK FAILED. Do not close this session before saving what is listed above by hand.")
-    for q in problems:
-        print("  - " + q)
-    print("!" * 100)
-    raise RuntimeError("OUTPUT CHECK FAILED: " + "; ".join(problems))
-print("\\nOUTPUT CHECK PASSED:", len(expected), "archive(s) in", WORK)
-print({"kaggle": "Download them from the Output tab of this saved version (folder kaggle_out).",
-       "colab": "They were handed to the browser by the cell above; if not, download them from the Files panel now."}.get(PLATFORM, ""))
+def write_status(work, state, run, commit, platform, expected, problems):
+    \"\"\"STATUS.txt in the output directory, and a copy inside the small results archive (results/round2_output_status_<run>.txt),
+    so that the status travels with the download even if STATUS.txt itself is not downloaded.\"\"\"
+    lines = [state, "run: " + run, "commit: " + commit, "platform: " + platform, "output directory: " + work,
+             "written: " + datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "archives:"]
+    for f in expected:
+        p = os.path.join(work, f)
+        lines.append("  " + f + "  " + (str(os.path.getsize(p)) + " bytes" if os.path.isfile(p) else "MISSING"))
+    lines.append("problems:" + ("" if problems else " none"))
+    lines += ["  - " + q for q in problems]
+    text = "\\n".join(lines) + "\\n"
+    with open(os.path.join(work, "STATUS.txt"), "w") as f:
+        f.write(text)
+    member = "results/round2_output_status_" + run + ".txt"
+    for f in expected:
+        p = os.path.join(work, f)
+        if f.startswith("results") and os.path.isfile(p) and zipfile.is_zipfile(p):
+            tmp = p + ".tmp"                      # rewritten rather than appended to, so that re-running this cell replaces the copy
+            with zipfile.ZipFile(p) as zi, zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as zo:
+                for it in zi.infolist():
+                    if it.filename != member:
+                        zo.writestr(it, zi.read(it.filename))
+                zo.writestr(member, text)
+            os.replace(tmp, p)
+    return text
+
+try:
+    problems = ([not_finished] if not_finished and not skipped else []) + check_outputs(WORK, PERSIST, expected)
+    OUTPUT_STATE = "SKIPPED" if skipped else ("FAILED" if problems else "OK")
+    if skipped:
+        problems = ["the run skipped itself: " + skipped] + problems
+    status_text = write_status(WORK, OUTPUT_STATE, RUN, COMMIT, PLATFORM, expected, problems)
+except Exception as e:                            # the check itself must not be what loses the output
+    OUTPUT_STATE, problems, status_text = "FAILED", ["the output check itself failed: %s: %s" % (type(e).__name__, e)], ""
+    try:
+        with open(os.path.join(WORK, "STATUS.txt"), "w") as f:
+            f.write("FAILED\\nrun: %s\\nproblems:\\n  - %s\\n" % (RUN, problems[0]))
+    except Exception:
+        pass
+bar = ("#" if OUTPUT_STATE == "OK" else "!") * 100
+print("\\n" + bar)
+if OUTPUT_STATE == "OK":
+    print("OUTPUT CHECK PASSED:", len(expected), "archive(s) and STATUS.txt in", WORK)
+    print({"kaggle": "Download the zip files and STATUS.txt from the Output tab of this saved version (folder kaggle_out).",
+           "colab": "The archives were handed to the browser by the cell above; if not, download them from the Files panel now."}.get(PLATFORM, ""))
+elif OUTPUT_STATE == "SKIPPED":
+    print("RUN SKIPPED, nothing to download. Reason: " + skipped)
+else:
+    print("OUTPUT CHECK FAILED. Save what is listed above by hand before this session ends. The ingest will refuse this run.")
+for q in problems:
+    print("  - " + q)
+print(bar)
+print("STATUS.txt, first line:", OUTPUT_STATE)
 '''

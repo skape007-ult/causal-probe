@@ -167,6 +167,8 @@ for m in s.get("models_run", []):
         expected.append(f"cache_{RUN}_{m}.zip")
 expected = list(dict.fromkeys(expected))
 zips = sorted(f for f in os.listdir(WORK) if f.endswith(".zip"))
+# a run that decided not to run (no access, not enough GPU memory): see the first cells and the runner's preflight
+skipped = globals().get("SKIP_REASON", "") or "; ".join(f"{m}: {why}" for m, why in s.get("skipped", {}).items() if not s.get("models_run"))
 '''
 
 
@@ -191,8 +193,8 @@ Read `KAGGLE.md` ("Round 2") in the repository first. **What this run does:** {r
 """ + (kaggle_how + "\n\n" + colab_how if kag else colab_how + "\n\n" + kaggle_how) + """
 
 The notebook works on either platform: the first code cell detects where it is running, writes the archives to the place that
-platform keeps, and stops before any GPU time is spent if it cannot. **The last cell lists the output directory with sizes and
-fails loudly if an expected archive is not there.**
+platform keeps, and stops before any GPU time is spent if it cannot. **The last cell lists the output directory with sizes,
+writes `STATUS.txt` there (first line `OK`, `FAILED` or `SKIPPED`) and prints a banner. Download `STATUS.txt` with the zip files.**
 
 Everything heavy happens in `scripts/gpu_round2.py`: each stage is time-limited, skipped if already done, and allowed to fail without
 stopping the rest. Afterwards put the downloaded files into `kaggle_in/""" + r["run"] + """/` on the laptop (see `notes/kaggle_ingest.md`).
@@ -212,7 +214,7 @@ SKIP_STAGES = ""           # comma-separated stage-name prefixes to skip, e.g. "
 """),
         code(SETUP_HEAD + PLATFORM_SETUP + COMMON_SETUP),
         code(CLONE), code(ENV), code(RUN), code(SUMMARY), code(COLAB_DOWNLOAD),
-        code(FINAL_CHECK),          # always the last cell: lists the output directory, raises if an archive is missing
+        code(FINAL_CHECK),          # always the last cell: lists the output directory, writes STATUS.txt, never raises
     ]
     return {"cells": cells, "nbformat": 4, "nbformat_minor": 5,
             "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},

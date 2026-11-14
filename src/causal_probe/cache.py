@@ -82,7 +82,8 @@ class ResidCollector:
 
     def _take(self, h):
         b = torch.arange(h.shape[0], device=h.device)[:, None]
-        self.out.append(h[b, self.idx].float().cpu())
+        # a model placed over two GPUs (config.MULTI_GPU) has its later layers on another device than the inputs
+        self.out.append(h[b, self.idx.to(h.device)].float().cpu())
 
     def _pre(self, module, args, kwargs=None):
         self._take(args[0] if args else kwargs["hidden_states"])

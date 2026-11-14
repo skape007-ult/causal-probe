@@ -35,7 +35,7 @@ Read `KAGGLE.md` in the repository first. Settings needed on the right-hand pane
 attached to this notebook (the Gemma weights are gated). Then *Save Version → Save & Run All (Commit)*.
 
 Everything heavy happens in `scripts/kaggle_run.py`. Each stage is time-limited, skipped if already
-done, and allowed to fail without stopping the rest. Output: zip files in `/kaggle/working/kaggle_out`; the last cell lists them and fails if one is missing.
+done, and allowed to fail without stopping the rest. Output: zip files in `/kaggle/working/kaggle_out`; the last cell lists them and writes `STATUS.txt` (OK or the list of problems).
 """),
         code(f"""
 # ---- settings ---------------------------------------------------------------
@@ -125,9 +125,10 @@ print("export:", json.dumps(s_.get("export", {}).get("zip_megabytes", {})))
 not_finished = "" if "export" in s_ else "the runner did not reach its export step (no export record in " + st + ")"
 expected = list(dict.fromkeys(["results.zip"] + list(s_.get("export", {}).get("zip_megabytes", {}))))
 zips = sorted(f for f in os.listdir(WORK) if f.endswith(".zip"))
+RUN, skipped = "round1", ""
 """),
         code(COLAB_DOWNLOAD),
-        code(FINAL_CHECK),          # always the last cell: lists the output directory, raises if an archive is missing
+        code(FINAL_CHECK),          # always the last cell: lists the output directory, writes STATUS.txt, never raises
     ]
     nb = {"cells": cells, "nbformat": 4, "nbformat_minor": 5,
           "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},

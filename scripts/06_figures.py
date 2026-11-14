@@ -514,7 +514,55 @@ def fig_adjacency(site="final_best", name="fig11_adjacency_final.png", where="fi
     save(fig, name)
 
 
+# ------------------------------------------------------------------ fig 13: the debiased-pool ladder (headline claim 2)
+def fig_debiased_ladder():
+    ms = [m for m in MODELS if (RESULTS / f"probe_content_{m}_c2c_debiased.json").exists()]
+    if not ms:
+        return
+    R = {m: load(f"probe_content_{m}_c2c_debiased.json")["baselines"] for m in ms}
+    text = R[ms[0]]                                    # text-only scorers do not depend on the model
+    rows = [("single input: hypothesis only, or premise only", text["A0_single_input"]["hypothesis_string_prior"]),
+            ("no binding: per-template bag-of-words of the premise", text["A_no_binding_interaction"]["template_x_premise_bag_of_words"]),
+            ("binding: per-template lookup of statements naming the pair", text["B_binding_text_reference"]["template_x_statements_naming_the_pair"]),
+            ("binding: per-hypothesis premise 4-grams (no parser)", text["B_binding_text_reference"]["per_string_premise_4grams"]),
+            ("binding: hand-written parse", text["B_binding_text_reference"]["hand_parse_all_features"]),
+            ("binding: hand parse + 4-grams (strongest text-only)", text["B_binding_text_reference"]["strongest_text_only_parse_plus_4grams"])]
+    fig, ax = plt.subplots(figsize=(9.6, 4.8))
+    labels, y = [], 0
+    for m in ms:                                       # probes on top
+        g = R[m]["gold_probe"]["accuracy"]; r0 = R[m]["A_no_binding_interaction"]["probe_on_random_init_model"]["accuracy"]
+        ax.errorbar(g["est"], y, xerr=[[g["est"] - g["lo"]], [g["hi"] - g["est"]]], fmt="o", ms=7, color=MODEL_COL[m], ecolor=MODEL_COL[m],
+                    elinewidth=1.6, capsize=3, zorder=3)
+        ax.plot(r0["est"], y, "o", ms=7, mfc=SURF, mec=MODEL_COL[m], mew=1.6, zorder=3)
+        ax.text(g["hi"] + 0.006, y, f"{g['est']:.3f}", va="center", fontsize=7.5, color=INK2)
+        labels.append(f"probe on {MODEL_LAB[m]} activations"); y += 1
+    y += 0.6
+    ysep = y - 0.8
+    for lab, v in rows:
+        a = v["accuracy"]
+        ax.errorbar(a["est"], y, xerr=[[a["est"] - a["lo"]], [a["hi"] - a["est"]]], fmt="s", ms=6, color=INK2, ecolor=INK2, elinewidth=1.3, capsize=3, zorder=3)
+        ax.text(a["hi"] + 0.006, y, f"{a['est']:.3f}", va="center", fontsize=7.5, color=INK2)
+        labels.append("text only · " + lab); y += 1
+    ys = [i for i in range(len(ms))] + [len(ms) + 0.6 + i for i in range(len(rows))]
+    ax.set_yticks(ys, labels, fontsize=8)
+    ax.invert_yaxis()
+    ax.axvline(0.5, color=INK2, lw=1, ls="--")
+    ax.axhline(ysep, color=AXIS, lw=0.8)
+    ax.set_xlim(0.46, 0.92); ax.set_xlabel("accuracy on held-out premises (report half of the debiased Corr2Cause pool)")
+    ax.grid(axis="y", visible=False)
+    from matplotlib.lines import Line2D
+    ax.legend(handles=[Line2D([], [], marker="o", color=INK2, ls="", label="probe, trained model"),
+                       Line2D([], [], marker="o", color=INK2, mfc=SURF, ls="", label="probe, randomly initialised copy"),
+                       Line2D([], [], marker="s", color=INK2, ls="", label="text-only classifier (no model)")], fontsize=7.5,
+              loc="upper center", bbox_to_anchor=(0.5, -0.14), ncol=3)
+    fig.suptitle("What a probe reads on the debiased pool, against text-only classifiers of increasing strength\n"
+                 "Whiskers: 95% cluster-bootstrap CI; dashed line: chance. The models' own answers are at chance on this pool.", fontsize=8.5, color=INK2)
+    fig.tight_layout()
+    save(fig, "fig13_debiased_ladder.png")
+
+
 if __name__ == "__main__":
     fig_steering(); fig_patching(); fig_components(); fig_cross_model(); fig_patching_same()
+    fig_debiased_ladder()
     fig_adjacency(); fig_adjacency("hyp_best", "fig12_adjacency_end_of_hypothesis.png", "last token of the hypothesis")
     fig_behaviour(); fig_lens(); fig_probes(); fig_selectivity_positions(); fig_confound()

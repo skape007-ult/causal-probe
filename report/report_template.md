@@ -15,7 +15,7 @@ Technical report. Every number in a table comes from `results/*.json` via `scrip
 5. *Steering.* At the probed layer and final token (Qwen2.5-0.5B and 1.5B), and at the end of the hypothesis (Qwen2.5-0.5B), adding the gold probe's weight direction shifts the answer by an amount within the range of probe directions fitted to shuffled labels, and a movement of natural size along it changes nothing measurable. This neither shows nor excludes a causal role. The difference-of-class-means direction moves the answer about as much as differences of means for shuffled labels on the debiased pool, and more than all 20 on the original pool for Qwen2.5-0.5B (Section 4.1; rewritten after the second audit, wording tightened after the third).
 6. *Patching.* A change of one variable in the prompt reaches the answer position at about 0.6 of the network's depth in three models. With pairs whose correct answer does not change (Qwen2.5-0.5B so far), the answer logit moves as much, and its sign follows which variable letter is asked about. This locates the arrival of a prompt difference, not a causal judgement (Section 4.2).
 7. *Is the adjacency information used? (Qwen2.5-0.5B so far.)* No evidence of an adjacency feature. At the final token from layer 15 of 24 the within-question answer is a linear function of the activation, and the part that goes with adjacency for common-effect hypotheses can be moved and removed there, beyond every control; at the end of the hypothesis the same intervention is not distinguishable from a random direction of the same size. Two earlier readings of this experiment were wrong and were corrected by the fourth and fifth audits (Section 4.4).
-8. *Sparse-autoencoder features (Gemma-2-2B, CLadder).* The public SAEs reconstruct most of each activation but little of what differs between items. The features most associated with a causal graph type are not specific to it (one partial exception, for collision), and removing them shifts the answer somewhat more than removing three sets of matched random features in four of five cases (Section 5).
+8. *Sparse-autoencoder features (Gemma-2-2B, CLadder).* The public SAEs reconstruct most of each activation but little of what differs between items. The features most associated with a causal graph type are not specific to it (one partial exception, for collision), and removing them shifts the answer somewhat more than removing three sets of matched random features in four of five cases (Appendix C).
 9. *Remote runs.* Gemma-2-2B interventions and everything for Qwen2.5-3B ran on a Kaggle GPU and are included. A second round (Qwen2.5-7B behaviour; matched steering controls for Gemma and Qwen2.5-3B; steering at the end of the hypothesis; label-preserving patching pairs; a causal test of the adjacency information) is reported where its results have arrived and marked as pending where they have not.
 
 **Pre-registration status.** Pre-registered before any probe was run: the wrong-items criterion (D11) with TF-IDF and template-prior baselines, grouped cross-validation, split-half selection, cluster bootstrap. Added after seeing results, each making the claim harder to pass or narrowing it: stronger text baselines (D18), the audited criterion (D19), the debiased pool (D21), the steering metric and matched controls (D24), the two-group reading and its three tests (D25). The pre-registered analysis is reported in full alongside.
@@ -111,10 +111,7 @@ By rung and query type (CLadder) and by template (Corr2Cause test):
 
 ### 3.2 Logit lens
 
-![lens](../figures/fig2_logit_lens.png)
-![lens auroc](../figures/fig2b_lens_auroc.png)
-
-The first figure shows the Yes−No logit difference the model would produce if it stopped at each layer, for gold-Yes and gold-No items separately. In every panel the curves move together: the lens shows a shared drift towards one answer, not a separation by the correct answer. The second figure removes the drift by asking only whether the lens value ranks gold-Yes above gold-No items (AUROC). On the Corr2Cause pool it never exceeds 0.60 at any layer for the three local models (the maxima are 0.59 to 0.60, reached in the second half of the network) and reaches 0.63 for Qwen2.5-3B; on CLadder it stays between 0.47 and 0.53 at every layer for the local models and reaches 0.54 for Qwen2.5-3B (`results/lens_*.json`, key `auroc_gold_by_layer`). The lens at the last layer reproduces the model's actual answer logits (maximum error and sign agreement are in `results/lens_*.json`). So the lens gives no sign of a correct answer that forms in the middle of the network and is then overwritten.
+Moved to Appendix A: it supports none of the three headline claims of `RESULTS.md`. In one line: read through the unembedding at every layer, the answer never separates valid from invalid items; there is no correct answer that forms in the middle of the network and is then overwritten.
 
 ### 3.3 Probes and controls
 
@@ -330,11 +327,7 @@ Gemma-2-2B, patched on Kaggle with 40 pairs per kind, shows the same thing: mean
 
 **The random-donor row is not a control.** Only 16 of 60 (Qwen2.5-0.5B) and 6 of 40 (Qwen2.5-1.5B) pairs have a donor prompt of equal length, half of the donors carry the same token as the clean prompt at the changed position, and the statistic is not zero under the null. It is shown and not used.
 
-<!-- TABLE:patching_components -->
-
-![attribution](../figures/fig8_attribution_validation.png)
-
-**Components.** Attribution patching (one gradient) agrees with real patching for the ten highest-ranked components of each model and pair kind. Among ten random components the agreement is driven by one or two large ones; without them the two estimates can disagree in sign. So: accurate for the largest components, not a complete ranking. Component names such as L14H5 are block numbers; residual index 15 is the output of block 14.
+Attribution patching of individual attention heads and MLPs, and its validation against real patching, is in Appendix D.
 
 **Label-preserving pairs (second round; so far Qwen2.5-0.5B).** The control this section lacked: pairs with the same kind of edit (one variable letter in the hypothesis, or the matching relabelling of the premise) whose two prompts have the *same* gold label, half of them valid/valid and half invalid/invalid.
 
@@ -350,11 +343,7 @@ Three cautions. The patching curves of the two kinds of pair look alike, and tha
 
 ### 4.3 Cross-model comparison
 
-<!-- TABLE:cross_model -->
-
-![cross model](../figures/fig9_cross_model.png)
-
-A descriptive comparison of four models from two families, not a scaling law. On the original item sets gold-probe accuracy is higher for the three larger models than for Qwen2.5-0.5B and does not differ among them (Corr2Cause pool 0.86 to 0.87), and the probe trails the strongest text baseline for every model. The selected layer lies at relative depth 0.6 to 0.9. Qwen2.5-3B's CLadder point is on the other draw of the CLadder sample; its paired differences to the other models use the 2,271 shared items (`results/cross_model.json`, `n_items_paired`). On the debiased pool (Section 3.6) the step from Qwen2.5-0.5B to Qwen2.5-1.5B is larger and is the more informative comparison, since it is not inflated by the hypothesis-string cue; from 1.5B to 3B nothing changes there either.
+Moved to Appendix B. In one line: the three larger models do not differ in what a probe reads, on the original or on the debiased item sets; four models are a description, not a scaling law.
 
 ### 4.4 Is the adjacency information used? (second round)
 
@@ -418,38 +407,7 @@ Activations are centred by hypothesis string first, so that no direction can enc
 
 ## 5. Tier 3 results
 
-### 5.1 Sparse-autoencoder features for causal graph type (Gemma-2-2B, CLadder)
-
-**Question.** Does Gemma-2-2B have sparse features that mark the causal graph a CLadder question is about (confounding, collision, chain, fork, mediation), and does removing them change the answer more than removing other features?
-
-**Setup.** Gemma Scope residual-stream SAEs (`gemma-scope-2b-pt-res-canonical`, 16k features) at blocks 6, 12 and 18, applied to activations at the last token of the context and at the final prompt token. Only CLadder's ten "nonsense" stories are used ({{sae_features.json|n_nonsense_items|int}} items in the sample), because every real-world story has a single graph type, so a "smoking" feature would pass for a "confounding" feature. For each graph type the ten features with the highest AUROC for that type against the rest are selected on stories 0–4 ({{sae_features.json|n_discovery|int}} items) and evaluated on stories 5–9 ({{sae_features.json|n_eval|int}} items). Ablation (block 12): the selected features' contributions are subtracted from the residual stream at every token and the answer logit difference is compared with the unablated run, against three sets of random features matched on mean activation. All of this ran on Kaggle, on Kaggle's draw of the CLadder sample (Section 7).
-
-**Two caveats that limit everything below.**
-
-1. *The SAEs reconstruct most of each activation but little of what differs between items.* They were trained on the base model `gemma-2-2b`; the activations are from the instruction-tuned `gemma-2-2b-it`, at two specific tokens. The reconstruction recovers 74 to 84% of the squared norm (relative squared error 0.16 to 0.26). But most of an activation at a fixed token is shared by all items, and a search for features of graph type depends on the part that differs. Of that part, at the end of the context, the reconstruction leaves {{sae_features.json|layers/6/positions/premise_end/reconstruction/fraction_variance_unexplained|num2}}, {{sae_features.json|layers/12/positions/premise_end/reconstruction/fraction_variance_unexplained|num2}} and {{sae_features.json|layers/18/positions/premise_end/reconstruction/fraction_variance_unexplained|num2}} unexplained (blocks 6, 12, 18; the fraction of variance across these items), although the reconstruction points in nearly the right direction (cosine {{sae_features.json|layers/12/positions/premise_end/reconstruction/cosine_recon|num2}} at block 12). At the final prompt token the unexplained fraction is above one at every block: all items share that token and differ little there, and the SAE does not capture the differences. Features at the final token are listed in the table for completeness and I draw nothing from them. No reference value on the SAEs' own training distribution was computed, so this does not show that they fit worse here than they were built to; it shows that they are a blunt tool for this question.
-2. *Three random feature sets are too few.* Their effects range from {{sae_ablation.json|structures/collision/target_structure/mean_abs_delta_random_each/0|num2}} to {{sae_ablation.json|structures/mediation/target_structure/mean_abs_delta_random_each/1|num2}} logits. This is the same weakness the Tier 2 audit found in the first steering table, and I did not fix it before the Kaggle run.
-
-<!-- TABLE:sae_reconstruction -->
-
-**Features.** Selected features generalise to held-out stories about as well as they fit the discovery stories, so the selection is not noise, but they are weak markers of graph type.
-
-<!-- TABLE:sae_features -->
-
-At the end of the context no selected feature reaches a held-out AUROC of 0.70 for confounding or mediation at any block. The best features are for chain (up to {{sae_features.json|layers/12/positions/premise_end/structures/chain/top_features/0/auroc_heldout_stories|num2}}), and the same feature is the best one for fork: at block 12 feature {{sae_features.json|layers/12/positions/premise_end/structures/chain/top_features/0/feature|str}} fires on {{sae_features.json|layers/12/positions/premise_end/structures/chain/top_features/0/firing_rate_target|pct}} of chain items and on {{sae_features.json|layers/12/positions/premise_end/structures/chain/top_features/0/firing_rate_other|pct}} of all other items, and its top-activating examples include collision and mediation items (`results/sae_top_examples.md`). It responds more strongly to contexts that describe the graph as a short list of "has a direct effect on" sentences without probabilities; chain and fork items are over-represented among those. I found no feature that is specific to one graph type by its content. The nearest is feature 4602 at block 18, end of context: it fires on 85% of collision items and 38% of the others (held-out AUROC 0.78), and its eight top examples are all collision items; they are `collider_bias` and `backadj` questions, so it tracks the wording of the question. The ablation below is at block 12 and did not test it.
-
-**Ablation.**
-
-<!-- TABLE:sae_ablation -->
-
-Removing the ten selected features changes the answer logit difference by {{sae_ablation.json|structures/mediation/target_structure/mean_abs_delta_top|est}} (mediation) to {{sae_ablation.json|structures/chain/target_structure/mean_abs_delta_top|est}} (chain) logits on items of the features' own graph type. For four of the five graph types that is more than each of their three matched random sets (by 0.10 to 0.32 logits on average); for mediation it is less, and one of mediation's random sets moves the answer more ({{sae_ablation.json|structures/mediation/target_structure/mean_abs_delta_random_each/1|num2}}) than any selected set. For four graph types the effect is not specific: it is as large on items of other graph types (for example chain: {{sae_ablation.json|structures/chain/target_structure/mean_abs_delta_top|est}} on chain items, {{sae_ablation.json|structures/chain/other_structures/mean_abs_delta_top|est}} on others). Collision is the exception: {{sae_ablation.json|structures/collision/target_structure/mean_abs_delta_top|ci}} on collision items against {{sae_ablation.json|structures/collision/other_structures/mean_abs_delta_top|ci}} on others (intervals over five stories; fragile). For confounding and collision the change is almost entirely a uniform shift of the logit difference in one direction, a change of answer bias; for chain and fork about half of it is. Accuracy before and after differs by at most eight points on 27 to 40 items, which is inside the noise for samples of that size.
-
-**What may be concluded.** With SAEs that fit poorly, on one sample of nonsense-story items: there are features whose activation is moderately associated with chain- or fork-shaped contexts, they are not specific to a graph type (collision in part excepted), and removing them shifts the answer logit somewhat more than removing three sets of matched random features in four of five cases. This is not evidence of a "causal structure" feature that the answer depends on, and it is not evidence against one either: a dictionary that leaves two thirds or more of the between-item variance unexplained could miss it.
-
-**Compared with what I expected** (logged before opening the results): I expected the features to track story or question type more than graph type (roughly right: they track how the context is worded) and the ablation effect to be below matched random features in at least half the cases (wrong: above in four of five). I expected no accuracy change beyond three points; the data cannot resolve three points.
-
-**A reporting error of mine.** The result file's `top_minus_random_mean_abs_delta` interval subtracts the absolute value of the mean over random sets, not the mean of their absolute effects, and so overstates the gap (for confounding it reads +0.25 where the two means in the table differ by +0.15). The table shows the difference of the two means without an interval; the raw per-item values were not exported, so a correct interval needs a rerun.
-
-LoRA fine-tuning (the optional second half of Tier 3) was dropped when the heavy runs moved to Kaggle (decision D20).
+The sparse-autoencoder tier is in Appendix C: it supports none of the three headline claims. In one line: with dictionaries that reconstruct little of what differs between items, no feature specific to a causal graph type was found, and none can be ruled out.
 
 ## 6. Audits
 
@@ -493,7 +451,24 @@ Each tier was reviewed by a fresh reviewer agent that received the code, the res
 | For Qwen2.5-0.5B the final-token signal is absent, not "weaker" | Wording |
 | Adjacency is largely decodable from per-variable statement counts; single shuffles are not a null distribution; near-duplicate properties; uninformative strata | Text baselines per property, end-of-premise check, repeated shuffles, merged properties, score strata (Sections 3.6.3, 3.6.4) |
 
-**What the audits did not cover.** Gemma-2-2B's Tier 1 results were produced after the Tier 1 audit by the same, already-audited code and were reviewed by the author only. The new experiment code for the second round of GPU runs was reviewed by a fourth independent reviewer before those runs were launched (`notes/audit_round2_code_raw.md`); the results of the first Kaggle run (Gemma steering, patching and SAEs; Qwen2.5-3B) and of the second round are covered by that audit's follow-up. *(Findings and responses are added below as they arrive.)*
+**Fourth audit (Friday 17:30; the round-2 experiment code, before it ran on rented GPUs).** Raw report: `notes/audit_round2_code_raw.md`. Verified the layout of the intervention arrays against every slice of the analysis, the selection/report separation, and that the label-changing patching pairs were unchanged. Found:
+
+| Finding | Consequence |
+|---|---|
+| The first adjacency experiment's "removal" left adjacency readable at AUROC 0.84; its pooled class-mean direction did not separate the classes for direct-causation hypotheses; its summary compared a real change with the mean of controls whose signs cancel | Experiment rewritten (`17_adjacency_test.py`): string-centred, per-template class differences, LEACE, control distributions (Section 4.4) |
+| A smoke test could be ingested as a real run; a cut-short run could pass as complete | Runner and ingest hardened (applied in commit `cdb08d7`; I had reported it done two hours earlier when it was not) |
+| `09_cross_model.py` paired models by position although one model is on another draw of the CLadder sample | Pairing by item id |
+
+**Fifth audit (Friday 19:30; the round-2 results for Qwen2.5-0.5B, the four-model debiased-pool text, the SAE section, and a claims pass over the summary, README and EXPLAINER).** Raw report: `notes/audit_round2_results_raw.md`. Verified every Section 3.6 sentence for four models and the raw-file-to-table chain. Found:
+
+| Finding | Consequence |
+|---|---|
+| "Erasing adjacency at the end of the hypothesis removes about a sixth of the dependence, beyond all 20 controls": the erasure is the translation scaled per item; its control could not fail; the summary counted a gap moving away from zero as a reduction; the erasure was checked on the half it was fitted on | Claim withdrawn; fair control, gaps before and after, held-out erasure quality (Section 4.4, decision D29) |
+| The +0.22 mean difference in label-preserving premise pairs is produced by the one-sided construction of that pair set; my explanation was wrong | Direction-matched comparison (Section 4.2) |
+| Steering controls on the debiased pool were shuffled over the whole pool, not within hypothesis string | Controls redone for Qwen2.5-0.5B (Section 4.1); in the notebooks from `bab7d1b` |
+| "Fully accounted for by text" too strong; SAE section inexact in four places; Qwen2.5-3B CLadder rows not flagged as being on another draw; stale sentences | Reworded; daggers in the tables |
+
+**What the audits did not cover.** Gemma-2-2B's Tier 1 results on the original item sets were produced after the Tier 1 audit by the same, already-audited code. The corrected analysis of Section 4.4 and the reruns that followed the fifth audit (within-string steering controls, the split by answer direction) have not been audited. Results from GPU runs that return after this was written are audited before they enter `RESULTS.md`.
 
 ## 7. Limitations
 
@@ -517,6 +492,66 @@ Each tier was reviewed by a fresh reviewer agent that received the code, the res
 ## 8. Interpretation and what I'd do next
 
 *(Deliberately left empty: to be written by the project owner.)*
+
+## Appendix
+
+Sections moved here on 13 November because they support none of the three headline claims in `RESULTS.md`. Their content is unchanged apart from the headings.
+
+### Appendix A. Logit lens (formerly Section 3.2)
+
+![lens](../figures/fig2_logit_lens.png)
+![lens auroc](../figures/fig2b_lens_auroc.png)
+
+The first figure shows the Yes−No logit difference the model would produce if it stopped at each layer, for gold-Yes and gold-No items separately. In every panel the curves move together: the lens shows a shared drift towards one answer, not a separation by the correct answer. The second figure removes the drift by asking only whether the lens value ranks gold-Yes above gold-No items (AUROC). On the Corr2Cause pool it never exceeds 0.60 at any layer for the three local models (the maxima are 0.59 to 0.60, reached in the second half of the network) and reaches 0.63 for Qwen2.5-3B; on CLadder it stays between 0.47 and 0.53 at every layer for the local models and reaches 0.54 for Qwen2.5-3B (`results/lens_*.json`, key `auroc_gold_by_layer`). The lens at the last layer reproduces the model's actual answer logits (maximum error and sign agreement are in `results/lens_*.json`). So the lens gives no sign of a correct answer that forms in the middle of the network and is then overwritten.
+
+### Appendix B. Cross-model comparison (formerly Section 4.3)
+
+<!-- TABLE:cross_model -->
+
+![cross model](../figures/fig9_cross_model.png)
+
+A descriptive comparison of four models from two families, not a scaling law. On the original item sets gold-probe accuracy is higher for the three larger models than for Qwen2.5-0.5B and does not differ among them (Corr2Cause pool 0.86 to 0.87), and the probe trails the strongest text baseline for every model. The selected layer lies at relative depth 0.6 to 0.9. Qwen2.5-3B's CLadder point is on the other draw of the CLadder sample; its paired differences to the other models use the 2,271 shared items (`results/cross_model.json`, `n_items_paired`). On the debiased pool (Section 3.6) the step from Qwen2.5-0.5B to Qwen2.5-1.5B is larger and is the more informative comparison, since it is not inflated by the hypothesis-string cue; from 1.5B to 3B nothing changes there either.
+
+### Appendix C. Sparse-autoencoder features for causal graph type (Gemma-2-2B, CLadder; formerly Section 5.1)
+
+**Question.** Does Gemma-2-2B have sparse features that mark the causal graph a CLadder question is about (confounding, collision, chain, fork, mediation), and does removing them change the answer more than removing other features?
+
+**Setup.** Gemma Scope residual-stream SAEs (`gemma-scope-2b-pt-res-canonical`, 16k features) at blocks 6, 12 and 18, applied to activations at the last token of the context and at the final prompt token. Only CLadder's ten "nonsense" stories are used ({{sae_features.json|n_nonsense_items|int}} items in the sample), because every real-world story has a single graph type, so a "smoking" feature would pass for a "confounding" feature. For each graph type the ten features with the highest AUROC for that type against the rest are selected on stories 0–4 ({{sae_features.json|n_discovery|int}} items) and evaluated on stories 5–9 ({{sae_features.json|n_eval|int}} items). Ablation (block 12): the selected features' contributions are subtracted from the residual stream at every token and the answer logit difference is compared with the unablated run, against three sets of random features matched on mean activation. All of this ran on Kaggle, on Kaggle's draw of the CLadder sample (Section 7).
+
+**Two caveats that limit everything below.**
+
+1. *The SAEs reconstruct most of each activation but little of what differs between items.* They were trained on the base model `gemma-2-2b`; the activations are from the instruction-tuned `gemma-2-2b-it`, at two specific tokens. The reconstruction recovers 74 to 84% of the squared norm (relative squared error 0.16 to 0.26). But most of an activation at a fixed token is shared by all items, and a search for features of graph type depends on the part that differs. Of that part, at the end of the context, the reconstruction leaves {{sae_features.json|layers/6/positions/premise_end/reconstruction/fraction_variance_unexplained|num2}}, {{sae_features.json|layers/12/positions/premise_end/reconstruction/fraction_variance_unexplained|num2}} and {{sae_features.json|layers/18/positions/premise_end/reconstruction/fraction_variance_unexplained|num2}} unexplained (blocks 6, 12, 18; the fraction of variance across these items), although the reconstruction points in nearly the right direction (cosine {{sae_features.json|layers/12/positions/premise_end/reconstruction/cosine_recon|num2}} at block 12). At the final prompt token the unexplained fraction is above one at every block: all items share that token and differ little there, and the SAE does not capture the differences. Features at the final token are listed in the table for completeness and I draw nothing from them. No reference value on the SAEs' own training distribution was computed, so this does not show that they fit worse here than they were built to; it shows that they are a blunt tool for this question.
+2. *Three random feature sets are too few.* Their effects range from {{sae_ablation.json|structures/collision/target_structure/mean_abs_delta_random_each/0|num2}} to {{sae_ablation.json|structures/mediation/target_structure/mean_abs_delta_random_each/1|num2}} logits. This is the same weakness the Tier 2 audit found in the first steering table, and I did not fix it before the Kaggle run.
+
+<!-- TABLE:sae_reconstruction -->
+
+**Features.** Selected features generalise to held-out stories about as well as they fit the discovery stories, so the selection is not noise, but they are weak markers of graph type.
+
+<!-- TABLE:sae_features -->
+
+At the end of the context no selected feature reaches a held-out AUROC of 0.70 for confounding or mediation at any block. The best features are for chain (up to {{sae_features.json|layers/12/positions/premise_end/structures/chain/top_features/0/auroc_heldout_stories|num2}}), and the same feature is the best one for fork: at block 12 feature {{sae_features.json|layers/12/positions/premise_end/structures/chain/top_features/0/feature|str}} fires on {{sae_features.json|layers/12/positions/premise_end/structures/chain/top_features/0/firing_rate_target|pct}} of chain items and on {{sae_features.json|layers/12/positions/premise_end/structures/chain/top_features/0/firing_rate_other|pct}} of all other items, and its top-activating examples include collision and mediation items (`results/sae_top_examples.md`). It responds more strongly to contexts that describe the graph as a short list of "has a direct effect on" sentences without probabilities; chain and fork items are over-represented among those. I found no feature that is specific to one graph type by its content. The nearest is feature 4602 at block 18, end of context: it fires on 85% of collision items and 38% of the others (held-out AUROC 0.78), and its eight top examples are all collision items; they are `collider_bias` and `backadj` questions, so it tracks the wording of the question. The ablation below is at block 12 and did not test it.
+
+**Ablation.**
+
+<!-- TABLE:sae_ablation -->
+
+Removing the ten selected features changes the answer logit difference by {{sae_ablation.json|structures/mediation/target_structure/mean_abs_delta_top|est}} (mediation) to {{sae_ablation.json|structures/chain/target_structure/mean_abs_delta_top|est}} (chain) logits on items of the features' own graph type. For four of the five graph types that is more than each of their three matched random sets (by 0.10 to 0.32 logits on average); for mediation it is less, and one of mediation's random sets moves the answer more ({{sae_ablation.json|structures/mediation/target_structure/mean_abs_delta_random_each/1|num2}}) than any selected set. For four graph types the effect is not specific: it is as large on items of other graph types (for example chain: {{sae_ablation.json|structures/chain/target_structure/mean_abs_delta_top|est}} on chain items, {{sae_ablation.json|structures/chain/other_structures/mean_abs_delta_top|est}} on others). Collision is the exception: {{sae_ablation.json|structures/collision/target_structure/mean_abs_delta_top|ci}} on collision items against {{sae_ablation.json|structures/collision/other_structures/mean_abs_delta_top|ci}} on others (intervals over five stories; fragile). For confounding and collision the change is almost entirely a uniform shift of the logit difference in one direction, a change of answer bias; for chain and fork about half of it is. Accuracy before and after differs by at most eight points on 27 to 40 items, which is inside the noise for samples of that size.
+
+**What may be concluded.** With SAEs that fit poorly, on one sample of nonsense-story items: there are features whose activation is moderately associated with chain- or fork-shaped contexts, they are not specific to a graph type (collision in part excepted), and removing them shifts the answer logit somewhat more than removing three sets of matched random features in four of five cases. This is not evidence of a "causal structure" feature that the answer depends on, and it is not evidence against one either: a dictionary that leaves two thirds or more of the between-item variance unexplained could miss it.
+
+**Compared with what I expected** (logged before opening the results): I expected the features to track story or question type more than graph type (roughly right: they track how the context is worded) and the ablation effect to be below matched random features in at least half the cases (wrong: above in four of five). I expected no accuracy change beyond three points; the data cannot resolve three points.
+
+**A reporting error of mine.** The result file's `top_minus_random_mean_abs_delta` interval subtracts the absolute value of the mean over random sets, not the mean of their absolute effects, and so overstates the gap (for confounding it reads +0.25 where the two means in the table differ by +0.15). The table shows the difference of the two means without an interval; the raw per-item values were not exported, so a correct interval needs a rerun.
+
+LoRA fine-tuning (the optional second half of Tier 3) was dropped when the heavy runs moved to Kaggle (decision D20).
+
+### Appendix D. Components: attribution patching and its validation (formerly part of Section 4.2)
+
+<!-- TABLE:patching_components -->
+
+![attribution](../figures/fig8_attribution_validation.png)
+
+**Components.** Attribution patching (one gradient) agrees with real patching for the ten highest-ranked components of each model and pair kind. Among ten random components the agreement is driven by one or two large ones; without them the two estimates can disagree in sign. So: accurate for the largest components, not a complete ranking. Component names such as L14H5 are block numbers; residual index 15 is the output of block 14.
 
 ## References
 

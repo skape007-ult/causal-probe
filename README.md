@@ -3,25 +3,54 @@
 
 Do small open-weight language models internally represent the correct answer to formal causal-reasoning questions that they answer wrongly? A probing, steering and patching study on Corr2Cause and CLadder, run on an 8 GB laptop plus free Kaggle and Colab GPU sessions.
 
-**Status:** work in progress until Sunday 15 November 2026, 14:00 (Toronto). Sections marked *pending* are filled in as runs finish.
+**Status:** work in progress until Sunday 15 November 2026, 14:00 (Toronto). GPU runs for three models are still returning; what has and has not arrived is marked.
 
-## The question
+**Question.** When small language models answer formal causal-reasoning questions wrongly, is the correct answer nevertheless linearly readable from their activations, and is it used?
 
-1. Is the correct answer linearly decodable from a model's activations even when the model answers wrongly?
-2. Is that representation causally used, and where is the answer determined?
-3. What do sparse-autoencoder features show? *(Tier 3.)*
+**Run:** Qwen2.5-0.5B, 1.5B, 3B and Gemma-2-2B on Corr2Cause and CLadder; probes against text-only baselines, steering, patching; five independent audits. Every number is from `results/*.json`; the full account is `report/report.md`.
 
-## The short answer
+## Three headline claims
 
-- **Behaviour.** Qwen2.5-0.5B, Qwen2.5-1.5B, Gemma-2-2B and Qwen2.5-3B answer both benchmarks at or near chance. Part of that is answer bias, but the bias-free ranking score is also near 0.5 (table below), and indistinguishable from chance on the debiased item set (AUROC 0.49 to 0.51).
-- **Probes.** Linear probes read the gold label at 0.807 to 0.870 accuracy on a balanced Corr2Cause pool. This is **not** evidence of a hidden correct answer: the hypothesis string alone, with no premise and no model, predicts the label at 0.859, and a parsed-feature text classifier at 0.924. Against the strongest text-only baseline the probe loses in all six model × benchmark cells.
-- **A fair test (post hoc, audited).** On a debiased Corr2Cause pool, where neither the hypothesis alone nor the premise alone carries label information in any fold, only an interaction between the two can predict the label. The final-token probes of Qwen2.5-1.5B, Gemma-2-2B and Qwen2.5-3B score 0.752 [0.728, 0.774], 0.763 [0.739, 0.787] and 0.765 [0.743, 0.788]: above every interaction control that binds nothing to the queried variables (strongest: 0.659), level with a per-template lookup of the premise statements that name the queried pair (0.765), and below a hand-written parse (0.816). They add two to three points to that parse and at most one, with an interval reaching zero, to the strongest text-only model. Qwen2.5-0.5B's probe (0.633 [0.611, 0.657]) is not above the no-binding controls. **The audited criterion for "represents the answer but doesn't say it" is not met for any model.**
-- **The answers.** Pooled, all four models answer the debiased pool at chance. Their answers do depend on whether the two queried variables are adjacent in the premise, with a sign that differs by hypothesis type and by model.
-- **Steering (rewritten after a second audit, tightened after a third and a fifth).** Adding the gold-label probe's weight direction at the final token (Qwen2.5-0.5B and 1.5B) or at the end of the hypothesis (Qwen2.5-0.5B) shifts the answer by an amount within the range of 20 probe directions fitted to shuffled labels; matched controls for the other models come with the second round of GPU runs. This neither shows nor excludes a causal role. On the debiased pool, with controls shuffled within hypothesis string, the gold difference of class means does not stand out either.
-- **Patching.** A change of one variable in the prompt reaches the answer position at about 60% of the network's depth (three models). The answer logit moves as much when the edit leaves the correct answer unchanged as when it changes it, and its sign follows which variable letter is asked about (Qwen2.5-0.5B so far), so this locates where a prompt difference arrives, not where a causal judgement is made.
-- **Is the adjacency information used? (second round; Qwen2.5-0.5B so far.)** No evidence that it is, as a feature. At the final token from layer 15 (of 24) the within-question answer is a linear function of the activation (held-out R² 0.96), and for common-effect hypotheses the part of it that goes with adjacency can be moved and removed there, beyond every control (gap on evaluated items -0.263 → -0.006); four layers earlier it cannot. That locates where this part of the answer is, and a transfer check shows it is each hypothesis type's own answer shift. At the last token of the hypothesis the same intervention has a small effect that is not distinguishable from a random direction of the same size (1 of 20 controls larger). Two earlier versions of this result were wrong and were corrected by independent audits: the first experiment did not remove what it claimed to remove, and my first summary of the second claimed "about a sixth of the dependence, beyond all controls" on the strength of a control that could not fail.
-- **SAE features (Gemma-2-2B, CLadder).** The public dictionaries fit these activations poorly. The features most associated with a type of causal graph are not specific to it; removing them shifts the answer somewhat more than removing matched random features in four of five cases, and for four of the five graph types as much on items of other graph types.
-- **Still running as this is written:** Qwen2.5-7B behaviour; matched steering controls, label-preserving patching and the adjacency test for Qwen2.5-1.5B, Qwen2.5-3B and Gemma-2-2B. The report marks what has and has not arrived.
+**1. A probe's accuracy for the correct answer means nothing until it is compared with what the text alone gives away.** On the official Corr2Cause test split a classifier that sees only the hypothesis, never the premise, reaches AUROC 0.895 [0.863, 0.919]. Gold-label probes lose to the strongest text-only classifier in all eight model × benchmark cells. *Checked by* audit 1, which found it and forced the retraction of my first positive result.
+
+![probe vs text](figures/fig5_confound_c2c_probe.png)
+
+**2. With every single-input shortcut removed, the larger models' activations hold about what a lookup of the premise statements about the two queried variables gives, and the models answer at chance.** On the debiased pool Qwen2.5-3B's probe scores 0.765 [0.743, 0.788], the lookup 0.765, a hand-written parse 0.816; Qwen2.5-1.5B and Gemma-2-2B score 0.752 and 0.763; the four models' answers have AUROC 0.505, 0.510, 0.492 and 0.507. *Checked by* audit 3 (two models; it replaced my baseline list) and audit 5 (four models, recomputed).
+
+![ladder](figures/fig13_debiased_ladder.png)
+
+**3. There is no evidence that what a probe reads is what the answer is computed from.** In Qwen2.5-0.5B, intervening at the end of the hypothesis on the encoding of adjacency (the one structural property the answers depend on) has an effect that is larger in absolute value than 95% of 20 random directions of the same size: inside their range. At the answer position it removes the dependence for one hypothesis type, where the answer is already a linear function of the activation (held-out R² 0.96): that locates the answer, nothing more. Steering along the gold-label probe direction stays within the range of matched controls. *Checked by* audits 2, 4 and 5; the reruns after audit 5 are not yet audited. One model so far.
+
+![adjacency](figures/fig12_adjacency_end_of_hypothesis.png)
+
+## What we retracted, and why
+
+| Claim as first made | What was wrong | Caught by |
+|---|---|---|
+| "Qwen2.5-1.5B represents the answer but doesn't say it" | Baselines too weak: the hypothesis string alone predicts 86% of labels | Audit 1 |
+| "The gold-probe direction is inert; the model-output direction flips answers" | One sign shown, three random directions, steps far beyond natural scale | Audit 2 |
+| "The probe beats the shallow controls and adds nothing to the parser" | Controls at 50% by construction; an insensitive test | Audit 3 |
+| "The answers do not express what the probe reads" | False per hypothesis type; opposite signs cancel | Audit 3 |
+| First adjacency experiment | Its "removal" left the property readable (AUROC 0.84) | Audit 4 |
+| "Erasing adjacency removes a sixth of the dependence, beyond all 20 controls" | A control that could not fail; a summary that counted a gap growing as a reduction | Audit 5 |
+| "The model reacts to letters out of alphabetical order" | A one-sided pair construction | Audit 5 |
+| Three bugs: CLadder sample differing between machines; an overstated SAE interval; a fix reported but not applied | See `notes/log.md` | Ingest check, own review, audit 5 |
+
+## Limitations
+
+- Models up to 3 billion parameters, all at or near chance; two benchmarks; linear probes. Nothing here says what a model that can do the task would show (a 7B behaviour check is running).
+- Claim 3 rests on one model, four sites and 20 controls. "No evidence" is not "evidence of absence".
+- The stronger baselines, the debiased pool and every corrected analysis were introduced after seeing results; the pre-registered analysis is reported next to them (report Section 3.4).
+- Interventions act on one layer and one token at a time.
+- Qwen2.5-3B's CLadder numbers are on a different draw of the sample (marked † in the tables).
+
+The same page as a file: `RESULTS.md`. How the story unfolded, in plain language: `EXPLAINER.md`, "Start here".
+
+## Further results (not headline claims)
+
+- **Behaviour.** All four models answer both benchmarks at or near chance; part of that is answer bias, and the bias-free ranking score is near 0.5 as well (table below).
+- **Patching.** A change of one variable in the prompt reaches the answer position at about 60% of the network's depth (three models). The answer logit moves as much when the edit leaves the correct answer unchanged as when it changes it, and its sign follows which variable letter is asked about (Qwen2.5-0.5B so far): this locates where a prompt difference arrives, not where a judgement is made.
+- **In the report's appendix:** logit lens, cross-model comparison, sparse-autoencoder features, attribution patching of components.
 
 ## What was pre-registered, what passed, what was retracted
 
@@ -106,12 +135,10 @@ What the text alone gives away on Corr2Cause (official splits):
 
 <sub>Source: `results/benchmark_baselines.json`</sub>
 
-## Key figures
+## Other figures
 
 ![behaviour](figures/fig1_behaviour.png)
 ![probes](figures/fig3_probes_c2c_probe.png)
-![probe vs text](figures/fig5_confound_c2c_probe.png)
-![adjacency, end of hypothesis](figures/fig12_adjacency_end_of_hypothesis.png)
 
 How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 
@@ -131,6 +158,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 
 | File | What it is |
 |---|---|
+| `RESULTS.md` | The one-page results shown at the top of this README |
 | `EXPLAINER.md` | Start here. Concept primer, decision log, how to read each figure, questions a professor would ask |
 | `report/report.md` | Method, tables and figures per tier |
 | `report/benchmark_text_baselines.md` | Stand-alone note on text-only baselines for the two benchmarks |
@@ -144,7 +172,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 
 ## Limitations
 
-*(Full list in the report; filled in at packaging.)*
+The short list is in the results page at the top; the full list is Section 7 of `report/report.md`.
 
 ## Reproduction
 

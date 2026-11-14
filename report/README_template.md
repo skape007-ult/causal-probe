@@ -2,25 +2,17 @@
 
 Do small open-weight language models internally represent the correct answer to formal causal-reasoning questions that they answer wrongly? A probing, steering and patching study on Corr2Cause and CLadder, run on an 8 GB laptop plus free Kaggle and Colab GPU sessions.
 
-**Status:** work in progress until Sunday 15 November 2026, 14:00 (Toronto). Sections marked *pending* are filled in as runs finish.
+**Status:** work in progress until Sunday 15 November 2026, 14:00 (Toronto). GPU runs for three models are still returning; what has and has not arrived is marked.
 
-## The question
+<!-- INCLUDE:RESULTS -->
 
-1. Is the correct answer linearly decodable from a model's activations even when the model answers wrongly?
-2. Is that representation causally used, and where is the answer determined?
-3. What do sparse-autoencoder features show? *(Tier 3.)*
+The same page as a file: `RESULTS.md`. How the story unfolded, in plain language: `EXPLAINER.md`, "Start here".
 
-## The short answer
+## Further results (not headline claims)
 
-- **Behaviour.** Qwen2.5-0.5B, Qwen2.5-1.5B, Gemma-2-2B and Qwen2.5-3B answer both benchmarks at or near chance. Part of that is answer bias, but the bias-free ranking score is also near 0.5 (table below), and indistinguishable from chance on the debiased item set (AUROC 0.49 to 0.51).
-- **Probes.** Linear probes read the gold label at {{confound_qwen0.5b_c2c_probe.json|all_items/gold_probe/accuracy|est}} to {{confound_qwen1.5b_c2c_probe.json|all_items/gold_probe/accuracy|est}} accuracy on a balanced Corr2Cause pool. This is **not** evidence of a hidden correct answer: the hypothesis string alone, with no premise and no model, predicts the label at {{benchmark_baselines.json|corr2cause_balanced_pool/baselines/hypothesis_only/accuracy|est}}, and a parsed-feature text classifier at {{benchmark_baselines.json|corr2cause_balanced_pool/baselines/parsed_features/accuracy|est}}. Against the strongest text-only baseline the probe loses in all six model × benchmark cells.
-- **A fair test (post hoc, audited).** On a debiased Corr2Cause pool, where neither the hypothesis alone nor the premise alone carries label information in any fold, only an interaction between the two can predict the label. The final-token probes of Qwen2.5-1.5B, Gemma-2-2B and Qwen2.5-3B score {{probe_content_qwen1.5b_c2c_debiased.json|baselines/gold_probe/accuracy|ci}}, {{probe_content_gemma2b_c2c_debiased.json|baselines/gold_probe/accuracy|ci}} and {{probe_content_qwen3b_c2c_debiased.json|baselines/gold_probe/accuracy|ci}}: above every interaction control that binds nothing to the queried variables (strongest: {{probe_content_qwen1.5b_c2c_debiased.json|baselines/A_no_binding_interaction/template_x_premise_bag_of_words/accuracy|est}}), level with a per-template lookup of the premise statements that name the queried pair ({{probe_content_qwen1.5b_c2c_debiased.json|baselines/B_binding_text_reference/template_x_statements_naming_the_pair/accuracy|est}}), and below a hand-written parse ({{probe_content_qwen1.5b_c2c_debiased.json|baselines/B_binding_text_reference/hand_parse_all_features/accuracy|est}}). They add two to three points to that parse and at most one, with an interval reaching zero, to the strongest text-only model. Qwen2.5-0.5B's probe ({{probe_content_qwen0.5b_c2c_debiased.json|baselines/gold_probe/accuracy|ci}}) is not above the no-binding controls. **The audited criterion for "represents the answer but doesn't say it" is not met for any model.**
-- **The answers.** Pooled, all four models answer the debiased pool at chance. Their answers do depend on whether the two queried variables are adjacent in the premise, with a sign that differs by hypothesis type and by model.
-- **Steering (rewritten after a second audit, tightened after a third and a fifth).** Adding the gold-label probe's weight direction at the final token (Qwen2.5-0.5B and 1.5B) or at the end of the hypothesis (Qwen2.5-0.5B) shifts the answer by an amount within the range of 20 probe directions fitted to shuffled labels; matched controls for the other models come with the second round of GPU runs. This neither shows nor excludes a causal role. On the debiased pool, with controls shuffled within hypothesis string, the gold difference of class means does not stand out either.
-- **Patching.** A change of one variable in the prompt reaches the answer position at about 60% of the network's depth (three models). The answer logit moves as much when the edit leaves the correct answer unchanged as when it changes it, and its sign follows which variable letter is asked about (Qwen2.5-0.5B so far), so this locates where a prompt difference arrives, not where a causal judgement is made.
-- **Is the adjacency information used? (second round; Qwen2.5-0.5B so far.)** No evidence that it is, as a feature. At the final token from layer 15 (of 24) the within-question answer is a linear function of the activation (held-out R² {{adjacency_qwen0.5b_c2c_debiased_final_best.json|audit5/within_string_answer_linearly_predictable/held_out_r2|num2}}), and for common-effect hypotheses the part of it that goes with adjacency can be moved and removed there, beyond every control (gap on evaluated items {{adjacency_qwen0.5b_c2c_debiased_final_best.json|audit5/gaps_on_evaluated_items_within_string/by_template/has_collider/gap_before|signed}} → {{adjacency_qwen0.5b_c2c_debiased_final_best.json|audit5/gaps_on_evaluated_items_within_string/by_template/has_collider/gap_after_erasure|signed}}); four layers earlier it cannot. That locates where this part of the answer is, and a transfer check shows it is each hypothesis type's own answer shift. At the last token of the hypothesis the same intervention has a small effect that is not distinguishable from a random direction of the same size (1 of 20 controls larger). Two earlier versions of this result were wrong and were corrected by independent audits: the first experiment did not remove what it claimed to remove, and my first summary of the second claimed "about a sixth of the dependence, beyond all controls" on the strength of a control that could not fail.
-- **SAE features (Gemma-2-2B, CLadder).** The public dictionaries fit these activations poorly. The features most associated with a type of causal graph are not specific to it; removing them shifts the answer somewhat more than removing matched random features in four of five cases, and for four of the five graph types as much on items of other graph types.
-- **Still running as this is written:** Qwen2.5-7B behaviour; matched steering controls, label-preserving patching and the adjacency test for Qwen2.5-1.5B, Qwen2.5-3B and Gemma-2-2B. The report marks what has and has not arrived.
+- **Behaviour.** All four models answer both benchmarks at or near chance; part of that is answer bias, and the bias-free ranking score is near 0.5 as well (table below).
+- **Patching.** A change of one variable in the prompt reaches the answer position at about 60% of the network's depth (three models). The answer logit moves as much when the edit leaves the correct answer unchanged as when it changes it, and its sign follows which variable letter is asked about (Qwen2.5-0.5B so far): this locates where a prompt difference arrives, not where a judgement is made.
+- **In the report's appendix:** logit lens, cross-model comparison, sparse-autoencoder features, attribution patching of components.
 
 ## What was pre-registered, what passed, what was retracted
 
@@ -43,12 +35,10 @@ What the text alone gives away on Corr2Cause (official splits):
 
 <!-- TABLE:benchmark_c2c_official -->
 
-## Key figures
+## Other figures
 
 ![behaviour](figures/fig1_behaviour.png)
 ![probes](figures/fig3_probes_c2c_probe.png)
-![probe vs text](figures/fig5_confound_c2c_probe.png)
-![adjacency, end of hypothesis](figures/fig12_adjacency_end_of_hypothesis.png)
 
 How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 
@@ -68,6 +58,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 
 | File | What it is |
 |---|---|
+| `RESULTS.md` | The one-page results shown at the top of this README |
 | `EXPLAINER.md` | Start here. Concept primer, decision log, how to read each figure, questions a professor would ask |
 | `report/report.md` | Method, tables and figures per tier |
 | `report/benchmark_text_baselines.md` | Stand-alone note on text-only baselines for the two benchmarks |
@@ -81,7 +72,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 
 ## Limitations
 
-*(Full list in the report; filled in at packaging.)*
+The short list is in the results page at the top; the full list is Section 7 of `report/report.md`.
 
 ## Reproduction
 

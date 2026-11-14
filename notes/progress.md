@@ -1,6 +1,6 @@
 # Progress (read this first after a restart)
 
-## MORNING STATUS, Saturday 14 November (written 01:45; nothing was started that needs your input)
+## MORNING STATUS, Saturday 14 November (written 01:45, updated about 03:00; nothing was started that needs your input)
 
 **In one line.** Qwen 3B and Qwen 1.5B are ingested and audited. One steering result beats its 20 controls and is undecided. `RESULTS.md` is unchanged. A run designed to decide it is ready for you to launch or not.
 
@@ -26,29 +26,36 @@ A claims pass on the report and README then found 43 + 9 sentences that were sta
 - **`RESULTS.md`.** Claim 3 is still worded for one model. Proposed rewording, evidence for and against, three options: **`notes/claim3_proposed_rewording.md`**. Nine smaller stale items in `RESULTS.md` are listed in `notes/claims_pass_14nov_raw.md`, list C.
 - **Report Section 8** is still empty.
 
-### 3. Ready to launch (all on repo `main`; first code cell shows `COMMIT = "df7313e…"`)
+### 3. Ready to launch (all on repo `main`; first code cell shows `COMMIT = "e336431…"`)
 
 | Notebook | Hours | HF secret | My recommendation |
 |---|---|---|---|
-| `notebooks/kaggle_r3_settle_qwen3b.ipynb` | about 1.5 | no | **Run first, if you want claim 3 decided before packaging.** See caveat below. |
-| `notebooks/kaggle_r3_settle_qwen1.5b.ipynb` | about 1 | no | Second. Same test for the Qwen 1.5B arm. |
+| `notebooks/kaggle_r3_settle_qwen3b.ipynb` | about 1.5 | no | **Your call; read the caveat below first.** It has about one chance in three to one in two of an informative outcome. |
+| `notebooks/kaggle_r3_settle_qwen1.5b.ipynb` | about 1 | no | The more informative of the two (a little better than even). Same test for the Qwen 1.5B arm. |
 | `notebooks/kaggle_r3_gemma9b.ipynb` | 2 – 3.5 (ends in about 15 min if it cannot run) | **yes**, with the licence of `google/gemma-2-9b-it` accepted | Yes. |
 | `notebooks/kaggle_r3_patch240_qwen3b.ipynb` | about 2 | no | Yes. |
 | `notebooks/kaggle_r3_patch240_gemma.ipynb` | 1 – 2.5 | **yes** | Yes. |
 | `notebooks/kaggle_r3_controls100_qwen3b.ipynb` (and `_qwen1.5b`, `_qwen0.5b`, `_gemma`) | 1 – 3 | Gemma only | **No longer recommended**: the audit showed 100 controls on the same split decide nothing. Ready if you want them anyway. |
 
-**Caveat on the settle run.** Its test and threshold are written down before any run (`notes/log.md`, "AMENDED pre-registration"). It is the *second* version: an independent review of the first (ninth audit, `notes/audit_settle_code_raw.md`) showed my first design would have announced a replication in 57% of cases with nothing real behind it. The second version is tested with a stand-in for the model and its control families are checked to be calibrated, but **nobody except me has reviewed the second version, and it has never run on a GPU.** If you prefer, say so and I will have it reviewed before you launch.
+**Caveat on the settle run: what it can and cannot show.** Its test and threshold are written down before any run (`notes/log.md`, the two "amendment" entries of 14 November). The script was reviewed twice before running (ninth and tenth audits). The first review showed my first design would have announced a replication in 57% of cases with nothing real behind it; the second confirmed the rewrite is correct and put numbers on its power:
+
+| What is true | Qwen 3B: beyond all 500 controls / in between / p > 0.05 | Qwen 1.5B |
+|---|---|---|
+| Nothing label-specific | 3% / 51% / 46% | 2% / 26% / 72% |
+| A real effect of the size observed | 25% / 67% / 9% | 48% / 44% / 8% |
+
+"Beyond all 500" would be moderate evidence for a real effect; "p > 0.05" moderate evidence against; **the in-between outcome is evidence for neither**, and for Qwen 3B it is the most likely outcome whatever is true. So the run may well leave claim 3 exactly where it is. It costs about 2.5 GPU hours for both models. Not run on a GPU; the last five small changes after the second review have been seen by me alone.
 
 ### 4. What I need from you
 
 1. **B (Qwen 7B) and D (Gemma) zips** in `kaggle_in/r2_qwen7b/` and `kaggle_in/r2_gemma/` (or `kaggle_out/<run>/` as you did last night; either works). Both were launched from pin `6d9ce8d`: they write no `STATUS.txt`, which the ingest accepts. **B has a known weak point at that pin:** if 4-bit loading failed and it fell back to two GPUs, the cache stage will show FAILED (a bug fixed one commit later). Then rerun `notebooks/kaggle_r2_qwen7b.ipynb` from the current repo; nothing from the failed run needs keeping.
 2. **Your decision on claim 3**: option A, B or C in `notes/claim3_proposed_rewording.md`.
-3. **Whether to launch the settle run** (and whether you want it reviewed again first).
+3. **Whether to launch the settle run**, knowing it may be uninformative (table above).
 
 ### 5. What I am unsure about
 
 - Whether "No intervention shows…" is honest wording while one arm at p = 1/21 among 12 is perfectly consistent across items. I think yes; it is your call (the note says why).
-- The settle run's second version (see the caveat). Its primary test asks a lot: beyond all 500 controls. If the true effect is modest it will not pass, and the result will read "reproducible, no more than selection explains". That is the honest outcome for a modest effect, but it means the run may not change the wording of claim 3 at all.
+- Whether the settle run is worth its GPU time (see the table). I would run the Qwen 1.5B one; for Qwen 3B it is closer to a coin flip whether it tells us anything. The error rates in that table assume the model responds to label-free directions about equally in all directions; if not, "beyond all 500" could happen by chance in up to about 12% of runs instead of 3%. The run measures that itself.
 - Nothing involving two GPUs (B's fallback, Gemma-2-9B) has ever run. The Gemma-2-9B notebook checks itself and skips cleanly if it cannot run.
 - The laptop could not hold a model last night without swapping (even Qwen 0.5B on CPU), so every laptop test of new GPU code used a stand-in for the model. The 7B probe ladder, when B arrives, is CPU-only analysis and should be fine.
 - `scripts/run_all.sh` has not been run end to end since the second round; that is a packaging item for Sunday.
@@ -56,7 +63,7 @@ A claims pass on the report and README then found 43 + 9 sentences that were sta
 ### 6. Things I got wrong overnight (all corrected, all in the log)
 
 - My first reaction to the Qwen 3B result was to prepare 100 controls. The audit showed that would decide nothing.
-- My first settle design could not have told a real effect from a reproducible artefact. Caught by review before any run.
+- My first settle design could not have told a real effect from a reproducible artefact, and my second still had one comparison that an adjacency-only response would have triggered. Both caught by review before any run.
 - A commit message claimed a log entry that was not in it (a step failed half-way). Added in the next commit.
 - The figure script had been failing silently since Friday evening; two figures were stale for Qwen 3B. Fixed and checked.
 - Several timestamps in my notes were guesses and ran ahead of the clock. Corrected where I found them.

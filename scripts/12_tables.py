@@ -558,7 +558,7 @@ def STEER_NOTES():
 
 def t_settle():
     """The held-out test of the two steering arms that ranked first of 21 (scripts/07d_steering_settle.py). The three outcomes
-    and what each is taken to mean were fixed before the run (notes/log.md, 14 Nov 01:40, 02:45 and 08:00)."""
+    and what each is taken to mean were fixed before the run (notes/log.md, 14 Nov 01:40, 02:45 and 07:56)."""
     rows, src = [], []
     for m in MODELS:
         r = load(f"steering_settle_{m}_c2c_debiased_hyp.json")

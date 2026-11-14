@@ -605,7 +605,7 @@ So: **"beyond all 500" is moderate evidence for a real effect** (9 and 20 times 
 
 **Expectations, restated with what the power table says.** Qwen 3B: most likely the middle outcome, which I will report as uninformative. Qwen 1.5B: about even between "beyond all 500" and the rest if the effect is real at the observed size; most likely "above 0.05" if it is not.
 
-## Sat 2026-11-14 08:00 — Runs B (Qwen 7B) and D (Gemma-2-2B) ingested; the 7B rule applied; the user's decision on claim 3; the settle run's three outcomes mapped to wording before any of its output exists
+## Sat 2026-11-14 07:56 — Runs B (Qwen 7B) and D (Gemma-2-2B) ingested; the 7B rule applied; the user's decision on claim 3; the settle run's three outcomes mapped to wording before any of its output exists
 
 **Ingest.** Both runs came from the notebooks pinned to `08d99b1` (not `6d9ce8d`, as I had told the user last night: they were relaunched from a later pin), finished every stage, and carry `OK` in the status copy inside the results archive (the loose `STATUS.txt` was not brought; the ingest accepts an unzipped folder with the inner copy). Between `08d99b1` and the current pin `e336431` no file of the model code or of the stages these runs used has changed (`git diff --stat`), so their outputs are what the current code would give. Run B loaded Qwen2.5-7B in 4-bit as planned (no two-GPU fallback), 64 min; run D 119 min. The user's folders were `kaggle_out/r2_qwen7b` and `kaggle_out/r2_gemma2_2b`.
 
@@ -634,7 +634,7 @@ So: **"beyond all 500" is moderate evidence for a real effect** (9 and 20 times 
 **The user's decisions this morning (quoted).** "Claim 3: option A. Keep the headline, reworded to: no intervention result survives correction for multiple comparisons; one arm (Qwen 3B, gold difference of class means, end of hypothesis) exceeded its 20 controls, is loaded on adjacency rather than validity, and is undecided. Have this wording audited before it enters RESULTS.md, along with the nine stale items from the claims pass." Launch order: settle Qwen 1.5B + Gemma-2-9B; the two 240-pair patching runs; settle Qwen 3B. The 100-control runs are skipped.
 - *What the result files say against that wording, to be put to the user:* "one arm" was already two on the debiased pool last night (Qwen 1.5B's gold probe at the same token, −0.251, first of 21, with the sign that lowers Yes), and with Gemma it is three there and four of 32 in all. The wording that goes to the audit names them.
 
-**The settle run: outcomes mapped to wording in advance (the user's mapping, 14 Nov morning; recorded at 08:00, after the user reported launching `kaggle_r3_settle_qwen1.5b` and before any of its output has been downloaded or seen).** The test and the threshold are those of the entries of 01:40 and 02:45; nothing in them is changed here.
+**The settle run: outcomes mapped to wording in advance (the user's mapping, 14 Nov morning; recorded at 07:56 (the time of the pushed commit `8b8ca08`; I first stamped this entry 08:00, four minutes ahead of the clock, and corrected it), after the user reported launching `kaggle_r3_settle_qwen1.5b` and before any of its output has been downloaded or seen).** The test and the threshold are those of the entries of 01:40 and 02:45; nothing in them is changed here.
 
 | Outcome of the primary test (split 1, 500 premise-balanced controls, one-sided) | Wording of claim 3's caveat |
 |---|---|

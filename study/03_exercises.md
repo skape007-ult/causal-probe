@@ -80,7 +80,7 @@ Four text-only models, none of which uses a language model:
 
 Now combine the two: a logistic regression on the parse's score and the probe's score. Both scores are produced by a cross-validation inside each training fold, so neither has seen the labels of the items it is scored on ("nested" stacking).
 
-**Question.** (a) By how much does the combined model's accuracy exceed the parse alone? (b) The same, when the probe is added to the strongest text-only model (model D, 0.865) instead?
+**Question.** (a) By how much does the combined model's accuracy exceed the parse alone? (b) The same, when the probe is added to the text-only stack with fixed settings (hand parse + 4-grams) (model D, 0.865) instead?
 
 **Your prediction:** (a) ____ ; (b) ____ ; because ____
 

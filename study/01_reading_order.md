@@ -94,7 +94,7 @@
 
 - *What the pool removes.* Every premise contributes one valid and one invalid hypothesis. Every hypothesis sentence is half valid in every fold. So a classifier that sees only the hypothesis, or only the premise, scores 0.50 by construction. Only the *combination* can predict the label.
 - *A probe score needs a ladder, not one baseline.* For Qwen2.5-1.5B the probe scores 0.752 [0.728, 0.774]. The strongest control that connects nothing in the premise to the queried variables scores 0.659. A per-template lookup of the premise statements that name the queried pair scores 0.765. A hand-written parse scores 0.816. For Qwen2.5-0.5B the final-token probe (0.633) is not above the no-binding controls.
-- *"Does the probe know something the text model does not?" is a separate question.* Stacked with the hand parse, the probe adds +0.022 [+0.005, +0.038] accuracy. Stacked with the strongest text-only model it adds -0.001 [-0.010, +0.008].
+- *"Does the probe know something the text model does not?" is a separate question.* Stacked with the hand parse, the probe adds +0.022 [+0.005, +0.038] accuracy. Stacked with the text-only stack with fixed settings (hand parse + 4-grams) it adds -0.001 [-0.010, +0.008].
 - *An average can hide opposite tendencies.* Pooled, the 1.5B model's answers have AUROC 0.510 [0.488, 0.532]. Within "X directly causes Y" hypotheses it is 0.628 [0.581, 0.673].
 
 **Figures.** There is no figure for this section yet. The evidence is in five tables inside report Section 3.6 (also saved as `report/tables/debiased_ladder.md`, `debiased_incremental.md`, `debiased_properties.md`, `debiased_strata.md`, `debiased_answers.md`). Make your own figure: draw a vertical axis from 0.5 to 0.9, mark every scorer of the `debiased_ladder` table for Qwen2.5-1.5B, and mark the probe. Check three things on your drawing: the probe is above all of group (a); it sits among the lower rungs of group (b); the rungs of group (b) differ a lot among themselves, so "the text baseline" is not one number.
@@ -224,6 +224,4 @@ After that hour you should be able to say these five sentences from memory.
 
 ## Still to be added
 
-- The held-out test of the two steering cases, the 240-pair patching runs, Gemma-2-9B
-- Qwen 7B: its probe comparison on the debiased pool
-- The settle run for the Qwen 3B steering arm, if it is run
+- The held-out test of the Qwen 3B steering case (queued), the runs on all available patching pairs (queued), Gemma-2-9B (launched, not returned)

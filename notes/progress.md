@@ -7,7 +7,7 @@
 - **Kaggle, launched by the user at about 16:50, not returned:** the settle run for Qwen 3B and the all-pairs patching run for Qwen 3B. Not launched and not wanted: the all-pairs patching run for Gemma. No fine-tuning pilot exists.
 - **Rehearsal of `scripts/run_all.sh`** in `../rehearsal_run_all` (isolated worktree, cloned cache): first part (tier 1 of three models) ran without error and reproduced every committed number; second part (Qwen 3B tier 1, the 7B path, everything after the tier-1 loop) running since 17:09, log `logs/rehearsal2.log` there.
 - **Freeze (user):** after the two Qwen 3B runs are ingested and audited, no new analyses; then `scripts/run_all.sh` end to end in the real checkout tonight; Sunday 10:00 to 14:00 packaging and the rest of `notes/handoff.md` (started; next-phase section written).
-- **Seventeen reviews so far** are not all on the page: RESULTS.md says fifteen; the sixteenth is the 9B one. Queue a count change with the next RESULTS.md change.
+- **Sixteen reviews so far**; RESULTS.md says fifteen (the sixteenth is the 9B one). Queue the count with the next RESULTS.md change.
 
 ## STATUS, Saturday 14 November 11:39 (supersedes everything below where they differ)
 

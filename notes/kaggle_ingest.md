@@ -139,3 +139,9 @@ reached its export step. `--allow-partial` ingests what is there.
 
 Note on the first run's downloads (13 Nov): Safari unpacked the zips into `results/`, `cache/`,
 `cache-1/` ...; the ingest accepts that layout.
+
+Runs launched from an earlier round-2 pin (the notebooks were re-pinned five times on 13 November) are accepted: the ingest
+checks that the run's commit lies between the first round-2 pin and the current code and prints a note. Their result files
+come from an older version of the analysis; after ingesting, the statistics are recomputed here from the raw arrays
+(`17_adjacency_test.py --analyse-only` per site). Follow-up runs use the run names `r2b_qwen3b`, `r2b_qwen15b`, `r2b_gemma`.
+A smoke test (`SMOKE_TEST = True`) writes under `<run>_tiny` and is refused by the ingest.

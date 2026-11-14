@@ -299,7 +299,8 @@ def t_steering():
                               num(x["versus"][mf]["ratio_to_median_abs_slope_per_s"], 1),
                               num(x["own_sd_over_s"], 4), num(fam[mf]["own_sd_over_s_median"], 4),
                               f"{100 * x['versus'][mf]['percentile_of_abs_slope_per_own_sd']:.0f}",
-                              num(x["versus"][mf]["ratio_to_median_abs_slope_per_own_sd"], 1)])
+                              num(x["versus"][mf]["ratio_to_median_abs_slope_per_own_sd"], 1),
+                              c.get("control_labels_shuffled", "over the whole item set")])
     write("steering", table(
         ["Model", "Item set", "Layer", "Direction", "Slope: Δ(Yes−No logit) per unit s", "Share of items with positive slope",
          "One unit of s in the direction's own SDs", "Slope per own SD", "Effect of moving across the natural gold-class gap",
@@ -313,7 +314,8 @@ def t_steering():
              "Isotropic median |slope|", "Isotropic max |slope|", "Matched control family (20 directions)",
              "Percentile among matched controls", "Matched median |slope|", "Matched max |slope|", "Ratio to matched median",
              "Natural SD along this direction (units of s)", "Natural SD, matched controls (median)",
-             "Percentile among matched controls, per natural SD", "Ratio to matched median, per natural SD"], rows3, src3))
+             "Percentile among matched controls, per natural SD", "Ratio to matched median, per natural SD",
+             "Control labels shuffled"], rows3, src3))
 
 
 def t_patching():

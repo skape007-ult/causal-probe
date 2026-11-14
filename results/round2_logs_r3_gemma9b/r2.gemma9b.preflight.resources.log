@@ -1,0 +1,2 @@
+GPUs: [14.6, 14.6] GiB
+PREFLIGHT OK: weights 17.2 GiB within limits 9+13 GiB on GPUs of 14.6+14.6 GiB; 960 GiB disk free for a 17.2 GiB download

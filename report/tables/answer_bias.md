@@ -32,5 +32,9 @@
 | Qwen2.5-7B (4-bit) | Corr2Cause pool | zero-shot | 2400 | 0.09 | 0.496 [0.485, 0.508] | 0.500 | 0.594 [0.572, 0.618] | 0.601 [0.582, 0.620] | informative (AUROC CI above 0.5) |
 | Qwen2.5-7B (4-bit) | Corr2Cause debiased pool | zero-shot | 2400 | 0.07 | 0.506 [0.496, 0.517] | 0.500 | 0.514 [0.490, 0.536] | 0.525 [0.505, 0.543] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-7B (4-bit) | CLadder | zero-shot | 3000 | 0.49 | 0.544 [0.520, 0.568] | 0.500 | 0.570 [0.541, 0.601] | 0.534 [0.511, 0.555] | informative (AUROC CI above 0.5) |
+| Gemma-2-9B | Corr2Cause test | zero-shot | 1162 | 0.02 | 0.842 [0.803, 0.888] | 0.845 | 0.553 [0.496, 0.602] | 0.842 [0.800, 0.893] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-9B | Corr2Cause pool | zero-shot | 2400 | 0.01 | 0.505 [0.501, 0.508] | 0.500 | 0.574 [0.552, 0.597] | 0.598 [0.578, 0.619] | informative (AUROC CI above 0.5) |
+| Gemma-2-9B | Corr2Cause debiased pool | zero-shot | 2400 | 0.01 | 0.507 [0.503, 0.512] | 0.500 | 0.512 [0.490, 0.535] | 0.517 [0.502, 0.531] | at chance (AUROC CI includes 0.5) |
+| Gemma-2-9B | CLadder | zero-shot | 3000 | 0.75 | 0.566 [0.546, 0.586] | 0.500 | 0.598 [0.569, 0.626] | 0.555 [0.536, 0.575] | informative (AUROC CI above 0.5) |
 
 <sub>Source: `results/answer_bias.json`</sub><br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>

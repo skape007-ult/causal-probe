@@ -1,0 +1,10 @@
+OK
+run: r3_gemma9b
+commit: e336431bbcf3eee973c559c9feed137c23d0b1ff
+platform: kaggle
+output directory: /kaggle/working/kaggle_out
+written: 2026-11-14T18:05:02Z
+archives:
+  results_r3_gemma9b.zip  1718108 bytes
+  cache_r3_gemma9b_gemma9b.zip  1483136087 bytes
+problems: none

@@ -1853,5 +1853,280 @@
    "best_threshold_in_sample": -6.06251335144043,
    "reading": "informative (AUROC CI above 0.5)"
   }
+ },
+ "gemma9b": {
+  "c2c_test": {
+   "mode": "zero-shot",
+   "n": 1162,
+   "n_clusters": 21,
+   "frac_gold_yes": 0.1549053356282272,
+   "majority": 0.8450946643717728,
+   "yes_rate": 0.01721170395869191,
+   "mean_logit_diff": -6.719038900122585,
+   "accuracy": {
+    "est": 0.8416523235800344,
+    "lo": 0.8031184171303657,
+    "hi": 0.8883444881889763,
+    "n": 1162,
+    "n_groups": 21
+   },
+   "macro_f1": {
+    "est": 0.4966854990583804,
+    "lo": 0.4671487928474005,
+    "hi": 0.5292981825131677,
+    "n": 1162,
+    "n_groups": 21
+   },
+   "auroc": {
+    "est": 0.552907897714415,
+    "lo": 0.4960288462002913,
+    "hi": 0.6015831586088319,
+    "n": 1162,
+    "n_groups": 21
+   },
+   "best_threshold_acc": {
+    "est": 0.8416523235800344,
+    "lo": 0.7998251748251748,
+    "hi": 0.8933617578486793,
+    "n": 1162,
+    "n_groups": 21
+   },
+   "best_threshold_acc_in_sample": 0.8450946643717728,
+   "best_threshold_in_sample": 2.788616180419922,
+   "reading": "at chance (AUROC CI includes 0.5)"
+  },
+  "c2c_probe": {
+   "mode": "zero-shot",
+   "n": 2400,
+   "n_clusters": 300,
+   "frac_gold_yes": 0.5,
+   "majority": 0.5,
+   "yes_rate": 0.007916666666666667,
+   "mean_logit_diff": -6.3315398546059924,
+   "accuracy": {
+    "est": 0.5045833333333334,
+    "lo": 0.50125,
+    "hi": 0.5083333333333333,
+    "n": 2400,
+    "n_groups": 300
+   },
+   "macro_f1": {
+    "est": 0.346290088583924,
+    "lo": 0.3397426954668905,
+    "hi": 0.3536790541805006,
+    "n": 2400,
+    "n_groups": 300
+   },
+   "auroc": {
+    "est": 0.5744229166666667,
+    "lo": 0.5517075173611111,
+    "hi": 0.5973956076388889,
+    "n": 2400,
+    "n_groups": 300
+   },
+   "best_threshold_acc": {
+    "est": 0.5979166666666667,
+    "lo": 0.57790625,
+    "hi": 0.61875,
+    "n": 2400,
+    "n_groups": 300
+   },
+   "best_threshold_acc_in_sample": 0.5983333333333334,
+   "best_threshold_in_sample": -6.196826934814453,
+   "reading": "informative (AUROC CI above 0.5)"
+  },
+  "c2c_debiased": {
+   "mode": "zero-shot",
+   "n": 2400,
+   "n_clusters": 1200,
+   "frac_gold_yes": 0.5,
+   "majority": 0.5,
+   "yes_rate": 0.012083333333333333,
+   "mean_logit_diff": -6.216523993412654,
+   "accuracy": {
+    "est": 0.5070833333333333,
+    "lo": 0.5029166666666667,
+    "hi": 0.5116666666666667,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "macro_f1": {
+    "est": 0.3530745251675929,
+    "lo": 0.3449949629086913,
+    "hi": 0.3615222059683012,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "auroc": {
+    "est": 0.5122375,
+    "lo": 0.4902610590277778,
+    "hi": 0.5348506249999999,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "best_threshold_acc": {
+    "est": 0.5170833333333333,
+    "lo": 0.5020833333333333,
+    "hi": 0.53125,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "best_threshold_acc_in_sample": 0.5233333333333333,
+   "best_threshold_in_sample": -8.29559850692749,
+   "reading": "at chance (AUROC CI includes 0.5)",
+   "within_hypothesis_string": {
+    "mean_auroc": {
+     "est": 0.5419,
+     "lo": 0.5218440282685411,
+     "hi": 0.5603237868204347,
+     "permutation_p_two_sided": 0.0009995002498750624,
+     "null_mean": 0.49968617690994627,
+     "null_sd": 0.010188564977665737
+    },
+    "n_strings": 48,
+    "n_strings_with_auroc_above_half": 31,
+    "by_type": {
+     "has_collider": {
+      "est": 0.47311999999999993,
+      "lo": 0.4217728636618118,
+      "hi": 0.519457855153316,
+      "permutation_p_two_sided": 0.2683658170914543,
+      "null_mean": 0.49929591699141995,
+      "null_sd": 0.02436253507803515,
+      "n_strings": 10
+     },
+     "has_confounder": {
+      "est": 0.6335999999999999,
+      "lo": 0.5720074832705326,
+      "hi": 0.6914308273217105,
+      "permutation_p_two_sided": 0.0004997501249375312,
+      "null_mean": 0.4993823143667802,
+      "null_sd": 0.03298879369160265,
+      "n_strings": 6
+     },
+     "non-child descendant": {
+      "est": 0.5475555555555556,
+      "lo": 0.495848705299851,
+      "hi": 0.5970208462920925,
+      "permutation_p_two_sided": 0.0704647676161919,
+      "null_mean": 0.500671002522044,
+      "null_sd": 0.02658549738401437,
+      "n_strings": 9
+     },
+     "non-parent ancestor": {
+      "est": 0.4368000000000001,
+      "lo": 0.3885362073049066,
+      "hi": 0.4885677898418345,
+      "permutation_p_two_sided": 0.01699150424787606,
+      "null_mean": 0.49982206249831873,
+      "null_sd": 0.027313122117906073,
+      "n_strings": 9
+     },
+     "parent": {
+      "est": 0.6156571428571428,
+      "lo": 0.5754300739571504,
+      "hi": 0.6537970784359476,
+      "permutation_p_two_sided": 0.0004997501249375312,
+      "null_mean": 0.4993747035985197,
+      "null_sd": 0.020436046086816827,
+      "n_strings": 14
+     }
+    },
+    "within_string_and_adjacency": {
+     "est": 0.5410708057202651,
+     "lo": 0.5111428674931845,
+     "hi": 0.5698935300553601,
+     "permutation_p_two_sided": 0.0009995002498750624,
+     "null_mean": 0.4997406633524433,
+     "null_sd": 0.010782229333052784,
+     "by_type": {
+      "has_collider": {
+       "est": 0.5592631213069169,
+       "lo": 0.4967356188969671,
+       "hi": 0.6175329126997317,
+       "permutation_p_two_sided": 0.01999000499750125,
+       "null_mean": 0.4989897695257836,
+       "null_sd": 0.025411537460833116
+      },
+      "has_confounder": {
+       "est": 0.6048024012006002,
+       "lo": 0.5286295251479463,
+       "hi": 0.6825348451258847,
+       "permutation_p_two_sided": 0.0024987506246876563,
+       "null_mean": 0.49987518811894266,
+       "null_sd": 0.034676213113834
+      },
+      "non-child descendant": {
+       "est": 0.5354358610914245,
+       "lo": 0.46996608589970845,
+       "hi": 0.6020698075924492,
+       "permutation_p_two_sided": 0.21139430284857572,
+       "null_mean": 0.5007779589641743,
+       "null_sd": 0.0284907630977825
+      },
+      "non-parent ancestor": {
+       "est": 0.40458015267175573,
+       "lo": 0.3404329370898014,
+       "hi": 0.4695889965297859,
+       "permutation_p_two_sided": 0.001999000499750125,
+       "null_mean": 0.4998384246636468,
+       "null_sd": 0.02862897444538285
+      },
+      "parent": {
+       "est": 0.7095652173913043,
+       "lo": 0.6173756752523655,
+       "hi": 0.7876758394491066,
+       "permutation_p_two_sided": 0.0004997501249375312,
+       "null_mean": 0.4994260800262428,
+       "null_sd": 0.021238965236367195
+      }
+     },
+     "share_of_items_in_cells_with_both_labels": 0.8370833333333333
+    },
+    "valid_item_above_invalid_item_of_the_same_premise": 0.5258333333333334,
+    "reading": "above chance within hypothesis string",
+    "note": "chosen after the pooled statistics had been seen (eleventh audit, F1); n_boot 1000 premise resamples, 2000 permutations"
+   }
+  },
+  "cladder": {
+   "mode": "zero-shot",
+   "n": 3000,
+   "n_clusters": 47,
+   "frac_gold_yes": 0.5,
+   "majority": 0.5,
+   "yes_rate": 0.7543333333333333,
+   "mean_logit_diff": 2.5766530691782634,
+   "accuracy": {
+    "est": 0.5656666666666667,
+    "lo": 0.5456965167594829,
+    "hi": 0.585870892034959,
+    "n": 3000,
+    "n_groups": 47
+   },
+   "macro_f1": {
+    "est": 0.5356285960124407,
+    "lo": 0.5129016150601587,
+    "hi": 0.558862790515738,
+    "n": 3000,
+    "n_groups": 47
+   },
+   "auroc": {
+    "est": 0.5980364444444444,
+    "lo": 0.5686276715118436,
+    "hi": 0.6260700652276849,
+    "n": 3000,
+    "n_groups": 47
+   },
+   "best_threshold_acc": {
+    "est": 0.5546666666666666,
+    "lo": 0.5359082745782847,
+    "hi": 0.5752565830145512,
+    "n": 3000,
+    "n_groups": 47
+   },
+   "best_threshold_acc_in_sample": 0.5736666666666667,
+   "best_threshold_in_sample": -1.5293550491333008,
+   "reading": "informative (AUROC CI above 0.5)"
+  }
  }
 }

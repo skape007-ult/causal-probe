@@ -1,0 +1,156 @@
+{
+ "stages": {
+  "data": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "ok  corr2cause/train.csv  causal-nlp/corr2cause@42ba12c7  md5 bee2c98caa50f69bee54318d35f0ace4",
+    "ok  corr2cause/dev.csv  causal-nlp/corr2cause@42ba12c7  md5 7a343e9d341b892a7a7b1b1bddd39aa9",
+    "ok  corr2cause/test.csv  causal-nlp/corr2cause@42ba12c7  md5 c318d19ddc585bb4310084e2ce2d241f",
+    "ok  cladder/full_v1.5_default.csv  causal-nlp/CLadder@18d684e4  md5 32815a3e44cbd32fa3db84972d750815"
+   ]
+  },
+  "environment": {
+   "ok": true,
+   "minutes": 0.3,
+   "detail": "ok",
+   "log_tail": [
+    "  15.6",
+    " ],",
+    " \"sae_lens\": \"6.55.4\",",
+    " \"peft\": \"0.21.2\",",
+    " \"bitsandbytes\": \"not available (ModuleNotFoundError)\",",
+    " \"accelerate\": \"1.15.0\",",
+    " \"git_commit\": \"e336431bbcf3eee973c559c9feed137c23d0b1ff\"",
+    "}"
+   ]
+  },
+  "r2.gemma9b.preflight.resources": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "GPUs: [14.6, 14.6] GiB",
+    "PREFLIGHT OK: weights 17.2 GiB within limits 9+13 GiB on GPUs of 14.6+14.6 GiB; 960 GiB disk free for a 17.2 GiB download"
+   ]
+  },
+  "r2.gemma9b.preflight.load": {
+   "ok": true,
+   "minutes": 2.6,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  93%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e| 432/464 [00:37<00:04,  7.27it/s]",
+    "Loading weights:  95%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c| 443/464 [00:39<00:03,  6.96it/s]",
+    "Loading weights:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 454/464 [00:41<00:01,  7.29it/s]",
+    "Loading weights:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 456/464 [00:41<00:01,  7.72it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 464/464 [00:41<00:00, 11.28it/s]",
+    "loaded in 137 s; modules per device {'0': 20, '1': 26}; GiB allocated [8.35, 8.86]",
+    "[cache] gemma9b/c2c_debiased chunk 1/1 1.86 items/s",
+    "PREFLIGHT OK: gemma9b loads and runs: peak GiB per GPU [9.08, 9.72], activations [16, 43, 3, 3584], about 137 min projected for the four item sets (upper bound: includes warm-up)"
+   ]
+  },
+  "r2.gemma9b.behaviour.cache_part0": {
+   "ok": false,
+   "minutes": 52.2,
+   "detail": "exit code 1",
+   "log_tail": [
+    "[cache] gemma9b/cladder chunk 12/12 5.77 items/s",
+    "[cache] gemma9b/c2c_probe chunk 1/10 1.70 items/s",
+    "[cache] gemma9b/c2c_probe chunk 2/10 1.87 items/s",
+    "[cache] gemma9b/c2c_probe chunk 3/10 1.89 items/s",
+    "[cache] gemma9b/c2c_probe chunk 4/10 1.89 items/s",
+    "[cache] gemma9b/c2c_probe chunk 5/10 1.86 items/s",
+    "[cache] gemma9b/c2c_probe chunk 6/10 1.88 items/s",
+    "time budget reached; re-run to resume"
+   ]
+  },
+  "r2.gemma9b.behaviour.cache_part1": {
+   "ok": true,
+   "minutes": 9.3,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] /kaggle/temp/cache/gemma9b/c2c_debiased already complete",
+    "[cache] /kaggle/temp/cache/gemma9b/c2c_test already complete",
+    "[cache] /kaggle/temp/cache/gemma9b/cladder already complete",
+    "[cache] gemma9b/c2c_probe chunk 7/10 1.52 items/s",
+    "[cache] gemma9b/c2c_probe chunk 8/10 1.63 items/s",
+    "[cache] gemma9b/c2c_probe chunk 9/10 1.73 items/s",
+    "[cache] gemma9b/c2c_probe chunk 10/10 1.71 items/s",
+    "done in 9.1 min"
+   ]
+  },
+  "r2.gemma9b.behaviour.cache": {
+   "ok": true,
+   "minutes": 61.5,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] /kaggle/temp/cache/gemma9b/c2c_debiased already complete",
+    "[cache] /kaggle/temp/cache/gemma9b/c2c_test already complete",
+    "[cache] /kaggle/temp/cache/gemma9b/cladder already complete",
+    "[cache] gemma9b/c2c_probe chunk 7/10 1.52 items/s",
+    "[cache] gemma9b/c2c_probe chunk 8/10 1.63 items/s",
+    "[cache] gemma9b/c2c_probe chunk 9/10 1.73 items/s",
+    "[cache] gemma9b/c2c_probe chunk 10/10 1.71 items/s",
+    "done in 9.1 min"
+   ]
+  },
+  "r2.gemma9b.behaviour.report": {
+   "ok": true,
+   "minutes": 1.0,
+   "detail": "ok",
+   "log_tail": [
+    "gemma9b   c2c_test               yes 0.02 acc 0.842 (maj 0.845) auroc 0.553 [0.496,0.602] best-thr acc 0.842 -> at chance (AUROC CI includes 0.5)",
+    "gemma9b   c2c_probe              yes 0.01 acc 0.505 (maj 0.500) auroc 0.574 [0.552,0.597] best-thr acc 0.598 -> informative (AUROC CI above 0.5)",
+    "gemma9b   c2c_debiased           yes 0.01 acc 0.507 (maj 0.500) auroc 0.512 [0.490,0.535] best-thr acc 0.517 -> at chance (AUROC CI includes 0.5)",
+    "gemma9b   cladder                yes 0.75 acc 0.566 (maj 0.500) auroc 0.598 [0.569,0.626] best-thr acc 0.555 -> informative (AUROC CI above 0.5)"
+   ]
+  }
+ },
+ "run": "r3_gemma9b",
+ "models": [
+  "gemma9b"
+ ],
+ "jobs": [
+  "preflight",
+  "behaviour",
+  "export"
+ ],
+ "tiny": false,
+ "planned": [
+  "data",
+  "environment",
+  "r2.gemma9b.preflight.resources",
+  "r2.gemma9b.preflight.load",
+  "r2.gemma9b.behaviour.cache",
+  "r2.gemma9b.behaviour.report"
+ ],
+ "options": {
+  "n_shuf": 20,
+  "sites": "all",
+  "control_tags": "c2c_debiased,c2c_probe",
+  "n_pairs": 60,
+  "no_resid": false
+ },
+ "total_minutes": 65.9,
+ "models_run": [
+  "gemma9b"
+ ],
+ "export": {
+  "positions": [
+   "final",
+   "content_end"
+  ],
+  "bytes_per_cache_dir": {
+   "gemma9b/c2c_debiased": 1480455090,
+   "gemma9b/c2c_probe": 967607,
+   "gemma9b/c2c_test": 562256,
+   "gemma9b/cladder": 1149812
+  },
+  "zip_megabytes": {
+   "cache_r3_gemma9b_gemma9b.zip": 1483.1
+  }
+ },
+ "all_ok": true,
+ "finished": true
+}

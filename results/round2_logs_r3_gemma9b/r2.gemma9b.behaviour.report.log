@@ -1,0 +1,4 @@
+gemma9b   c2c_test               yes 0.02 acc 0.842 (maj 0.845) auroc 0.553 [0.496,0.602] best-thr acc 0.842 -> at chance (AUROC CI includes 0.5)
+gemma9b   c2c_probe              yes 0.01 acc 0.505 (maj 0.500) auroc 0.574 [0.552,0.597] best-thr acc 0.598 -> informative (AUROC CI above 0.5)
+gemma9b   c2c_debiased           yes 0.01 acc 0.507 (maj 0.500) auroc 0.512 [0.490,0.535] best-thr acc 0.517 -> at chance (AUROC CI includes 0.5)
+gemma9b   cladder                yes 0.75 acc 0.566 (maj 0.500) auroc 0.598 [0.569,0.626] best-thr acc 0.555 -> informative (AUROC CI above 0.5)

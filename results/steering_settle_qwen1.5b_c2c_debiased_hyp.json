@@ -1,0 +1,1905 @@
+{
+ "model": "qwen1.5b",
+ "tag": "c2c_debiased",
+ "position": "content_end",
+ "layer": 19,
+ "n_layers": 28,
+ "probe_C": 0.1,
+ "arm": "gold_probe",
+ "expected_sign_from_the_20_control_run": -1.0,
+ "slopes_in_the_20_control_run": {
+  "gold_probe": -0.25096410512924194,
+  "gold_diffmeans": 0.09507502615451813,
+  "model_out": 0.5060944557189941
+ },
+ "n_primary": 500,
+ "n_shuf": 100,
+ "n_other": 20,
+ "step_in_s": 1.0,
+ "smaller_steps_in_s": [
+  0.1,
+  0.3
+ ],
+ "configurations_dropped_for_time": [],
+ "configs": [
+  {
+   "real": {
+    "gold_diffmeans": {
+     "slope_per_s": 0.1281153361002604,
+     "own_sd_over_s": 0.1798705905675888,
+     "gold_class_gap_along_direction_over_s": 0.030529888346791267,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.003911346906652587,
+     "share_of_items_with_positive_slope": 0.8333333333333334,
+     "versus": {
+      "premise_balanced_diffmeans": {
+       "slope": 0.1281153361002604,
+       "n_controls": 20,
+       "control_mean": 0.013074199994405114,
+       "control_sd": 0.15513857963928457,
+       "control_min": -0.27932134628295896,
+       "control_max": 0.22334321975708007,
+       "control_max_abs": 0.27932134628295896,
+       "z_vs_controls": 0.7415378971068284,
+       "signed_rank_1_is_most_positive": 6,
+       "abs_rank_1_is_largest": 11,
+       "share_of_controls_smaller_in_absolute_value": 0.5,
+       "abs_rank_per_natural_sd": 6,
+       "natural_sd_over_s": 0.1798705905675888,
+       "natural_sd_controls_median": 0.1179535835981369,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_string_diffmeans": {
+       "slope": 0.1281153361002604,
+       "n_controls": 20,
+       "control_mean": 0.015219600359598798,
+       "control_sd": 0.13690126053409013,
+       "control_min": -0.3243801752726237,
+       "control_max": 0.1700174077351888,
+       "control_max_abs": 0.3243801752726237,
+       "z_vs_controls": 0.8246508125653756,
+       "signed_rank_1_is_most_positive": 6,
+       "abs_rank_1_is_largest": 9,
+       "share_of_controls_smaller_in_absolute_value": 0.6,
+       "abs_rank_per_natural_sd": 6,
+       "natural_sd_over_s": 0.1798705905675888,
+       "natural_sd_controls_median": 0.13988851010799408,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 29,
+       "slope_per_s": 0.14354159914214035,
+       "signed_rank_vs_premise_balanced_diffmeans": 5,
+       "signed_rank_vs_within_string_diffmeans": 1
+      },
+      "has_confounder": {
+       "n_items": 16,
+       "slope_per_s": 0.10448330640792847,
+       "signed_rank_vs_premise_balanced_diffmeans": 6,
+       "signed_rank_vs_within_string_diffmeans": 2
+      },
+      "non-child descendant": {
+       "n_items": 24,
+       "slope_per_s": -0.03468978404998779,
+       "signed_rank_vs_premise_balanced_diffmeans": 16,
+       "signed_rank_vs_within_string_diffmeans": 12
+      },
+      "non-parent ancestor": {
+       "n_items": 29,
+       "slope_per_s": 0.06456431027116447,
+       "signed_rank_vs_premise_balanced_diffmeans": 9,
+       "signed_rank_vs_within_string_diffmeans": 11
+      },
+      "parent": {
+       "n_items": 52,
+       "slope_per_s": 0.2373663645524245,
+       "signed_rank_vs_premise_balanced_diffmeans": 4,
+       "signed_rank_vs_within_string_diffmeans": 4
+      }
+     }
+    },
+    "gold_probe": {
+     "slope_per_s": -0.11188604990641277,
+     "own_sd_over_s": 0.008285288698971272,
+     "gold_class_gap_along_direction_over_s": 0.008815685287117958,
+     "effect_of_moving_across_the_gold_class_gap_logits": -0.0009863522039937087,
+     "share_of_items_with_positive_slope": 0.02,
+     "versus": {
+      "premise_balanced_probe": {
+       "slope": -0.11188604990641277,
+       "n_controls": 500,
+       "control_mean": -0.0038016836802164723,
+       "control_sd": 0.08540091881274393,
+       "control_min": -0.2263322067260742,
+       "control_max": 0.2282603708902995,
+       "control_max_abs": 0.2282603708902995,
+       "z_vs_controls": -1.265611280637269,
+       "signed_rank_1_is_most_positive": 442,
+       "abs_rank_1_is_largest": 105,
+       "share_of_controls_smaller_in_absolute_value": 0.792,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.008285288698971272,
+       "natural_sd_controls_median": 0.004044379107654095,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_string_probe": {
+       "slope": -0.11188604990641277,
+       "n_controls": 100,
+       "control_mean": -0.004515608914693195,
+       "control_sd": 0.0897982109604085,
+       "control_min": -0.21452655792236328,
+       "control_max": 0.20092521667480467,
+       "control_max_abs": 0.21452655792236328,
+       "z_vs_controls": -1.1956857474483378,
+       "signed_rank_1_is_most_positive": 84,
+       "abs_rank_1_is_largest": 29,
+       "share_of_controls_smaller_in_absolute_value": 0.72,
+       "abs_rank_per_natural_sd": 3,
+       "natural_sd_over_s": 0.008285288698971272,
+       "natural_sd_controls_median": 0.004406689666211605,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_cell_probe": {
+       "slope": -0.11188604990641277,
+       "n_controls": 100,
+       "control_mean": -0.15140348523457844,
+       "control_sd": 0.060955887639027706,
+       "control_min": -0.295933043162028,
+       "control_max": -0.01217627207438151,
+       "control_max_abs": 0.295933043162028,
+       "z_vs_controls": 0.6482956258824815,
+       "signed_rank_1_is_most_positive": 28,
+       "abs_rank_1_is_largest": 74,
+       "share_of_controls_smaller_in_absolute_value": 0.27,
+       "abs_rank_per_natural_sd": 61,
+       "natural_sd_over_s": 0.008285288698971272,
+       "natural_sd_controls_median": 0.006997202057391405,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 29,
+       "slope_per_s": -0.10934911925217201,
+       "signed_rank_vs_premise_balanced_probe": 461,
+       "signed_rank_vs_within_string_probe": 90,
+       "signed_rank_vs_within_cell_probe": 60
+      },
+      "has_confounder": {
+       "n_items": 16,
+       "slope_per_s": -0.09998124837875366,
+       "signed_rank_vs_premise_balanced_probe": 426,
+       "signed_rank_vs_within_string_probe": 85,
+       "signed_rank_vs_within_cell_probe": 22
+      },
+      "non-child descendant": {
+       "n_items": 24,
+       "slope_per_s": -0.0376350482304891,
+       "signed_rank_vs_premise_balanced_probe": 337,
+       "signed_rank_vs_within_string_probe": 70,
+       "signed_rank_vs_within_cell_probe": 14
+      },
+      "non-parent ancestor": {
+       "n_items": 29,
+       "slope_per_s": -0.11966971693367794,
+       "signed_rank_vs_premise_balanced_probe": 418,
+       "signed_rank_vs_within_string_probe": 81,
+       "signed_rank_vs_within_cell_probe": 16
+      },
+      "parent": {
+       "n_items": 52,
+       "slope_per_s": -0.14689269432654747,
+       "signed_rank_vs_premise_balanced_probe": 449,
+       "signed_rank_vs_within_string_probe": 87,
+       "signed_rank_vs_within_cell_probe": 38
+      }
+     }
+    },
+    "gold_beyond_adjacency": {
+     "slope_per_s": -0.06086151123046875,
+     "own_sd_over_s": 0.18214550614356995,
+     "gold_class_gap_along_direction_over_s": 0.010086351074278355,
+     "effect_of_moving_across_the_gold_class_gap_logits": -0.0006138705691816427,
+     "share_of_items_with_positive_slope": 0.05333333333333334,
+     "versus": {
+      "within_cell_residual": {
+       "slope": -0.06086151123046875,
+       "n_controls": 100,
+       "control_mean": -0.002911651865641277,
+       "control_sd": 0.10554352903417048,
+       "control_min": -0.2795114390055339,
+       "control_max": 0.35423492431640624,
+       "control_max_abs": 0.35423492431640624,
+       "z_vs_controls": -0.5490612252132083,
+       "signed_rank_1_is_most_positive": 73,
+       "abs_rank_1_is_largest": 53,
+       "share_of_controls_smaller_in_absolute_value": 0.48,
+       "abs_rank_per_natural_sd": 46,
+       "natural_sd_over_s": 0.18214550614356995,
+       "natural_sd_controls_median": 0.15017840266227722,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 29,
+       "slope_per_s": -0.07255590373072131,
+       "signed_rank_vs_within_cell_residual": 78
+      },
+      "has_confounder": {
+       "n_items": 16,
+       "slope_per_s": -0.051243484020233154,
+       "signed_rank_vs_within_cell_residual": 67
+      },
+      "non-child descendant": {
+       "n_items": 24,
+       "slope_per_s": -0.025106430053710938,
+       "signed_rank_vs_within_cell_residual": 58
+      },
+      "non-parent ancestor": {
+       "n_items": 29,
+       "slope_per_s": -0.017747944798962825,
+       "signed_rank_vs_within_cell_residual": 46
+      },
+      "parent": {
+       "n_items": 52,
+       "slope_per_s": -0.09784548099224384,
+       "signed_rank_vs_within_cell_residual": 74
+      }
+     }
+    },
+    "gold_beyond_adjacency_orth": {
+     "slope_per_s": -0.13313011169433595,
+     "own_sd_over_s": 0.16233737766742706,
+     "gold_class_gap_along_direction_over_s": 0.00342563190497458,
+     "effect_of_moving_across_the_gold_class_gap_logits": -0.0004560547581329466,
+     "share_of_items_with_positive_slope": 0.013333333333333334,
+     "versus": {
+      "within_cell_residual_orth": {
+       "slope": -0.13313011169433595,
+       "n_controls": 100,
+       "control_mean": -0.0007571173350016281,
+       "control_sd": 0.10823815292475213,
+       "control_min": -0.29966628392537437,
+       "control_max": 0.3528049532572428,
+       "control_max_abs": 0.3528049532572428,
+       "z_vs_controls": -1.2229790585151696,
+       "signed_rank_1_is_most_positive": 91,
+       "abs_rank_1_is_largest": 22,
+       "share_of_controls_smaller_in_absolute_value": 0.79,
+       "abs_rank_per_natural_sd": 17,
+       "natural_sd_over_s": 0.16233737766742706,
+       "natural_sd_controls_median": 0.13626497983932495,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 29,
+       "slope_per_s": -0.12429990439579405,
+       "signed_rank_vs_within_cell_residual_orth": 93
+      },
+      "has_confounder": {
+       "n_items": 16,
+       "slope_per_s": -0.07291948795318604,
+       "signed_rank_vs_within_cell_residual_orth": 72
+      },
+      "non-child descendant": {
+       "n_items": 24,
+       "slope_per_s": -0.0571742057800293,
+       "signed_rank_vs_within_cell_residual_orth": 69
+      },
+      "non-parent ancestor": {
+       "n_items": 29,
+       "slope_per_s": -0.07301810692096579,
+       "signed_rank_vs_within_cell_residual_orth": 74
+      },
+      "parent": {
+       "n_items": 52,
+       "slope_per_s": -0.2251615707690899,
+       "signed_rank_vs_within_cell_residual_orth": 96
+      }
+     }
+    },
+    "model_out": {
+     "slope_per_s": 0.38997884750366213,
+     "own_sd_over_s": 0.06243254616856575,
+     "gold_class_gap_along_direction_over_s": 0.0029727835208177567,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.0011593226913263878,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "within_string_probe": {
+       "slope": 0.38997884750366213,
+       "n_controls": 100,
+       "control_mean": -0.004515608914693195,
+       "control_sd": 0.0897982109604085,
+       "control_min": -0.21452655792236328,
+       "control_max": 0.20092521667480467,
+       "control_max_abs": 0.21452655792236328,
+       "z_vs_controls": 4.393121557758936,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.06243254616856575,
+       "natural_sd_controls_median": 0.004406689666211605,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "premise_balanced_probe": {
+       "slope": 0.38997884750366213,
+       "n_controls": 500,
+       "control_mean": -0.0038016836802164723,
+       "control_sd": 0.08540091881274393,
+       "control_min": -0.2263322067260742,
+       "control_max": 0.2282603708902995,
+       "control_max_abs": 0.2282603708902995,
+       "z_vs_controls": 4.610963636671282,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.06243254616856575,
+       "natural_sd_controls_median": 0.004044379107654095,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 29,
+       "slope_per_s": 0.35459268504175645,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      },
+      "has_confounder": {
+       "n_items": 16,
+       "slope_per_s": 0.35045695304870605,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      },
+      "non-child descendant": {
+       "n_items": 24,
+       "slope_per_s": 0.2908161481221517,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      },
+      "non-parent ancestor": {
+       "n_items": 29,
+       "slope_per_s": 0.37441697613946323,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      },
+      "parent": {
+       "n_items": 52,
+       "slope_per_s": 0.4763201566842886,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      }
+     }
+    },
+    "adjacency_parent_diffmeans": {
+     "slope_per_s": 0.1842698351542155,
+     "own_sd_over_s": 0.22187069058418274,
+     "gold_class_gap_along_direction_over_s": 0.023461254313588142,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.004323201464876014,
+     "share_of_items_with_positive_slope": 0.9733333333333334,
+     "versus": {
+      "adjacency_parent_shuffled": {
+       "slope": 0.1842698351542155,
+       "n_controls": 20,
+       "control_mean": -0.01268973954518636,
+       "control_sd": 0.17159472204738513,
+       "control_min": -0.32317241668701174,
+       "control_max": 0.3534534962972005,
+       "control_max_abs": 0.3534534962972005,
+       "z_vs_controls": 1.147818373137446,
+       "signed_rank_1_is_most_positive": 4,
+       "abs_rank_1_is_largest": 6,
+       "share_of_controls_smaller_in_absolute_value": 0.75,
+       "abs_rank_per_natural_sd": 5,
+       "natural_sd_over_s": 0.22187069058418274,
+       "natural_sd_controls_median": 0.14755913615226746,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 29,
+       "slope_per_s": 0.18063255836223735,
+       "signed_rank_vs_adjacency_parent_shuffled": 4
+      },
+      "has_confounder": {
+       "n_items": 16,
+       "slope_per_s": 0.12229788303375244,
+       "signed_rank_vs_adjacency_parent_shuffled": 5
+      },
+      "non-child descendant": {
+       "n_items": 24,
+       "slope_per_s": 0.010404308636983236,
+       "signed_rank_vs_adjacency_parent_shuffled": 6
+      },
+      "non-parent ancestor": {
+       "n_items": 29,
+       "slope_per_s": 0.11217689514160156,
+       "signed_rank_vs_adjacency_parent_shuffled": 5
+      },
+      "parent": {
+       "n_items": 52,
+       "slope_per_s": 0.32581791510948765,
+       "signed_rank_vs_adjacency_parent_shuffled": 3
+      }
+     }
+    },
+    "adjacency_within_string": {
+     "slope_per_s": 0.07944520950317382,
+     "own_sd_over_s": 0.19886083900928497,
+     "gold_class_gap_along_direction_over_s": 0.012385397218167782,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.0009839604767773657,
+     "share_of_items_with_positive_slope": 0.96,
+     "versus": {
+      "adjacency_within_string_shuffled": {
+       "slope": 0.07944520950317382,
+       "n_controls": 20,
+       "control_mean": -0.024531922976175947,
+       "control_sd": 0.17024450486287135,
+       "control_min": -0.34978387196858723,
+       "control_max": 0.3188128026326497,
+       "control_max_abs": 0.34978387196858723,
+       "z_vs_controls": 0.610751768834485,
+       "signed_rank_1_is_most_positive": 6,
+       "abs_rank_1_is_largest": 13,
+       "share_of_controls_smaller_in_absolute_value": 0.4,
+       "abs_rank_per_natural_sd": 10,
+       "natural_sd_over_s": 0.19886083900928497,
+       "natural_sd_controls_median": 0.15866106748580933,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 29,
+       "slope_per_s": 0.045742593962570716,
+       "signed_rank_vs_adjacency_within_string_shuffled": 6
+      },
+      "has_confounder": {
+       "n_items": 16,
+       "slope_per_s": 0.015158534049987793,
+       "signed_rank_vs_adjacency_within_string_shuffled": 9
+      },
+      "non-child descendant": {
+       "n_items": 24,
+       "slope_per_s": 0.03804969787597656,
+       "signed_rank_vs_adjacency_within_string_shuffled": 6
+      },
+      "non-parent ancestor": {
+       "n_items": 29,
+       "slope_per_s": 0.06895703282849543,
+       "signed_rank_vs_adjacency_within_string_shuffled": 7
+      },
+      "parent": {
+       "n_items": 52,
+       "slope_per_s": 0.1429762106675368,
+       "signed_rank_vs_adjacency_within_string_shuffled": 5
+      }
+     }
+    }
+   },
+   "families": {
+    "adjacency_parent_shuffled": {
+     "n": 20,
+     "mean": -0.01268973954518636,
+     "sd": 0.17159472204738513,
+     "min": -0.32317241668701174,
+     "max": 0.3534534962972005,
+     "median_abs": 0.12574703216552735,
+     "median_own_sd_over_s": 0.14755913615226746
+    },
+    "adjacency_within_string_shuffled": {
+     "n": 20,
+     "mean": -0.024531922976175947,
+     "sd": 0.17024450486287135,
+     "min": -0.34978387196858723,
+     "max": 0.3188128026326497,
+     "median_abs": 0.09363100051879883,
+     "median_own_sd_over_s": 0.15866106748580933
+    },
+    "isotropic": {
+     "n": 20,
+     "mean": -0.011632268269856774,
+     "sd": 0.07003935186096094,
+     "min": -0.17640708287556967,
+     "max": 0.10208518346150716,
+     "median_abs": 0.04330136934916178,
+     "median_own_sd_over_s": 0.024253804236650467
+    },
+    "premise_balanced_diffmeans": {
+     "n": 20,
+     "mean": 0.013074199994405114,
+     "sd": 0.15513857963928457,
+     "min": -0.27932134628295896,
+     "max": 0.22334321975708007,
+     "median_abs": 0.11788979212443033,
+     "median_own_sd_over_s": 0.1179535835981369
+    },
+    "premise_balanced_probe": {
+     "n": 500,
+     "mean": -0.0038016836802164723,
+     "sd": 0.08540091881274393,
+     "min": -0.2263322067260742,
+     "max": 0.2282603708902995,
+     "median_abs": 0.05685171763102213,
+     "median_own_sd_over_s": 0.004044379107654095
+    },
+    "within_cell_probe": {
+     "n": 100,
+     "mean": -0.15140348523457844,
+     "sd": 0.060955887639027706,
+     "min": -0.295933043162028,
+     "max": -0.01217627207438151,
+     "median_abs": 0.151238218943278,
+     "median_own_sd_over_s": 0.006997202057391405
+    },
+    "within_cell_residual": {
+     "n": 100,
+     "mean": -0.002911651865641277,
+     "sd": 0.10554352903417048,
+     "min": -0.2795114390055339,
+     "max": 0.35423492431640624,
+     "median_abs": 0.06562132835388183,
+     "median_own_sd_over_s": 0.15017840266227722
+    },
+    "within_cell_residual_orth": {
+     "n": 100,
+     "mean": -0.0007571173350016281,
+     "sd": 0.10823815292475213,
+     "min": -0.29966628392537437,
+     "max": 0.3528049532572428,
+     "median_abs": 0.0695562998453776,
+     "median_own_sd_over_s": 0.13626497983932495
+    },
+    "within_string_diffmeans": {
+     "n": 20,
+     "mean": 0.015219600359598798,
+     "sd": 0.13690126053409013,
+     "min": -0.3243801752726237,
+     "max": 0.1700174077351888,
+     "median_abs": 0.11121010462443034,
+     "median_own_sd_over_s": 0.13988851010799408
+    },
+    "within_string_probe": {
+     "n": 100,
+     "mean": -0.004515608914693195,
+     "sd": 0.0897982109604085,
+     "min": -0.21452655792236328,
+     "max": 0.20092521667480467,
+     "median_abs": 0.05833918253580729,
+     "median_own_sd_over_s": 0.004406689666211605
+    }
+   },
+   "split": 1,
+   "layer": 19,
+   "role": "primary",
+   "n_items": 150,
+   "shortened_to_items": null,
+   "s_unit": 13.198143005371094,
+   "fitting_notes": {
+    "gold_probe": true,
+    "model_out": true,
+    "within_string_probe_share_converged": 1.0,
+    "premise_balanced_mean_agreement_with_gold": 0.5008814102564103,
+    "premise_balanced_mean_agreement_between_successive": 0.5024664714043472,
+    "premise_balanced_probe_share_converged": 1.0,
+    "within_cell_probe_share_converged": 1.0
+   },
+   "fitting_half": "report half (mirror image of the original split)",
+   "baseline_max_abs_diff_vs_cache": 0.05345916748046875
+  },
+  {
+   "real": {
+    "gold_diffmeans": {
+     "slope_per_s": 0.09507502873738606,
+     "own_sd_over_s": 0.13764098286628723,
+     "gold_class_gap_along_direction_over_s": 0.04239089787006378,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.0040303158331999114,
+     "share_of_items_with_positive_slope": 0.8333333333333334,
+     "versus": {
+      "premise_balanced_diffmeans": {
+       "slope": 0.09507502873738606,
+       "n_controls": 20,
+       "control_mean": -0.02943453057607015,
+       "control_sd": 0.13558870459167746,
+       "control_min": -0.2504970105489095,
+       "control_max": 0.26881079355875653,
+       "control_max_abs": 0.26881079355875653,
+       "z_vs_controls": 0.9182885822857747,
+       "signed_rank_1_is_most_positive": 5,
+       "abs_rank_1_is_largest": 10,
+       "share_of_controls_smaller_in_absolute_value": 0.55,
+       "abs_rank_per_natural_sd": 8,
+       "natural_sd_over_s": 0.13764098286628723,
+       "natural_sd_controls_median": 0.10578654706478119,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_string_diffmeans": {
+       "slope": 0.09507502873738606,
+       "n_controls": 20,
+       "control_mean": -0.003971491177876792,
+       "control_sd": 0.09883055932385099,
+       "control_min": -0.187686341603597,
+       "control_max": 0.1199261220296224,
+       "control_max_abs": 0.187686341603597,
+       "z_vs_controls": 1.0021851600647549,
+       "signed_rank_1_is_most_positive": 5,
+       "abs_rank_1_is_largest": 10,
+       "share_of_controls_smaller_in_absolute_value": 0.55,
+       "abs_rank_per_natural_sd": 12,
+       "natural_sd_over_s": 0.13764098286628723,
+       "natural_sd_controls_median": 0.15083596110343933,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 34,
+       "slope_per_s": 0.1442696907941033,
+       "signed_rank_vs_premise_balanced_diffmeans": 4,
+       "signed_rank_vs_within_string_diffmeans": 2
+      },
+      "has_confounder": {
+       "n_items": 20,
+       "slope_per_s": 0.09013428688049316,
+       "signed_rank_vs_premise_balanced_diffmeans": 5,
+       "signed_rank_vs_within_string_diffmeans": 5
+      },
+      "non-child descendant": {
+       "n_items": 23,
+       "slope_per_s": -0.05799820112145465,
+       "signed_rank_vs_premise_balanced_diffmeans": 18,
+       "signed_rank_vs_within_string_diffmeans": 15
+      },
+      "non-parent ancestor": {
+       "n_items": 34,
+       "slope_per_s": 0.040154372944551354,
+       "signed_rank_vs_premise_balanced_diffmeans": 6,
+       "signed_rank_vs_within_string_diffmeans": 10
+      },
+      "parent": {
+       "n_items": 39,
+       "slope_per_s": 0.1928745905558268,
+       "signed_rank_vs_premise_balanced_diffmeans": 4,
+       "signed_rank_vs_within_string_diffmeans": 1
+      }
+     },
+     "slope_per_s_at_smaller_steps": {
+      "0.1": {
+       "slope_per_s": 0.09631506601969402,
+       "signed_rank_among_first_controls": 6,
+       "n_controls": 20
+      },
+      "0.3": {
+       "slope_per_s": 0.09516917334662545,
+       "signed_rank_among_first_controls": 6,
+       "n_controls": 20
+      }
+     }
+    },
+    "gold_probe": {
+     "slope_per_s": -0.2509640947977702,
+     "own_sd_over_s": 0.007887921296060085,
+     "gold_class_gap_along_direction_over_s": 0.008876750245690346,
+     "effect_of_moving_across_the_gold_class_gap_logits": -0.0022277455901555617,
+     "share_of_items_with_positive_slope": 0.0,
+     "versus": {
+      "premise_balanced_probe": {
+       "slope": -0.2509640947977702,
+       "n_controls": 100,
+       "control_mean": 0.005057784334818524,
+       "control_sd": 0.09827875581312237,
+       "control_min": -0.355005423227946,
+       "control_max": 0.2085292434692383,
+       "control_max_abs": 0.355005423227946,
+       "z_vs_controls": -2.6050582042309918,
+       "signed_rank_1_is_most_positive": 100,
+       "abs_rank_1_is_largest": 2,
+       "share_of_controls_smaller_in_absolute_value": 0.99,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.007887921296060085,
+       "natural_sd_controls_median": 0.004169107880443335,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_string_probe": {
+       "slope": -0.2509640947977702,
+       "n_controls": 100,
+       "control_mean": -0.004175111452738444,
+       "control_sd": 0.09232711629643153,
+       "control_min": -0.20990741729736329,
+       "control_max": 0.20663761774698894,
+       "control_max_abs": 0.20990741729736329,
+       "z_vs_controls": -2.6729848526046753,
+       "signed_rank_1_is_most_positive": 101,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.007887921296060085,
+       "natural_sd_controls_median": 0.004550638608634472,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_cell_probe": {
+       "slope": -0.2509640947977702,
+       "n_controls": 100,
+       "control_mean": -0.21674917443593342,
+       "control_sd": 0.07487593434809815,
+       "control_min": -0.4224230448404948,
+       "control_max": -0.05621651331583659,
+       "control_max_abs": 0.4224230448404948,
+       "z_vs_controls": -0.4569548368207555,
+       "signed_rank_1_is_most_positive": 68,
+       "abs_rank_1_is_largest": 34,
+       "share_of_controls_smaller_in_absolute_value": 0.67,
+       "abs_rank_per_natural_sd": 16,
+       "natural_sd_over_s": 0.007887921296060085,
+       "natural_sd_controls_median": 0.006712856702506542,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 34,
+       "slope_per_s": -0.18536980011883905,
+       "signed_rank_vs_premise_balanced_probe": 98,
+       "signed_rank_vs_within_string_probe": 100,
+       "signed_rank_vs_within_cell_probe": 69
+      },
+      "has_confounder": {
+       "n_items": 20,
+       "slope_per_s": -0.2593704700469971,
+       "signed_rank_vs_premise_balanced_probe": 100,
+       "signed_rank_vs_within_string_probe": 101,
+       "signed_rank_vs_within_cell_probe": 67
+      },
+      "non-child descendant": {
+       "n_items": 23,
+       "slope_per_s": -0.1360639074574346,
+       "signed_rank_vs_premise_balanced_probe": 99,
+       "signed_rank_vs_within_string_probe": 92,
+       "signed_rank_vs_within_cell_probe": 51
+      },
+      "non-parent ancestor": {
+       "n_items": 34,
+       "slope_per_s": -0.3217469103196088,
+       "signed_rank_vs_premise_balanced_probe": 100,
+       "signed_rank_vs_within_string_probe": 101,
+       "signed_rank_vs_within_cell_probe": 71
+      },
+      "parent": {
+       "n_items": 39,
+       "slope_per_s": -0.3098914562127529,
+       "signed_rank_vs_premise_balanced_probe": 99,
+       "signed_rank_vs_within_string_probe": 101,
+       "signed_rank_vs_within_cell_probe": 69
+      }
+     },
+     "slope_per_s_at_smaller_steps": {
+      "0.1": {
+       "slope_per_s": -0.26671733856201174,
+       "signed_rank_among_first_controls": 21,
+       "n_controls": 20
+      },
+      "0.3": {
+       "slope_per_s": -0.2609301461113823,
+       "signed_rank_among_first_controls": 21,
+       "n_controls": 20
+      }
+     }
+    },
+    "gold_beyond_adjacency": {
+     "slope_per_s": -0.020680885314941406,
+     "own_sd_over_s": 0.1845405250787735,
+     "gold_class_gap_along_direction_over_s": 0.010178602300584316,
+     "effect_of_moving_across_the_gold_class_gap_logits": -0.000210502506844783,
+     "share_of_items_with_positive_slope": 0.31333333333333335,
+     "versus": {
+      "within_cell_residual": {
+       "slope": -0.020680885314941406,
+       "n_controls": 100,
+       "control_mean": 0.008984115600585936,
+       "control_sd": 0.10682066380452983,
+       "control_min": -0.29150317509969076,
+       "control_max": 0.29974431355794273,
+       "control_max_abs": 0.29974431355794273,
+       "z_vs_controls": -0.27770844946078094,
+       "signed_rank_1_is_most_positive": 59,
+       "abs_rank_1_is_largest": 88,
+       "share_of_controls_smaller_in_absolute_value": 0.13,
+       "abs_rank_per_natural_sd": 84,
+       "natural_sd_over_s": 0.1845405250787735,
+       "natural_sd_controls_median": 0.1429053544998169,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 34,
+       "slope_per_s": -0.0281219482421875,
+       "signed_rank_vs_within_cell_residual": 63
+      },
+      "has_confounder": {
+       "n_items": 20,
+       "slope_per_s": -0.006375265121459961,
+       "signed_rank_vs_within_cell_residual": 51
+      },
+      "non-child descendant": {
+       "n_items": 23,
+       "slope_per_s": -0.009336803270422894,
+       "signed_rank_vs_within_cell_residual": 58
+      },
+      "non-parent ancestor": {
+       "n_items": 34,
+       "slope_per_s": 0.025833746966193703,
+       "signed_rank_vs_within_cell_residual": 49
+      },
+      "parent": {
+       "n_items": 39,
+       "slope_per_s": -0.0687713378514999,
+       "signed_rank_vs_within_cell_residual": 74
+      }
+     }
+    },
+    "gold_beyond_adjacency_orth": {
+     "slope_per_s": -0.05760104497273763,
+     "own_sd_over_s": 0.18000754714012146,
+     "gold_class_gap_along_direction_over_s": 0.0005158200510777533,
+     "effect_of_moving_across_the_gold_class_gap_logits": -2.971177395996949e-05,
+     "share_of_items_with_positive_slope": 0.13333333333333333,
+     "versus": {
+      "within_cell_residual_orth": {
+       "slope": -0.05760104497273763,
+       "n_controls": 100,
+       "control_mean": 0.006100954755147297,
+       "control_sd": 0.10545820523872072,
+       "control_min": -0.28343915939331055,
+       "control_max": 0.2940588188171387,
+       "control_max_abs": 0.2940588188171387,
+       "z_vs_controls": -0.6040497236197576,
+       "signed_rank_1_is_most_positive": 73,
+       "abs_rank_1_is_largest": 61,
+       "share_of_controls_smaller_in_absolute_value": 0.4,
+       "abs_rank_per_natural_sd": 45,
+       "natural_sd_over_s": 0.18000754714012146,
+       "natural_sd_controls_median": 0.1281467080116272,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 34,
+       "slope_per_s": -0.05923820944393382,
+       "signed_rank_vs_within_cell_residual_orth": 79
+      },
+      "has_confounder": {
+       "n_items": 20,
+       "slope_per_s": -0.019224166870117188,
+       "signed_rank_vs_within_cell_residual_orth": 57
+      },
+      "non-child descendant": {
+       "n_items": 23,
+       "slope_per_s": -0.03561376488727072,
+       "signed_rank_vs_within_cell_residual_orth": 64
+      },
+      "non-parent ancestor": {
+       "n_items": 34,
+       "slope_per_s": -0.0055143131929285384,
+       "signed_rank_vs_within_cell_residual_orth": 56
+      },
+      "parent": {
+       "n_items": 39,
+       "slope_per_s": -0.1342300268319937,
+       "signed_rank_vs_within_cell_residual_orth": 91
+      }
+     }
+    },
+    "model_out": {
+     "slope_per_s": 0.5060944557189941,
+     "own_sd_over_s": 0.06665167212486267,
+     "gold_class_gap_along_direction_over_s": 0.002629548776894808,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.0013308000570291245,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "within_string_probe": {
+       "slope": 0.5060944557189941,
+       "n_controls": 100,
+       "control_mean": -0.004175111452738444,
+       "control_sd": 0.09232711629643153,
+       "control_min": -0.20990741729736329,
+       "control_max": 0.20663761774698894,
+       "control_max_abs": 0.20990741729736329,
+       "z_vs_controls": 5.526757334577931,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.06665167212486267,
+       "natural_sd_controls_median": 0.004550638608634472,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "premise_balanced_probe": {
+       "slope": 0.5060944557189941,
+       "n_controls": 100,
+       "control_mean": 0.005057784334818524,
+       "control_sd": 0.09827875581312237,
+       "control_min": -0.355005423227946,
+       "control_max": 0.2085292434692383,
+       "control_max_abs": 0.355005423227946,
+       "z_vs_controls": 5.098117769591017,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.06665167212486267,
+       "natural_sd_controls_median": 0.004169107880443335,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 34,
+       "slope_per_s": 0.4220270830042222,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      },
+      "has_confounder": {
+       "n_items": 20,
+       "slope_per_s": 0.43311519622802735,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      },
+      "non-child descendant": {
+       "n_items": 23,
+       "slope_per_s": 0.31900260759436566,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      },
+      "non-parent ancestor": {
+       "n_items": 34,
+       "slope_per_s": 0.5322312467238483,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      },
+      "parent": {
+       "n_items": 39,
+       "slope_per_s": 0.704359519175994,
+       "signed_rank_vs_within_string_probe": 1,
+       "signed_rank_vs_premise_balanced_probe": 1
+      }
+     }
+    },
+    "adjacency_parent_diffmeans": {
+     "slope_per_s": 0.1774706204732259,
+     "own_sd_over_s": 0.20835840702056885,
+     "gold_class_gap_along_direction_over_s": 0.03984314575791359,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.0070709877992621035,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "adjacency_parent_shuffled": {
+       "slope": 0.1774706204732259,
+       "n_controls": 20,
+       "control_mean": 0.17154399172465004,
+       "control_sd": 0.1140564018060694,
+       "control_min": -0.07288159052530925,
+       "control_max": 0.37687875111897784,
+       "control_max_abs": 0.37687875111897784,
+       "z_vs_controls": 0.05196226300960231,
+       "signed_rank_1_is_most_positive": 11,
+       "abs_rank_1_is_largest": 11,
+       "share_of_controls_smaller_in_absolute_value": 0.5,
+       "abs_rank_per_natural_sd": 7,
+       "natural_sd_over_s": 0.20835840702056885,
+       "natural_sd_controls_median": 0.16188740730285645,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 34,
+       "slope_per_s": 0.18570653130026424,
+       "signed_rank_vs_adjacency_parent_shuffled": 9
+      },
+      "has_confounder": {
+       "n_items": 20,
+       "slope_per_s": 0.1257920742034912,
+       "signed_rank_vs_adjacency_parent_shuffled": 11
+      },
+      "non-child descendant": {
+       "n_items": 23,
+       "slope_per_s": 0.04187961246656335,
+       "signed_rank_vs_adjacency_parent_shuffled": 15
+      },
+      "non-parent ancestor": {
+       "n_items": 34,
+       "slope_per_s": 0.128814136280733,
+       "signed_rank_vs_adjacency_parent_shuffled": 13
+      },
+      "parent": {
+       "n_items": 39,
+       "slope_per_s": 0.31917481544690257,
+       "signed_rank_vs_adjacency_parent_shuffled": 7
+      }
+     }
+    },
+    "adjacency_within_string": {
+     "slope_per_s": 0.09797283172607422,
+     "own_sd_over_s": 0.18823373317718506,
+     "gold_class_gap_along_direction_over_s": 0.029751097783446312,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.0029147992968035653,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "adjacency_within_string_shuffled": {
+       "slope": 0.09797283172607422,
+       "n_controls": 20,
+       "control_mean": 0.011079601287841795,
+       "control_sd": 0.1177226834130898,
+       "control_min": -0.2885894266764323,
+       "control_max": 0.19643030802408853,
+       "control_max_abs": 0.2885894266764323,
+       "z_vs_controls": 0.7381179898297375,
+       "signed_rank_1_is_most_positive": 5,
+       "abs_rank_1_is_largest": 8,
+       "share_of_controls_smaller_in_absolute_value": 0.65,
+       "abs_rank_per_natural_sd": 7,
+       "natural_sd_over_s": 0.18823373317718506,
+       "natural_sd_controls_median": 0.15459179878234863,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     },
+     "by_template": {
+      "has_collider": {
+       "n_items": 34,
+       "slope_per_s": 0.07600085875567268,
+       "signed_rank_vs_adjacency_within_string_shuffled": 8
+      },
+      "has_confounder": {
+       "n_items": 20,
+       "slope_per_s": 0.03290028572082519,
+       "signed_rank_vs_adjacency_within_string_shuffled": 10
+      },
+      "non-child descendant": {
+       "n_items": 23,
+       "slope_per_s": 0.06837629235309103,
+       "signed_rank_vs_adjacency_within_string_shuffled": 1
+      },
+      "non-parent ancestor": {
+       "n_items": 34,
+       "slope_per_s": 0.08925005968879252,
+       "signed_rank_vs_adjacency_within_string_shuffled": 5
+      },
+      "parent": {
+       "n_items": 39,
+       "slope_per_s": 0.17555725880158254,
+       "signed_rank_vs_adjacency_within_string_shuffled": 4
+      }
+     }
+    }
+   },
+   "families": {
+    "adjacency_parent_shuffled": {
+     "n": 20,
+     "mean": 0.17154399172465004,
+     "sd": 0.1140564018060694,
+     "min": -0.07288159052530925,
+     "max": 0.37687875111897784,
+     "median_abs": 0.1762075932820638,
+     "median_own_sd_over_s": 0.16188740730285645
+    },
+    "adjacency_within_string_shuffled": {
+     "n": 20,
+     "mean": 0.011079601287841795,
+     "sd": 0.1177226834130898,
+     "min": -0.2885894266764323,
+     "max": 0.19643030802408853,
+     "median_abs": 0.07782182375590006,
+     "median_own_sd_over_s": 0.15459179878234863
+    },
+    "isotropic": {
+     "n": 20,
+     "mean": 0.007132881482442219,
+     "sd": 0.08002052457363798,
+     "min": -0.10695706685384114,
+     "max": 0.15640753428141277,
+     "median_abs": 0.07142537434895833,
+     "median_own_sd_over_s": 0.024844713509082794
+    },
+    "premise_balanced_diffmeans": {
+     "n": 20,
+     "mean": -0.02943453057607015,
+     "sd": 0.13558870459167746,
+     "min": -0.2504970105489095,
+     "max": 0.26881079355875653,
+     "median_abs": 0.08775028228759765,
+     "median_own_sd_over_s": 0.10578654706478119
+    },
+    "premise_balanced_probe": {
+     "n": 100,
+     "mean": 0.005057784334818524,
+     "sd": 0.09827875581312237,
+     "min": -0.355005423227946,
+     "max": 0.2085292434692383,
+     "median_abs": 0.06466490427652995,
+     "median_own_sd_over_s": 0.004169107880443335
+    },
+    "within_cell_probe": {
+     "n": 100,
+     "mean": -0.21674917443593342,
+     "sd": 0.07487593434809815,
+     "min": -0.4224230448404948,
+     "max": -0.05621651331583659,
+     "median_abs": 0.20373806317647297,
+     "median_own_sd_over_s": 0.006712856702506542
+    },
+    "within_cell_residual": {
+     "n": 100,
+     "mean": 0.008984115600585936,
+     "sd": 0.10682066380452983,
+     "min": -0.29150317509969076,
+     "max": 0.29974431355794273,
+     "median_abs": 0.06967358907063802,
+     "median_own_sd_over_s": 0.1429053544998169
+    },
+    "within_cell_residual_orth": {
+     "n": 100,
+     "mean": 0.006100954755147297,
+     "sd": 0.10545820523872072,
+     "min": -0.28343915939331055,
+     "max": 0.2940588188171387,
+     "median_abs": 0.06950285275777181,
+     "median_own_sd_over_s": 0.1281467080116272
+    },
+    "within_string_diffmeans": {
+     "n": 20,
+     "mean": -0.003971491177876792,
+     "sd": 0.09883055932385099,
+     "min": -0.187686341603597,
+     "max": 0.1199261220296224,
+     "median_abs": 0.0885491180419922,
+     "median_own_sd_over_s": 0.15083596110343933
+    },
+    "within_string_probe": {
+     "n": 100,
+     "mean": -0.004175111452738444,
+     "sd": 0.09232711629643153,
+     "min": -0.20990741729736329,
+     "max": 0.20663761774698894,
+     "median_abs": 0.07559832572937011,
+     "median_own_sd_over_s": 0.004550638608634472
+    }
+   },
+   "split": 0,
+   "layer": 19,
+   "role": "original",
+   "n_items": 150,
+   "shortened_to_items": null,
+   "s_unit": 13.172061920166016,
+   "fitting_notes": {
+    "gold_probe": true,
+    "model_out": true,
+    "within_string_probe_share_converged": 1.0,
+    "premise_balanced_mean_agreement_with_gold": 0.4933506944444444,
+    "premise_balanced_mean_agreement_between_successive": 0.4989828843995511,
+    "premise_balanced_probe_share_converged": 1.0,
+    "within_cell_probe_share_converged": 1.0
+   },
+   "fitting_half": "selection half (the original split)",
+   "baseline_max_abs_diff_vs_cache": 0.0533599853515625
+  },
+  {
+   "real": {
+    "gold_diffmeans": {
+     "slope_per_s": 1.9062107785542806,
+     "own_sd_over_s": 0.09566754847764969,
+     "gold_class_gap_along_direction_over_s": 0.033172279596328735,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.06323335691573807,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {}
+    },
+    "gold_probe": {
+     "slope_per_s": 0.3420268058776855,
+     "own_sd_over_s": 0.0068604471161961555,
+     "gold_class_gap_along_direction_over_s": 0.0073746610432863235,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.002522331761065821,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "premise_balanced_probe": {
+       "slope": 0.3420268058776855,
+       "n_controls": 20,
+       "control_mean": -0.1102555503845215,
+       "control_sd": 0.4236092394693624,
+       "control_min": -0.7368255233764649,
+       "control_max": 0.8275275611877442,
+       "control_max_abs": 0.8275275611877442,
+       "z_vs_controls": 1.0676876567394098,
+       "signed_rank_1_is_most_positive": 4,
+       "abs_rank_1_is_largest": 10,
+       "share_of_controls_smaller_in_absolute_value": 0.55,
+       "abs_rank_per_natural_sd": 4,
+       "natural_sd_over_s": 0.0068604471161961555,
+       "natural_sd_controls_median": 0.003757572267204523,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_string_probe": {
+       "slope": 0.3420268058776855,
+       "n_controls": 20,
+       "control_mean": -0.017051878929138176,
+       "control_sd": 0.5295204007386763,
+       "control_min": -1.5140867614746094,
+       "control_max": 0.9540803718566895,
+       "control_max_abs": 1.5140867614746094,
+       "z_vs_controls": 0.678120586677892,
+       "signed_rank_1_is_most_positive": 6,
+       "abs_rank_1_is_largest": 10,
+       "share_of_controls_smaller_in_absolute_value": 0.55,
+       "abs_rank_per_natural_sd": 5,
+       "natural_sd_over_s": 0.0068604471161961555,
+       "natural_sd_controls_median": 0.0041481186635792255,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     }
+    },
+    "model_out": {
+     "slope_per_s": 4.576912441253662,
+     "own_sd_over_s": 0.0604650154709816,
+     "gold_class_gap_along_direction_over_s": 0.0028394043911248446,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.01299570528348958,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "within_string_probe": {
+       "slope": 4.576912441253662,
+       "n_controls": 20,
+       "control_mean": -0.017051878929138176,
+       "control_sd": 0.5295204007386763,
+       "control_min": -1.5140867614746094,
+       "control_max": 0.9540803718566895,
+       "control_max_abs": 1.5140867614746094,
+       "z_vs_controls": 8.675707892980629,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.0604650154709816,
+       "natural_sd_controls_median": 0.0041481186635792255,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "premise_balanced_probe": {
+       "slope": 4.576912441253662,
+       "n_controls": 20,
+       "control_mean": -0.1102555503845215,
+       "control_sd": 0.4236092394693624,
+       "control_min": -0.7368255233764649,
+       "control_max": 0.8275275611877442,
+       "control_max_abs": 0.8275275611877442,
+       "z_vs_controls": 11.064838900845514,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.0604650154709816,
+       "natural_sd_controls_median": 0.003757572267204523,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     }
+    }
+   },
+   "families": {
+    "premise_balanced_probe": {
+     "n": 20,
+     "mean": -0.1102555503845215,
+     "sd": 0.4236092394693624,
+     "min": -0.7368255233764649,
+     "max": 0.8275275611877442,
+     "median_abs": 0.30422232309977215,
+     "median_own_sd_over_s": 0.003757572267204523
+    },
+    "within_string_probe": {
+     "n": 20,
+     "mean": -0.017051878929138176,
+     "sd": 0.5295204007386763,
+     "min": -1.5140867614746094,
+     "max": 0.9540803718566895,
+     "median_abs": 0.26569732983907063,
+     "median_own_sd_over_s": 0.0041481186635792255
+    }
+   },
+   "split": 0,
+   "layer": 17,
+   "role": "other",
+   "n_items": 150,
+   "shortened_to_items": null,
+   "s_unit": 12.345335006713867,
+   "fitting_notes": {
+    "gold_probe": true,
+    "model_out": true,
+    "within_string_probe_share_converged": 1.0,
+    "premise_balanced_mean_agreement_with_gold": 0.5019965277777777,
+    "premise_balanced_mean_agreement_between_successive": 0.4962536549707601,
+    "premise_balanced_probe_share_converged": 1.0
+   },
+   "fitting_half": "selection half (the original split)",
+   "baseline_max_abs_diff_vs_cache": 0.0533599853515625
+  },
+  {
+   "real": {
+    "gold_diffmeans": {
+     "slope_per_s": 0.09201730728149414,
+     "own_sd_over_s": 0.19844171404838562,
+     "gold_class_gap_along_direction_over_s": 0.04041526839137077,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.003718904170432822,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {}
+    },
+    "gold_probe": {
+     "slope_per_s": -0.027988834381103514,
+     "own_sd_over_s": 0.007257067132741213,
+     "gold_class_gap_along_direction_over_s": 0.00796687975525856,
+     "effect_of_moving_across_the_gold_class_gap_logits": -0.00022298367800409834,
+     "share_of_items_with_positive_slope": 0.02,
+     "versus": {
+      "premise_balanced_probe": {
+       "slope": -0.027988834381103514,
+       "n_controls": 20,
+       "control_mean": -0.0009991032282511392,
+       "control_sd": 0.0272581727738867,
+       "control_min": -0.06629066467285157,
+       "control_max": 0.05003110885620117,
+       "control_max_abs": 0.06629066467285157,
+       "z_vs_controls": -0.9901518849681851,
+       "signed_rank_1_is_most_positive": 18,
+       "abs_rank_1_is_largest": 7,
+       "share_of_controls_smaller_in_absolute_value": 0.7,
+       "abs_rank_per_natural_sd": 2,
+       "natural_sd_over_s": 0.007257067132741213,
+       "natural_sd_controls_median": 0.00416837353259325,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_string_probe": {
+       "slope": -0.027988834381103514,
+       "n_controls": 20,
+       "control_mean": -0.007348171234130859,
+       "control_sd": 0.03423107281160925,
+       "control_min": -0.054241294860839846,
+       "control_max": 0.06447660446166992,
+       "control_max_abs": 0.06447660446166992,
+       "z_vs_controls": -0.6029803173440857,
+       "signed_rank_1_is_most_positive": 16,
+       "abs_rank_1_is_largest": 8,
+       "share_of_controls_smaller_in_absolute_value": 0.65,
+       "abs_rank_per_natural_sd": 6,
+       "natural_sd_over_s": 0.007257067132741213,
+       "natural_sd_controls_median": 0.004528987221419811,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     }
+    },
+    "model_out": {
+     "slope_per_s": 0.13831466674804688,
+     "own_sd_over_s": 0.06099747121334076,
+     "gold_class_gap_along_direction_over_s": 0.001221369137056172,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.00016893326516827402,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "within_string_probe": {
+       "slope": 0.13831466674804688,
+       "n_controls": 20,
+       "control_mean": -0.007348171234130859,
+       "control_sd": 0.03423107281160925,
+       "control_min": -0.054241294860839846,
+       "control_max": 0.06447660446166992,
+       "control_max_abs": 0.06447660446166992,
+       "z_vs_controls": 4.255281123785788,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.06099747121334076,
+       "natural_sd_controls_median": 0.004528987221419811,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "premise_balanced_probe": {
+       "slope": 0.13831466674804688,
+       "n_controls": 20,
+       "control_mean": -0.0009991032282511392,
+       "control_sd": 0.0272581727738867,
+       "control_min": -0.06629066467285157,
+       "control_max": 0.05003110885620117,
+       "control_max_abs": 0.06629066467285157,
+       "z_vs_controls": 5.110899073534396,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.06099747121334076,
+       "natural_sd_controls_median": 0.00416837353259325,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     }
+    }
+   },
+   "families": {
+    "premise_balanced_probe": {
+     "n": 20,
+     "mean": -0.0009991032282511392,
+     "sd": 0.0272581727738867,
+     "min": -0.06629066467285157,
+     "max": 0.05003110885620117,
+     "median_abs": 0.020595022837320964,
+     "median_own_sd_over_s": 0.00416837353259325
+    },
+    "within_string_probe": {
+     "n": 20,
+     "mean": -0.007348171234130859,
+     "sd": 0.03423107281160925,
+     "min": -0.054241294860839846,
+     "max": 0.06447660446166992,
+     "median_abs": 0.023254261016845704,
+     "median_own_sd_over_s": 0.004528987221419811
+    }
+   },
+   "split": 0,
+   "layer": 21,
+   "role": "other",
+   "n_items": 150,
+   "shortened_to_items": null,
+   "s_unit": 17.060993194580078,
+   "fitting_notes": {
+    "gold_probe": true,
+    "model_out": true,
+    "within_string_probe_share_converged": 1.0,
+    "premise_balanced_mean_agreement_with_gold": 0.5019965277777777,
+    "premise_balanced_mean_agreement_between_successive": 0.4962536549707601,
+    "premise_balanced_probe_share_converged": 1.0
+   },
+   "fitting_half": "selection half (the original split)",
+   "baseline_max_abs_diff_vs_cache": 0.0533599853515625
+  },
+  {
+   "real": {
+    "gold_diffmeans": {
+     "slope_per_s": 0.11903485616048178,
+     "own_sd_over_s": 0.17914502322673798,
+     "gold_class_gap_along_direction_over_s": 0.036741871386766434,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.004373563375590663,
+     "share_of_items_with_positive_slope": 0.8466666666666667,
+     "versus": {}
+    },
+    "gold_probe": {
+     "slope_per_s": -0.18618468602498373,
+     "own_sd_over_s": 0.008074426092207432,
+     "gold_class_gap_along_direction_over_s": 0.008984396234154701,
+     "effect_of_moving_across_the_gold_class_gap_logits": -0.0016727569919801392,
+     "share_of_items_with_positive_slope": 0.0,
+     "versus": {
+      "premise_balanced_probe": {
+       "slope": -0.18618468602498373,
+       "n_controls": 20,
+       "control_mean": -0.007265551249186199,
+       "control_sd": 0.08154266775894922,
+       "control_min": -0.11219813028971354,
+       "control_max": 0.22560874938964845,
+       "control_max_abs": 0.22560874938964845,
+       "z_vs_controls": -2.194178087289293,
+       "signed_rank_1_is_most_positive": 21,
+       "abs_rank_1_is_largest": 2,
+       "share_of_controls_smaller_in_absolute_value": 0.95,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.008074426092207432,
+       "natural_sd_controls_median": 0.004189653322100639,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_string_probe": {
+       "slope": -0.18618468602498373,
+       "n_controls": 20,
+       "control_mean": 0.029944093068440758,
+       "control_sd": 0.08767219734212356,
+       "control_min": -0.1236381975809733,
+       "control_max": 0.174117488861084,
+       "control_max_abs": 0.174117488861084,
+       "z_vs_controls": -2.4651917671234393,
+       "signed_rank_1_is_most_positive": 21,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.008074426092207432,
+       "natural_sd_controls_median": 0.004507608711719513,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     }
+    },
+    "model_out": {
+     "slope_per_s": 0.44765963236490885,
+     "own_sd_over_s": 0.07328993082046509,
+     "gold_class_gap_along_direction_over_s": 0.002642054110765457,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.0011827409719134608,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "within_string_probe": {
+       "slope": 0.44765963236490885,
+       "n_controls": 20,
+       "control_mean": 0.029944093068440758,
+       "control_sd": 0.08767219734212356,
+       "control_min": -0.1236381975809733,
+       "control_max": 0.174117488861084,
+       "control_max_abs": 0.174117488861084,
+       "z_vs_controls": 4.7645154559821865,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.07328993082046509,
+       "natural_sd_controls_median": 0.004507608711719513,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "premise_balanced_probe": {
+       "slope": 0.44765963236490885,
+       "n_controls": 20,
+       "control_mean": -0.007265551249186199,
+       "control_sd": 0.08154266775894922,
+       "control_min": -0.11219813028971354,
+       "control_max": 0.22560874938964845,
+       "control_max_abs": 0.22560874938964845,
+       "z_vs_controls": 5.578983323907348,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.07328993082046509,
+       "natural_sd_controls_median": 0.004189653322100639,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     }
+    }
+   },
+   "families": {
+    "premise_balanced_probe": {
+     "n": 20,
+     "mean": -0.007265551249186199,
+     "sd": 0.08154266775894922,
+     "min": -0.11219813028971354,
+     "max": 0.22560874938964845,
+     "median_abs": 0.060416212081909185,
+     "median_own_sd_over_s": 0.004189653322100639
+    },
+    "within_string_probe": {
+     "n": 20,
+     "mean": 0.029944093068440758,
+     "sd": 0.08767219734212356,
+     "min": -0.1236381975809733,
+     "max": 0.174117488861084,
+     "median_abs": 0.07855130513509115,
+     "median_own_sd_over_s": 0.004507608711719513
+    }
+   },
+   "split": 2,
+   "layer": 19,
+   "role": "other",
+   "n_items": 150,
+   "shortened_to_items": null,
+   "s_unit": 13.169020652770996,
+   "fitting_notes": {
+    "gold_probe": true,
+    "model_out": true,
+    "within_string_probe_share_converged": 1.0,
+    "premise_balanced_mean_agreement_with_gold": 0.5021701388888888,
+    "premise_balanced_mean_agreement_between_successive": 0.5109649122807017,
+    "premise_balanced_probe_share_converged": 1.0
+   },
+   "fitting_half": "random half of the blocks",
+   "baseline_max_abs_diff_vs_cache": 0.055225372314453125
+  },
+  {
+   "real": {
+    "gold_diffmeans": {
+     "slope_per_s": 0.07531749725341796,
+     "own_sd_over_s": 0.1336788386106491,
+     "gold_class_gap_along_direction_over_s": 0.0412304624915123,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.00310537524546163,
+     "share_of_items_with_positive_slope": 0.7666666666666667,
+     "versus": {}
+    },
+    "gold_probe": {
+     "slope_per_s": -0.24042994817097982,
+     "own_sd_over_s": 0.0077175782062113285,
+     "gold_class_gap_along_direction_over_s": 0.008636889047920704,
+     "effect_of_moving_across_the_gold_class_gap_logits": -0.002076566786150078,
+     "share_of_items_with_positive_slope": 0.0,
+     "versus": {
+      "premise_balanced_probe": {
+       "slope": -0.24042994817097982,
+       "n_controls": 20,
+       "control_mean": -0.016998986562093095,
+       "control_sd": 0.12980254777180114,
+       "control_min": -0.21595999399820964,
+       "control_max": 0.1878187115987142,
+       "control_max_abs": 0.21595999399820964,
+       "z_vs_controls": -1.721314145556593,
+       "signed_rank_1_is_most_positive": 21,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.0077175782062113285,
+       "natural_sd_controls_median": 0.0042327106930315495,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "within_string_probe": {
+       "slope": -0.24042994817097982,
+       "n_controls": 20,
+       "control_mean": 0.004788169225056964,
+       "control_sd": 0.09779113787485431,
+       "control_min": -0.1699451510111491,
+       "control_max": 0.16913927714029947,
+       "control_max_abs": 0.1699451510111491,
+       "z_vs_controls": -2.5075699365503685,
+       "signed_rank_1_is_most_positive": 21,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.0077175782062113285,
+       "natural_sd_controls_median": 0.004562380723655224,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     }
+    },
+    "model_out": {
+     "slope_per_s": 0.5485787200927734,
+     "own_sd_over_s": 0.06736396253108978,
+     "gold_class_gap_along_direction_over_s": 0.0024051452055573463,
+     "effect_of_moving_across_the_gold_class_gap_logits": 0.0013194114785019194,
+     "share_of_items_with_positive_slope": 1.0,
+     "versus": {
+      "within_string_probe": {
+       "slope": 0.5485787200927734,
+       "n_controls": 20,
+       "control_mean": 0.004788169225056964,
+       "control_sd": 0.09779113787485431,
+       "control_min": -0.1699451510111491,
+       "control_max": 0.16913927714029947,
+       "control_max_abs": 0.1699451510111491,
+       "z_vs_controls": 5.5607344661805485,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.06736396253108978,
+       "natural_sd_controls_median": 0.004562380723655224,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      },
+      "premise_balanced_probe": {
+       "slope": 0.5485787200927734,
+       "n_controls": 20,
+       "control_mean": -0.016998986562093095,
+       "control_sd": 0.12980254777180114,
+       "control_min": -0.21595999399820964,
+       "control_max": 0.1878187115987142,
+       "control_max_abs": 0.21595999399820964,
+       "z_vs_controls": 4.357215758578007,
+       "signed_rank_1_is_most_positive": 1,
+       "abs_rank_1_is_largest": 1,
+       "share_of_controls_smaller_in_absolute_value": 1.0,
+       "abs_rank_per_natural_sd": 1,
+       "natural_sd_over_s": 0.06736396253108978,
+       "natural_sd_controls_median": 0.0042327106930315495,
+       "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)"
+      }
+     }
+    }
+   },
+   "families": {
+    "premise_balanced_probe": {
+     "n": 20,
+     "mean": -0.016998986562093095,
+     "sd": 0.12980254777180114,
+     "min": -0.21595999399820964,
+     "max": 0.1878187115987142,
+     "median_abs": 0.12147703170776367,
+     "median_own_sd_over_s": 0.0042327106930315495
+    },
+    "within_string_probe": {
+     "n": 20,
+     "mean": 0.004788169225056964,
+     "sd": 0.09779113787485431,
+     "min": -0.1699451510111491,
+     "max": 0.16913927714029947,
+     "median_abs": 0.07024167696634928,
+     "median_own_sd_over_s": 0.004562380723655224
+    }
+   },
+   "split": 3,
+   "layer": 19,
+   "role": "other",
+   "n_items": 150,
+   "shortened_to_items": null,
+   "s_unit": 13.179679870605469,
+   "fitting_notes": {
+    "gold_probe": true,
+    "model_out": true,
+    "within_string_probe_share_converged": 1.0,
+    "premise_balanced_mean_agreement_with_gold": 0.5009548611111111,
+    "premise_balanced_mean_agreement_between_successive": 0.5124269005847953,
+    "premise_balanced_probe_share_converged": 1.0
+   },
+   "fitting_half": "random half of the blocks",
+   "baseline_max_abs_diff_vs_cache": 0.05645942687988281
+  }
+ ],
+ "primary_test": {
+  "what": "split 1 (fitted on the report half, steered on the selection half), layer 19, gold_probe against 500 premise_balanced_probe controls (labellings with both balances of the gold label), one-sided in the sign of the 20-control run (-1), per unit of s",
+  "slope": -0.11188604990641277,
+  "p_one_sided": 0.11976047904191617,
+  "threshold_for_the_most_extreme_of_24_comparisons": 0.0020833333333333333,
+  "survives_the_correction_for_24_comparisons": false,
+  "smallest_p_this_many_controls_can_give": 0.001996007984031936,
+  "n_controls": 500,
+  "control_mean": -0.0038016836802164723,
+  "control_sd": 0.08540091881274393,
+  "control_min": -0.2263322067260742,
+  "control_max": 0.2282603708902995,
+  "control_max_abs": 0.2282603708902995,
+  "z_vs_controls": -1.265611280637269,
+  "signed_rank_1_is_most_positive": 442,
+  "abs_rank_1_is_largest": 105,
+  "share_of_controls_smaller_in_absolute_value": 0.792,
+  "abs_rank_per_natural_sd": 1,
+  "natural_sd_over_s": 0.008285288698971272,
+  "natural_sd_controls_median": 0.004044379107654095,
+  "abs_rank_per_natural_sd_note": "a size, not a test: for probe directions the real direction has about twice the natural SD of every control, and ranks first in 12 to 41% of runs with no effect (tenth audit, F5)",
+  "p_one_sided_vs_within_string_controls": 0.1782178217821782,
+  "second_question_the_label_beyond_adjacency": {
+   "direction": "gold_beyond_adjacency_orth",
+   "controls": "within_cell_residual_orth",
+   "n_controls": 100,
+   "slope": -0.13313011169433595,
+   "z_vs_controls": -1.2229790585151696,
+   "p_one_sided_in_the_arms_sign": 0.10891089108910891,
+   "stands_out": false,
+   "what_it_can_show": "a positive result: the label has an effect beyond the one linear adjacency direction (not beyond graph structure in general). A null result shows nothing: the comparison has little power at the observed size, and a fifth of the items sit in single-class cells."
+  },
+  "how_to_read": {
+   "beyond_all_controls": "moderate evidence for a label-specific effect: under a label-free response this happens in about 3% of runs if that response is isotropic and in 1 to 12% under the anisotropy the 20-control run allows",
+   "between_the_threshold_and_0.05": "evidence for neither account: about as likely with a real effect of the observed size as without",
+   "above_0.05": "moderate evidence against an effect of the observed size"
+  },
+  "note": "The direction of this split is not an independent draw: the gold direction fitted on the two halves is nearly one vector. p <= 0.05 here means only that this direction's slope is reproducibly in the tail of its controls, which choosing the most extreme of 24 comparisons would produce by itself; the threshold for that choice is 0.05/24.",
+  "fixed_before_the_run": true
+ },
+ "arm_across_splits_and_layers_descriptive": [
+  {
+   "split": 1,
+   "layer": 19,
+   "role": "primary",
+   "slope": -0.11188604990641277,
+   "premise_balanced_probe": {
+    "p_one_sided": 0.11976047904191617,
+    "n_controls": 500,
+    "z_vs_controls": -1.265611280637269,
+    "signed_rank_1_is_most_positive": 442,
+    "abs_rank_1_is_largest": 105,
+    "abs_rank_per_natural_sd": 1
+   },
+   "within_string_probe": {
+    "p_one_sided": 0.1782178217821782,
+    "n_controls": 100,
+    "z_vs_controls": -1.1956857474483378,
+    "signed_rank_1_is_most_positive": 84,
+    "abs_rank_1_is_largest": 29,
+    "abs_rank_per_natural_sd": 3
+   }
+  },
+  {
+   "split": 0,
+   "layer": 19,
+   "role": "original",
+   "slope": -0.2509640947977702,
+   "premise_balanced_probe": {
+    "p_one_sided": 0.019801980198019802,
+    "n_controls": 100,
+    "z_vs_controls": -2.6050582042309918,
+    "signed_rank_1_is_most_positive": 100,
+    "abs_rank_1_is_largest": 2,
+    "abs_rank_per_natural_sd": 1
+   },
+   "within_string_probe": {
+    "p_one_sided": 0.009900990099009901,
+    "n_controls": 100,
+    "z_vs_controls": -2.6729848526046753,
+    "signed_rank_1_is_most_positive": 101,
+    "abs_rank_1_is_largest": 1,
+    "abs_rank_per_natural_sd": 1
+   }
+  },
+  {
+   "split": 0,
+   "layer": 17,
+   "role": "other",
+   "slope": 0.3420268058776855,
+   "premise_balanced_probe": {
+    "p_one_sided": 0.8571428571428571,
+    "n_controls": 20,
+    "z_vs_controls": 1.0676876567394098,
+    "signed_rank_1_is_most_positive": 4,
+    "abs_rank_1_is_largest": 10,
+    "abs_rank_per_natural_sd": 4
+   },
+   "within_string_probe": {
+    "p_one_sided": 0.7619047619047619,
+    "n_controls": 20,
+    "z_vs_controls": 0.678120586677892,
+    "signed_rank_1_is_most_positive": 6,
+    "abs_rank_1_is_largest": 10,
+    "abs_rank_per_natural_sd": 5
+   }
+  },
+  {
+   "split": 0,
+   "layer": 21,
+   "role": "other",
+   "slope": -0.027988834381103514,
+   "premise_balanced_probe": {
+    "p_one_sided": 0.19047619047619047,
+    "n_controls": 20,
+    "z_vs_controls": -0.9901518849681851,
+    "signed_rank_1_is_most_positive": 18,
+    "abs_rank_1_is_largest": 7,
+    "abs_rank_per_natural_sd": 2
+   },
+   "within_string_probe": {
+    "p_one_sided": 0.2857142857142857,
+    "n_controls": 20,
+    "z_vs_controls": -0.6029803173440857,
+    "signed_rank_1_is_most_positive": 16,
+    "abs_rank_1_is_largest": 8,
+    "abs_rank_per_natural_sd": 6
+   }
+  },
+  {
+   "split": 2,
+   "layer": 19,
+   "role": "other",
+   "slope": -0.18618468602498373,
+   "premise_balanced_probe": {
+    "p_one_sided": 0.047619047619047616,
+    "n_controls": 20,
+    "z_vs_controls": -2.194178087289293,
+    "signed_rank_1_is_most_positive": 21,
+    "abs_rank_1_is_largest": 2,
+    "abs_rank_per_natural_sd": 1
+   },
+   "within_string_probe": {
+    "p_one_sided": 0.047619047619047616,
+    "n_controls": 20,
+    "z_vs_controls": -2.4651917671234393,
+    "signed_rank_1_is_most_positive": 21,
+    "abs_rank_1_is_largest": 1,
+    "abs_rank_per_natural_sd": 1
+   }
+  },
+  {
+   "split": 3,
+   "layer": 19,
+   "role": "other",
+   "slope": -0.24042994817097982,
+   "premise_balanced_probe": {
+    "p_one_sided": 0.047619047619047616,
+    "n_controls": 20,
+    "z_vs_controls": -1.721314145556593,
+    "signed_rank_1_is_most_positive": 21,
+    "abs_rank_1_is_largest": 1,
+    "abs_rank_per_natural_sd": 1
+   },
+   "within_string_probe": {
+    "p_one_sided": 0.047619047619047616,
+    "n_controls": 20,
+    "z_vs_controls": -2.5075699365503685,
+    "signed_rank_1_is_most_positive": 21,
+    "abs_rank_1_is_largest": 1,
+    "abs_rank_per_natural_sd": 1
+   }
+  }
+ ],
+ "minutes": 37.9
+}

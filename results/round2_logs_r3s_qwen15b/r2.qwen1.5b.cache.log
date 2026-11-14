@@ -1,0 +1,12 @@
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<03:01,  1.86it/s]Loading weights:  44%|████▍     | 148/338 [00:00<00:00, 305.06it/s]Loading weights:  68%|██████▊   | 229/338 [00:00<00:00, 299.52it/s]Loading weights:  85%|████████▍ | 286/338 [00:01<00:00, 282.51it/s]Loading weights:  98%|█████████▊| 331/338 [00:01<00:00, 282.33it/s]Loading weights: 100%|██████████| 338/338 [00:01<00:00, 258.01it/s]
+[cache] qwen1.5b/c2c_debiased chunk 1/10 12.14 items/s
+[cache] qwen1.5b/c2c_debiased chunk 2/10 12.92 items/s
+[cache] qwen1.5b/c2c_debiased chunk 3/10 12.76 items/s
+[cache] qwen1.5b/c2c_debiased chunk 4/10 12.77 items/s
+[cache] qwen1.5b/c2c_debiased chunk 5/10 12.72 items/s
+[cache] qwen1.5b/c2c_debiased chunk 6/10 12.52 items/s
+[cache] qwen1.5b/c2c_debiased chunk 7/10 12.27 items/s
+[cache] qwen1.5b/c2c_debiased chunk 8/10 11.98 items/s
+[cache] qwen1.5b/c2c_debiased chunk 9/10 11.82 items/s
+[cache] qwen1.5b/c2c_debiased chunk 10/10 11.71 items/s
+done in 4.1 min

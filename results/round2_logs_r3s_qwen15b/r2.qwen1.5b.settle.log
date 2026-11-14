@@ -1,0 +1,37 @@
+[    0s] site: last token of the hypothesis, layer 19/28, C 0.1; arm gold_probe, expected sign -1; configurations [(1, 19), (0, 19), (0, 17), (0, 21), (2, 19), (3, 19)]
+[  168s] split 1 layer 19 (primary): 1007 directions, 2015 vectors per item, 150 items; converged: gold_probe True, within_string_probe_share_converged 1.0, premise_balanced_probe_share_converged 1.0, within_cell_probe_share_converged 1.0; premise-balanced labellings agree with gold on 50% of items
+[  222s] split 0 layer 19 (original): 607 directions, 1383 vectors per item, 150 items; converged: gold_probe True, within_string_probe_share_converged 1.0, premise_balanced_probe_share_converged 1.0, within_cell_probe_share_converged 1.0; premise-balanced labellings agree with gold on 49% of items
+[  235s] split 0 layer 17 (other): 43 directions, 87 vectors per item, 150 items; converged: gold_probe True, within_string_probe_share_converged 1.0, premise_balanced_probe_share_converged 1.0; premise-balanced labellings agree with gold on 50% of items
+[  246s] split 0 layer 21 (other): 43 directions, 87 vectors per item, 150 items; converged: gold_probe True, within_string_probe_share_converged 1.0, premise_balanced_probe_share_converged 1.0; premise-balanced labellings agree with gold on 50% of items
+[  257s] split 2 layer 19 (other): 43 directions, 87 vectors per item, 150 items; converged: gold_probe True, within_string_probe_share_converged 1.0, premise_balanced_probe_share_converged 1.0; premise-balanced labellings agree with gold on 50% of items
+[  270s] split 3 layer 19 (other): 43 directions, 87 vectors per item, 150 items; converged: gold_probe True, within_string_probe_share_converged 1.0, premise_balanced_probe_share_converged 1.0; premise-balanced labellings agree with gold on 50% of items
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<02:43,  2.07it/s]Loading weights:  40%|███▉      | 135/338 [00:00<00:00, 296.20it/s]Loading weights:  60%|██████    | 203/338 [00:00<00:00, 290.31it/s]Loading weights:  75%|███████▍  | 253/338 [00:01<00:00, 276.02it/s]Loading weights:  87%|████████▋ | 293/338 [00:01<00:00, 268.28it/s]Loading weights:  97%|█████████▋| 328/338 [00:01<00:00, 276.07it/s]Loading weights: 100%|██████████| 338/338 [00:01<00:00, 254.33it/s]
+[  314s] [timing] 6.97 µs per token and vector -> 30.1 min for the rest; 94.8 min left of 100
+[  764s] [timing] 7.81 µs per token and vector -> 26.3 min for the rest; 87.3 min left of 100
+[ 1268s] split 1 layer 19 done; baseline max |difference| vs cache 0.053
+[ 1311s] [timing] 7.33 µs per token and vector -> 15.1 min for the rest; 78.2 min left of 100
+[ 1655s] [timing] 7.32 µs per token and vector -> 9.3 min for the rest; 72.4 min left of 100
+[ 2022s] split 0 layer 19 done; baseline max |difference| vs cache 0.053
+[ 2026s] [timing] 7.31 µs per token and vector -> 3.1 min for the rest; 66.2 min left of 100
+[ 2056s] [timing] 7.34 µs per token and vector -> 2.7 min for the rest; 65.7 min left of 100
+[ 2087s] split 0 layer 17 done; baseline max |difference| vs cache 0.053
+[ 2090s] [timing] 7.37 µs per token and vector -> 2.3 min for the rest; 65.2 min left of 100
+[ 2120s] [timing] 7.40 µs per token and vector -> 1.9 min for the rest; 64.7 min left of 100
+[ 2151s] split 0 layer 21 done; baseline max |difference| vs cache 0.053
+[ 2154s] [timing] 7.43 µs per token and vector -> 1.5 min for the rest; 64.1 min left of 100
+[ 2182s] [timing] 7.46 µs per token and vector -> 1.2 min for the rest; 63.6 min left of 100
+[ 2214s] split 2 layer 19 done; baseline max |difference| vs cache 0.055
+[ 2217s] [timing] 7.49 µs per token and vector -> 0.7 min for the rest; 63.1 min left of 100
+[ 2245s] [timing] 7.52 µs per token and vector -> 0.4 min for the rest; 62.6 min left of 100
+[ 2274s] split 3 layer 19 done; baseline max |difference| vs cache 0.056
+PRIMARY TEST: split 1 (fitted on the report half, steered on the selection half), layer 19, gold_probe against 500 premise_balanced_probe controls (labellings with both balances of the gold label), one-sided in the sign of the 20-control run (-1), per unit of s
+  slope -0.112; controls mean -0.004, SD 0.085, range -0.226 to +0.228; one-sided p = 0.1198 (threshold 0.0021: does not survive); against within-string controls p = 0.178
+  split 1 layer 19 (primary): gold_probe slope -0.112, vs 500 premise-balanced controls z -1.27, signed rank 442/501, one-sided p 0.120
+  split 0 layer 19 (original): gold_probe slope -0.251, vs 100 premise-balanced controls z -2.61, signed rank 100/101, one-sided p 0.020
+  split 0 layer 17 (other): gold_probe slope +0.342, vs 20 premise-balanced controls z +1.07, signed rank 4/21, one-sided p 0.857
+  split 0 layer 21 (other): gold_probe slope -0.028, vs 20 premise-balanced controls z -0.99, signed rank 18/21, one-sided p 0.190
+  split 2 layer 19 (other): gold_probe slope -0.186, vs 20 premise-balanced controls z -2.19, signed rank 21/21, one-sided p 0.048
+  split 3 layer 19 (other): gold_probe slope -0.240, vs 20 premise-balanced controls z -1.72, signed rank 21/21, one-sided p 0.048
+  split 1: the label beyond adjacency, adjacency direction projected out: slope -0.133, z -1.22 against 100 controls built the same way (descriptive: gold probe against 100 within-cell probes z +0.65)
+  split 0: the label beyond adjacency, adjacency direction projected out: slope -0.058, z -0.60 against 100 controls built the same way (descriptive: gold probe against 100 within-cell probes z -0.46)
+SECOND QUESTION (split 1): one-sided p = 0.109 against 100 controls: does not stand out

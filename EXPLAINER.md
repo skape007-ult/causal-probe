@@ -378,6 +378,16 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 
 **What it costs.** The scope sentence makes the project's conclusion narrower than its title suggests: nothing here is about a model that can do the task. And claim 3 now carries four undecided cases in the open instead of one tidy null.
 
+### D35. The 7B verdict corrected within the hour: above chance within hypothesis string; stop and plan (Sat 14 Nov, 08:34)
+
+**Context.** D34 (1) called the 7B model "at chance on the debiased pool" from the pooled AUROC. The eleventh audit, which had the result files and not my verdict, computed the same statistic inside each hypothesis string: 0.549 [0.530, 0.569], and 0.589 [0.560, 0.620] when adjacency of the queried pair is held fixed as well, where the four smaller models are at or below 0.5. I reproduced it with two implementations of my own.
+
+**Decision.** The verdict of D34 (1) is withdrawn. The pooled criterion was fixed in advance and by it the reading is still "at chance", but it is the wrong statistic for this pool: the answer differs far more between hypothesis strings than within them, and the label is balanced inside every string, so pooled it can sit at 0.5 while the answers follow the label inside the strings. The within-string statistics are now computed for every model by `scripts/15_answer_bias.py`. Under the user's rule this is the "above chance" branch: no further experiment is started, and the user gets a plan with GPU hours.
+
+**Alternatives.** *Keep "at chance" because the criterion was fixed in advance:* a criterion fixed in advance protects against choosing the statistic that flatters a result; it does not make an insensitive statistic the right one, and here the insensitivity was known (third audit) before the criterion was applied. *Call the model "able to do the task":* it is not; the valid item of a premise gets the higher answer logit in 53.6% of premises and the answers themselves hardly change.
+
+**What it costs.** The tidy scope sentence ("models that cannot do the task") is gone. And I gave the user a wrong one-line answer to the one question they had asked to have answered first.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.

@@ -1,5 +1,14 @@
 # Progress (read this first after a restart)
 
+## STATUS, Saturday 14 November 17:38 (the block below it is the status of 11:40; this one supersedes it where they differ)
+
+- **RESULTS.md:** cut to 834 words and committed on the user's approval (`0b8ec33`). Rule since 12:25: no wording change without the user's answer; three changes are queued in `notes/results_md_queue.md` (Q3a to Q3c: drop the 9B from the status line; in claim 2's caveat remove "go against it for direct-causation hypotheses (0.442)", add the prompt-length control for the 7B model and one sentence on the 9B; add the pool's prompt-length leak to the first limitation).
+- **Gemma-2-9B** (`r3_gemma9b`): ingested, audited (sixteenth review, `notes/audit_gemma9b_answers_raw.md`). Within-string AUROC 0.542, but 0.52 with prompt length removed: not shown beyond a response to prompt length. The 7B result survives that control (0.53; 0.55 with adjacency fixed). The control is in `answer_bias.json` for all six models. Its probe ladder is unfinished: C = 0.01 done, the other steps were stopped by the swap watchdog and are queued behind the rehearsal.
+- **Kaggle, launched by the user at about 16:50, not returned:** the settle run for Qwen 3B and the all-pairs patching run for Qwen 3B. Not launched and not wanted: the all-pairs patching run for Gemma. No fine-tuning pilot exists.
+- **Rehearsal of `scripts/run_all.sh`** in `../rehearsal_run_all` (isolated worktree, cloned cache): first part (tier 1 of three models) ran without error and reproduced every committed number; second part (Qwen 3B tier 1, the 7B path, everything after the tier-1 loop) running since 17:09, log `logs/rehearsal2.log` there.
+- **Freeze (user):** after the two Qwen 3B runs are ingested and audited, no new analyses; then `scripts/run_all.sh` end to end in the real checkout tonight; Sunday 10:00 to 14:00 packaging and the rest of `notes/handoff.md` (started; next-phase section written).
+- **Seventeen reviews so far** are not all on the page: RESULTS.md says fifteen; the sixteenth is the 9B one. Queue a count change with the next RESULTS.md change.
+
 ## STATUS, Saturday 14 November 11:39 (supersedes everything below where they differ)
 
 **Where things stand.**

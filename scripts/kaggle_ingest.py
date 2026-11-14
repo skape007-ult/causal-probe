@@ -37,7 +37,7 @@ PY = sys.executable
 
 def notebook_setting(run: str, name: str) -> str | None:
     """A string setting (JOBS, MODELS) from the notebook whose RUN_NAME is `run`."""
-    for nb in sorted((ROOT / "notebooks").glob("*_r2*.ipynb")):
+    for nb in sorted((ROOT / "notebooks").glob("*_r[0-9]*.ipynb")):
         txt = nb.read_text()
         if re.search(r'RUN_NAME\s*=\s*\\"%s\\"' % re.escape(run), txt):
             m = re.search(r'%s\s*=\s*\\"([^"\\]*)\\"' % name, txt)
@@ -48,7 +48,7 @@ def notebook_setting(run: str, name: str) -> str | None:
 def pinned_commit(run: str | None = None) -> str | None:
     """The commit pinned in the notebook of this run (round 1: notebooks/kaggle_gpu.ipynb; round 2:
     the notebook whose RUN_NAME is `run`)."""
-    nbs = [ROOT / "notebooks" / "kaggle_gpu.ipynb"] if run is None else sorted((ROOT / "notebooks").glob("*_r2*.ipynb"))
+    nbs = [ROOT / "notebooks" / "kaggle_gpu.ipynb"] if run is None else sorted((ROOT / "notebooks").glob("*_r[0-9]*.ipynb"))
     for nb in nbs:
         txt = nb.read_text() if nb.exists() else ""
         if run is not None and not re.search(r'RUN_NAME\s*=\s*\\"%s\\"' % re.escape(run), txt):
@@ -199,14 +199,24 @@ def main():
     if a.run:
         print("== 2b. output status (STATUS.txt) ==")
         got_c = ((env or {}).get("git_commit") or "")
-        writes_status = bool(re.fullmatch(r"[0-9a-f]{40}", got_c)) and b"STATUS.txt" in (git_blob(got_c, "scripts/notebook_cells.py") or b"")
+        # Does this run's notebook write STATUS.txt? Yes if scripts/notebook_cells.py at the run's commit mentions it. If the
+        # run's commit is unknown (no environment record, or not a commit of this repository), the pinned commit decides;
+        # if that is unknown too, the answer is yes: an unidentifiable run is not waved through (seventh audit, F5).
+        def cells_write_status(c):
+            blob = git_blob(c, "scripts/notebook_cells.py") if re.fullmatch(r"[0-9a-f]{40}", c or "") else None
+            return None if blob is None and git_blob(c or "x", "README.md") is None else b"STATUS.txt" in (blob or b"")
+        writes_status = cells_write_status(got_c)
+        if writes_status is None:
+            writes_status = cells_write_status(commit or "")
+        if writes_status is None:
+            writes_status = True
         member = f"results/round2_output_status_{a.run}.txt"
-        if (src / "STATUS.txt").is_file():
-            st_txt, st_from = (src / "STATUS.txt").read_text(errors="replace"), "STATUS.txt"
-        elif member in names:
-            st_txt, st_from = R.read(member).decode(errors="replace"), member + " (copy inside the results archive)"
-        else:
-            st_txt, st_from = None, None
+        loose = (src / "STATUS.txt").read_text(errors="replace").lstrip("\ufeff") if (src / "STATUS.txt").is_file() else None
+        inner = R.read(member).decode(errors="replace").lstrip("\ufeff") if member in names else None
+        st_txt, st_from = (loose, "STATUS.txt") if loose is not None else (inner, member + " (copy inside the results archive)") if inner is not None else (None, None)
+
+        def field(txt, key):
+            return next((l.split(":", 1)[1].strip() for l in txt.splitlines() if l.strip().startswith(key + ":")), None)
         report["output_status"] = None if st_txt is None else st_txt.splitlines()[0].strip() if st_txt.strip() else ""
         refuse = None
         if st_txt is None:
@@ -219,12 +229,18 @@ def main():
         else:
             lines = [l.strip() for l in st_txt.splitlines() if l.strip()]
             state = lines[0] if lines else ""
-            run_line = next((l for l in lines if l.startswith("run:")), "run: ?")
-            print(f"  {st_from}: {state or '(empty)'} | {run_line}")
-            if run_line.split(":", 1)[1].strip() != a.run:
-                refuse = f"STATUS.txt belongs to another run ({run_line}); expected run: {a.run}"
+            print(f"  {st_from}: {state or '(empty)'} | run: {field(st_txt, 'run')} | commit: {str(field(st_txt, 'commit'))[:12]}")
+            if field(st_txt, "run") != a.run:
+                refuse = f"STATUS.txt belongs to another run (run: {field(st_txt, 'run')}); expected run: {a.run}"
             elif state != "OK":
                 refuse = f"STATUS.txt says {state or '(empty)'}, not OK:\n    " + "\n    ".join(lines[1:])
+            elif loose is not None and inner is not None and (inner.split("\n", 1)[0].strip() != "OK" or field(inner, "written") != field(loose, "written")):
+                # a STATUS.txt left in the folder from an earlier download must not vouch for another archive (F4)
+                refuse = (f"STATUS.txt beside the archives (written {field(loose, 'written')}) and the copy inside the results archive "
+                          f"({inner.split(chr(10), 1)[0].strip() or '(empty)'}, written {field(inner, 'written')}) do not agree: "
+                          "the loose file is from another download. Remove it and run again.")
+            elif re.fullmatch(r"[0-9a-f]{40}", got_c) and field(st_txt, "commit") not in (None, got_c):
+                refuse = f"STATUS.txt was written for commit {str(field(st_txt, 'commit'))[:12]}; the run's environment record says {got_c[:12]}"
         if refuse and not a.ignore_status:
             sys.exit("ERROR: " + refuse + "\nNothing was changed. (--ignore-status overrides this check; say in the log why.)")
         if refuse:

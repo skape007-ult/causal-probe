@@ -49,18 +49,31 @@ def main():
     ap.add_argument("--position", default="final", choices=["final", "content_end"])
     ap.add_argument("--select-stride", type=int, default=1)
     ap.add_argument("--max-minutes", type=float, default=85.0)
+    ap.add_argument("--n-shuf", type=int, default=N_SHUF, help="shuffled-label directions of each kind (probe, difference of means)")
+    ap.add_argument("--out-suffix", default="", help="appended to the output names, e.g. _c100 for a run with 100 controls. Such a run "
+                                                     "must sit at the site of the run without the suffix, whose result file must be in the checkout")
+    ap.add_argument("--allow-new-site", action="store_true", help="with --out-suffix: do not require that result file (smoke tests)")
     a = ap.parse_args()
     t0 = time.time()
     resid, meta, items = cache.load_cache(a.model, a.tag)
     pi = meta["positions"].index(a.position)
     sj_path = RESULTS / f"steering_{a.model}_{a.tag}{a.suffix}.json"
-    out_suffix = a.suffix + ("" if a.position == "final" else "_hyp")
+    out_suffix = a.suffix + ("" if a.position == "final" else "_hyp") + a.out_suffix
     if a.position == "final" and sj_path.exists():
         sj = json.loads(sj_path.read_text())
         layer, C, how = sj["layer"], sj["probe_C"], "main steering run"
     else:
         layer, C, how = steer.choose_site(a.model, a.tag, resid, meta, items, a.position, a.select_stride)
     print(f"site: {a.position}, layer {layer}, C {C:g} ({how})", flush=True)
+    if a.out_suffix and not a.allow_new_site:
+        # a run with more controls must sit at the site of the run it refines (seventh audit, F8)
+        base_json = RESULTS / f"steering_controls_{a.model}_{a.tag}{a.suffix}{'' if a.position == 'final' else '_hyp'}.json"
+        if not base_json.exists():
+            raise SystemExit(f"{base_json.name} is not in this checkout: a '{a.out_suffix}' run must use the site of the run without the suffix. "
+                             "Ingest that run and re-pin the notebook first (or pass --allow-new-site).")
+        if int(json.loads(base_json.read_text())["layer"]) != int(layer):
+            raise SystemExit(f"site mismatch: {base_json.name} is at layer {json.loads(base_json.read_text())['layer']}, the selection here gives layer {layer}")
+        print(f"same site as {base_json.name}", flush=True)
     X = probes.layer_features(resid, layer, pi)
     y = np.array(meta["labels"]); ld0 = np.array(meta["logit_diff"])
     groups = np.array([i["group"] for i in items])
@@ -93,7 +106,7 @@ def main():
             m_ = np.where(strs_sel == s_)[0]
             out_[m_] = lab[rng.permutation(m_)]
         return out_
-    for _ in range(N_SHUF):
+    for _ in range(a.n_shuf):      # the first 20 shuffles of a longer run are those of the 20-control run (same generator, same order)
         ys = shuffled(y[sel])
         add("shuffled_probe", steer.probe_direction(X[sel], ys, C))
         add("shuffled_diffmeans", steer.diff_of_means(X[sel], ys))
@@ -136,7 +149,7 @@ def main():
     res = {"model": a.model, "tag": a.tag, "position": a.position, "layer": int(layer), "layer_selection": how,
            "n_layers": int(resid.shape[1] - 1), "probe_C": C, "alpha": ALPHA, "s_unit": s_unit,
            "control_labels_shuffled": "within hypothesis string" if within else "over the whole item set",
-           "n_items": int(len(idx)), "baseline_max_abs_diff_vs_cache": float(np.abs(out[:, 0] - ld0[idx]).max()),
+           "n_shuffled_label_directions_of_each_kind": int(a.n_shuf), "n_items": int(len(idx)), "baseline_max_abs_diff_vs_cache": float(np.abs(out[:, 0] - ld0[idx]).max()),
            "families": {}, "real": {}}
     for f in ("isotropic", "shuffled_probe", "shuffled_diffmeans"):
         m = fam == f

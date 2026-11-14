@@ -9,7 +9,7 @@ import json
 import sys
 from pathlib import Path
 
-from notebook_cells import COLAB_DOWNLOAD, FINAL_CHECK, PLATFORM_SETUP
+from notebook_cells import FINAL_CHECK, PLATFORM_SETUP
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = "https://github.com/skape007-ult/causal-probe.git"
@@ -27,6 +27,7 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
               "the official Corr2Cause test set, CLadder and the original probe pool; no interventions", est="1.5 to 3 hours"),
     dict(file="kaggle_r2_gemma.ipynb", platform="kaggle", run="r2_gemma", models="gemma2b",
          jobs="cache,controls,controls_hyp,adjacency,patch_same,export", fallback="", token=True,
+         gated="google/gemma-2-2b-it",
          title="Round 2 / D: Gemma-2-2B interventions",
          what="matched steering controls at both tokens, the adjacency causal test, label-preserving patching pairs", est="2.5 to 4 hours"),
     dict(file="kaggle_r2b_qwen3b_adjacency.ipynb", platform="kaggle", run="r2b_qwen3b", models="qwen3b",
@@ -36,6 +37,7 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
          est="1.5 to 2.5 hours"),
     dict(file="kaggle_r2b_gemma_adjacency.ipynb", platform="kaggle", run="r2b_gemma", models="gemma2b",
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=True,
+         gated="google/gemma-2-2b-it",
          title="Round 2 / D2: Gemma-2-2B follow-up (corrected steering controls and adjacency test)",
          what="ONLY needed if notebook D was launched from a commit before cdb08d7: steering controls shuffled within hypothesis string, and the adjacency test with all its arms, at four sites",
          est="1.5 to 2.5 hours"),
@@ -59,6 +61,59 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
          what="matched steering controls at both tokens (the debiased-pool controls shuffled within hypothesis string), the adjacency "
               "test with all its arms at four sites, label-preserving patching pairs. One run; no follow-up needed",
          est="1.25 to 2 hours"),
+    # ---------------- round 3 (Fri 13 Nov, late): depth on the three headline claims; see KAGGLE.md, "Round 3"
+    dict(file="kaggle_r3_gemma9b.ipynb", platform="kaggle", run="r3_gemma9b", models="gemma9b",
+         jobs="preflight,behaviour,export", fallback="", token=True, gated="google/gemma-2-9b-it", min_gpus=2,
+         title="Round 3 / E: Gemma-2-9B behaviour and debiased-pool activations",
+         what="a second model family above 7B: per-item answer logits of Gemma-2-9B (float16, split over the two T4s) on the debiased "
+              "pool, the official Corr2Cause test set, CLadder and the original pool, and its debiased-pool activations for the "
+              "probe comparison on the laptop; no interventions. The first cell checks the token's access to the gated weights "
+              "and that two GPUs are present; the runner then checks memory and disk, loads the model and runs 16 items. If any "
+              "of that fails the run ends within minutes with the reason (STATUS.txt: SKIPPED)", est="2 to 3.5 hours"),
+    dict(file="kaggle_r3_patch240_qwen3b.ipynb", platform="kaggle", run="r3p_qwen3b", models="qwen3b",
+         jobs="patch_same,patch,export", fallback="", token=False, extra="--n-pairs 240 --no-resid",
+         title="Round 3 / F: Qwen2.5-3B patching on all available pairs",
+         what="activation patching on up to 240 label-preserving and 240 label-changing pairs per kind (the pool holds about 230 "
+              "and 210) instead of 60, to narrow the interval on their comparison. No component patching, no random-donor control",
+         est="1 to 2.5 hours (to be narrowed with the stage times of run A)"),
+    dict(file="kaggle_r3_patch240_gemma.ipynb", platform="kaggle", run="r3p_gemma", models="gemma2b",
+         jobs="patch_same,patch,export", fallback="", token=True, gated="google/gemma-2-2b-it", extra="--n-pairs 240 --no-resid",
+         title="Round 3 / F: Gemma-2-2B patching on all available pairs",
+         what="activation patching on up to 240 label-preserving and 240 label-changing pairs per kind (the pool holds about 230 "
+              "and 210) instead of 60, to narrow the interval on their comparison. No component patching, no random-donor control",
+         est="1 to 2.5 hours (to be narrowed with the stage times of run D)"),
+    dict(file="kaggle_r3_controls100_qwen0.5b.ipynb", platform="kaggle", run="r3c_qwen05b", models="qwen0.5b",
+         jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False, 
+         extra="--n-shuf 100 --sites best --control-tags c2c_debiased --no-resid",
+         title="Round 3 / G: Qwen2.5-0.5B with 100 control directions",
+         what="ONLY if the 20-control run of this model shows an effect beyond its controls (I will say so after its ingest). The steering "
+              "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
+              "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
+              "20-control run", est="about 1 hour"),
+    dict(file="kaggle_r3_controls100_qwen1.5b.ipynb", platform="kaggle", run="r3c_qwen15b", models="qwen1.5b",
+         jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False, 
+         extra="--n-shuf 100 --sites best --control-tags c2c_debiased --no-resid",
+         title="Round 3 / G: Qwen2.5-1.5B with 100 control directions",
+         what="ONLY if the 20-control run of this model shows an effect beyond its controls (I will say so after its ingest). The steering "
+              "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
+              "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
+              "20-control run", est="1.5 to 2 hours"),
+    dict(file="kaggle_r3_controls100_qwen3b.ipynb", platform="kaggle", run="r3c_qwen3b", models="qwen3b",
+         jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False, 
+         extra="--n-shuf 100 --sites best --control-tags c2c_debiased --no-resid",
+         title="Round 3 / G: Qwen2.5-3B with 100 control directions",
+         what="ONLY if the 20-control run of this model shows an effect beyond its controls (I will say so after its ingest). The steering "
+              "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
+              "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
+              "20-control run", est="2.5 to 4.5 hours"),
+    dict(file="kaggle_r3_controls100_gemma.ipynb", platform="kaggle", run="r3c_gemma", models="gemma2b",
+         jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=True, gated="google/gemma-2-2b-it",
+         extra="--n-shuf 100 --sites best --control-tags c2c_debiased --no-resid",
+         title="Round 3 / G: Gemma-2-2B with 100 control directions",
+         what="ONLY if the 20-control run of this model shows an effect beyond its controls (I will say so after its ingest). The steering "
+              "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
+              "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
+              "20-control run", est="2.5 to 4.5 hours"),
 ]
 
 
@@ -140,6 +195,7 @@ RUN = '''
 # ---- run (resumable: re-running this cell skips finished stages) ---------------
 cmd = [PY, "-u", "scripts/gpu_round2.py", "--run", RUN_NAME, "--models", MODELS, "--jobs", JOBS, "--out", WORK]
 if FALLBACK: cmd += ["--fallback", FALLBACK]
+cmd += EXTRA_ARGS.split()
 if SMOKE_TEST: cmd.append("--tiny")
 if SKIP_STAGES: cmd += ["--skip", SKIP_STAGES]
 print(" ".join(cmd))
@@ -152,30 +208,42 @@ print("runner exit code", p.returncode, "| total %.0f min" % ((time.time() - t_s
 
 SUMMARY = '''
 # ---- what ran, and which archives to expect -----------------------------------
+# Nothing in this cell may stop the notebook: the last cell must run whatever happened before.
 RUN = RUN_NAME + ("_tiny" if SMOKE_TEST else "")      # a smoke test runs under its own name and results folder
-st = REPO_DIR + "/results/" + ("_tiny/" if SMOKE_TEST else "") + "round2_status_" + RUN + ".json"
-s = json.load(open(st)) if os.path.exists(st) else {}
-for k in s.get("planned", []):
-    v = s["stages"].get(k)
-    print("not run         " + k if v is None else ("ok     " if v["ok"] else "FAILED ") + f"{v['minutes']:6.1f} min  {k}" + ("" if v["ok"] else "   <- " + v["detail"]))
-print("export:", json.dumps(s.get("export", {}).get("zip_megabytes", {})))
-not_finished = "" if s.get("finished") else "the runner did not reach its export step (no finished flag in " + st + ")"
-# expected: the small results archive, every archive the runner recorded, and one activation archive per model whose cache stage succeeded
-expected = ["results_" + RUN + ".zip"] + list(s.get("export", {}).get("zip_megabytes", {}))
-for m in s.get("models_run", []):
-    if any(s.get("stages", {}).get(f"r2.{m}.{j}", {}).get("ok") for j in ("cache", "behaviour.cache")):
-        expected.append(f"cache_{RUN}_{m}.zip")
-expected = list(dict.fromkeys(expected))
-zips = sorted(f for f in os.listdir(WORK) if f.endswith(".zip"))
-# a run that decided not to run (no access, not enough GPU memory): see the first cells and the runner's preflight
-skipped = globals().get("SKIP_REASON", "") or "; ".join(f"{m}: {why}" for m, why in s.get("skipped", {}).items() if not s.get("models_run"))
+s, expected, zips, not_finished, skipped = {}, ["results_" + RUN + ".zip"], [], "", ""
+try:
+    st = REPO_DIR + "/results/" + ("_tiny/" if SMOKE_TEST else "") + "round2_status_" + RUN + ".json"
+    s = json.load(open(st)) if os.path.exists(st) else {}
+    for k in s.get("planned", []):
+        v = s["stages"].get(k)
+        print("not run         " + k if v is None else ("ok     " if v["ok"] else "FAILED ") + f"{v['minutes']:6.1f} min  {k}" + ("" if v["ok"] else "   <- " + v["detail"]))
+    print("export:", json.dumps(s.get("export", {}).get("zip_megabytes", {})))
+    if not s.get("finished"):
+        not_finished = "the runner did not reach its export step (no finished flag in " + st + ")"
+    # expected: the small results archive, every archive the runner recorded, and one activation archive per model whose cache stage succeeded
+    expected += list(s.get("export", {}).get("zip_megabytes", {}))
+    for m in s.get("models_run", []):
+        if any(s.get("stages", {}).get(f"r2.{m}.{j}", {}).get("ok") for j in ("cache", "behaviour.cache")):
+            expected.append(f"cache_{RUN}_{m}.zip")
+    expected = list(dict.fromkeys(expected))
+    zips = sorted(f for f in os.listdir(WORK) if f.endswith(".zip"))
+    # a run that decided not to run (no access, not enough GPU memory): see the runner's preflight
+    skipped = "; ".join(f"{m}: {why}" for m, why in s.get("skipped", {}).items()) if not s.get("models_run") else ""
+except Exception as e:
+    not_finished = "the runner's status could not be read (%s: %s)" % (type(e).__name__, e)
+# the runner itself ended with an error (an unknown option, a refused output directory): whatever status is on disk is from an earlier attempt
+_rc = getattr(globals().get("p"), "returncode", None)
+if _rc not in (0, None):
+    not_finished = "the runner ended with exit code %s (see the output of the cell above)" % _rc
+elif _rc is None:
+    not_finished = not_finished or "the run cell was not executed in this session"
 '''
 
 
 def notebook(r: dict, commit: str) -> dict:
     kag = r["platform"] == "kaggle"
     token = ("the secret **`HF_TOKEN`** attached to THIS notebook (Gemma is gated; secrets are attached per notebook, and the "
-             "first code cell stops at once if it is missing)" if r["token"] else
+             "first code cell stops at once if it is missing or has no access to the weights)" if r["token"] else
              "no Hugging Face token needed (if your `HF_TOKEN` secret is attached to this notebook it is used; otherwise the "
              "public Qwen weights are downloaded anonymously and the first cell says so)")
     kaggle_how = ("**On Kaggle:** settings (right-hand panel) **Accelerator = GPU T4 x2**, **Internet = On**, " + token +
@@ -208,12 +276,15 @@ RUN_NAME    = "{r['run']}"
 MODELS      = "{r['models']}"
 JOBS        = "{r['jobs']}"
 FALLBACK    = "{r['fallback']}"
+EXTRA_ARGS  = "{r.get('extra', '')}"   # further options of scripts/gpu_round2.py (size of the intervention jobs)
 NEEDS_TOKEN = {r['token']}
+GATED_REPOS = "{r.get('gated', '')}"   # the first cell checks that the token has access to these before anything is installed
+MIN_GPUS    = {r.get('min_gpus', 1)}
 SMOKE_TEST  = False        # True: a few items per stage (about 10 minutes) to check the plumbing
 SKIP_STAGES = ""           # comma-separated stage-name prefixes to skip, e.g. "r2.qwen3b.patch"
 """),
         code(SETUP_HEAD + PLATFORM_SETUP + COMMON_SETUP),
-        code(CLONE), code(ENV), code(RUN), code(SUMMARY), code(COLAB_DOWNLOAD),
+        code(CLONE), code(ENV), code(RUN), code(SUMMARY),
         code(FINAL_CHECK),          # always the last cell: lists the output directory, writes STATUS.txt, never raises
     ]
     return {"cells": cells, "nbformat": 4, "nbformat_minor": 5,

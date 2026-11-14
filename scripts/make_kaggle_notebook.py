@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-from notebook_cells import COLAB_DOWNLOAD, FINAL_CHECK, PLATFORM_SETUP
+from notebook_cells import FINAL_CHECK, PLATFORM_SETUP
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = "https://github.com/skape007-ult/causal-probe.git"
@@ -117,17 +117,21 @@ print("runner exit code", p.returncode, "| total %.0f min" % ((time.time() - t_s
 """),
         code("""
 # ---- what to download ---------------------------------------------------------
-st = REPO_DIR + "/results/kaggle_run_status.json"
-s_ = json.load(open(st)) if os.path.exists(st) else {}
-for k, v in s_.get("stages", {}).items():
-    print(("ok     " if v["ok"] else "FAILED ") + f"{v['minutes']:6.1f} min  {k}" + ("" if v["ok"] else "   <- " + v["detail"]))
-print("export:", json.dumps(s_.get("export", {}).get("zip_megabytes", {})))
-not_finished = "" if "export" in s_ else "the runner did not reach its export step (no export record in " + st + ")"
-expected = list(dict.fromkeys(["results.zip"] + list(s_.get("export", {}).get("zip_megabytes", {}))))
-zips = sorted(f for f in os.listdir(WORK) if f.endswith(".zip"))
-RUN, skipped = "round1", ""
+# Nothing in this cell may stop the notebook: the last cell must run whatever happened before.
+RUN, skipped, expected, not_finished = "round1", "", ["results.zip"], ""
+try:
+    st = REPO_DIR + "/results/kaggle_run_status.json"
+    s_ = json.load(open(st)) if os.path.exists(st) else {}
+    for k, v in s_.get("stages", {}).items():
+        print(("ok     " if v["ok"] else "FAILED ") + f"{v['minutes']:6.1f} min  {k}" + ("" if v["ok"] else "   <- " + v["detail"]))
+    print("export:", json.dumps(s_.get("export", {}).get("zip_megabytes", {})))
+    not_finished = "" if "export" in s_ else "the runner did not reach its export step (no export record in " + st + ")"
+    expected = list(dict.fromkeys(["results.zip"] + list(s_.get("export", {}).get("zip_megabytes", {}))))
+except Exception as e:
+    not_finished = "the runner's status could not be read (%s: %s)" % (type(e).__name__, e)
+if getattr(globals().get("p"), "returncode", None) != 0:
+    not_finished = not_finished or "the runner did not end normally (exit code %s)" % getattr(globals().get("p"), "returncode", "none: the run cell was not executed")
 """),
-        code(COLAB_DOWNLOAD),
         code(FINAL_CHECK),          # always the last cell: lists the output directory, writes STATUS.txt, never raises
     ]
     nb = {"cells": cells, "nbformat": 4, "nbformat_minor": 5,

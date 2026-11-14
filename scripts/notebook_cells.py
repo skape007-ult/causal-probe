@@ -11,7 +11,8 @@ only /kaggle/working after "Save & Run All", and 72 minutes of GPU output were l
 tests/test_notebook_cells.py runs these cells' functions, including the case that went wrong.
 """
 
-# Needs: os imported, NEEDS_TOKEN defined. Defines PLATFORM, WORK, TEMP, PERSIST.
+# Needs: os imported; NEEDS_TOKEN and gpu (the nvidia-smi listing, '' without a GPU) defined; optional GATED_REPOS
+# (comma-separated Hugging Face repositories) and MIN_GPUS. Defines PLATFORM, WORK, TEMP, PERSIST.
 PLATFORM_SETUP = '''
 # ---- which platform is this, and where must the output go? --------------------
 # Kaggle keeps ONLY /kaggle/working after "Save & Run All". Colab keeps nothing after the session, so the
@@ -38,7 +39,7 @@ with open(WORK + "/.write_test", "w") as f:
 os.remove(WORK + "/.write_test")
 print("platform:", PLATFORM, "| archives will be written to", WORK,
       {"kaggle": "(kept by Kaggle: Output tab of the saved version, folder kaggle_out)",
-       "colab": "(NOT kept after the session: the download cell near the end hands them to the browser)"}.get(PLATFORM, ""))
+       "colab": "(NOT kept after the session: the last cell hands them to the browser)"}.get(PLATFORM, ""))
 
 # ---- Hugging Face token, from this platform's Secrets ---------------------------
 # It is never printed or written to disk by this notebook. A secret is attached PER NOTEBOOK: on Kaggle,
@@ -66,22 +67,52 @@ except Exception as e:
         raise RuntimeError("This run needs the HF_TOKEN secret (the Gemma weights are gated). Attach it to THIS notebook "
                            "(Kaggle: Add-ons -> Secrets -> tick HF_TOKEN; Colab: the key icon in the left bar) and run again.")
     print("This run does not need one: the Qwen weights are public and are downloaded anonymously.")
-'''
 
-# Needs: PLATFORM, WORK, zips (list of archive names in WORK).
-COLAB_DOWNLOAD = '''
-# ---- Colab only: hand the archives to the browser -------------------------------
-# Colab deletes /content when the session ends, so download now. If the browser blocks the downloads,
-# open the Files panel (folder icon, left), go to /content/out and download from there.
-if PLATFORM == "colab":
+# ---- gated weights: does this token have access? Asked now, before anything is installed ----
+def check_access(repo, token):
+    """(True, "") access; (False, reason) refused by Hugging Face; (None, reason) the question could not be asked
+    (no network, certificate store missing). One small request for the repository's config.json; redirects are not
+    followed, so the token is sent to huggingface.co only."""
+    import ssl, urllib.error, urllib.request
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *args, **kw):
+            return None
     try:
-        from google.colab import files
-        for f in zips:
-            files.download(WORK + "/" + f)
+        import certifi
+        ctx = ssl.create_default_context(cafile=certifi.where())
+    except Exception:
+        ctx = ssl.create_default_context()
+    req = urllib.request.Request("https://huggingface.co/" + repo + "/resolve/main/config.json", method="HEAD",
+                                 headers={"Authorization": "Bearer " + token} if token else {})
+    try:
+        urllib.request.build_opener(NoRedirect, urllib.request.HTTPSHandler(context=ctx)).open(req, timeout=30)
+        return True, ""
+    except urllib.error.HTTPError as e:
+        if 300 <= e.code < 400:
+            return True, ""                       # a redirect to the file: access granted
+        if e.code in (401, 403, 404):
+            return False, {401: "the token was rejected, or the licence of this model has not been accepted with the token's account",
+                           403: "this account has not been granted access to the model",
+                           404: "repository or file not found"}[e.code]
+        return None, "HTTP %d" % e.code
     except Exception as e:
-        print("automatic download not available here:", type(e).__name__)
-else:
-    print("not on Colab: nothing to do in this cell")
+        return None, "%s: %s" % (type(e).__name__, str(getattr(e, "reason", e))[:120])
+for _repo in [r for r in globals().get("GATED_REPOS", "").split(",") if r]:
+    _ok, _why = check_access(_repo, os.environ.get("HF_TOKEN", ""))
+    if _ok is False:
+        raise RuntimeError("No access to " + _repo + ": " + _why + ". Open https://huggingface.co/" + _repo + " while logged in to "
+                           "the account the token belongs to, accept the licence, then run this notebook again. Nothing has been run or installed.")
+    if _ok is None:      # not a refusal: do not stop a run over a check that could not be made; the download will show it
+        print("WARNING: could not ask Hugging Face about access to", _repo, "(" + _why + "). Is Internet switched on? Continuing; "
+              "if access is missing, the model download fails within the first minutes of the run.")
+        continue
+    print("access to", _repo, "confirmed")
+
+# ---- GPUs: a model that is split over two cards needs both. Checked now, before anything is installed ----
+_n_gpu = len([l for l in gpu.strip().splitlines()[1:] if l.strip()])
+if PLATFORM != "local" and globals().get("MIN_GPUS", 1) > 1 and _n_gpu < MIN_GPUS:       # one-GPU runs keep the warning printed above
+    raise RuntimeError("This run needs %d GPUs and this session has %d. On Kaggle set Accelerator = GPU T4 x2 (not P100, not a "
+                       "single T4) and run again. Nothing has been run or installed." % (MIN_GPUS, _n_gpu))
 '''
 
 # Needs: os, PLATFORM, WORK, PERSIST, under(), COMMIT, RUN (the run's name), expected (list of archive names),
@@ -158,7 +189,7 @@ print("\\n" + bar)
 if OUTPUT_STATE == "OK":
     print("OUTPUT CHECK PASSED:", len(expected), "archive(s) and STATUS.txt in", WORK)
     print({"kaggle": "Download the zip files and STATUS.txt from the Output tab of this saved version (folder kaggle_out).",
-           "colab": "The archives were handed to the browser by the cell above; if not, download them from the Files panel now."}.get(PLATFORM, ""))
+           "colab": "The archives and STATUS.txt are handed to the browser below; if that is blocked, download them from the Files panel now."}.get(PLATFORM, ""))
 elif OUTPUT_STATE == "SKIPPED":
     print("RUN SKIPPED, nothing to download. Reason: " + skipped)
 else:
@@ -167,4 +198,15 @@ for q in problems:
     print("  - " + q)
 print(bar)
 print("STATUS.txt, first line:", OUTPUT_STATE)
+
+# ---- Colab only: hand the archives and STATUS.txt to the browser ------------------
+# Here, after the status has been written (its copy is inside the results archive). Colab deletes /content when the
+# session ends. If the browser blocks the downloads, open the Files panel (folder icon, left) and download from /content/out.
+if PLATFORM == "colab":
+    try:
+        from google.colab import files
+        for f in [f for f in expected if os.path.isfile(os.path.join(WORK, f))] + ["STATUS.txt"]:
+            files.download(os.path.join(WORK, f))
+    except Exception as e:
+        print("automatic download not available here (%s): use the Files panel" % type(e).__name__)
 '''

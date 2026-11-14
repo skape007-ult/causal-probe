@@ -1,6 +1,8 @@
 """Model loading (plain Hugging Face + hooks), answer-token handling, random-init control."""
 from __future__ import annotations
 
+import os
+
 import gc
 
 import numpy as np
@@ -16,6 +18,8 @@ NO_VARIANTS = ["No", " No", "no", " no", "NO", " NO"]
 
 
 def pick_device() -> str:
+    if os.environ.get("CAUSAL_PROBE_DEVICE"):        # e.g. "cpu" for tests on a machine whose GPU must stay free
+        return os.environ["CAUSAL_PROBE_DEVICE"]
     if torch.cuda.is_available():
         return "cuda"
     return "mps" if torch.backends.mps.is_available() else "cpu"
@@ -85,6 +89,14 @@ def reinit_(model) -> None:
                 mod.weight.fill_(0.0 if "gemma" in type(mod).__name__.lower() else 1.0)
 
 
+def multi_gpu_caps_gib(n_gpus: int) -> list[int]:
+    """Upper limits on the WEIGHTS placed on each GPU for config.MULTI_GPU models, for 16 GB cards. A Kaggle T4 reports
+    15.6e9 bytes = 14.5 GiB (results/kaggle_environment.json), not 15 GiB. The first GPU also holds the inputs and the
+    activations of the batch as they start, so it gets less. Gemma-2-9B (17.2 GiB) is placed as 8.35 + 8.86 GiB under
+    these limits (seventh audit, computed from the device map without weights)."""
+    return [9 if i == 0 else 13 for i in range(n_gpus)]
+
+
 def load_model(name: str, device: str | None = None, dtype=None, random_init: bool = False,
                disk_embed: bool | None = None):
     """Load an instruct model. `random_init=True` gives an untrained copy with the same
@@ -119,8 +131,7 @@ def load_model(name: str, device: str | None = None, dtype=None, random_init: bo
         # that add vectors move them to the device of the activation they modify.
         assert device == "cuda" and torch.cuda.device_count() >= 2 and not random_init, \
             f"{name} needs two CUDA GPUs and has no random-init control"
-        # leave room on the first GPU, where the inputs and the batch's activations start
-        mem = {i: ("9GiB" if i == 0 else "14GiB") for i in range(torch.cuda.device_count())}
+        mem = {i: f"{g}GiB" for i, g in enumerate(multi_gpu_caps_gib(torch.cuda.device_count()))}
         model = AutoModelForCausalLM.from_pretrained(hf_id, dtype=torch.float16, device_map="auto", max_memory=mem).eval()
         for p in model.parameters():
             p.requires_grad_(False)

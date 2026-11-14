@@ -14,7 +14,7 @@ from pathlib import Path
 
 OUT = Path(os.environ.get("CAUSAL_PROBE_TABLES", ROOT / "report" / "tables"))
 LAB = {"qwen0.5b": "Qwen2.5-0.5B", "qwen1.5b": "Qwen2.5-1.5B", "gemma2b": "Gemma-2-2B", "qwen0.5b-lora": "Qwen2.5-0.5B + LoRA",
-       "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)", "qwen7b": "Qwen2.5-7B"}
+       "qwen3b": "Qwen2.5-3B", "qwen7b-4bit": "Qwen2.5-7B (4-bit)", "qwen7b": "Qwen2.5-7B", "gemma9b": "Gemma-2-9B"}
 DS = {"c2c_test": "Corr2Cause test", "c2c_probe": "Corr2Cause pool", "cladder": "CLadder",
       "c2c_debiased": "Corr2Cause debiased pool", "c2c_test_renamed": "Corr2Cause test, variables renamed",
       "c2c_test_sub_fewshot": "Corr2Cause test (500 items)", "cladder_sub_fewshot": "CLadder (500 items)"}

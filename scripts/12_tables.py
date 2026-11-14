@@ -458,19 +458,30 @@ def t_within_string():
         rows.append([LAB[m], ci(r[m]["c2c_debiased"]["auroc"]), ci(w["mean_auroc"]), pp(w["mean_auroc"]),
                      f"{w['n_strings_with_auroc_above_half']}/{w['n_strings']}"]
                     + [f"{w['by_type'][t]['est']:.3f}" + ("*" if w["by_type"][t]["lo"] > 0.5 or w["by_type"][t]["hi"] < 0.5 else "") for t in TEMPLATES_T]
-                    + [ci(c), pp(c), " · ".join(f"{c['by_type'][t]['est']:.2f}" for t in TEMPLATES_T), w["reading"]])
+                    + [ci(c), pp(c), " · ".join(f"{c['by_type'][t]['est']:.2f}" for t in TEMPLATES_T)]
+                    + ([f"{ci(lr[k]['mean_auroc'])} (p {lr[k]['mean_auroc']['permutation_p_two_sided']:.4f})" for k in ("linear_in_token_count", "quadratic_in_log_token_count")]
+                       + [ci(lr["quadratic_in_log_token_count"]["within_string_and_adjacency"])] if (lr := w.get("prompt_length_removed")) else ["–", "–", "–"])
+                    + [w["reading"]])
     if rows:
         write("answers_within_string", table(
             ["Model", "Pooled AUROC of the answer (all items)", "Mean AUROC within hypothesis string", "Permutation p", "Strings above 0.5"]
             + [f"Within string, by type: {TSHORT[t]}" for t in TEMPLATES_T]
-            + ["AUROC within string and adjacency of the queried pair", "Permutation p", "…by type (" + ", ".join(TSHORT[t] for t in TEMPLATES_T) + ")", "Reading"],
+            + ["AUROC within string and adjacency of the queried pair", "Permutation p", "…by type (" + ", ".join(TSHORT[t] for t in TEMPLATES_T) + ")",
+               "Within string, prompt length removed (linear in token count)", "…(quadratic in log token count)", "…within string and adjacency, length removed (quadratic)",
+               "Reading of the uncontrolled mean"],
             rows, ["answer_bias.json"],
             notes=["AUROC of the Yes−No logit difference for the gold label. Pooled: over all 2,400 items. Within string: computed inside each of the 48 hypothesis strings "
                    "(the label is balanced in every string) and averaged. Within string and adjacency: inside cells of (string, queried pair adjacent or not), weighted by the "
                    "number of valid-invalid pairs; it asks whether the answer follows the label beyond following adjacency.",
                    "Intervals: premises resampled. Permutation p, two-sided: the two labels of each premise swapped at random; its smallest possible value here is 0.0005. * interval excludes 0.5.",
                    "These statistics were chosen after the pooled ones had been seen (eleventh audit, F1). The pooled AUROC is insensitive on this pool: the answer differs "
-                   "far more between hypothesis strings than within them, and opposite signs in different hypothesis types cancel."]))
+                   "far more between hypothesis strings than within them, and opposite signs in different hypothesis types cancel.",
+                   "Prompt length removed (sixteenth review, finding 1): the token count of the prompt is regressed out of the answer logit inside each hypothesis string without "
+                   "looking at the labels, and the within-string statistic is recomputed. Inside a string the token count alone predicts the label for some hypothesis types (AUROC "
+                   + (", ".join(f"{TSHORT[t]} {la['by_type'][t]['est']:.2f}" for t in TEMPLATES_T) if (la := next((r[m_]['c2c_debiased']['within_hypothesis_string'].get('prompt_length_alone')
+                      for m_ in MODELS if m_ in r and 'within_hypothesis_string' in r[m_].get('c2c_debiased', {})), None)) else "n/a")
+                   + "; the same for every model), so a model whose answer follows prompt length gets a within-string AUROC away from 0.5 without evaluating the hypothesis. "
+                   "A within-string effect that does not survive this control is not shown to be more than a response to prompt length."]))
 
 
 def t_probe_content():

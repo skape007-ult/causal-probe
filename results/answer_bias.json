@@ -120,6 +120,244 @@
    "best_threshold_in_sample": -0.7405242919921875,
    "reading": "at chance (AUROC CI includes 0.5)",
    "within_hypothesis_string": {
+    "prompt_length_removed": {
+     "linear_in_token_count": {
+      "mean_auroc": {
+       "est": 0.5166333333333334,
+       "lo": 0.4971449199649602,
+       "hi": 0.5362594940533384,
+       "permutation_p_two_sided": 0.09095452273863068
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.616,
+        "lo": 0.5630961207539312,
+        "hi": 0.6611615269276103,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "has_confounder": {
+        "est": 0.4938666666666667,
+        "lo": 0.42926860215108253,
+        "hi": 0.5531960677974672,
+        "permutation_p_two_sided": 0.856071964017991
+       },
+       "non-child descendant": {
+        "est": 0.45582222222222224,
+        "lo": 0.3998705810888078,
+        "hi": 0.5047452914426628,
+        "permutation_p_two_sided": 0.10644677661169415
+       },
+       "non-parent ancestor": {
+        "est": 0.4531555555555555,
+        "lo": 0.40442569246457655,
+        "hi": 0.5071398777696929,
+        "permutation_p_two_sided": 0.09195402298850575
+       },
+       "parent": {
+        "est": 0.5353142857142857,
+        "lo": 0.4951519219942528,
+        "hi": 0.5738962620768944,
+        "permutation_p_two_sided": 0.08345827086456771
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.5037495640041856,
+       "lo": 0.4735030198446937,
+       "hi": 0.5326161907945898,
+       "permutation_p_two_sided": 0.6951524237881059
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.5738616614529023,
+        "lo": 0.5112792040077137,
+        "hi": 0.6369073681433108,
+        "permutation_p_two_sided": 0.00399800099950025
+       },
+       "has_confounder": {
+        "est": 0.49524762381190596,
+        "lo": 0.4246137538475454,
+        "hi": 0.5647064819811717,
+        "permutation_p_two_sided": 0.895552223888056
+       },
+       "non-child descendant": {
+        "est": 0.4780297661233168,
+        "lo": 0.41057959901678326,
+        "hi": 0.5469118154242634,
+        "permutation_p_two_sided": 0.45377311344327836
+       },
+       "non-parent ancestor": {
+        "est": 0.4488549618320611,
+        "lo": 0.3820773394495413,
+        "hi": 0.5199734587301191,
+        "permutation_p_two_sided": 0.0769615192403798
+       },
+       "parent": {
+        "est": 0.5313043478260869,
+        "lo": 0.42434924884724085,
+        "hi": 0.6478193374198725,
+        "permutation_p_two_sided": 0.14042978510744628
+       }
+      }
+     },
+     "quadratic_in_log_token_count": {
+      "mean_auroc": {
+       "est": 0.5115333333333334,
+       "lo": 0.49446603783228343,
+       "hi": 0.5310827407279386,
+       "permutation_p_two_sided": 0.24287856071964017
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.61584,
+        "lo": 0.5664306400158845,
+        "hi": 0.6616914947910876,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "has_confounder": {
+        "est": 0.4802666666666666,
+        "lo": 0.4122532603389019,
+        "hi": 0.5533478005669966,
+        "permutation_p_two_sided": 0.55872063968016
+       },
+       "non-child descendant": {
+        "est": 0.4481777777777778,
+        "lo": 0.39617212140589825,
+        "hi": 0.5015835102007932,
+        "permutation_p_two_sided": 0.05247376311844078
+       },
+       "non-parent ancestor": {
+        "est": 0.4581333333333333,
+        "lo": 0.4023678208302002,
+        "hi": 0.5071416665072123,
+        "permutation_p_two_sided": 0.12293853073463268
+       },
+       "parent": {
+        "est": 0.5254857142857142,
+        "lo": 0.4860944961912936,
+        "hi": 0.5663699961047332,
+        "permutation_p_two_sided": 0.22538730634682658
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.4960760376700384,
+       "lo": 0.469735974939287,
+       "hi": 0.5275463356512927,
+       "permutation_p_two_sided": 0.6951524237881059
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.570385818561001,
+        "lo": 0.5002792078100241,
+        "hi": 0.6279910395332222,
+        "permutation_p_two_sided": 0.0069965017491254375
+       },
+       "has_confounder": {
+        "est": 0.4782391195597799,
+        "lo": 0.4042910725788619,
+        "hi": 0.5567462031617929,
+        "permutation_p_two_sided": 0.5432283858070964
+       },
+       "non-child descendant": {
+        "est": 0.4585400425230333,
+        "lo": 0.3896883171564065,
+        "hi": 0.5267939108592925,
+        "permutation_p_two_sided": 0.13993003498250875
+       },
+       "non-parent ancestor": {
+        "est": 0.44236641221374046,
+        "lo": 0.37148708220658916,
+        "hi": 0.5094360341445896,
+        "permutation_p_two_sided": 0.043478260869565216
+       },
+       "parent": {
+        "est": 0.5556521739130434,
+        "lo": 0.4550081787524941,
+        "hi": 0.6644742188910963,
+        "permutation_p_two_sided": 0.0079960019990005
+       }
+      }
+     },
+     "note": "token count regressed out of the answer logit inside each hypothesis string, labels not used; 400 premise resamples, 2000 permutations"
+    },
+    "prompt_length_alone": {
+     "mean_auroc": {
+      "est": 0.49443333333333334,
+      "lo": 0.4841332202797884,
+      "hi": 0.5055437110637153,
+      "permutation_p_two_sided": 0.12243878060969515
+     },
+     "by_type": {
+      "has_collider": {
+       "est": 0.46504,
+       "lo": 0.41305515891679534,
+       "hi": 0.513071614303947,
+       "permutation_p_two_sided": 0.1539230384807596
+      },
+      "has_confounder": {
+       "est": 0.3968,
+       "lo": 0.3415467575933034,
+       "hi": 0.4605036613326773,
+       "permutation_p_two_sided": 0.0034982508745627187
+      },
+      "non-child descendant": {
+       "est": 0.4953777777777778,
+       "lo": 0.45067027078702626,
+       "hi": 0.5412352720508846,
+       "permutation_p_two_sided": 0.8700649675162418
+      },
+      "non-parent ancestor": {
+       "est": 0.4640888888888889,
+       "lo": 0.41787317665621027,
+       "hi": 0.5103354105630591,
+       "permutation_p_two_sided": 0.1774112943528236
+      },
+      "parent": {
+       "est": 0.5761714285714287,
+       "lo": 0.5383006333743188,
+       "hi": 0.6096692281807704,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     },
+     "within_string_and_adjacency": {
+      "est": 0.4362138123474015,
+      "lo": 0.40995649423476155,
+      "hi": 0.45794174190338754,
+      "permutation_p_two_sided": 0.0004997501249375312
+     },
+     "within_string_and_adjacency_by_type": {
+      "has_collider": {
+       "est": 0.3713938129996524,
+       "lo": 0.3105704081475288,
+       "hi": 0.4290603302097278,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "has_confounder": {
+       "est": 0.41420710355177587,
+       "lo": 0.3479852408936609,
+       "hi": 0.4947168530128991,
+       "permutation_p_two_sided": 0.01249375312343828
+      },
+      "non-child descendant": {
+       "est": 0.42221828490432317,
+       "lo": 0.3438976189632016,
+       "hi": 0.4842643089481841,
+       "permutation_p_two_sided": 0.008995502248875561
+      },
+      "non-parent ancestor": {
+       "est": 0.4028625954198473,
+       "lo": 0.3361573822879474,
+       "hi": 0.4692480011878303,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "parent": {
+       "est": 0.7469565217391304,
+       "lo": 0.6528821834958882,
+       "hi": 0.8212000346497011,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     }
+    },
+    "mean_correlation_of_answer_logit_with_token_count_within_string_and_label": 0.19539647520136658,
     "mean_auroc": {
      "est": 0.5057333333333333,
      "lo": 0.4871762863729812,
@@ -515,6 +753,244 @@
    "best_threshold_in_sample": -4.224793434143066,
    "reading": "at chance (AUROC CI includes 0.5)",
    "within_hypothesis_string": {
+    "prompt_length_removed": {
+     "linear_in_token_count": {
+      "mean_auroc": {
+       "est": 0.5117666666666666,
+       "lo": 0.4945295751030909,
+       "hi": 0.531718164797356,
+       "permutation_p_two_sided": 0.20039980009995004
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.5262399999999999,
+        "lo": 0.4703998646746166,
+        "hi": 0.574969430265687,
+        "permutation_p_two_sided": 0.3258370814592704
+       },
+       "has_confounder": {
+        "est": 0.44506666666666667,
+        "lo": 0.3813855801248452,
+        "hi": 0.5113832668836917,
+        "permutation_p_two_sided": 0.11144427786106946
+       },
+       "non-child descendant": {
+        "est": 0.4151111111111111,
+        "lo": 0.35942548813946834,
+        "hi": 0.46512897084600596,
+        "permutation_p_two_sided": 0.0024987506246876563
+       },
+       "non-parent ancestor": {
+        "est": 0.4652444444444444,
+        "lo": 0.41461032692542826,
+        "hi": 0.5205073473393443,
+        "permutation_p_two_sided": 0.1839080459770115
+       },
+       "parent": {
+        "est": 0.6220571428571428,
+        "lo": 0.5858675595783868,
+        "hi": 0.6637979513672998,
+        "permutation_p_two_sided": 0.0004997501249375312
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.4552668294384374,
+       "lo": 0.4264059207546391,
+       "hi": 0.48306373428483884,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.5015641293013556,
+        "lo": 0.43570902907484543,
+        "hi": 0.5629545782006474,
+        "permutation_p_two_sided": 0.9545227386306847
+       },
+       "has_confounder": {
+        "est": 0.44172086043021513,
+        "lo": 0.3732137614700174,
+        "hi": 0.5292531446540881,
+        "permutation_p_two_sided": 0.1024487756121939
+       },
+       "non-child descendant": {
+        "est": 0.4121190644932672,
+        "lo": 0.343718546231165,
+        "hi": 0.4699178177766201,
+        "permutation_p_two_sided": 0.001999000499750125
+       },
+       "non-parent ancestor": {
+        "est": 0.45114503816793894,
+        "lo": 0.3856060403777706,
+        "hi": 0.5168022635555045,
+        "permutation_p_two_sided": 0.07496251874062969
+       },
+       "parent": {
+        "est": 0.4782608695652174,
+        "lo": 0.383703954393022,
+        "hi": 0.5950268817204301,
+        "permutation_p_two_sided": 0.3078460769615192
+       }
+      }
+     },
+     "quadratic_in_log_token_count": {
+      "mean_auroc": {
+       "est": 0.5094333333333333,
+       "lo": 0.4894675210635462,
+       "hi": 0.5271791946620563,
+       "permutation_p_two_sided": 0.3468265867066467
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.5328000000000002,
+        "lo": 0.4796547635266317,
+        "hi": 0.5871365172136758,
+        "permutation_p_two_sided": 0.21739130434782608
+       },
+       "has_confounder": {
+        "est": 0.4477333333333333,
+        "lo": 0.38108876256699853,
+        "hi": 0.5052303779260787,
+        "permutation_p_two_sided": 0.11094452773613193
+       },
+       "non-child descendant": {
+        "est": 0.4051555555555556,
+        "lo": 0.3542049269943214,
+        "hi": 0.4703092552618423,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "non-parent ancestor": {
+        "est": 0.4574222222222223,
+        "lo": 0.405765755865591,
+        "hi": 0.5110090140010201,
+        "permutation_p_two_sided": 0.12343828085957022
+       },
+       "parent": {
+        "est": 0.6196571428571429,
+        "lo": 0.5795558996091911,
+        "hi": 0.658607980718565,
+        "permutation_p_two_sided": 0.0004997501249375312
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.45701081269619814,
+       "lo": 0.4280552070079017,
+       "hi": 0.48718574988899555,
+       "permutation_p_two_sided": 0.0009995002498750624
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.5109489051094891,
+        "lo": 0.4520567478112321,
+        "hi": 0.5663738172647182,
+        "permutation_p_two_sided": 0.6861569215392304
+       },
+       "has_confounder": {
+        "est": 0.4517258629314657,
+        "lo": 0.3769773277704574,
+        "hi": 0.5221043357775992,
+        "permutation_p_two_sided": 0.17541229385307347
+       },
+       "non-child descendant": {
+        "est": 0.4121190644932672,
+        "lo": 0.3510557890361145,
+        "hi": 0.4833442767380772,
+        "permutation_p_two_sided": 0.001999000499750125
+       },
+       "non-parent ancestor": {
+        "est": 0.4545801526717557,
+        "lo": 0.3855508158240289,
+        "hi": 0.5283898151630824,
+        "permutation_p_two_sided": 0.11894052973513243
+       },
+       "parent": {
+        "est": 0.4469565217391304,
+        "lo": 0.33267109196918687,
+        "hi": 0.5536092570891572,
+        "permutation_p_two_sided": 0.015492253873063468
+       }
+      }
+     },
+     "note": "token count regressed out of the answer logit inside each hypothesis string, labels not used; 400 premise resamples, 2000 permutations"
+    },
+    "prompt_length_alone": {
+     "mean_auroc": {
+      "est": 0.49443333333333334,
+      "lo": 0.4841332202797884,
+      "hi": 0.5055437110637153,
+      "permutation_p_two_sided": 0.12243878060969515
+     },
+     "by_type": {
+      "has_collider": {
+       "est": 0.46504,
+       "lo": 0.41305515891679534,
+       "hi": 0.513071614303947,
+       "permutation_p_two_sided": 0.1539230384807596
+      },
+      "has_confounder": {
+       "est": 0.3968,
+       "lo": 0.3415467575933034,
+       "hi": 0.4605036613326773,
+       "permutation_p_two_sided": 0.0034982508745627187
+      },
+      "non-child descendant": {
+       "est": 0.4953777777777778,
+       "lo": 0.45067027078702626,
+       "hi": 0.5412352720508846,
+       "permutation_p_two_sided": 0.8700649675162418
+      },
+      "non-parent ancestor": {
+       "est": 0.4640888888888889,
+       "lo": 0.41787317665621027,
+       "hi": 0.5103354105630591,
+       "permutation_p_two_sided": 0.1774112943528236
+      },
+      "parent": {
+       "est": 0.5761714285714287,
+       "lo": 0.5383006333743188,
+       "hi": 0.6096692281807704,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     },
+     "within_string_and_adjacency": {
+      "est": 0.4362138123474015,
+      "lo": 0.40995649423476155,
+      "hi": 0.45794174190338754,
+      "permutation_p_two_sided": 0.0004997501249375312
+     },
+     "within_string_and_adjacency_by_type": {
+      "has_collider": {
+       "est": 0.3713938129996524,
+       "lo": 0.3105704081475288,
+       "hi": 0.4290603302097278,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "has_confounder": {
+       "est": 0.41420710355177587,
+       "lo": 0.3479852408936609,
+       "hi": 0.4947168530128991,
+       "permutation_p_two_sided": 0.01249375312343828
+      },
+      "non-child descendant": {
+       "est": 0.42221828490432317,
+       "lo": 0.3438976189632016,
+       "hi": 0.4842643089481841,
+       "permutation_p_two_sided": 0.008995502248875561
+      },
+      "non-parent ancestor": {
+       "est": 0.4028625954198473,
+       "lo": 0.3361573822879474,
+       "hi": 0.4692480011878303,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "parent": {
+       "est": 0.7469565217391304,
+       "lo": 0.6528821834958882,
+       "hi": 0.8212000346497011,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     }
+    },
+    "mean_correlation_of_answer_logit_with_token_count_within_string_and_label": 0.2987542175653998,
     "mean_auroc": {
      "est": 0.5072333333333333,
      "lo": 0.4901082589389029,
@@ -910,6 +1386,244 @@
    "best_threshold_in_sample": 1.6616582870483398,
    "reading": "at chance (AUROC CI includes 0.5)",
    "within_hypothesis_string": {
+    "prompt_length_removed": {
+     "linear_in_token_count": {
+      "mean_auroc": {
+       "est": 0.4822333333333333,
+       "lo": 0.4644259007552051,
+       "hi": 0.5005555411752152,
+       "permutation_p_two_sided": 0.047976011994003
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.56592,
+        "lo": 0.5166186913404809,
+        "hi": 0.6187623559473634,
+        "permutation_p_two_sided": 0.011494252873563218
+       },
+       "has_confounder": {
+        "est": 0.5050666666666667,
+        "lo": 0.4411127305820076,
+        "hi": 0.5693595231444791,
+        "permutation_p_two_sided": 0.8640679660169915
+       },
+       "non-child descendant": {
+        "est": 0.47964444444444443,
+        "lo": 0.4261140618798505,
+        "hi": 0.5325446779296227,
+        "permutation_p_two_sided": 0.46326836581709147
+       },
+       "non-parent ancestor": {
+        "est": 0.48711111111111105,
+        "lo": 0.43705212332550597,
+        "hi": 0.5422157853009805,
+        "permutation_p_two_sided": 0.6471764117941029
+       },
+       "parent": {
+        "est": 0.41119999999999995,
+        "lo": 0.3706128466804477,
+        "hi": 0.4485592327605028,
+        "permutation_p_two_sided": 0.0004997501249375312
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.47113707708406,
+       "lo": 0.4423584767874637,
+       "hi": 0.5018913496555892,
+       "permutation_p_two_sided": 0.00399800099950025
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.5116440736878693,
+        "lo": 0.4428225949486265,
+        "hi": 0.5740298182656545,
+        "permutation_p_two_sided": 0.6656671664167916
+       },
+       "has_confounder": {
+        "est": 0.511255627813907,
+        "lo": 0.4320923161967938,
+        "hi": 0.5830801538671023,
+        "permutation_p_two_sided": 0.7491254372813593
+       },
+       "non-child descendant": {
+        "est": 0.46987951807228917,
+        "lo": 0.39796775201597534,
+        "hi": 0.5423020333264272,
+        "permutation_p_two_sided": 0.30634682658670664
+       },
+       "non-parent ancestor": {
+        "est": 0.4400763358778626,
+        "lo": 0.37514265603733554,
+        "hi": 0.5022475498269382,
+        "permutation_p_two_sided": 0.031984007996002
+       },
+       "parent": {
+        "est": 0.3739130434782609,
+        "lo": 0.27620725075178376,
+        "hi": 0.4776722504358371,
+        "permutation_p_two_sided": 0.0004997501249375312
+       }
+      }
+     },
+     "quadratic_in_log_token_count": {
+      "mean_auroc": {
+       "est": 0.4887333333333333,
+       "lo": 0.4709018803210433,
+       "hi": 0.5060227034464053,
+       "permutation_p_two_sided": 0.2158920539730135
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.56688,
+        "lo": 0.518206528649173,
+        "hi": 0.6144162092532885,
+        "permutation_p_two_sided": 0.00849575212393803
+       },
+       "has_confounder": {
+        "est": 0.5216,
+        "lo": 0.45648438867947466,
+        "hi": 0.5845605057285067,
+        "permutation_p_two_sided": 0.5132433783108445
+       },
+       "non-child descendant": {
+        "est": 0.47822222222222216,
+        "lo": 0.42346377475415836,
+        "hi": 0.5295239869437768,
+        "permutation_p_two_sided": 0.4007996001999001
+       },
+       "non-parent ancestor": {
+        "est": 0.4940444444444445,
+        "lo": 0.43801975992472136,
+        "hi": 0.5479521413685245,
+        "permutation_p_two_sided": 0.8330834582708646
+       },
+       "parent": {
+        "est": 0.42217142857142864,
+        "lo": 0.38426972462793285,
+        "hi": 0.45631545339618046,
+        "permutation_p_two_sided": 0.0014992503748125937
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.4769794209975584,
+       "lo": 0.4486155819307779,
+       "hi": 0.5092585022101832,
+       "permutation_p_two_sided": 0.02048975512243878
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.5112964893986792,
+        "lo": 0.45367199423252963,
+        "hi": 0.5787969489736481,
+        "permutation_p_two_sided": 0.6581709145427287
+       },
+       "has_confounder": {
+        "est": 0.5342671335667833,
+        "lo": 0.4587135996698411,
+        "hi": 0.6074768450060491,
+        "permutation_p_two_sided": 0.3328335832083958
+       },
+       "non-child descendant": {
+        "est": 0.45357902197023386,
+        "lo": 0.38709330611611203,
+        "hi": 0.526211857903852,
+        "permutation_p_two_sided": 0.10394802598700649
+       },
+       "non-parent ancestor": {
+        "est": 0.449618320610687,
+        "lo": 0.38513093607863,
+        "hi": 0.5181135214394509,
+        "permutation_p_two_sided": 0.079960019990005
+       },
+       "parent": {
+        "est": 0.41130434782608694,
+        "lo": 0.3146416021611142,
+        "hi": 0.5247387842510213,
+        "permutation_p_two_sided": 0.0004997501249375312
+       }
+      }
+     },
+     "note": "token count regressed out of the answer logit inside each hypothesis string, labels not used; 400 premise resamples, 2000 permutations"
+    },
+    "prompt_length_alone": {
+     "mean_auroc": {
+      "est": 0.49443333333333334,
+      "lo": 0.4841332202797884,
+      "hi": 0.5055437110637153,
+      "permutation_p_two_sided": 0.12243878060969515
+     },
+     "by_type": {
+      "has_collider": {
+       "est": 0.46504,
+       "lo": 0.41305515891679534,
+       "hi": 0.513071614303947,
+       "permutation_p_two_sided": 0.1539230384807596
+      },
+      "has_confounder": {
+       "est": 0.3968,
+       "lo": 0.3415467575933034,
+       "hi": 0.4605036613326773,
+       "permutation_p_two_sided": 0.0034982508745627187
+      },
+      "non-child descendant": {
+       "est": 0.4953777777777778,
+       "lo": 0.45067027078702626,
+       "hi": 0.5412352720508846,
+       "permutation_p_two_sided": 0.8700649675162418
+      },
+      "non-parent ancestor": {
+       "est": 0.4640888888888889,
+       "lo": 0.41787317665621027,
+       "hi": 0.5103354105630591,
+       "permutation_p_two_sided": 0.1774112943528236
+      },
+      "parent": {
+       "est": 0.5761714285714287,
+       "lo": 0.5383006333743188,
+       "hi": 0.6096692281807704,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     },
+     "within_string_and_adjacency": {
+      "est": 0.4362138123474015,
+      "lo": 0.40995649423476155,
+      "hi": 0.45794174190338754,
+      "permutation_p_two_sided": 0.0004997501249375312
+     },
+     "within_string_and_adjacency_by_type": {
+      "has_collider": {
+       "est": 0.3713938129996524,
+       "lo": 0.3105704081475288,
+       "hi": 0.4290603302097278,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "has_confounder": {
+       "est": 0.41420710355177587,
+       "lo": 0.3479852408936609,
+       "hi": 0.4947168530128991,
+       "permutation_p_two_sided": 0.01249375312343828
+      },
+      "non-child descendant": {
+       "est": 0.42221828490432317,
+       "lo": 0.3438976189632016,
+       "hi": 0.4842643089481841,
+       "permutation_p_two_sided": 0.008995502248875561
+      },
+      "non-parent ancestor": {
+       "est": 0.4028625954198473,
+       "lo": 0.3361573822879474,
+       "hi": 0.4692480011878303,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "parent": {
+       "est": 0.7469565217391304,
+       "lo": 0.6528821834958882,
+       "hi": 0.8212000346497011,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     }
+    },
+    "mean_correlation_of_answer_logit_with_token_count_within_string_and_label": -0.20624899398529242,
     "mean_auroc": {
      "est": 0.4732,
      "lo": 0.4550217009509648,
@@ -1305,6 +2019,244 @@
    "best_threshold_in_sample": -22.413002967834473,
    "reading": "at chance (AUROC CI includes 0.5)",
    "within_hypothesis_string": {
+    "prompt_length_removed": {
+     "linear_in_token_count": {
+      "mean_auroc": {
+       "est": 0.5186999999999999,
+       "lo": 0.4965544805752735,
+       "hi": 0.540094517783219,
+       "permutation_p_two_sided": 0.0864567716141929
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.56016,
+        "lo": 0.5116013579347115,
+        "hi": 0.6116307015727812,
+        "permutation_p_two_sided": 0.025487256371814093
+       },
+       "has_confounder": {
+        "est": 0.412,
+        "lo": 0.35333779675084465,
+        "hi": 0.47328635538361885,
+        "permutation_p_two_sided": 0.010994502748625687
+       },
+       "non-child descendant": {
+        "est": 0.46044444444444443,
+        "lo": 0.40635808418259506,
+        "hi": 0.5108048602799073,
+        "permutation_p_two_sided": 0.14642678660669664
+       },
+       "non-parent ancestor": {
+        "est": 0.46737777777777784,
+        "lo": 0.41858677057458826,
+        "hi": 0.5222909860668794,
+        "permutation_p_two_sided": 0.24437781109445278
+       },
+       "parent": {
+        "est": 0.6052571428571429,
+        "lo": 0.5636156212701591,
+        "hi": 0.6467757470346697,
+        "permutation_p_two_sided": 0.0004997501249375312
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.4826473665852808,
+       "lo": 0.4492675230573372,
+       "hi": 0.5109764397584445,
+       "permutation_p_two_sided": 0.12693653173413294
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.5752519986096628,
+        "lo": 0.5127687163953049,
+        "hi": 0.6352495733472704,
+        "permutation_p_two_sided": 0.005997001499250375
+       },
+       "has_confounder": {
+        "est": 0.416208104052026,
+        "lo": 0.3373187323191145,
+        "hi": 0.5009079059581539,
+        "permutation_p_two_sided": 0.02048975512243878
+       },
+       "non-child descendant": {
+        "est": 0.4553508150248051,
+        "lo": 0.39061598131958963,
+        "hi": 0.5258647477887511,
+        "permutation_p_two_sided": 0.12243878060969515
+       },
+       "non-parent ancestor": {
+        "est": 0.4854961832061069,
+        "lo": 0.4232817233778226,
+        "hi": 0.5550777238822344,
+        "permutation_p_two_sided": 0.6261869065467266
+       },
+       "parent": {
+        "est": 0.42695652173913046,
+        "lo": 0.3292756847716296,
+        "hi": 0.5336085625167504,
+        "permutation_p_two_sided": 0.001999000499750125
+       }
+      }
+     },
+     "quadratic_in_log_token_count": {
+      "mean_auroc": {
+       "est": 0.5133333333333333,
+       "lo": 0.49268128202050615,
+       "hi": 0.5334301148448167,
+       "permutation_p_two_sided": 0.22588705647176413
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.56752,
+        "lo": 0.5195357991624625,
+        "hi": 0.613528140403479,
+        "permutation_p_two_sided": 0.012993503248375811
+       },
+       "has_confounder": {
+        "est": 0.4096,
+        "lo": 0.35184560780516105,
+        "hi": 0.4836070663914813,
+        "permutation_p_two_sided": 0.0079960019990005
+       },
+       "non-child descendant": {
+        "est": 0.4567111111111111,
+        "lo": 0.40697573969532663,
+        "hi": 0.5142298506838038,
+        "permutation_p_two_sided": 0.1184407796101949
+       },
+       "non-parent ancestor": {
+        "est": 0.4600888888888888,
+        "lo": 0.4076826720973942,
+        "hi": 0.5139608074790382,
+        "permutation_p_two_sided": 0.1469265367316342
+       },
+       "parent": {
+        "est": 0.5897142857142856,
+        "lo": 0.5503267674362804,
+        "hi": 0.6273861357303847,
+        "permutation_p_two_sided": 0.0009995002498750624
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.4805545866759679,
+       "lo": 0.4476400228363502,
+       "hi": 0.5108259860294744,
+       "permutation_p_two_sided": 0.09695152423788106
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.586722280152937,
+        "lo": 0.5285137427220551,
+        "hi": 0.6474557933289897,
+        "permutation_p_two_sided": 0.0024987506246876563
+       },
+       "has_confounder": {
+        "est": 0.41720860430215106,
+        "lo": 0.34428667174887595,
+        "hi": 0.49572919598461396,
+        "permutation_p_two_sided": 0.022988505747126436
+       },
+       "non-child descendant": {
+        "est": 0.4418851878100638,
+        "lo": 0.37895253235392873,
+        "hi": 0.511663432207777,
+        "permutation_p_two_sided": 0.04297851074462768
+       },
+       "non-parent ancestor": {
+        "est": 0.48091603053435117,
+        "lo": 0.41053631375481064,
+        "hi": 0.5487918685956473,
+        "permutation_p_two_sided": 0.5082458770614693
+       },
+       "parent": {
+        "est": 0.4191304347826087,
+        "lo": 0.3259487920289728,
+        "hi": 0.5187537570279741,
+        "permutation_p_two_sided": 0.0009995002498750624
+       }
+      }
+     },
+     "note": "token count regressed out of the answer logit inside each hypothesis string, labels not used; 400 premise resamples, 2000 permutations"
+    },
+    "prompt_length_alone": {
+     "mean_auroc": {
+      "est": 0.49443333333333334,
+      "lo": 0.4841332202797884,
+      "hi": 0.5055437110637153,
+      "permutation_p_two_sided": 0.12243878060969515
+     },
+     "by_type": {
+      "has_collider": {
+       "est": 0.46504,
+       "lo": 0.41305515891679534,
+       "hi": 0.513071614303947,
+       "permutation_p_two_sided": 0.1539230384807596
+      },
+      "has_confounder": {
+       "est": 0.3968,
+       "lo": 0.3415467575933034,
+       "hi": 0.4605036613326773,
+       "permutation_p_two_sided": 0.0034982508745627187
+      },
+      "non-child descendant": {
+       "est": 0.4953777777777778,
+       "lo": 0.45067027078702626,
+       "hi": 0.5412352720508846,
+       "permutation_p_two_sided": 0.8700649675162418
+      },
+      "non-parent ancestor": {
+       "est": 0.4640888888888889,
+       "lo": 0.41787317665621027,
+       "hi": 0.5103354105630591,
+       "permutation_p_two_sided": 0.1774112943528236
+      },
+      "parent": {
+       "est": 0.5761714285714287,
+       "lo": 0.5383006333743188,
+       "hi": 0.6096692281807704,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     },
+     "within_string_and_adjacency": {
+      "est": 0.4362138123474015,
+      "lo": 0.40995649423476155,
+      "hi": 0.45794174190338754,
+      "permutation_p_two_sided": 0.0004997501249375312
+     },
+     "within_string_and_adjacency_by_type": {
+      "has_collider": {
+       "est": 0.3713938129996524,
+       "lo": 0.3105704081475288,
+       "hi": 0.4290603302097278,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "has_confounder": {
+       "est": 0.41420710355177587,
+       "lo": 0.3479852408936609,
+       "hi": 0.4947168530128991,
+       "permutation_p_two_sided": 0.01249375312343828
+      },
+      "non-child descendant": {
+       "est": 0.42221828490432317,
+       "lo": 0.3438976189632016,
+       "hi": 0.4842643089481841,
+       "permutation_p_two_sided": 0.008995502248875561
+      },
+      "non-parent ancestor": {
+       "est": 0.4028625954198473,
+       "lo": 0.3361573822879474,
+       "hi": 0.4692480011878303,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "parent": {
+       "est": 0.7469565217391304,
+       "lo": 0.6528821834958882,
+       "hi": 0.8212000346497011,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     }
+    },
+    "mean_correlation_of_answer_logit_with_token_count_within_string_and_label": -0.4028974757239374,
     "mean_auroc": {
      "est": 0.5114666666666666,
      "lo": 0.49081138490090986,
@@ -1700,6 +2652,244 @@
    "best_threshold_in_sample": -19.935157775878906,
    "reading": "at chance (AUROC CI includes 0.5)",
    "within_hypothesis_string": {
+    "prompt_length_removed": {
+     "linear_in_token_count": {
+      "mean_auroc": {
+       "est": 0.5362666666666667,
+       "lo": 0.515972682781763,
+       "hi": 0.5565828713665403,
+       "permutation_p_two_sided": 0.0009995002498750624
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.46640000000000004,
+        "lo": 0.4146714607829534,
+        "hi": 0.5122313143699787,
+        "permutation_p_two_sided": 0.1774112943528236
+       },
+       "has_confounder": {
+        "est": 0.5181333333333333,
+        "lo": 0.45886773483794174,
+        "hi": 0.578319164486673,
+        "permutation_p_two_sided": 0.5737131434282858
+       },
+       "non-child descendant": {
+        "est": 0.6405333333333334,
+        "lo": 0.5925424001229029,
+        "hi": 0.6840818635327215,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "non-parent ancestor": {
+        "est": 0.6714666666666668,
+        "lo": 0.6192179591318288,
+        "hi": 0.7218002110519275,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "parent": {
+        "est": 0.44,
+        "lo": 0.39915447831831774,
+        "hi": 0.48658647250252995,
+        "permutation_p_two_sided": 0.0024987506246876563
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.5569410533658877,
+       "lo": 0.5196660007231677,
+       "hi": 0.5904000198808869,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.4744525547445255,
+        "lo": 0.4112044324563699,
+        "hi": 0.5419819935385785,
+        "permutation_p_two_sided": 0.33483258370814595
+       },
+       "has_confounder": {
+        "est": 0.5087543771885943,
+        "lo": 0.4393089196017563,
+        "hi": 0.5878305095819274,
+        "permutation_p_two_sided": 0.8070964517741129
+       },
+       "non-child descendant": {
+        "est": 0.6180014174344437,
+        "lo": 0.5606666593556028,
+        "hi": 0.6821384314667744,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "non-parent ancestor": {
+        "est": 0.6351145038167939,
+        "lo": 0.5623052509489667,
+        "hi": 0.7002265532719785,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "parent": {
+        "est": 0.5191304347826087,
+        "lo": 0.40922613659455764,
+        "hi": 0.62808660823335,
+        "permutation_p_two_sided": 0.39780109945027486
+       }
+      }
+     },
+     "quadratic_in_log_token_count": {
+      "mean_auroc": {
+       "est": 0.5333333333333333,
+       "lo": 0.5137729567044751,
+       "hi": 0.5532086042162809,
+       "permutation_p_two_sided": 0.0009995002498750624
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.4742399999999999,
+        "lo": 0.4306061414743671,
+        "hi": 0.5227980445148387,
+        "permutation_p_two_sided": 0.2958520739630185
+       },
+       "has_confounder": {
+        "est": 0.5272,
+        "lo": 0.4661029036545689,
+        "hi": 0.5948078606026262,
+        "permutation_p_two_sided": 0.3963018490754623
+       },
+       "non-child descendant": {
+        "est": 0.6369777777777779,
+        "lo": 0.5861035244449543,
+        "hi": 0.685081257809308,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "non-parent ancestor": {
+        "est": 0.6561777777777777,
+        "lo": 0.6077028638309087,
+        "hi": 0.7009067224204573,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "parent": {
+        "est": 0.43257142857142855,
+        "lo": 0.3934565506034825,
+        "hi": 0.47047325347323815,
+        "permutation_p_two_sided": 0.001999000499750125
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.5516219044297175,
+       "lo": 0.519873276180652,
+       "hi": 0.5819980099762821,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.47236704900938475,
+        "lo": 0.4155062819876414,
+        "hi": 0.5333597096414349,
+        "permutation_p_two_sided": 0.29035482258870565
+       },
+       "has_confounder": {
+        "est": 0.5152576288144072,
+        "lo": 0.4397141484391898,
+        "hi": 0.5885467104371868,
+        "permutation_p_two_sided": 0.670664667666167
+       },
+       "non-child descendant": {
+        "est": 0.6162296243798724,
+        "lo": 0.5501860526173393,
+        "hi": 0.675375940340033,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "non-parent ancestor": {
+        "est": 0.6183206106870229,
+        "lo": 0.5449234408746733,
+        "hi": 0.6848573152919032,
+        "permutation_p_two_sided": 0.0004997501249375312
+       },
+       "parent": {
+        "est": 0.5026086956521739,
+        "lo": 0.3831710675013902,
+        "hi": 0.606174505362773,
+        "permutation_p_two_sided": 0.9120439780109945
+       }
+      }
+     },
+     "note": "token count regressed out of the answer logit inside each hypothesis string, labels not used; 400 premise resamples, 2000 permutations"
+    },
+    "prompt_length_alone": {
+     "mean_auroc": {
+      "est": 0.49443333333333334,
+      "lo": 0.4841332202797884,
+      "hi": 0.5055437110637153,
+      "permutation_p_two_sided": 0.12243878060969515
+     },
+     "by_type": {
+      "has_collider": {
+       "est": 0.46504,
+       "lo": 0.41305515891679534,
+       "hi": 0.513071614303947,
+       "permutation_p_two_sided": 0.1539230384807596
+      },
+      "has_confounder": {
+       "est": 0.3968,
+       "lo": 0.3415467575933034,
+       "hi": 0.4605036613326773,
+       "permutation_p_two_sided": 0.0034982508745627187
+      },
+      "non-child descendant": {
+       "est": 0.4953777777777778,
+       "lo": 0.45067027078702626,
+       "hi": 0.5412352720508846,
+       "permutation_p_two_sided": 0.8700649675162418
+      },
+      "non-parent ancestor": {
+       "est": 0.4640888888888889,
+       "lo": 0.41787317665621027,
+       "hi": 0.5103354105630591,
+       "permutation_p_two_sided": 0.1774112943528236
+      },
+      "parent": {
+       "est": 0.5761714285714287,
+       "lo": 0.5383006333743188,
+       "hi": 0.6096692281807704,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     },
+     "within_string_and_adjacency": {
+      "est": 0.4362138123474015,
+      "lo": 0.40995649423476155,
+      "hi": 0.45794174190338754,
+      "permutation_p_two_sided": 0.0004997501249375312
+     },
+     "within_string_and_adjacency_by_type": {
+      "has_collider": {
+       "est": 0.3713938129996524,
+       "lo": 0.3105704081475288,
+       "hi": 0.4290603302097278,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "has_confounder": {
+       "est": 0.41420710355177587,
+       "lo": 0.3479852408936609,
+       "hi": 0.4947168530128991,
+       "permutation_p_two_sided": 0.01249375312343828
+      },
+      "non-child descendant": {
+       "est": 0.42221828490432317,
+       "lo": 0.3438976189632016,
+       "hi": 0.4842643089481841,
+       "permutation_p_two_sided": 0.008995502248875561
+      },
+      "non-parent ancestor": {
+       "est": 0.4028625954198473,
+       "lo": 0.3361573822879474,
+       "hi": 0.4692480011878303,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "parent": {
+       "est": 0.7469565217391304,
+       "lo": 0.6528821834958882,
+       "hi": 0.8212000346497011,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     }
+    },
+    "mean_correlation_of_answer_logit_with_token_count_within_string_and_label": -0.14045483822912866,
     "mean_auroc": {
      "est": 0.5490666666666667,
      "lo": 0.5302225421781909,
@@ -1975,6 +3165,244 @@
    "best_threshold_in_sample": -8.29559850692749,
    "reading": "at chance (AUROC CI includes 0.5)",
    "within_hypothesis_string": {
+    "prompt_length_removed": {
+     "linear_in_token_count": {
+      "mean_auroc": {
+       "est": 0.5232333333333333,
+       "lo": 0.5051811829627753,
+       "hi": 0.5421889343633001,
+       "permutation_p_two_sided": 0.01649175412293853
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.44528,
+        "lo": 0.396268889022796,
+        "hi": 0.4889277760995928,
+        "permutation_p_two_sided": 0.02798600699650175
+       },
+       "has_confounder": {
+        "est": 0.6152,
+        "lo": 0.54679255687054,
+        "hi": 0.689597346102098,
+        "permutation_p_two_sided": 0.0009995002498750624
+       },
+       "non-child descendant": {
+        "est": 0.5271111111111111,
+        "lo": 0.4770562272323389,
+        "hi": 0.5735179196677038,
+        "permutation_p_two_sided": 0.328335832083958
+       },
+       "non-parent ancestor": {
+        "est": 0.46008888888888894,
+        "lo": 0.40914709912642544,
+        "hi": 0.5143178269672807,
+        "permutation_p_two_sided": 0.1359320339830085
+       },
+       "parent": {
+        "est": 0.5776,
+        "lo": 0.5419569648838788,
+        "hi": 0.6227981238876675,
+        "permutation_p_two_sided": 0.0009995002498750624
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.5283397279386118,
+       "lo": 0.49878804809736627,
+       "hi": 0.5562677625994712,
+       "permutation_p_two_sided": 0.004497751124437781
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.5060827250608273,
+        "lo": 0.44386969309001933,
+        "hi": 0.5623101151133117,
+        "permutation_p_two_sided": 0.8105947026486756
+       },
+       "has_confounder": {
+        "est": 0.6058029014507254,
+        "lo": 0.5209021258611282,
+        "hi": 0.6876630362213135,
+        "permutation_p_two_sided": 0.0034982508745627187
+       },
+       "non-child descendant": {
+        "est": 0.5400425230333097,
+        "lo": 0.4824505203831437,
+        "hi": 0.5998541780449836,
+        "permutation_p_two_sided": 0.16841579210394803
+       },
+       "non-parent ancestor": {
+        "est": 0.4530534351145038,
+        "lo": 0.38521273900106423,
+        "hi": 0.515610828037591,
+        "permutation_p_two_sided": 0.08895552223888056
+       },
+       "parent": {
+        "est": 0.5921739130434782,
+        "lo": 0.49224970007634417,
+        "hi": 0.6936371807587404,
+        "permutation_p_two_sided": 0.0004997501249375312
+       }
+      }
+     },
+     "quadratic_in_log_token_count": {
+      "mean_auroc": {
+       "est": 0.5163666666666668,
+       "lo": 0.49634425790088244,
+       "hi": 0.5356348524869149,
+       "permutation_p_two_sided": 0.10994502748625687
+      },
+      "by_type": {
+       "has_collider": {
+        "est": 0.45488,
+        "lo": 0.40151846650846995,
+        "hi": 0.4989140401087971,
+        "permutation_p_two_sided": 0.07196401799100449
+       },
+       "has_confounder": {
+        "est": 0.5730666666666666,
+        "lo": 0.5121513128543966,
+        "hi": 0.6318276804000891,
+        "permutation_p_two_sided": 0.029985007496251874
+       },
+       "non-child descendant": {
+        "est": 0.5493333333333335,
+        "lo": 0.49652724538154047,
+        "hi": 0.6002426974784876,
+        "permutation_p_two_sided": 0.06796601699150424
+       },
+       "non-parent ancestor": {
+        "est": 0.43608888888888886,
+        "lo": 0.38344980751144964,
+        "hi": 0.4894495548166749,
+        "permutation_p_two_sided": 0.01649175412293853
+       },
+       "parent": {
+        "est": 0.5664,
+        "lo": 0.5256336238814044,
+        "hi": 0.6081909531024269,
+        "permutation_p_two_sided": 0.0009995002498750624
+       }
+      },
+      "within_string_and_adjacency": {
+       "est": 0.5183990233693756,
+       "lo": 0.4886349441855402,
+       "hi": 0.5485828247816673,
+       "permutation_p_two_sided": 0.07646176911544228
+      },
+      "within_string_and_adjacency_by_type": {
+       "has_collider": {
+        "est": 0.5251998609662843,
+        "lo": 0.46804195084917444,
+        "hi": 0.5836369920519041,
+        "permutation_p_two_sided": 0.33833083458270863
+       },
+       "has_confounder": {
+        "est": 0.5607803901950975,
+        "lo": 0.4815990364805139,
+        "hi": 0.6398664921519959,
+        "permutation_p_two_sided": 0.0864567716141929
+       },
+       "non-child descendant": {
+        "est": 0.5616583982990787,
+        "lo": 0.49566138603710047,
+        "hi": 0.6348818793681679,
+        "permutation_p_two_sided": 0.03398300849575212
+       },
+       "non-parent ancestor": {
+        "est": 0.4396946564885496,
+        "lo": 0.3736225727214964,
+        "hi": 0.4965283656035814,
+        "permutation_p_two_sided": 0.034482758620689655
+       },
+       "parent": {
+        "est": 0.5008695652173913,
+        "lo": 0.38743443132912475,
+        "hi": 0.6084110534290683,
+        "permutation_p_two_sided": 0.9625187406296851
+       }
+      }
+     },
+     "note": "token count regressed out of the answer logit inside each hypothesis string, labels not used; 400 premise resamples, 2000 permutations"
+    },
+    "prompt_length_alone": {
+     "mean_auroc": {
+      "est": 0.49443333333333334,
+      "lo": 0.4841332202797884,
+      "hi": 0.5055437110637153,
+      "permutation_p_two_sided": 0.12243878060969515
+     },
+     "by_type": {
+      "has_collider": {
+       "est": 0.46504,
+       "lo": 0.41305515891679534,
+       "hi": 0.513071614303947,
+       "permutation_p_two_sided": 0.1539230384807596
+      },
+      "has_confounder": {
+       "est": 0.3968,
+       "lo": 0.3415467575933034,
+       "hi": 0.4605036613326773,
+       "permutation_p_two_sided": 0.0034982508745627187
+      },
+      "non-child descendant": {
+       "est": 0.4953777777777778,
+       "lo": 0.45067027078702626,
+       "hi": 0.5412352720508846,
+       "permutation_p_two_sided": 0.8700649675162418
+      },
+      "non-parent ancestor": {
+       "est": 0.4640888888888889,
+       "lo": 0.41787317665621027,
+       "hi": 0.5103354105630591,
+       "permutation_p_two_sided": 0.1774112943528236
+      },
+      "parent": {
+       "est": 0.5761714285714287,
+       "lo": 0.5383006333743188,
+       "hi": 0.6096692281807704,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     },
+     "within_string_and_adjacency": {
+      "est": 0.4362138123474015,
+      "lo": 0.40995649423476155,
+      "hi": 0.45794174190338754,
+      "permutation_p_two_sided": 0.0004997501249375312
+     },
+     "within_string_and_adjacency_by_type": {
+      "has_collider": {
+       "est": 0.3713938129996524,
+       "lo": 0.3105704081475288,
+       "hi": 0.4290603302097278,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "has_confounder": {
+       "est": 0.41420710355177587,
+       "lo": 0.3479852408936609,
+       "hi": 0.4947168530128991,
+       "permutation_p_two_sided": 0.01249375312343828
+      },
+      "non-child descendant": {
+       "est": 0.42221828490432317,
+       "lo": 0.3438976189632016,
+       "hi": 0.4842643089481841,
+       "permutation_p_two_sided": 0.008995502248875561
+      },
+      "non-parent ancestor": {
+       "est": 0.4028625954198473,
+       "lo": 0.3361573822879474,
+       "hi": 0.4692480011878303,
+       "permutation_p_two_sided": 0.0004997501249375312
+      },
+      "parent": {
+       "est": 0.7469565217391304,
+       "lo": 0.6528821834958882,
+       "hi": 0.8212000346497011,
+       "permutation_p_two_sided": 0.0004997501249375312
+      }
+     }
+    },
+    "mean_correlation_of_answer_logit_with_token_count_within_string_and_label": 0.2214892746116879,
     "mean_auroc": {
      "est": 0.5419,
      "lo": 0.5218440282685411,

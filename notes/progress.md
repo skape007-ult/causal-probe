@@ -8,15 +8,15 @@ Last updated: Fri 2026-11-13 20:30 (Toronto).
 
 **Scope (user, Fri 16:25):** the scope freeze is lifted; push the science until Sunday 10:00, then package (decision D27). Heavy runs on Kaggle and Colab, launched by the user.
 
-## Where things stand (Fri 20:55)
+## Where things stand (Fri 21:15)
 
 | Piece | State |
 |---|---|
-| GPU runs launched by the user | **A (`r2_qwen3b`) and C (`r2_qwen15b`) from pin `5c31791`**, Fri evening. B (7B behaviour) and D (Gemma) not launched yet; current pin for them: `cdb08d7`. Follow-ups A2/C2/D2 (`*_r2b_*`, pin `cdb08d7`: cache, controls, controls_hyp, adjacency, export) are for runs made from earlier pins |
-| Consolidation (user request, D30) | `RESULTS.md` (from `report/RESULTS_template.md`) = top of README; report appendix A–D; fig13. **Sixth audit running** on the consolidation and on everything written after the fifth audit (report: `notes/audit_consolidation_raw.md`) |
-| Tier 1, Steps 2–3, four models | Done |
-| Qwen 0.5B round 2 (laptop) | Done at the audited-and-corrected state: label-preserving patching, within-string steering controls at both tokens, adjacency test at four sites with all arms (last site finishing: `logs/r2_local3.log`) |
-| Audits | Five done and logged; sixth running |
+| GPU runs launched by the user | **A (`r2_qwen3b`) and C (`r2_qwen15b`) from pin `5c31791`**, Fri evening. B (7B behaviour) and D (Gemma): user told to launch from the current pin `cdb08d7`. Follow-ups A2/C2/D2 (`*_r2b_*`, pin `cdb08d7`: cache, controls, controls_hyp, adjacency, export) after the main run of each model |
+| Consolidation (D30) | `RESULTS.md` (from `report/RESULTS_template.md`) = top of README; report appendix A–D; fig13. Audited (sixth audit, `notes/audit_consolidation_raw.md`) and corrected |
+| Laptop | **Nothing running.** All Qwen 0.5B round-2 work done; Qwen 3B and Gemma analysis done |
+| Audits | Six done and logged. Not audited: the wording changes made in response to the sixth |
+| Ingest | Fixed after the sixth audit: compares with the commit the run used; refuses smoke-test archives; conflicts saved as `<file>.kaggle` |
 
 ## The user's instructions for arriving runs (Fri 20:40)
 

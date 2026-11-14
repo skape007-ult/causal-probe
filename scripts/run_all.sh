@@ -50,6 +50,7 @@ for M in qwen0.5b qwen1.5b gemma2b qwen3b; do          # label-changing vs label
   if [ -e "$CACHE_DIR/$M/patching.npz" ] && [ -e "$CACHE_DIR/$M/patching_same.npz" ]; then $PY scripts/08b_patching_by_template.py --model "$M"; fi
 done
 $PY scripts/07e_steering_multiplicity.py                    # how many steering comparisons, how many first ranks
+$PY scripts/07g_slope_vs_answer_alignment.py               # is a class-mean difference's slope its alignment with the answer direction?
 if [ -e "$CACHE_DIR/qwen3b/c2c_debiased/resid.npy" ]; then $PY scripts/07f_direction_geometry.py --model qwen3b; fi
 $PY scripts/15_answer_bias.py
 $PY scripts/09_cross_model.py

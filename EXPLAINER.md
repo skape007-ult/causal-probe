@@ -405,6 +405,16 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 
 **Outcome (09:10).** The user chose the realistic share for the rule, provided the reviewer agreed that it is the right reading. The reviewer, who estimated the power before reading mine, did: about 0.2 for case (a) (0.12 to 0.32), below 0.6. **Option C: no intervention on the 7B model in this phase.** The review also found something my calculation had missed entirely: inside cells of hypothesis string and adjacency the label is correlated with prompt length, the tested direction is mostly a length direction, and a positive result would not have separated validity from length. And it contradicted the reason pencilled into the rule for option C ("needs more items"): more items of the same kind would not help. A pool balanced for length inside the cells would remove the length confound; it would not raise the power, which is limited by how much one site carries. The report gives the reviewed reason.
 
+### D37. Freeze: no new analyses after the remaining runs; the end-to-end script decides whether the project is finished (Sat 14 Nov, 12:30; user's decision)
+
+**Context.** Fifteen reviews and two claims passes in a day, each of which found something, and three GPU runs still out or queued (Gemma-2-9B, patching on all available pairs, the held-out test for Qwen 3B). The user's instructions: keep the three reviewed wordings in RESULTS.md, and from now on no change to its wording without the user's answer; after the remaining runs are ingested and audited, no new analyses; then `scripts/run_all.sh` end to end tonight, "and fix anything it fails on; a project whose numbers can't be regenerated isn't finished"; cuts to bring RESULTS.md to one printed page are proposed, not applied; Sunday 10:00 to 14:00 is packaging plus a `notes/handoff.md`.
+
+**Decision.** As instructed. Proposed changes to RESULTS.md go into `notes/results_md_queue.md` with their reasons. Because the end-to-end script takes hours and had not been run since I changed it, I started a rehearsal of it at once in an isolated copy of the repository (a git worktree with a copy-on-write clone of the cache), so that failures surface this afternoon and tonight's run in the real checkout is the second one, not the first. The rehearsal writes nothing into the real results.
+
+**Alternatives.** *Keep analysing:* every review today found something, and the next one would too; at some point the limit is the deadline and what the owner can verify. *Run the end-to-end script only tonight, as literally instructed:* then its first failure would be found at night with no slack.
+
+**What it costs.** Anything a later look would have caught stays as a known limitation. The rehearsal uses the laptop's two working cores for some hours, which slows the analysis of whichever run comes back first.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.

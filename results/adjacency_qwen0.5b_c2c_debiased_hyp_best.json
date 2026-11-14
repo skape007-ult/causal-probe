@@ -2319,5 +2319,359 @@
   },
   "note": "effect towards Yes, per move towards adjacent, of translating an item of the row's template by the class-mean difference of the column's template. A shared adjacency feature read in a template-specific way predicts a positive target-sign contrast; class differences that are each template's own answer shift predict a positive source-sign contrast."
  },
+ "audit5": {
+  "erasure_is_translation": {
+   "pearson_r_observed_vs_minus_coefficient_times_translation": 0.9394697050322701,
+   "regression_slope": 0.9817465280354498,
+   "mean_coefficient_adjacent": 0.374167169940489,
+   "mean_coefficient_not_adjacent": -0.4199661157492506,
+   "note": "the erasure moves item i by -c_i x (its template's class-mean difference); with a linear response its effect is -c_i x the translation effect, so erasure and translation are one measurement"
+  },
+  "gaps_on_evaluated_items_within_string": {
+   "by_template": {
+    "parent": {
+     "gap_before": 0.07691922187805175,
+     "gap_after_erasure": 0.0842787064662596,
+     "change_in_absolute_gap": 0.007359484588207843,
+     "relative_change_in_absolute_gap": 0.09567809461041635,
+     "fair_controls_change_in_absolute_gap": {
+      "value": 0.007359484588207843,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.45,
+      "share_of_controls_below": 0.65,
+      "control_min": -0.03348649562578606,
+      "control_max": 0.02018303306164189,
+      "control_mean": 0.001198515956924335,
+      "control_sd": 0.014148321977516105,
+      "outside_control_range": false
+     },
+     "fair_controls_change_in_signed_gap": {
+      "value": 0.007359484588207843,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.45,
+      "share_of_controls_below": 0.65,
+      "control_min": -0.03348649562578606,
+      "control_max": 0.02018303306164189,
+      "control_mean": 0.001198515956924335,
+      "control_sd": 0.014148321977516105,
+      "outside_control_range": false
+     }
+    },
+    "non-parent ancestor": {
+     "gap_before": -0.10521062744988335,
+     "gap_after_erasure": -0.10627187496770626,
+     "change_in_absolute_gap": 0.0010612475178229108,
+     "relative_change_in_absolute_gap": 0.010086885170687074,
+     "fair_controls_change_in_absolute_gap": {
+      "value": 0.0010612475178229108,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.1,
+      "share_of_controls_below": 0.55,
+      "control_min": -0.011905991499570542,
+      "control_max": 0.016668142052471233,
+      "control_mean": 0.0017184957247993785,
+      "control_sd": 0.00810530559513307,
+      "outside_control_range": false
+     },
+     "fair_controls_change_in_signed_gap": {
+      "value": -0.0010612475178229108,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.1,
+      "share_of_controls_below": 0.45,
+      "control_min": -0.016668142052471233,
+      "control_max": 0.011905991499570542,
+      "control_mean": -0.0017184957247993785,
+      "control_sd": 0.00810530559513307,
+      "outside_control_range": false
+     }
+    },
+    "non-child descendant": {
+     "gap_before": 0.05575322162957838,
+     "gap_after_erasure": 0.056675901698897975,
+     "change_in_absolute_gap": 0.0009226800693195938,
+     "relative_change_in_absolute_gap": 0.016549358805663897,
+     "fair_controls_change_in_absolute_gap": {
+      "value": 0.0009226800693195938,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.05,
+      "share_of_controls_below": 0.6,
+      "control_min": -0.008085341398327256,
+      "control_max": 0.009289562965557885,
+      "control_mean": -0.00020754823818832022,
+      "control_sd": 0.0053613477538891965,
+      "outside_control_range": false
+     },
+     "fair_controls_change_in_signed_gap": {
+      "value": 0.0009226800693195938,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.05,
+      "share_of_controls_below": 0.6,
+      "control_min": -0.008085341398327256,
+      "control_max": 0.009289562965557885,
+      "control_mean": -0.00020754823818832022,
+      "control_sd": 0.0053613477538891965,
+      "outside_control_range": false
+     }
+    },
+    "has_collider": {
+     "gap_before": -0.2640150241750889,
+     "gap_after_erasure": -0.2209034657352185,
+     "change_in_absolute_gap": -0.043111558439870384,
+     "relative_change_in_absolute_gap": -0.1632920648155226,
+     "fair_controls_change_in_absolute_gap": {
+      "value": -0.043111558439870384,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.85,
+      "share_of_controls_below": 0.05,
+      "control_min": -0.05670778938295812,
+      "control_max": 0.06291838107282888,
+      "control_mean": 0.010384756610311555,
+      "control_sd": 0.027128416909192335,
+      "outside_control_range": false
+     },
+     "fair_controls_change_in_signed_gap": {
+      "value": 0.043111558439870384,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.85,
+      "share_of_controls_below": 0.95,
+      "control_min": -0.06291838107282888,
+      "control_max": 0.05670778938295812,
+      "control_mean": -0.010384756610311555,
+      "control_sd": 0.027128416909192335,
+      "outside_control_range": false
+     }
+    },
+    "has_confounder": {
+     "gap_before": -0.010019965088362523,
+     "gap_after_erasure": 0.017885049095948496,
+     "change_in_absolute_gap": 0.007865084007585973,
+     "relative_change_in_absolute_gap": 0.7849412585998637,
+     "fair_controls_change_in_absolute_gap": {
+      "value": 0.007865084007585973,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.25,
+      "share_of_controls_below": 0.45,
+      "control_min": -0.00955826103726709,
+      "control_max": 0.039934537267588,
+      "control_mean": 0.009963518959067596,
+      "control_sd": 0.013582015534500568,
+      "outside_control_range": false
+     },
+     "fair_controls_change_in_signed_gap": {
+      "value": 0.027905014184311017,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.8,
+      "share_of_controls_below": 0.9,
+      "control_min": -0.039934537267588,
+      "control_max": 0.046224822999529756,
+      "control_mean": -0.0020171117073195664,
+      "control_sd": 0.020950407224399257,
+      "outside_control_range": false
+     }
+    }
+   },
+   "mean_absolute_gap_templates_in_contrast": {
+    "before": 0.10167685819277038,
+    "after_erasure": 0.09493578074908114,
+    "relative_reduction": 0.06629903365924965,
+    "reduction": {
+     "est": 0.006741077443689236,
+     "lo": 7.741111990781059e-05,
+     "hi": 0.018745836128054836,
+     "n": 500,
+     "n_groups": 401,
+     "vs_fair_controls": {
+      "value": 0.006741077443689236,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.6,
+      "share_of_controls_below": 1.0,
+      "control_min": -0.023744410286558507,
+      "control_max": 0.006324098577563747,
+      "control_mean": -0.0053348108220287955,
+      "control_sd": 0.00866343951143636,
+      "outside_control_range": true
+     }
+    }
+   },
+   "mean_absolute_gap_all_five_templates": {
+    "before": 0.102383612044193,
+    "after_erasure": 0.09720299959280618,
+    "relative_reduction": 0.05060001642792844,
+    "reduction": {
+     "est": 0.005180612451386818,
+     "lo": -0.0001428082457328654,
+     "hi": 0.014865462076672371,
+     "n": 500,
+     "n_groups": 401,
+     "vs_fair_controls": {
+      "value": 0.005180612451386818,
+      "n_controls": 20,
+      "share_of_controls_smaller_in_absolute_value": 0.6,
+      "share_of_controls_below": 1.0,
+      "control_min": -0.01825914030577283,
+      "control_max": 0.005086351757974478,
+      "control_mean": -0.004611547802582895,
+      "control_sd": 0.00629922439822492,
+      "outside_control_range": true
+     }
+    }
+   }
+  },
+  "erasure_quality_on_held_out_items": {
+   "adjacency_auroc_cv_within_report_half": {
+    "before": 0.9122785247922864,
+    "after_erasure": 0.7016582754041403
+   },
+   "adjacency_auroc_trained_on_unevaluated_report_items_tested_on_evaluated": {
+    "before": 0.9120249955014641,
+    "after_erasure": 0.6402970669545729
+   },
+   "note": "the eraser is fitted on the selection half; the values under 'leace' come from a probe trained on that half, where the class-mean difference is exactly zero after erasure, and overstate the erasure"
+  },
+  "within_string_answer_linearly_predictable": {
+   "held_out_r2": 0.7912448272648879,
+   "held_out_pearson_r": 0.8914847831122839,
+   "answer_shift_assigned_to_each_class_mean_difference": {
+    "parent": 0.04368313819701115,
+    "non-parent ancestor": -0.034477002510335295,
+    "non-child descendant": 0.06381759016033556,
+    "has_collider": -0.19072854343131856,
+    "has_confounder": -0.14694005034874486
+   }
+  },
+  "translation_contrast_under_other_sign_choices": {
+   "pre_specified_signs_where_gap_excludes_zero": {
+    "signs": {
+     "parent": 1,
+     "non-parent ancestor": 0,
+     "non-child descendant": 1,
+     "has_collider": -1,
+     "has_confounder": -1
+    },
+    "value": 0.012857146263122558,
+    "n_controls": 20,
+    "share_of_controls_smaller_in_absolute_value": 0.95,
+    "share_of_controls_below": 1.0,
+    "control_min": -0.020998248954125248,
+    "control_max": 0.010787535272844246,
+    "control_mean": -0.0007800003039489459,
+    "control_sd": 0.008159198984850093,
+    "outside_control_range": true
+   },
+   "point_estimate_signs_all_five": {
+    "signs": {
+     "parent": 1,
+     "non-parent ancestor": -1,
+     "non-child descendant": 1,
+     "has_collider": -1,
+     "has_confounder": -1
+    },
+    "value": 0.010676616668701172,
+    "n_controls": 20,
+    "share_of_controls_smaller_in_absolute_value": 0.9,
+    "share_of_controls_below": 1.0,
+    "control_min": -0.014804789346069321,
+    "control_max": 0.009868329658488663,
+    "control_mean": -0.0006635307492881269,
+    "control_sd": 0.005872988023810023,
+    "outside_control_range": true
+   },
+   "report_half_point_estimate_signs_all_five": {
+    "signs": {
+     "parent": 1,
+     "non-parent ancestor": -1,
+     "non-child descendant": 1,
+     "has_collider": -1,
+     "has_confounder": -1
+    },
+    "value": 0.010676616668701172,
+    "n_controls": 20,
+    "share_of_controls_smaller_in_absolute_value": 0.9,
+    "share_of_controls_below": 1.0,
+    "control_min": -0.014804789346069321,
+    "control_max": 0.009868329658488663,
+    "control_mean": -0.0006635307492881269,
+    "control_sd": 0.005872988023810023,
+    "outside_control_range": true
+   },
+   "selection_half_point_estimate_signs_all_five": {
+    "signs": {
+     "parent": 1,
+     "non-parent ancestor": -1,
+     "non-child descendant": 1,
+     "has_collider": -1,
+     "has_confounder": -1
+    },
+    "value": 0.010676616668701172,
+    "n_controls": 20,
+    "share_of_controls_smaller_in_absolute_value": 0.9,
+    "share_of_controls_below": 1.0,
+    "control_min": -0.014804789346069321,
+    "control_max": 0.009868329658488663,
+    "control_mean": -0.0006635307492881269,
+    "control_sd": 0.005872988023810023,
+    "outside_control_range": true
+   },
+   "uniform_sign_adjacent_towards_no": {
+    "signs": {
+     "parent": -1,
+     "non-parent ancestor": -1,
+     "non-child descendant": -1,
+     "has_collider": -1,
+     "has_confounder": -1
+    },
+    "value": 0.015549671173095702,
+    "n_controls": 20,
+    "share_of_controls_smaller_in_absolute_value": 0.95,
+    "share_of_controls_below": 1.0,
+    "control_min": -0.017719010257561025,
+    "control_max": 0.010641862065043506,
+    "control_mean": -0.003994865755530103,
+    "control_sd": 0.007704866616023332,
+    "outside_control_range": true
+   },
+   "common_effect_and_common_cause_only": {
+    "signs": {
+     "parent": 0,
+     "non-parent ancestor": 0,
+     "non-child descendant": 0,
+     "has_collider": -1,
+     "has_confounder": -1
+    },
+    "value": 0.03180561065673828,
+    "n_controls": 20,
+    "share_of_controls_smaller_in_absolute_value": 0.95,
+    "share_of_controls_below": 1.0,
+    "control_min": -0.03833383416486823,
+    "control_max": 0.01662363725576664,
+    "control_mean": -0.005724169365700363,
+    "control_sd": 0.013814587214217543,
+    "outside_control_range": true
+   }
+  },
+  "observational_gap_by_half": {
+   "parent": {
+    "selection_half": 0.04621060777443797,
+    "report_half": 0.04951560550817814
+   },
+   "non-parent ancestor": {
+    "selection_half": -0.017636694661672947,
+    "report_half": -0.06389115669272631
+   },
+   "non-child descendant": {
+    "selection_half": 0.0578361882470931,
+    "report_half": 0.05074040003379062
+   },
+   "has_collider": {
+    "selection_half": -0.22080447275905576,
+    "report_half": -0.23039392537769987
+   },
+   "has_confounder": {
+    "selection_half": -0.1566718422496213,
+    "report_half": -0.06766153953337424
+   }
+  },
+  "n_translation_effects_towards_no": 5
+ },
  "minutes_gpu": 15.82144437233607
 }

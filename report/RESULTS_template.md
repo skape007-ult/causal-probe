@@ -2,9 +2,9 @@
 
 **Question.** When small language models answer formal causal-reasoning questions wrongly, is the correct answer nevertheless linearly readable from their activations, and is it used?
 
-**Run:** Qwen2.5-0.5B, 1.5B, 3B and Gemma-2-2B on Corr2Cause and CLadder: probes against text-only baselines, steering, patching. Qwen2.5-7B (4-bit): answers, and probes on the debiased pool. Fifteen reviews by fresh reviewer agents; those of results were given code and files, not the conclusions. Numbers are from `results/*.json`; details and all caveats are in `report/report.md`.
+**Run:** Qwen2.5-0.5B, 1.5B, 3B and Gemma-2-2B on Corr2Cause and CLadder: probes against text-only baselines, steering, patching. Qwen2.5-7B (4-bit): answers, and probes on the debiased pool. Sixteen reviews by fresh reviewer agents; those of results were given code and files, not the conclusions. Numbers are from `results/*.json`; details and all caveats are in `report/report.md`.
 
-**Not in this page:** Gemma-2-9B (returned 14 Nov, under audit); the held-out test of the Qwen2.5-3B case and patching on all available pairs for Qwen2.5-3B (launched 14 Nov).
+**Not in this page:** the held-out test of the Qwen2.5-3B case and patching on all available pairs for Qwen2.5-3B (launched 14 Nov).
 
 ## Three headline claims
 
@@ -14,7 +14,7 @@
 
 **2. With every single-input shortcut removed, a probe on the activations of the models from 1.5B to 7B is about as accurate as a lookup of the premise statements about the two queried variables, and less accurate than a hand-written parse; ranked across all items at once, the models' answers are at chance.**
 - *Number:* on the debiased pool Qwen2.5-3B's probe scores {{probe_content_qwen3b_c2c_debiased.json|baselines/gold_probe/accuracy|ci}}, the lookup {{probe_content_qwen3b_c2c_debiased.json|baselines/B_binding_text_reference/template_x_statements_naming_the_pair/accuracy|est}}, a hand-written parse {{probe_content_qwen3b_c2c_debiased.json|baselines/B_binding_text_reference/hand_parse_all_features/accuracy|est}}; its answers have AUROC {{answer_bias.json|qwen3b/c2c_debiased/auroc|ci}}. Qwen2.5-7B: probe {{probe_content_qwen7b-4bit_c2c_debiased.json|baselines/gold_probe/accuracy|ci}}; answers {{answer_bias.json|qwen7b-4bit/c2c_debiased/auroc|ci}}.
-- *Caveats:* inside a hypothesis string the four smaller models' answers do not follow validity (AUROC {{answer_bias.json|gemma2b/c2c_debiased/within_hypothesis_string/mean_auroc|num2}} to {{answer_bias.json|qwen3b/c2c_debiased/within_hypothesis_string/mean_auroc|num2}}); they depend on adjacency of the queried pair. The 7B model's follow validity on average, weakly, and go against it for direct-causation hypotheses ({{answer_bias.json|qwen7b-4bit/c2c_debiased/within_hypothesis_string/by_type/parent|num}}): AUROC within string {{answer_bias.json|qwen7b-4bit/c2c_debiased/within_hypothesis_string/mean_auroc|ci}}; the valid item of a premise gets the higher answer logit in {{answer_bias.json|qwen7b-4bit/c2c_debiased/within_hypothesis_string/valid_item_above_invalid_item_of_the_same_premise|pct1}} of premises (Qwen2.5-3B: {{answer_bias.json|qwen3b/c2c_debiased/within_hypothesis_string/valid_item_above_invalid_item_of_the_same_premise|pct1}}).
+- *Caveats:* inside a hypothesis string the four smaller models' answers do not follow validity (AUROC {{answer_bias.json|gemma2b/c2c_debiased/within_hypothesis_string/mean_auroc|num2}} to {{answer_bias.json|qwen3b/c2c_debiased/within_hypothesis_string/mean_auroc|num2}}); they depend on adjacency of the queried pair. The 7B model's follow validity on average, weakly: AUROC within string {{answer_bias.json|qwen7b-4bit/c2c_debiased/within_hypothesis_string/mean_auroc|ci}}, about {{answer_bias.json|qwen7b-4bit/c2c_debiased/within_hypothesis_string/prompt_length_removed/quadratic_in_log_token_count/mean_auroc|num2}} with prompt length removed; the valid item of a premise gets the higher answer logit in {{answer_bias.json|qwen7b-4bit/c2c_debiased/within_hypothesis_string/valid_item_above_invalid_item_of_the_same_premise|pct1}} of premises (Qwen2.5-3B: {{answer_bias.json|qwen3b/c2c_debiased/within_hypothesis_string/valid_item_above_invalid_item_of_the_same_premise|pct1}}). Gemma-2-9B has the same raw figure ({{answer_bias.json|gemma9b/c2c_debiased/within_hypothesis_string/mean_auroc|num}}) and it is not shown beyond a response to prompt length ({{answer_bias.json|gemma9b/c2c_debiased/within_hypothesis_string/prompt_length_removed/quadratic_in_log_token_count/mean_auroc|num2}} with length removed).
 
 ![ladder](figures/fig13_debiased_ladder.png)
 
@@ -37,6 +37,6 @@ The other retractions, each with the review that caught it, are in report Sectio
 
 ## Limitations
 
-- Interventions on models of up to 3 billion parameters whose answers do not follow validity. The 7B model follows it weakly, was run in 4-bit quantisation, and was not intervened on. Two benchmarks; linear probes. Nothing here says what a model that can do the task would show.
+- Interventions on models of up to 3 billion parameters whose answers do not follow validity. The 7B model follows it weakly, was run in 4-bit quantisation, and was not intervened on. Inside a hypothesis type the pool still leaks through prompt length, which Gemma-2-9B's answers follow. Two benchmarks; linear probes. Nothing here says what a model that can do the task would show.
 - Claim 3: four models, three of one family. "No intervention shows" is not "unused".
 - The stronger baselines, the debiased pool, the within-string statistics and every corrected analysis were introduced after seeing results; the pre-registered analysis is reported next to them (report Section 3.4).

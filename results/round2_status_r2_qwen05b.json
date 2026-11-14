@@ -2,7 +2,7 @@
  "stages": {
   "r2.qwen0.5b.adjacency.final.best": {
    "ok": true,
-   "minutes": 9.0,
+   "minutes": 5.7,
    "detail": "ok",
    "log_tail": [
     "  transfer (rows = item's template, columns = template the vector came from):",
@@ -121,9 +121,11 @@
   "environment",
   "r2.qwen0.5b.controls.c2c_debiased",
   "r2.qwen0.5b.controls.c2c_probe",
-  "r2.qwen0.5b.controls_hyp.c2c_debiased"
+  "r2.qwen0.5b.controls_hyp.c2c_debiased",
+  "r2.qwen0.5b.controls_hyp.c2c_probe",
+  "r2.qwen0.5b.adjacency.final.best"
  ],
- "total_minutes": 6.0,
+ "total_minutes": 11.7,
  "models_run": [
   "qwen0.5b"
  ],

@@ -9,6 +9,8 @@ import json
 import sys
 from pathlib import Path
 
+from notebook_cells import COLAB_DOWNLOAD, FINAL_CHECK, PLATFORM_SETUP
+
 ROOT = Path(__file__).resolve().parents[1]
 REPO = "https://github.com/skape007-ult/causal-probe.git"
 
@@ -40,13 +42,23 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
     dict(file="colab_r2b_qwen1.5b_adjacency.ipynb", platform="colab", run="r2b_qwen15b", models="qwen1.5b",
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False,
          title="Round 2 / C2: Qwen2.5-1.5B follow-up (corrected steering controls and adjacency test; Colab)",
-         what="ONLY needed if notebook C was launched from a commit before cdb08d7: steering controls shuffled within hypothesis string, and the adjacency test with all its arms, at four sites",
-         est="1.5 to 2 hours"),
+         what="NOT needed if notebook C is run from this commit or from cdb08d7 (it already contains all of this). Only for a C "
+              "run from an earlier pin: steering controls shuffled within hypothesis string, and the adjacency test with all its arms, at four sites",
+         est="about 1 hour"),
+    # C exists twice, for the two platforms; both are the same run (r2_qwen15b) and either file works on either platform.
+    # One run of C replaces the original C and its follow-up C2: the code since bab7d1b has the fifth audit's corrections.
+    dict(file="kaggle_r2_qwen1.5b.ipynb", platform="kaggle", run="r2_qwen15b", models="qwen1.5b",
+         jobs="cache,controls,controls_hyp,adjacency,patch_same,export", fallback="", token=False,
+         title="Round 2 / C: Qwen2.5-1.5B interventions",
+         what="matched steering controls at both tokens (the debiased-pool controls shuffled within hypothesis string), the adjacency "
+              "test with all its arms at four sites, label-preserving patching pairs. One run; no follow-up needed",
+         est="about 1.25 hours (the same twelve stages took 72 minutes on Kaggle on 13 Nov)"),
     dict(file="colab_r2_qwen1.5b.ipynb", platform="colab", run="r2_qwen15b", models="qwen1.5b",
          jobs="cache,controls,controls_hyp,adjacency,patch_same,export", fallback="", token=False,
          title="Round 2 / C: Qwen2.5-1.5B interventions (Colab)",
          what="matched steering controls at both tokens (the debiased-pool controls shuffled within hypothesis string), the adjacency "
-              "test, label-preserving patching pairs", est="2 to 3 hours"),
+              "test with all its arms at four sites, label-preserving patching pairs. One run; no follow-up needed",
+         est="1.25 to 2 hours"),
 ]
 
 
@@ -59,45 +71,14 @@ def code(text):
             "source": text.strip("\n").splitlines(keepends=True)}
 
 
-KAGGLE_SETUP = '''
+SETUP_HEAD = '''
 import os, subprocess, sys, json, shutil, time
 t_start = time.time()
 gpu = subprocess.run(["nvidia-smi", "--query-gpu=name,memory.total", "--format=csv"], capture_output=True, text=True).stdout if shutil.which("nvidia-smi") else ""
-print(gpu or "NO GPU FOUND: set Accelerator to a GPU in the notebook settings (the run would be far too slow on CPU)")
-
-# Hugging Face token from Kaggle Secrets. It is never printed or written to disk by this notebook.
-try:
-    from kaggle_secrets import UserSecretsClient
-    os.environ["HF_TOKEN"] = UserSecretsClient().get_secret("HF_TOKEN")
-    print("HF_TOKEN loaded from Kaggle Secrets")
-except Exception as e:
-    print("No HF_TOKEN secret available (%s)." % type(e).__name__, "This run needs it (Gemma is gated)." if NEEDS_TOKEN else "This run does not need one.")
-
-WORK = "/kaggle/working" if os.path.isdir("/kaggle/working") else os.path.abspath("kaggle_out")
-TEMP = "/kaggle/temp" if os.path.isdir("/kaggle") else os.path.abspath("kaggle_tmp")
-'''
-
-COLAB_SETUP = '''
-import os, subprocess, sys, json, shutil, time
-t_start = time.time()
-gpu = subprocess.run(["nvidia-smi", "--query-gpu=name,memory.total", "--format=csv"], capture_output=True, text=True).stdout if shutil.which("nvidia-smi") else ""
-print(gpu or "NO GPU FOUND: Runtime -> Change runtime type -> T4 GPU, then Runtime -> Run all")
-
-# Hugging Face token from Colab Secrets (the key icon in the left bar), only if this run needs one.
-# It is never printed or written to disk by this notebook.
-try:
-    from google.colab import userdata
-    os.environ["HF_TOKEN"] = userdata.get("HF_TOKEN")
-    print("HF_TOKEN loaded from Colab Secrets")
-except Exception as e:
-    print("No HF_TOKEN secret available (%s)." % type(e).__name__, "This run needs it (Gemma is gated)." if NEEDS_TOKEN else "This run does not need one.")
-
-WORK = "/content/out" if os.path.isdir("/content") else os.path.abspath("kaggle_out")
-TEMP = "/content/tmp" if os.path.isdir("/content") else os.path.abspath("kaggle_tmp")
+print(gpu or "NO GPU FOUND: switch the accelerator to a GPU (Kaggle: notebook settings; Colab: Runtime -> Change runtime type). The run would be far too slow on CPU.")
 '''
 
 COMMON_SETUP = '''
-os.makedirs(TEMP, exist_ok=True); os.makedirs(WORK, exist_ok=True)
 os.environ["HF_HOME"] = TEMP + "/hf"                 # model downloads (not part of the output)
 os.environ["CAUSAL_PROBE_CACHE"] = TEMP + "/cache"   # full activation cache (not part of the output)
 os.environ["CAUSAL_PROBE_JOBS"] = "4" if (os.cpu_count() or 2) >= 4 else "2"
@@ -170,45 +151,48 @@ print("runner exit code", p.returncode, "| total %.0f min" % ((time.time() - t_s
 '''
 
 SUMMARY = '''
-# ---- what to download ---------------------------------------------------------
-st = REPO_DIR + "/results/round2_status_" + RUN_NAME + ".json"
-if os.path.exists(st):
-    s = json.load(open(st))
-    for k in s.get("planned", []):
-        v = s["stages"].get(k)
-        print("not run         " + k if v is None else ("ok     " if v["ok"] else "FAILED ") + f"{v['minutes']:6.1f} min  {k}" + ("" if v["ok"] else "   <- " + v["detail"]))
-    print("export:", json.dumps(s.get("export", {}).get("zip_megabytes", {})))
+# ---- what ran, and which archives to expect -----------------------------------
+RUN = RUN_NAME + ("_tiny" if SMOKE_TEST else "")      # a smoke test runs under its own name and results folder
+st = REPO_DIR + "/results/" + ("_tiny/" if SMOKE_TEST else "") + "round2_status_" + RUN + ".json"
+s = json.load(open(st)) if os.path.exists(st) else {}
+for k in s.get("planned", []):
+    v = s["stages"].get(k)
+    print("not run         " + k if v is None else ("ok     " if v["ok"] else "FAILED ") + f"{v['minutes']:6.1f} min  {k}" + ("" if v["ok"] else "   <- " + v["detail"]))
+print("export:", json.dumps(s.get("export", {}).get("zip_megabytes", {})))
+not_finished = "" if s.get("finished") else "the runner did not reach its export step (no finished flag in " + st + ")"
+# expected: the small results archive, every archive the runner recorded, and one activation archive per model whose cache stage succeeded
+expected = ["results_" + RUN + ".zip"] + list(s.get("export", {}).get("zip_megabytes", {}))
+for m in s.get("models_run", []):
+    if any(s.get("stages", {}).get(f"r2.{m}.{j}", {}).get("ok") for j in ("cache", "behaviour.cache")):
+        expected.append(f"cache_{RUN}_{m}.zip")
+expected = list(dict.fromkeys(expected))
 zips = sorted(f for f in os.listdir(WORK) if f.endswith(".zip"))
-for f in zips:
-    print(f"{WORK}/{f}  {os.path.getsize(WORK + '/' + f) / 1e6:.1f} MB")
-'''
-
-COLAB_DOWNLOAD = '''
-# ---- Colab only: hand the zip files to the browser ----------------------------
-# Colab deletes /content when the session ends, so download now. If the browser blocks the
-# downloads, open the Files panel (folder icon, left), go to /content/out and download from there.
-try:
-    from google.colab import files
-    for f in zips:
-        files.download(WORK + "/" + f)
-except Exception as e:
-    print("automatic download not available here:", type(e).__name__)
 '''
 
 
 def notebook(r: dict, commit: str) -> dict:
     kag = r["platform"] == "kaggle"
+    token = ("the secret **`HF_TOKEN`** attached to THIS notebook (Gemma is gated; secrets are attached per notebook, and the "
+             "first code cell stops at once if it is missing)" if r["token"] else
+             "no Hugging Face token needed (if your `HF_TOKEN` secret is attached to this notebook it is used; otherwise the "
+             "public Qwen weights are downloaded anonymously and the first cell says so)")
+    kaggle_how = ("**On Kaggle:** settings (right-hand panel) **Accelerator = GPU T4 x2**, **Internet = On**, " + token +
+                  ". Then *Save Version → Save & Run All (Commit)*. Output: the zip files in **`/kaggle/working/kaggle_out`** "
+                  "(Output tab of the saved version, folder `kaggle_out`).")
+    colab_how = ("**On Colab:** Runtime → Change runtime type → **T4 GPU**; then Runtime → **Run all**; " + token + ". Keep the "
+                 "browser tab open until the last cell has finished: a free Colab session stops when the tab is closed or idle "
+                 "for long, and its files are deleted. A cell near the end downloads the zip files from `/content/out` through "
+                 "the browser (allow multiple downloads when asked).")
     head = f"""
 # causal-probe: {r['title']}
 
 Read `KAGGLE.md` ("Round 2") in the repository first. **What this run does:** {r['what']}. **Estimated time:** {r['est']} on a T4.
 
-""" + ("""Settings (right-hand panel): **Accelerator = GPU T4 x2**, **Internet = On**""" +
-       (""", and the Kaggle Secret **`HF_TOKEN`** attached to this notebook (Gemma is gated)""" if r["token"] else """ (no Hugging Face token needed)""") +
-       """. Then *Save Version → Save & Run All (Commit)*. Output: zip files in `/kaggle/working`.""" if kag else
-       """Runtime → Change runtime type → **T4 GPU**; then Runtime → **Run all**. No Hugging Face token needed. Keep this browser tab open until
-the last cell has finished: a free Colab session stops when the tab is closed or idle for long, and its files are deleted. The last cell
-downloads the zip files through the browser (allow multiple downloads when asked).""") + """
+""" + (kaggle_how + "\n\n" + colab_how if kag else colab_how + "\n\n" + kaggle_how) + """
+
+The notebook works on either platform: the first code cell detects where it is running, writes the archives to the place that
+platform keeps, and stops before any GPU time is spent if it cannot. **The last cell lists the output directory with sizes and
+fails loudly if an expected archive is not there.**
 
 Everything heavy happens in `scripts/gpu_round2.py`: each stage is time-limited, skipped if already done, and allowed to fail without
 stopping the rest. Afterwards put the downloaded files into `kaggle_in/""" + r["run"] + """/` on the laptop (see `notes/kaggle_ingest.md`).
@@ -226,11 +210,10 @@ NEEDS_TOKEN = {r['token']}
 SMOKE_TEST  = False        # True: a few items per stage (about 10 minutes) to check the plumbing
 SKIP_STAGES = ""           # comma-separated stage-name prefixes to skip, e.g. "r2.qwen3b.patch"
 """),
-        code((KAGGLE_SETUP if kag else COLAB_SETUP) + COMMON_SETUP),
-        code(CLONE), code(ENV), code(RUN), code(SUMMARY),
+        code(SETUP_HEAD + PLATFORM_SETUP + COMMON_SETUP),
+        code(CLONE), code(ENV), code(RUN), code(SUMMARY), code(COLAB_DOWNLOAD),
+        code(FINAL_CHECK),          # always the last cell: lists the output directory, raises if an archive is missing
     ]
-    if not kag:
-        cells.append(code(COLAB_DOWNLOAD))
     return {"cells": cells, "nbformat": 4, "nbformat_minor": 5,
             "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                          "language_info": {"name": "python"}, **({} if kag else {"accelerator": "GPU", "colab": {"gpuType": "T4"}})}}

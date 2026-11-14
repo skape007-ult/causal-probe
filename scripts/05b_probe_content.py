@@ -240,6 +240,23 @@ def main():
     ng_c = max(NG_CS, key=lambda c_: (sel_acc[c_], -c_))
     s_tuned, s_tuned_probe = tuned[ng_c], stk(["parse", f"ngram4_C{ng_c:g}", "probe"])
     ladder["B_binding_text_reference"]["text_only_parse_plus_4grams_tuned"] = s_tuned
+    # Prompt length (the owner's request of 14 Nov evening, after the sixteenth review, notes/audit_gemma9b_answers_raw.md):
+    # inside a hypothesis type the length of the prompt predicts the label on this pool. Does that change where the probe
+    # stands against the text-only references? Length = characters of premise plus hypothesis: model-independent, so the
+    # text-only rows stay the same for every model (its correlation with each model's token count within a hypothesis
+    # string is 0.998 or more). It enters per hypothesis type, i.e. with its interaction with the type: on its own (a
+    # no-binding control), added to the lookup, and as a third component of the tuned stack.
+    plen = np.array([len(i["context"]) + len(i["query"]) for i in items], float)[:, None]
+    ntok_ = np.array(meta["n_tokens"], float)
+    res["prompt_length_feature"] = {
+        "definition": "characters of premise plus hypothesis, entered per hypothesis type (separate gradient boosting per template)",
+        "min_within_string_correlation_with_this_models_token_count": float(min(np.corrcoef(plen[strs == u, 0], ntok_[strs == u])[0, 1] for u in np.unique(strs)))}
+    ladder["A_no_binding_interaction"]["template_x_prompt_length"] = mean_oof(by_key_gbm(tmpl, plen))
+    ladder["B_binding_text_reference"]["template_x_statements_naming_the_pair_plus_length"] = mean_oof(by_key_gbm(tmpl, np.column_stack([Fpair, plen])))
+    nest["length_x_template"] = Parallel(n_jobs=a.jobs)(delayed(nested)(by_key_gbm(tmpl, plen), f, y, items) for f in seed_folds)
+    s_tl = stk(["parse", f"ngram4_C{ng_c:g}", "length_x_template"])
+    s_tl_probe = stk(["parse", f"ngram4_C{ng_c:g}", "length_x_template", "probe"])
+    ladder["B_binding_text_reference"]["text_only_parse_plus_4grams_tuned_plus_length"] = s_tl
     log("A/B': nested stacks done")
 
     def block(s):
@@ -284,6 +301,9 @@ def main():
                                  "selection_half_accuracy_of_text_only_stack_by_ngram_C": {f"{k:g}": v for k, v in sel_acc.items()},
                                  "gain_accuracy_selection_half": stats.bootstrap_ci(dacc, (y[~rep], s_tuned_probe[~rep], s_tuned[~rep]), groups[~rep], n_boot=1000),
                                  "note": "fourteenth review, finding 10: the text-only stack with the n-gram regularisation chosen on the selection half"},
+        "over_tuned_text_plus_length": {**gain(s_tl, s_tl_probe), "ngram_C_chosen_on_selection_half": ng_c,
+                                        "gain_accuracy_selection_half": stats.bootstrap_ci(dacc, (y[~rep], s_tl_probe[~rep], s_tl[~rep]), groups[~rep], n_boot=1000),
+                                        "note": "the tuned text-only stack with prompt length per hypothesis type as a third component (owner's request, 14 Nov evening)"},
         "over_strongest_text_only_selection_half": stats.bootstrap_ci(dacc, (y[~rep], s_text_probe[~rep], s_text[~rep]), groups[~rep], n_boot=1000),
         "gbm_plus_one_column_insensitive": {"gain_accuracy": ci(dacc, y, spl, sb), "gain_auroc": ci(dauc, y, spl, sb),
                                             "note": "third audit: this test returns about zero for a synthetic column worth +2 points"},

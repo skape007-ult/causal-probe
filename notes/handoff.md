@@ -8,7 +8,14 @@ Started Sat 14 Nov; the sections "What is finished" and "What to verify yourself
 
 **The first question to settle there.** The two models disagree by hypothesis type, beyond noise (model-by-type interaction p ≤ 0.00005, paired over the items both answered). Part of that is explained and part is not. The disagreement on direct causation (7B 0.442, 9B 0.616) disappears once prompt length and adjacency are controlled: both sit at 0.50. The disagreement on indirect causation through an ancestor (7B about 0.62 to 0.67, 9B about 0.44) survives both controls and is unexplained; with one model per family, size, precision and tokeniser it cannot be attributed to any of them. It is the first thing to settle on data where each type has enough hypothesis strings (here 6 to 14), and where prompt length does not predict the label inside a hypothesis type.
 
-**A design requirement this adds to D1.** Inside every hypothesis string, and inside every cell of string and adjacency, the token count of the prompt must not predict the label. On the present pool it does (AUROC of the token count alone for the label within string: about 0.58 for direct causation and 0.40 for common cause, by the audit's count).
+**Design requirements for D1, in order.**
+1. **Control prompt length by construction, within each hypothesis type.** Inside every hypothesis string, and inside every cell of string and adjacency, the length of the prompt must not predict the label. On the present pool it does: the token count alone predicts the label within string with AUROC 0.58 for direct causation and 0.40 for common cause (`answer_bias.json`, `prompt_length_alone`), and Gemma-2-9B's within-string result is not distinguishable from following it. A pool that is balanced only for the hypothesis alone and the premise alone (as the present one is: each premise appears once valid and once invalid) still leaks through the combination of premise length and hypothesis type.
+2. Balanced within hypothesis template, with enough hypothesis strings per type that a type-level effect can be tested with strings as the unit (here 6 to 14 per type, which leaves a type-level p of about 0.04 at best).
+3. No one-class cells of string and adjacency.
+4. Held out by graph, where the number of distinct graphs allows it.
+5. Every generated item labelled as generated, and kept apart from official-benchmark results in every table and figure.
+
+**The same requirement for D3 (fine-tuning).** Training and evaluation sets must be length-balanced within hypothesis type. Otherwise a fine-tuned model can learn prompt length, which this pool would reward, and an apparent gain on the debiased pool would say nothing about causal structure. The evaluation must include the length-removed version of the within-string statistic (`15_answer_bias.py`, `prompt_length_removed`).
 
 **The three proposals, as costed on 14 November (the costing is in the chat of that day and in `notes/log.md`).**
 

@@ -499,7 +499,10 @@ def t_probe_content():
             "per_string_premise_4grams": "Per hypothesis string: bag of premise 1–4-grams (no parser)",
             "hand_parse_all_features": "Hand-written parse, all features (gradient boosting)",
             "strongest_text_only_parse_plus_4grams": "Hand parse stacked with per-string 4-grams, fixed settings",
-            "text_only_parse_plus_4grams_tuned": "Hand parse stacked with per-string 4-grams, n-gram regularisation chosen on the selection half"}
+            "text_only_parse_plus_4grams_tuned": "Hand parse stacked with per-string 4-grams, n-gram regularisation chosen on the selection half",
+            "template_x_prompt_length": "Per template: prompt length only",
+            "template_x_statements_naming_the_pair_plus_length": "Per template: statements naming the queried pair (lookup), plus prompt length",
+            "text_only_parse_plus_4grams_tuned_plus_length": "Hand parse + per-string 4-grams (tuned) + prompt length per template"}
     plab = {"pair_correlated": "queried pair correlates", "pair_adjacent_in_skeleton": "queried pair adjacent in the skeleton (never separated)",
             "pair_has_common_neighbour": "pair has a common neighbour", "common_neighbour_in_a_separating_set": "a common neighbour lies in a separating set",
             "common_neighbour_in_no_separating_set": "a common neighbour lies in no separating set", "six_variables": "premise has six variables",
@@ -528,7 +531,8 @@ def t_probe_content():
                     rA.append([LAB[m], glab[g], blab[k], f"{v['mean']:.3f} ± {v['sd']:.3f} (max {v['max']:.3f})", "–", "–"])
         iv = r["incremental_value"]
         for key, lab in (("over_hand_parse", "hand-written parse"), ("over_strongest_text_only", "parse + per-string 4-grams, fixed settings"),
-                         ("over_tuned_text_only", "parse + per-string 4-grams, n-gram regularisation chosen on the selection half")):
+                         ("over_tuned_text_only", "parse + per-string 4-grams, n-gram regularisation chosen on the selection half"),
+                         ("over_tuned_text_plus_length", "the same, plus prompt length per hypothesis type")):
             if key not in iv:
                 continue
             g = iv[key]

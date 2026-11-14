@@ -51,3 +51,21 @@ The user asked: if the 9B result survives its audit, queue a revision from "the 
 - **Not proposed:** any sentence about the type-by-type difference between the two models. It is in the report and the handoff; on the page it would need three qualifications.
 
 Cost in words if all three are accepted: about +45.
+
+## Update 17:44: Q3a to Q3c and the review count applied on the user's approval (commit `997471b`; 863 words)
+
+## Q4. Claim 2's headline (queued 17:44 on the user's request; not applied; may need revising once the length-augmented comparison is audited)
+
+Now: "With every single-input shortcut removed, a probe on the activations of the models from 1.5B to 7B is about as accurate as …"
+
+Proposed: "With the hypothesis-only and premise-only shortcuts removed (prompt length still leaks within a hypothesis type), a probe on the activations of the models from 1.5B to 7B is about as accurate as …"
+
+Reason: on this pool the length of the prompt predicts the label inside a hypothesis type, and a reader of "every single-input shortcut removed" would take it that nothing in the text predicts the label without the causal reasoning. One correction to the premise of the request, for the record: the leak is not strictly single-input. Every premise appears once with a valid and once with an invalid hypothesis, so any function of the premise alone, its length included, predicts nothing (the token count pooled over all items has AUROC 0.494); it is premise length *together with* the hypothesis type that predicts the label. The headline's literal statement is therefore true and misleading, and the parenthesis fixes the misleading part.
+
+Length: +10 words. Compensating cuts, so that the page stays at 863 words or fewer: the Run line's last sentence "Numbers are from `results/*.json`; details and all caveats are in `report/report.md`." → "Numbers: `results/*.json`; caveats: `report/report.md`." (−7); claim 1's figure link text "probe against text, four of the eight cells" → "four of the eight cells" (−4). Net −1.
+
+If the length-augmented comparison (running) moves the probe below the lookup, "about as accurate as a lookup" will need changing as well; that would be a separate queued item.
+
+## Q5. Run line (queued 17:44; depends on the 9B probe ladder, which has not finished)
+
+Now: "Qwen2.5-7B (4-bit): answers, and probes on the debiased pool." The caveat of claim 2 now mentions Gemma-2-9B, which the Run line does not. Proposed, once the 9B probes exist: "Qwen2.5-7B (4-bit) and Gemma-2-9B: answers, and probes on the debiased pool." (+3 words)

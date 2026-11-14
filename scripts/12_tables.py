@@ -48,12 +48,13 @@ def ds_(m, tag):
     return DS[tag] + (" †" if m in OTHER_DRAW and tag.startswith("cladder") else "")
 
 
-def table(header, rows, sources):
+def table(header, rows, sources, notes=()):
     lines = ["| " + " | ".join(header) + " |", "|" + "|".join(["---"] * len(header)) + "|"]
     lines += ["| " + " | ".join(str(c) for c in r) + " |" for r in rows]
     dagger = any("†" in str(c) for r in rows for c in r)
     lines += ["", f"<sub>Source: {', '.join(f'`results/{s}`' for s in sources)}</sub>"
-              + ("<br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>" if dagger else ""), ""]
+              + ("<br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>" if dagger else "")
+              + "".join(f"<br><sub>{n}</sub>" for n in notes), ""]
     return "\n".join(lines)
 
 
@@ -295,12 +296,13 @@ def t_steering():
                               num(fam["isotropic"]["abs_slope_per_s"]["median"]), num(fam["isotropic"]["abs_slope_per_s"]["max"]),
                               mf.replace("_", "-label ", 1).replace("diffmeans", "difference of means"),
                               f"{100 * x['versus'][mf]['percentile_of_abs_slope_per_s']:.0f}",
+                              f"{1 + round((1 - x['versus'][mf]['percentile_of_abs_slope_per_s']) * fam[mf]['abs_slope_per_s']['n'])}/{1 + fam[mf]['abs_slope_per_s']['n']}",
                               num(fam[mf]["abs_slope_per_s"]["median"]), num(fam[mf]["abs_slope_per_s"]["max"]),
                               num(x["versus"][mf]["ratio_to_median_abs_slope_per_s"], 1),
                               num(x["own_sd_over_s"], 4), num(fam[mf]["own_sd_over_s_median"], 4),
-                              f"{100 * x['versus'][mf]['percentile_of_abs_slope_per_own_sd']:.0f}",
-                              num(x["versus"][mf]["ratio_to_median_abs_slope_per_own_sd"], 1),
-                              c.get("control_labels_shuffled", "over the whole item set")])
+                              f"{100 * x['versus'][mf]['percentile_of_abs_slope_per_own_sd']:.0f}" + ("‡" if "probe" in mf else ""),
+                              num(x["versus"][mf]["ratio_to_median_abs_slope_per_own_sd"], 1) + ("‡" if "probe" in mf else ""),
+                              c.get("control_labels_shuffled", "over the whole item set") + ("" if tag == "c2c_debiased" else " §")])
     write("steering", table(
         ["Model", "Item set", "Layer", "Direction", "Slope: Δ(Yes−No logit) per unit s", "Share of items with positive slope",
          "One unit of s in the direction's own SDs", "Slope per own SD", "Effect of moving across the natural gold-class gap",
@@ -312,10 +314,11 @@ def t_steering():
         write("steering_controls", table(
             ["Model", "Item set", "Token", "Layer", "Direction", "Slope per unit s", "Percentile among 100 isotropic directions (|slope|)",
              "Isotropic median |slope|", "Isotropic max |slope|", "Matched control family (20 directions)",
-             "Percentile among matched controls", "Matched median |slope|", "Matched max |slope|", "Ratio to matched median",
+             "Percentile among matched controls", "Rank of |slope| among the direction and its controls", "Matched median |slope|",
+             "Matched max |slope|", "Ratio to matched median",
              "Natural SD along this direction (units of s)", "Natural SD, matched controls (median)",
              "Percentile among matched controls, per natural SD", "Ratio to matched median, per natural SD",
-             "Control labels shuffled"], rows3, src3))
+             "Control labels shuffled"], rows3, src3, notes=STEER_NOTES()))
 
 
 def t_patching():
@@ -533,6 +536,26 @@ def t_probe_content():
          "Probe trained on the selection half only"], rF, src))
 
 
+def STEER_NOTES():
+    """Reading aids for the steering-controls table, added after the eighth audit (F2, F3, F4, F12)."""
+    mu = load("steering_controls_multiplicity.json")
+    out = []
+    if mu:
+        a, d = mu["summary"]["all"], mu["summary"]["debiased_pool"]
+        out.append(f"Each row with a gold-label direction is one of {a['n_comparisons']} such comparisons ({d['n_comparisons']} on the debiased pool). With 20 controls a "
+                   f"direction that is just another draw from its control family ranks first in 1 of 21 comparisons: {a['expected_rank_1_by_chance']:.2f} first ranks are "
+                   f"expected among {a['n_comparisons']} and {a['n_rank_1_in_absolute_slope']} are observed (probability of at least that many {a['p_at_least_this_many_rank_1']:.3f}); "
+                   f"on the debiased pool {d['expected_rank_1_by_chance']:.2f} expected, {d['n_rank_1_in_absolute_slope']} observed ({d['p_at_least_this_many_rank_1']:.3f}). "
+                   "No single first rank survives a correction for the number of comparisons (`results/steering_controls_multiplicity.json`).")
+    out.append("The interval on a slope is over items; it does not describe the comparison with the controls, whose uncertainty is the draw of the direction and of 20 controls.")
+    out.append("‡ Per natural SD the comparison is not matched for probe directions: a probe fitted to a decodable label has 1.0 to 5.5 times the natural SD of probes "
+               "fitted to shuffled labels, whatever its causal role, so a high percentile in these two columns can come from the spread alone.")
+    out.append("§ On the original pool the control labels are shuffled over the whole item set, and the gold label is mostly a property of the hypothesis string "
+               "(63% of its variance on the selection half lies between strings). The controls carry no string information, so these rows compare "
+               "'gold label and which hypothesis is asked' with noise and cannot be read as evidence about validity.")
+    return out
+
+
 def t_patching_same():
     """Label-changing vs label-preserving minimal pairs (round 2)."""
     import numpy as np
@@ -548,7 +571,9 @@ def t_patching_same():
                     continue
                 k = r["kinds"][kind]; b = k["behaviour_on_pairs"]
                 fin = np.array(k["pooled_recovery"], float)[:, -1]
-                first = next((r["layers"][i] for i, v in enumerate(fin) if v >= 0.5), None)
+                # read on the layers BOTH runs have: a run with every layer would otherwise cross 0.5 one layer earlier than one with every second
+                common = set(r["layers"]) & set((sm if r is ch else ch or sm)["layers"])
+                first = next((r["layers"][i] for i, v in enumerate(fin) if v >= 0.5 and r["layers"][i] in common), None)
                 byl = k.get("by_common_label", {})
                 rows.append([LAB[m], kind, lab, k["n_pairs"],
                              " / ".join(str(byl[c]["n_pairs"]) for c in ("1", "0") if c in byl) or "–",
@@ -558,7 +583,10 @@ def t_patching_same():
     if rows:
         write("patching_label_preserving", table(
             ["Model", "Pair kind", "Pairs", "n", "of which Yes/Yes, No/No", "Mean D = LD(original) − LD(edited)", "Mean |D|",
-             "Mean |D|: Yes/Yes, No/No", "First layer with ≥ 0.5 recovery at final token", "…as relative depth"], rows, src))
+             "Mean |D|: Yes/Yes, No/No", "First layer with ≥ 0.5 recovery at final token (on the layers both runs have)", "…as relative depth"], rows, src,
+            notes=["Mean |D| here is not standardised by hypothesis template; the two kinds of pair have different template mixes. The comparison within template is in "
+                   "`results/patching_by_template_<model>.json` (report 4.2).",
+                   "The label-changing pairs of Qwen2.5-1.5B (40) are from an earlier run on the laptop and are a different draw from the 60 of the other runs."]))
 
 
 FEATURE_SITES = (("adj_final_best", "final token, best layer"), ("adj_hyp_best", "end of hypothesis, best layer"),
@@ -688,7 +716,7 @@ def t_adjacency():
                        f"{100 * tc['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
                        num(un["value"], 3, signed=True), f"{100 * un['share_of_controls_smaller_in_absolute_value']:.0f}",
                        f"{a5['n_translation_effects_towards_no']}/5",
-                       f"{num(mg['before'])} → {num(mg['after_erasure'])}", ci(mg["reduction"], signed=True),
+                       f"{num(mg['before'])} → {num(mg['after_erasure'])}", num(mg["reduction"]["est"], 3, signed=True),
                        f"{100 * mg['reduction']['vs_fair_controls']['share_of_controls_smaller_in_absolute_value']:.0f}",
                        f"{mo['est']:+.3f} ({100 * mo['vs_controls']['share_of_controls_smaller_in_absolute_value']:.0f}%)"])
     r4, r5, src4 = [], [], []
@@ -705,7 +733,20 @@ def t_adjacency():
                           + [num(M[gi][hi], 3, signed=True) for hi in range(len(T))])
             off = [C[i][j] for i in range(len(T)) for j in range(len(T)) if i < j]
             tg, sr = x["off_diagonal_contrast_with_the_TARGET_template_sign"], x["off_diagonal_contrast_with_the_SOURCE_template_sign"]
-            r5.append([LAB[m], where, ci(tg, signed=True), ci(sr, signed=True), num(r["full_mediation_benchmark"]),
+            # Eighth audit, F1: where target and source template have the same sign of observed gap the two contrasts are the same number.
+            # Only the cells with different signs can tell "follows the item's template" from "follows the vector's template".
+            import numpy as np
+            sg = {g: float(np.sign(r["observational"][g]["gap_adjacent_minus_not"]["est"])) for g in r["templates_in_contrast"]}
+            cells = [(i, j) for i, gi_ in enumerate(T) for j, gj_ in enumerate(T) if i != j and gi_ in sg and gj_ in sg]
+            disc = [(i, j) for i, j in cells if sg[T[i]] != sg[T[j]]]
+            tg_all = np.mean([sg[T[i]] * M[i][j] for i, j in cells]) if cells else float("nan")
+            assert not cells or abs(tg_all - tg["est"]) < 2e-3, (m, site, tg_all, tg["est"])      # same definition as the script's
+            tg_d = np.mean([sg[T[i]] * M[i][j] for i, j in disc]) if disc else None
+            sr_d = np.mean([sg[T[j]] * M[i][j] for i, j in disc]) if disc else None
+            sv = np.linalg.svd(np.array(M, float), compute_uv=False)
+            r5.append([LAB[m], where, ci(tg, signed=True), ci(sr, signed=True),
+                       f"{len(disc)} of {len(cells)}", "–" if tg_d is None else f"{tg_d:+.3f}", "–" if sr_d is None else f"{sr_d:+.3f}",
+                       f"{100 * sv[0] ** 2 / (sv ** 2).sum():.0f}%", num(r["full_mediation_benchmark"]),
                        f"{min(off):+.2f} to {max(off):+.2f}",
                        " · ".join(f"{TSHORT[T[j]]} {C[0][j]:+.2f}" for j in range(1, len(T)))])
     if src4:
@@ -714,8 +755,14 @@ def t_adjacency():
             + [f"Vector from: {TSHORT[g]}" for g in TEMPLATES_T], r4, src4))
         write("adjacency_transfer_summary", table(
             ["Model", "Site (layer)", "Off-diagonal contrast with the target template's sign", "…with the source template's sign",
+             "Cells in which the two signs differ", "Target-sign contrast on those cells", "Source-sign contrast on those cells",
+             "Share of the 5 × 5 effect matrix that is rank one (target sensitivity × source push)",
              "Full-mediation benchmark", "Cosines between the five class-mean differences (range)",
-             "Cosine of the direct-causation difference with each of the others"], r5, src4))
+             "Cosine of the direct-causation difference with each of the others"], r5, src4,
+            notes=["A positive target-sign contrast over all cells does not show that the effect follows the item's template: in the cells where target and source "
+                   "template have the same sign of observed gap the two contrasts are the same number. The cells where the signs differ decide, and so does the "
+                   "rank-one share: an effect matrix that is (how sensitive the item's template is) × (which way the vector's template pushes) means the vector acts "
+                   "as an answer shift that is the same for every item it is applied to."]))
     if not src:
         return
     write("adjacency_sites", table(
@@ -726,16 +773,25 @@ def t_adjacency():
          "SD of the answer logit difference"], r1, src))
     write("adjacency_effects", table(
         ["Model", "Site (layer)", "Template", "Observed gap in the answer logit, adjacent − not adjacent (all items)",
-         "Translation by the class-mean difference: effect towards Yes per move towards adjacent", "…20 random directions of the same size (range)",
+         "Translation by the class-mean difference: effect towards Yes per move towards adjacent",
+         "…20 class-mean differences for adjacency shuffled within hypothesis string, rescaled to the same norm (range)",
          "Controls smaller in absolute value (%)", "Gap on evaluated items: before", "…after erasure", "Change in absolute gap",
          "…20 fair controls: same per-item coefficients, random direction (range)", "Controls smaller in absolute value (%)",
          "Moving across the class gap along the probe's weight vector"], r2, src))
     write("adjacency_contrast", table(
-        ["Model", "Site (layer)", "Templates in the pre-specified contrast", "Full-mediation benchmark (mean |observed gap|)",
-         "Translation: pre-specified contrast", "…20 random directions of the same size (range)", "Controls smaller in absolute value (%)",
+        ["Model", "Site (layer)", "Templates in the contrast (those whose observed gap excludes zero)", "Full-mediation benchmark (mean |observed gap|)",
+         "Translation: contrast with the signs of the observed gaps", "…20 shuffled-adjacency class-mean differences of the same norm (range)",
+         "Controls smaller in absolute value (%)",
          "Same with one sign for all types (adjacent → No)", "Controls smaller (%)", "Translation effects towards No",
-         "Mean absolute gap on evaluated items, before → after erasure", "Reduction (interval over items)", "Fair controls smaller in absolute value (%)",
-         "Positive control: model-answer direction, slope per unit norm (share of controls it exceeds)"], r3, src))
+         "Mean absolute gap on evaluated items, before → after erasure", "Reduction", "Fair controls smaller in absolute value (%)",
+         "Positive control: model-answer direction, slope per unit norm (share of controls it exceeds)"], r3, src,
+        notes=["The templates and signs of the contrast are taken from the observed gaps of all 2,400 items, including the 500 evaluated ones, so the contrast is not "
+               "pre-specified in the strict sense. With the signs from the selection half only, the conclusions are the same (eighth audit, F5: Qwen2.5-3B final token "
+               "+0.891, above all 20 controls; end of hypothesis +0.047, 70% of controls smaller; Qwen2.5-1.5B +0.357, 85%, and +0.055, 60%).",
+               "No interval is given for the reduction of the mean absolute gap: a bootstrap over items inflates absolute gaps and is biased for this statistic. "
+               "The reference is the distribution over the fair controls.",
+               "Where the positive control does not exceed its controls (the earlier-layer sites), a null result for the other directions says nothing.",
+               "Erasure and translation are one measurement (the erasure effect is minus a per-item coefficient times the translation effect), not two confirmations."]))
 
 
 def t_sae():

@@ -151,9 +151,11 @@ does only the corrected adjacency test:
 
 | Follow-up | For | Where | Token | Estimated GPU time |
 |---|---|---|---|---|
-| `notebooks/kaggle_r2b_qwen3b_adjacency.ipynb` | A launched early | Kaggle T4 x2 | none | 1 – 2 h |
-| `notebooks/colab_r2b_qwen1.5b_adjacency.ipynb` | C launched early | Colab T4 | none | 1 – 1.5 h |
-| `notebooks/kaggle_r2b_gemma_adjacency.ipynb` | D launched early | Kaggle T4 x2 | `HF_TOKEN` | 1 – 2 h |
+| `notebooks/kaggle_r2b_qwen3b_adjacency.ipynb` | A launched from a pin before `cdb08d7` | Kaggle T4 x2 | none | 1.5 – 2.5 h |
+| `notebooks/colab_r2b_qwen1.5b_adjacency.ipynb` | C launched from a pin before `cdb08d7` | Colab T4 (or Kaggle) | none | 1.5 – 2 h |
+| `notebooks/kaggle_r2b_gemma_adjacency.ipynb` | D launched from a pin before `cdb08d7` | Kaggle T4 x2 | `HF_TOKEN` | 1.5 – 2.5 h |
+
+Each follow-up reruns, at the current pin, the steering controls at both tokens (on the debiased pool with labels shuffled within hypothesis string) and the adjacency test with all its arms. It does not repeat the patching. Launch it after the main run of that model has finished, so that the two do not compete for quota.
 
 Their downloads go to `kaggle_in/r2b_qwen3b/`, `kaggle_in/r2b_qwen15b/`, `kaggle_in/r2b_gemma/`
 and are ingested with `--run r2b_qwen3b` and so on. Notebook B (7B behaviour) is unchanged in

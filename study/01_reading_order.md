@@ -14,6 +14,8 @@
 
 ---
 
+**Before session 1 (ten minutes):** read `RESULTS.md` once. It is the destination; the sessions are the route.
+
 ## Session 1. The question, the models, and what "at chance" means
 
 **Read.**

@@ -1,33 +1,31 @@
-"""One steering arm that stood out among 20 controls: is it a property of the gold label, of adjacency, or of one draw?
+"""One steering arm that stood out among 20 controls: a property of the gold label, of adjacency, or of one draw?
 Needs the model (GPU). Debiased pool, last token of the hypothesis. Writes results/steering_settle_<model>_c2c_debiased_hyp.json.
 
 Background (eighth audit, notes/audit_round2_runs_raw.md, Q1). In the 20-control runs two gold-label directions at the
 end of the hypothesis ranked first among 21 in absolute slope: Qwen 3B, difference of class means (+0.74 per s), and
-Qwen 1.5B, probe weights (-0.25 per s). Each is one of 12 such comparisons on this pool (24 in all), z about 2 to 3
-against its controls, not first in any neighbouring arm. The audit found the existing data cannot decide between a
-chance top rank and a modest real effect, that 100 controls instead of 20 would only refine one percentile of the same
-draw, and named what would decide it. This script runs those things, at the same site:
+Qwen 1.5B, probe weights (-0.25 per s). Each is one of 24 such comparisons (12 on this pool), z about 2 to 3 against its
+controls, not first in any neighbouring arm.
 
-  A. independent draws of the direction. The 25 blocks of the pool are split in halves in several ways; the direction
-     and its controls are fitted on one half and steered on items of the other. Split 0 is the original one (it
-     reproduces the 20-control run and extends it to --n-shuf controls). Split 1 is its mirror image: fitted on the
-     half that was only ever used for evaluation, steered on the half that was only ever used for fitting. Splits 2..
-     are random halvings (they overlap with both, and with each other).
-  B. controls that keep adjacency. Within a hypothesis string the gold label is associated with whether the queried
-     pair is adjacent in the graph skeleton. `within_string` controls shuffle the gold label inside each hypothesis
-     string (as before); `within_cell` controls shuffle it inside each (hypothesis string x adjacency) cell, so they
-     keep exactly the association of the label with adjacency and destroy the rest. A gold direction that exceeds the
-     first family but not the second acts through adjacency.
-  C. the adjacency direction itself: the difference of class means of adjacency among "X directly causes Y" items, and
-     pooled over all items, against the same for adjacency shuffled within hypothesis string.
-  D. a profile over layers: the same comparison two layers below and above the site.
-  E. size at natural scale: smaller steps (0.1 s and 0.3 s) for the gold directions and 20 controls, and the slope times
-     the distance between the class means along the direction.
+SECOND VERSION, after an independent review of the first before it ran (ninth audit, notes/audit_settle_code_raw.md):
+  - Fitting the direction on the other half of the blocks is NOT an independent draw of it: the gold direction of the
+    two halves is nearly one vector (cosine 0.84 for Qwen 3B). A direction whose slope is large for any reproducible
+    reason stays large. So "p <= 0.05 in the mirror split" cannot be read as "replicates"; the arm was chosen as the
+    most extreme of 24, and the test has to be strict enough for that: p <= 0.05 / 24, which needs 500 controls.
+  - The gold label has one valid and one invalid item per premise; a shuffle within hypothesis string does not keep
+    that, so those controls carry premise-level variance the gold direction cannot. The primary controls are now
+    labellings with BOTH of the gold label's balances (within hypothesis string, within premise): `premise_balanced_*`.
+  - "Controls that keep adjacency" built as class-mean differences share a common component (the difference under the
+    cell rates) that the real direction has less of; with no effect at all the real direction fell outside them in a
+    third to a half of runs. They are replaced by the part the shuffle actually randomises: the label minus its cell
+    mean, projected on the centred activations (`gold_beyond_adjacency` against `within_cell_residual`). The same for
+    adjacency (`adjacency_within_string`). For probe directions the within-cell family was calibrated and is kept.
 
-PRIMARY TEST, fixed before the run (notes/log.md, Sat 14 Nov): split 1, the site's layer, the direction named by --arm
-(the one that stood out), against its --n-shuf within-string controls, one-sided in the sign it had in the 20-control
-run, per unit of s. p = (1 + number of controls at least as extreme in that sign) / (1 + number of controls).
-Everything else in the output is descriptive and is labelled so.
+Splits of the 25 blocks into a fitting half and a steered half: 0 = the project's split (reproduces the 20-control run:
+same 150 items, same first 20 within-string labellings); 1 = its mirror image; 2.. = seeded random halvings.
+
+PRIMARY TEST (notes/log.md, Sat 14 Nov, amended before any run): split 1, the site's layer, the direction named by
+--arm, against --n-primary premise-balanced controls of the same kind, one-sided in the sign that direction had in the
+20-control run, per unit of s. p = (1 + controls at least as extreme) / (1 + n). Everything else is descriptive.
 
 Slopes: (LD(+a) - LD(-a)) / (2a) per item, a in units of s (root mean squared distance of the fitting half's
 activations from their mean), averaged over the steered items; LD = Yes-No answer logit difference at the final token.
@@ -46,11 +44,12 @@ from causal_probe.config import ALL_MODELS, RESULTS, SEED
 TAG, POSITION = "c2c_debiased", "content_end"
 SMALL_ALPHAS = (0.1, 0.3)
 N_ISO, N_SMALL = 20, 20
+N_COMPARISONS = 24            # gold-label directions compared with matched controls so far (results/steering_controls_multiplicity.json)
+KIND = {"gold_diffmeans": "diffmeans", "gold_probe": "probe"}
 
 
 def probe_dir(X, y, C, max_iter=2000):
-    """Unit direction of a standardised logistic probe in raw activation space, and whether the fit converged.
-    (steer.probe_direction stops at 300 iterations; at C = 1 that left 21 of 22 fits unconverged in the 20-control runs.)"""
+    """Unit direction of a standardised logistic probe in raw activation space, and whether the fit converged."""
     from sklearn.linear_model import LogisticRegression
     from sklearn.preprocessing import StandardScaler
     sc = StandardScaler().fit(X)
@@ -58,8 +57,24 @@ def probe_dir(X, y, C, max_iter=2000):
     return steer.unit(clf.coef_[0] / sc.scale_), bool(clf.n_iter_[0] < max_iter)
 
 
+def probe_dirs(X, labellings, C):
+    """Probe directions for many labellings, in parallel on the CPU cores (CAUSAL_PROBE_JOBS)."""
+    if not len(labellings):
+        return [], 1.0
+    from joblib import Parallel, delayed
+    out = Parallel(n_jobs=int(os.environ.get("CAUSAL_PROBE_JOBS", "2")))(delayed(probe_dir)(X, lab, C) for lab in labellings)
+    return [d for d, _ in out], float(np.mean([c for _, c in out]))
+
+
 def dom(X, lab):
     return steer.unit(X[lab == 1].mean(0) - X[lab == 0].mean(0))
+
+
+def cell_mean(v, cells):
+    out = np.zeros(len(v))
+    for c in np.unique(cells):
+        out[cells == c] = v[cells == c].mean()
+    return out
 
 
 def shuffle_within(lab, cells, rng):
@@ -69,6 +84,59 @@ def shuffle_within(lab, cells, rng):
         m = np.where(cells == c)[0]
         out[m] = lab[rng.permutation(m)]
     return out
+
+
+class PremiseBalanced:
+    """Random labellings with both balances of the gold label: every premise has one valid and one invalid item, and
+    every hypothesis string is half valid. A Markov chain started at the gold labelling: each premise is an edge from
+    the string of its valid item to the string of its invalid item; reversing a directed cycle of that graph swaps the
+    labels of the premises on it and keeps both balances. `thin` cycle reversals separate two labellings."""
+
+    def __init__(self, y, strs, groups, rng, burn=8000, thin=2500):
+        prem = {}
+        for i, g in enumerate(groups):
+            prem.setdefault(g, []).append(i)
+        assert all(len(v) == 2 for v in prem.values()), "every premise must have exactly two items on the fitting half"
+        self.pairs = np.array(list(prem.values()))
+        assert (y[self.pairs].sum(1) == 1).all(), "every premise must have one valid and one invalid item"
+        ids = {s: k for k, s in enumerate(np.unique(strs))}
+        self.node = np.array([ids[s] for s in strs])
+        self.y, self.rng, self.thin = y.copy(), rng, thin
+        self.first = (self.y[self.pairs[:, 0]] == 1)                       # is the pair's first item the valid one?
+        self.out = {}
+        for p in range(len(self.pairs)):
+            self.out.setdefault(self._src(p), []).append(p)
+        for _ in range(burn):
+            self._reverse_cycle()
+
+    def _src(self, p):
+        return int(self.node[self.pairs[p, 0 if self.first[p] else 1]])
+
+    def _dst(self, p):
+        return int(self.node[self.pairs[p, 1 if self.first[p] else 0]])
+
+    def _reverse_cycle(self):
+        cur = self._src(int(self.rng.integers(len(self.pairs))))
+        seen, edges = {cur: 0}, []
+        while True:
+            lst = self.out[cur]
+            p = lst[int(self.rng.integers(len(lst)))]
+            edges.append(p); cur = self._dst(p)
+            if cur in seen:
+                cyc = edges[seen[cur]:]
+                break
+            seen[cur] = len(edges)
+        for p in cyc:
+            self.out[self._src(p)].remove(p)
+            self.first[p] = not self.first[p]
+            self.out.setdefault(self._src(p), []).append(p)
+            a, b = self.pairs[p]
+            self.y[a], self.y[b] = self.y[b], self.y[a]
+
+    def sample(self):
+        for _ in range(self.thin):
+            self._reverse_cycle()
+        return self.y.copy()
 
 
 def block_splits(items, n_splits):
@@ -88,57 +156,82 @@ def block_splits(items, n_splits):
     return out[:n_splits]
 
 
-def build(X, F, y, t, strs, tm, mcal, C, k, n_ws, n_wc, n_adj, full, with_adjacency, arm, n_other):
-    """Unit directions for one (split, layer), fitted on the fitting half F. Returns families, D [n, d], alphas, info.
-    n_ws / n_wc: number of within-string / within-cell labellings for the family that matches `arm` (the other kind of
-    direction gets n_other of the same labellings, the first ones)."""
-    Xf, yf, tf, sf, tmf = X[F], y[F], t[F], strs[F], tm[F]
+def build(X, F, y, t, strs, grp, tm, mcal, C, k, arm, role, n_primary, n_shuf, n_other):
+    """Unit directions for one (split, layer), fitted on the fitting half F.
+    role: "primary" (split 1 at the site), "original" (split 0 at the site), "other" (random splits, other layers)."""
+    Xf, yf, tf, sf, gf, tmf = X[F], y[F], t[F], strs[F], grp[F], tm[F]
+    kind = KIND[arm]
     fam, D, conv = [], [], {}
 
     def add(f, v):
         fam.append(f); D.append(np.asarray(v, np.float64))
 
-    # the same generator and order of draws as 07c_steering_controls.py for split 0, so that its first 20 labellings
-    # are those of the 20-control run: 100 isotropic draws first (the first N_ISO are kept), then the shuffles
+    def add_family(labellings, n_dm, n_pr, name):
+        if n_pr:
+            dirs, share = probe_dirs(Xf, labellings[:n_pr], C)
+            conv[f"{name}_probe_share_converged"] = share
+            for d in dirs:
+                add(f"{name}_probe", d)
+        for lab in labellings[:n_dm]:
+            add(f"{name}_diffmeans", dom(Xf, lab))
+
+    def counts(n_arm, n_rest):          # (difference-of-means, probe) counts: n_arm for the arm's kind, n_rest for the other kind
+        return (n_arm, n_rest) if kind == "diffmeans" else (n_rest, n_arm)
+
+    # same generator and order of draws as 07c_steering_controls.py for split 0, so that its first 20 within-string
+    # labellings are those of the 20-control run: 100 isotropic draws first, then the shuffles
     rng = np.random.default_rng(SEED + 101 + 1000 * k)
     iso = [rng.standard_normal(X.shape[1]) for _ in range(100)]
     add("gold_diffmeans", dom(Xf, yf))
     g, c_ = probe_dir(Xf, yf, C); add("gold_probe", g); conv["gold_probe"] = c_
     m, c_ = probe_dir(Xf, mcal[F], C); add("model_out", m); conv["model_out"] = c_
-    if full:
+    if role == "original":
         for v in iso[:N_ISO]:
             add("isotropic", steer.unit(v))
-    n_conv = n_fit = 0
-    n_pr, n_dm = (n_ws, min(n_ws, n_other)) if arm == "gold_probe" else (min(n_ws, n_other), n_ws)
-    for i in range(n_ws):
-        ys = shuffle_within(yf, sf, rng)            # every labelling is drawn, so the sequence does not depend on the arm
-        if i < n_pr:
-            p, c_ = probe_dir(Xf, ys, C); n_conv += c_; n_fit += 1
-            add("within_string_probe", p)
-        if i < n_dm:
-            add("within_string_diffmeans", dom(Xf, ys))
-    rng_c = np.random.default_rng(SEED + 202 + 1000 * k)
-    cell = np.array([f"{a}|{b}" for a, b in zip(sf, tf)])
-    for i in range(n_wc):
-        yc = shuffle_within(yf, cell, rng_c)
-        if arm == "gold_diffmeans" or i < n_other:
-            add("within_cell_diffmeans", dom(Xf, yc))
-        if arm == "gold_probe":
-            p, c_ = probe_dir(Xf, yc, C); n_conv += c_; n_fit += 1
-            add("within_cell_probe", p)
-    conv["control_probes_share_converged"] = n_conv / max(n_fit, 1)
-    if with_adjacency:
+    # (1) labels shuffled within hypothesis string (the 20-control run's family)
+    n_ws = n_shuf if role in ("primary", "original") else n_other
+    ws = [shuffle_within(yf, sf, rng) for _ in range(n_ws)]
+    add_family(ws, *counts(n_ws, n_other if role != "other" else 0), "within_string")
+    # (2) labels with both of the gold label's balances (within string and within premise): the primary controls
+    n_pb = {"primary": n_primary, "original": n_shuf, "other": n_other}[role]
+    chain = PremiseBalanced(yf, sf, gf, np.random.default_rng(SEED + 404 + 1000 * k))
+    pb = [chain.sample() for _ in range(n_pb)]
+    for lab in pb[:3]:
+        assert all(lab[sf == s_].mean() == 0.5 for s_ in np.unique(sf)[:8]) and (lab[chain.pairs].sum(1) == 1).all()
+    conv["premise_balanced_mean_agreement_with_gold"] = float(np.mean([(lab == yf).mean() for lab in pb]))
+    conv["premise_balanced_mean_agreement_between_successive"] = float(np.mean([(a_ == b_).mean() for a_, b_ in zip(pb[:-1], pb[1:])])) if len(pb) > 1 else None
+    add_family(pb, *counts(n_pb, n_other if role != "other" else 0), "premise_balanced")
+    if role != "other":
+        # (3) beyond adjacency. Class-mean differences of labels shuffled within (string x adjacency) cells share the
+        # difference under the cell rates and are not a calibrated family. What the shuffle randomises is the label
+        # minus its cell mean; real and control are built from that part alone.
+        Xc = Xf - Xf.mean(0)
+        cell = np.array([f"{a}|{b}" for a, b in zip(sf, tf)])
+        rng_c = np.random.default_rng(SEED + 202 + 1000 * k)
+        ybar = cell_mean(yf.astype(float), cell)
+        add("gold_beyond_adjacency", steer.unit((yf - ybar) @ Xc))
+        wc = [shuffle_within(yf, cell, rng_c) for _ in range(n_shuf)]
+        for lab in (wc if kind == "diffmeans" else wc[:n_other]):
+            add("within_cell_residual", steer.unit((lab - ybar) @ Xc))
+        if kind == "probe":             # for probe directions the within-cell family is calibrated as it is
+            dirs, share = probe_dirs(Xf, wc, C)
+            conv["within_cell_probe_share_converged"] = share
+            for d in dirs:
+                add("within_cell_probe", d)
+        # (4) the adjacency direction itself
         par = tmf == "parent"
+        tbar = cell_mean(tf.astype(float), sf)
         add("adjacency_parent_diffmeans", dom(Xf[par], tf[par]))
-        add("adjacency_pooled_diffmeans", dom(Xf, tf))
+        add("adjacency_within_string", steer.unit((tf - tbar) @ Xc))
         rng_a = np.random.default_rng(SEED + 303 + 1000 * k)
-        for _ in range(n_adj):
+        for _ in range(n_other):
             ts = shuffle_within(tf, sf, rng_a)
             add("adjacency_parent_shuffled", dom(Xf[par], ts[par]))
-            add("adjacency_pooled_shuffled", dom(Xf, ts))
+            add("adjacency_within_string_shuffled", steer.unit((ts - tbar) @ Xc))
     fam = np.array(fam); D = np.stack(D)
+    assert np.isfinite(D).all(), "a direction is not finite (an empty class?)"
     alphas = [(j, 1.0) for j in range(len(D))]
-    if full:                                           # smaller steps for the two gold directions and the first controls
+    if role == "original":                 # smaller steps for the two gold directions and the first within-string controls
         small = [j for j, f in enumerate(fam) if f in ("gold_diffmeans", "gold_probe")] + \
                 [j for j, f in enumerate(fam) if f == "within_string_diffmeans"][:N_SMALL] + \
                 [j for j, f in enumerate(fam) if f == "within_string_probe"][:N_SMALL]
@@ -146,15 +239,19 @@ def build(X, F, y, t, strs, tm, mcal, C, k, n_ws, n_wc, n_adj, full, with_adjace
     return fam, D.astype(np.float32), alphas, conv
 
 
-def rank_stats(real, ctrl):
+def rank_stats(real, ctrl, real_sd=None, ctrl_sd=None):
     """Where a real slope stands among its controls. signed_rank: 1 = most positive among 1 + n."""
     ctrl = np.asarray(ctrl, float)
-    return {"slope": float(real), "n_controls": int(len(ctrl)), "control_mean": float(ctrl.mean()), "control_sd": float(ctrl.std(ddof=1)),
-            "control_min": float(ctrl.min()), "control_max": float(ctrl.max()), "control_max_abs": float(np.abs(ctrl).max()),
-            "z_vs_controls": float((real - ctrl.mean()) / ctrl.std(ddof=1)),
-            "signed_rank_1_is_most_positive": int(1 + (ctrl > real).sum()),
-            "abs_rank_1_is_largest": int(1 + (np.abs(ctrl) > abs(real)).sum()),
-            "share_of_controls_smaller_in_absolute_value": float((np.abs(ctrl) < abs(real)).mean())}
+    r = {"slope": float(real), "n_controls": int(len(ctrl)), "control_mean": float(ctrl.mean()), "control_sd": float(ctrl.std(ddof=1)),
+         "control_min": float(ctrl.min()), "control_max": float(ctrl.max()), "control_max_abs": float(np.abs(ctrl).max()),
+         "z_vs_controls": float((real - ctrl.mean()) / ctrl.std(ddof=1)),
+         "signed_rank_1_is_most_positive": int(1 + (ctrl > real).sum()),
+         "abs_rank_1_is_largest": int(1 + (np.abs(ctrl) > abs(real)).sum()),
+         "share_of_controls_smaller_in_absolute_value": float((np.abs(ctrl) < abs(real)).mean())}
+    if real_sd is not None:
+        r["abs_rank_per_natural_sd"] = int(1 + (np.abs(ctrl * ctrl_sd) > abs(real * real_sd)).sum())
+        r["natural_sd_over_s"] = float(real_sd); r["natural_sd_controls_median"] = float(np.median(ctrl_sd))
+    return r
 
 
 def one_sided_p(real, ctrl, sign):
@@ -162,9 +259,12 @@ def one_sided_p(real, ctrl, sign):
     return float((1 + (sign * ctrl >= sign * real).sum()) / (1 + len(ctrl)))
 
 
-MATCH = {"gold_diffmeans": ("within_string_diffmeans", "within_cell_diffmeans"), "gold_probe": ("within_string_probe", "within_cell_probe"),
-         "model_out": ("within_string_probe",), "adjacency_parent_diffmeans": ("adjacency_parent_shuffled",),
-         "adjacency_pooled_diffmeans": ("adjacency_pooled_shuffled",)}
+MATCH = {"gold_diffmeans": ("premise_balanced_diffmeans", "within_string_diffmeans"),
+         "gold_probe": ("premise_balanced_probe", "within_string_probe", "within_cell_probe"),
+         "gold_beyond_adjacency": ("within_cell_residual",),
+         "model_out": ("within_string_probe", "premise_balanced_probe"),
+         "adjacency_parent_diffmeans": ("adjacency_parent_shuffled",),
+         "adjacency_within_string": ("adjacency_within_string_shuffled",)}
 
 
 def summarise(fam, slopes, own_sd, gap_s, small, tm_items, slope_items):
@@ -180,12 +280,12 @@ def summarise(fam, slopes, own_sd, gap_s, small, tm_items, slope_items):
         if not len(j):
             continue
         j = int(j[0])
-        r = {"slope_per_s": float(slopes[j]), "own_sd_over_s": float(own_sd[j]), "class_gap_along_direction_over_s": float(gap_s[j]),
-             "effect_of_moving_across_the_class_gap_logits": float(slopes[j] * gap_s[j]),
+        r = {"slope_per_s": float(slopes[j]), "own_sd_over_s": float(own_sd[j]), "gold_class_gap_along_direction_over_s": float(gap_s[j]),
+             "effect_of_moving_across_the_gold_class_gap_logits": float(slopes[j] * gap_s[j]),
              "share_of_items_with_positive_slope": float((slope_items[:, j] > 0).mean()), "versus": {}}
         for f in fams:
             if (fam == f).sum() > 1:
-                r["versus"][f] = rank_stats(slopes[j], slopes[fam == f])
+                r["versus"][f] = rank_stats(slopes[j], slopes[fam == f], own_sd[j], own_sd[fam == f])
         if tm_items is not None:
             r["by_template"] = {}
             for g in sorted(set(tm_items.tolist())):
@@ -202,19 +302,26 @@ def summarise(fam, slopes, own_sd, gap_s, small, tm_items, slope_items):
     return out
 
 
+def config_slopes(p):
+    out, n1 = p["out"].astype(np.float64), len(p["fam"])
+    return (out[:, 1:1 + 2 * n1:2] - out[:, 2:2 + 2 * n1:2]) / 2.0          # [items, directions], per s at a = 1
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True, choices=ALL_MODELS)
-    ap.add_argument("--arm", default="gold_diffmeans", choices=["gold_diffmeans", "gold_probe"], help="the direction of the primary test")
+    ap.add_argument("--arm", default="gold_diffmeans", choices=list(KIND), help="the direction of the primary test")
     ap.add_argument("--n", type=int, default=150, help="steered items per split")
-    ap.add_argument("--n-shuf", type=int, default=100, help="within-string controls in splits 0 and 1 (and within-cell controls in split 0)")
+    ap.add_argument("--n-primary", type=int, default=500, help="premise-balanced controls of the arm's kind in the primary configuration (split 1)")
+    ap.add_argument("--n-shuf", type=int, default=100, help="controls per family of the arm's kind in splits 0 and 1 otherwise")
     ap.add_argument("--n-other", type=int, default=20, help="controls per family elsewhere")
-    ap.add_argument("--n-splits", type=int, default=6)
-    ap.add_argument("--layer-offsets", default="-2,2", help="extra layers for split 0, relative to the site's layer")
+    ap.add_argument("--n-splits", type=int, default=4)
+    ap.add_argument("--layer-offsets", default="-2,2", help="extra layers for split 0, relative to the site's layer (on a command line write --layer-offsets=-2,2)")
     ap.add_argument("--sub-batch", type=int, default=16)
-    ap.add_argument("--max-minutes", type=float, default=70.0)
+    ap.add_argument("--max-minutes", type=float, default=100.0)
     ap.add_argument("--allow-new-site", action="store_true", help="do not require the 20-control result (smoke tests)")
     a = ap.parse_args()
+    assert a.n_other >= 2 and a.n_shuf >= a.n_other and a.n_primary >= a.n_other, "families need at least two members"
     t0 = time.time()
 
     def log(msg):
@@ -227,44 +334,48 @@ def main():
         b = json.loads(base_json.read_text())
         layer, C, base = int(b["layer"]), float(b["probe_C"]), {k: v["slope_per_s"]["est"] for k, v in b["real"].items()}
         sign = float(np.sign(base[a.arm]))
+        assert sign != 0
     elif a.allow_new_site:
         layer, C, _ = steer.choose_site(a.model, TAG, resid, meta, items, POSITION, 6)
         base, sign = None, 1.0
     else:
         raise SystemExit(f"{base_json.name} is not in this checkout: this run must sit at the site of the 20-control run")
     L = resid.shape[1] - 1
-    y = np.array(meta["labels"]); ld0 = np.array(meta["logit_diff"])
+    y = np.array(meta["labels"]); ld0 = np.array(meta["logit_diff"]); ntok = np.array(meta["n_tokens"], float)
     t = probes.structural_features(items)[:, 2].astype(int)
-    strs = np.array([i["query"] for i in items]); tm = np.array([i["template"] for i in items])
+    strs = np.array([i["query"] for i in items]); tm = np.array([i["template"] for i in items]); grp = np.array([i["group"] for i in items])
     mcal = (ld0 > np.median(ld0)).astype(int)
-    splits = block_splits(items, a.n_splits)
-    offs = [int(o) for o in a.layer_offsets.split(",") if o.strip()]
-    configs = [(k, layer) for k in range(len(splits))] + [(0, layer + o) for o in offs if 1 <= layer + o <= L]
-    log(f"site: last token of the hypothesis, layer {layer}/{L}, C {C:g}; arm {a.arm}, expected sign {sign:+.0f}; "
-        f"{len(splits)} splits, extra layers {[l for _, l in configs[len(splits):]]}")
+    splits = block_splits(items, max(a.n_splits, 2))
+    offs = [int(o) for o in a.layer_offsets.split(",") if o.strip() and int(o) != 0]
+    # the primary configuration first: if the session ends early, it is the one that must exist
+    configs = [(1, layer, "primary"), (0, layer, "original")] + [(0, layer + o, "other") for o in offs if 1 <= layer + o <= L] + \
+              [(k, layer, "other") for k in range(2, len(splits))]
+    log(f"site: last token of the hypothesis, layer {layer}/{L}, C {C:g}; arm {a.arm}, expected sign {sign:+.0f}; configurations {[(k, l) for k, l, _ in configs]}")
 
-    plan = []
-    for k, l in configs:
+    plan, saved = [], {}
+    for k, l, role in configs:
         X = probes.layer_features(resid, l, pi)
         F = splits[k]; E = ~F
-        full = (k == 0 and l == layer)
-        n_ws = a.n_shuf if (k in (0, 1) and l == layer) else a.n_other
-        n_wc = a.n_shuf if full else a.n_other
-        fam, D, alphas, conv = build(X, F, y, t, strs, tm, mcal, C, k, n_ws, n_wc, a.n_other, full, with_adjacency=(l == layer and k in (0, 1)),
-                                     arm=a.arm, n_other=a.n_other)
+        fam, D, alphas, conv = build(X, F, y, t, strs, grp, tm, mcal, C, k, a.arm, role, a.n_primary, a.n_shuf, a.n_other)
         mu = X[F].mean(0)
         s_unit = float(np.sqrt(((X[F] - mu) ** 2).sum(1).mean()))
         own_sd = ((X[F] - mu) @ D.T).std(0) / s_unit
         gap_s = ((X[E & (y == 1)].mean(0) - X[E & (y == 0)].mean(0)) @ D.T) / s_unit      # gold class gap on the steered half, along each direction
-        # the same item sample as 07c for split 0 (same generator); other splits draw their own
-        r3 = np.random.default_rng(SEED + 13 + 1000 * k)
+        r3 = np.random.default_rng(SEED + 13 + 1000 * k)                                   # the 20-control run's item sample for split 0
         per = min(a.n // 2, int((E & (y == 1)).sum()), int((E & (y == 0)).sum()))
         idx = np.sort(np.concatenate([r3.choice(np.where(E & (y == c))[0], per, replace=False) for c in (1, 0)]))
         cols = np.concatenate([np.zeros((1, D.shape[1]), np.float32)] + [s * al * s_unit * D[j][None] for j, al in alphas for s in (1.0, -1.0)])
-        plan.append(dict(split=k, layer=l, full=full, fam=fam, D=D, alphas=alphas, conv=conv, s_unit=s_unit, own_sd=own_sd, gap_s=gap_s, idx=idx, vecs=cols))
-        log(f"split {k} layer {l}: {len(D)} directions, {len(cols)} vectors per item, {len(idx)} items; probes converged: "
-            f"gold {conv['gold_probe']}, controls {100 * conv['control_probes_share_converged']:.0f}%")
-    total_vi = sum(len(p["vecs"]) * len(p["idx"]) for p in plan)
+        key = f"{k}_{l}"
+        plan.append(dict(split=k, layer=l, role=role, key=key, fam=fam, D=D, alphas=alphas, conv=conv, s_unit=s_unit, own_sd=own_sd, gap_s=gap_s,
+                         idx=idx, vecs=cols, check=float(np.abs(cols).sum())))
+        saved.update({f"D_{key}": D.astype(np.float16), f"fam_{key}": fam, f"alphas_{key}": np.array(alphas, np.float64), f"own_sd_{key}": own_sd,
+                      f"gap_s_{key}": gap_s, f"s_unit_{key}": s_unit, f"idx_{key}": idx})
+        log(f"split {k} layer {l} ({role}): {len(D)} directions, {len(cols)} vectors per item, {len(idx)} items; converged: "
+            + ", ".join(f"{n_} {v_ if isinstance(v_, bool) else round(v_, 2)}" for n_, v_ in conv.items() if "converged" in n_ or n_ == "gold_probe")
+            + f"; premise-balanced labellings agree with gold on {100 * conv['premise_balanced_mean_agreement_with_gold']:.0f}% of items")
+    # the directions and everything needed to read the outputs, before any GPU time: they cannot be rebuilt on the laptop
+    # (the GPU run's activations are not exported), and a run that is cut short would otherwise leave outputs without labels
+    np.savez(cache.cache_dir(a.model, TAG) / "steering_settle_hyp_plan.npz", **saved)
 
     tok = models.load_tokenizer(a.model)
     model = models.load_model(a.model)
@@ -278,83 +389,102 @@ def main():
             done = {k_: z[k_] for k_ in z.files}
         except Exception as e:
             log(f"partial file unreadable ({type(e).__name__}); starting again")
-    t_loop, vi_done = time.time(), 0
-    for ci, p in enumerate(plan):
-        key = f"out_{p['split']}_{p['layer']}"
-        if key in done and done[key].shape == (len(p["idx"]), len(p["vecs"])) and np.array_equal(done.get(f"idx_{p['split']}_{p['layer']}"), p["idx"]):
-            p["out"] = done[key]
+    work = lambda p_, items_=None: float(ntok[p_["idx"] if items_ is None else items_].sum() * len(p_["vecs"]))    # cost grows with prompt length x vectors
+    t_loop, w_done, dropped = time.time(), 0.0, []
+    ci = 0
+    while ci < len(plan):
+        p = plan[ci]; key = p["key"]
+        if f"out_{key}" in done and done[f"out_{key}"].shape == (len(p["idx"]), len(p["vecs"])) and np.array_equal(done.get(f"idx_{key}"), p["idx"]) \
+                and abs(float(done.get(f"check_{key}", -1)) - p["check"]) < 1e-4 * p["check"]:
+            p["out"] = done[f"out_{key}"]
             log(f"split {p['split']} layer {p['layer']}: taken from the partial file")
+            ci += 1
             continue
         out = np.zeros((len(p["idx"]), len(p["vecs"])), np.float32)
         vecs = torch.tensor(p["vecs"])
         for n_, i in enumerate(p["idx"]):
             enc = prompts.encode_with_positions(tok, items[i])
             out[n_] = steer.steered_logit_diffs(model, enc["input_ids"], p["layer"], vecs, ans, sub_batch=a.sub_batch, pos=enc["pos"][POSITION])
-            vi_done += len(p["vecs"])
-            if ci == 0 and n_ == 5:
-                per_vi = (time.time() - t_loop) / vi_done
-                proj = per_vi * (total_vi - vi_done) / 60
+            w_done += ntok[i] * len(p["vecs"])
+            if (n_ == 5 or n_ == len(p["idx"]) // 2) and w_done > 0:
+                per_w = (time.time() - t_loop) / w_done
                 left = a.max_minutes - (time.time() - t0) / 60
-                log(f"[timing] {1000 * per_vi:.2f} ms per vector and item -> {proj:.1f} min for the rest; {left:.1f} min left of {a.max_minutes:.0f}")
-                if proj > 0.85 * left:
-                    raise SystemExit("projected run time too long: lower --n-shuf or --n-splits")
+                rest = work(p, p["idx"][n_ + 1:]) + sum(work(q) for q in plan[ci + 1:])
+                log(f"[timing] {per_w * 1e6:.2f} µs per token and vector -> {per_w * rest / 60:.1f} min for the rest; {left:.1f} min left of {a.max_minutes:.0f}")
+                while len(plan) > ci + 1 and per_w * rest / 60 > 0.9 * left:      # drop configurations from the end, never the one that is running
+                    q = plan.pop()
+                    dropped.append([q["split"], q["layer"], q["role"]])
+                    rest -= work(q)
+                    log(f"[timing] dropping split {q['split']} layer {q['layer']} ({q['role']}) to fit the time limit")
+                if ci == 0 and n_ == 5 and per_w * work(p, p["idx"][n_ + 1:]) / 60 > 0.95 * left:
+                    raise SystemExit("the primary configuration alone does not fit the time limit: lower --n-primary")
         p["out"] = out
-        done[key] = out; done[f"idx_{p['split']}_{p['layer']}"] = p["idx"]
+        done[f"out_{key}"] = out; done[f"idx_{key}"] = p["idx"]; done[f"check_{key}"] = p["check"]
         tmp = part.with_name(part.name + ".tmp.npz")
         np.savez(tmp, **done); os.replace(tmp, part)
         log(f"split {p['split']} layer {p['layer']} done; baseline max |difference| vs cache {np.abs(out[:, 0] - ld0[p['idx']]).max():.3f}")
+        ci += 1
     del model
 
+    kind = KIND[a.arm]
     res = {"model": a.model, "tag": TAG, "position": POSITION, "layer": layer, "n_layers": int(L), "probe_C": C, "arm": a.arm,
            "expected_sign_from_the_20_control_run": sign, "slopes_in_the_20_control_run": base,
-           "n_shuf": a.n_shuf, "n_other": a.n_other, "step_in_s": 1.0, "smaller_steps_in_s": list(SMALL_ALPHAS), "configs": []}
+           "n_primary": a.n_primary, "n_shuf": a.n_shuf, "n_other": a.n_other, "step_in_s": 1.0, "smaller_steps_in_s": list(SMALL_ALPHAS),
+           "configurations_dropped_for_time": dropped, "configs": []}
     raw = {}
     for p in plan:
         out, fam = p["out"].astype(np.float64), p["fam"]
         n1 = len(fam)
-        plus, minus = out[:, 1:1 + 2 * n1:2], out[:, 2:2 + 2 * n1:2]
-        slope_items = (plus - minus) / 2.0                                   # [items, directions], per s at a = 1
+        slope_items = config_slopes(p)
         slopes = slope_items.mean(0)
-        small = {}
-        extra = p["alphas"][n1:]
-        for e_i, (j, al) in enumerate(extra):
+        small, ctrl_small = {}, {}
+        for e_i, (j, al) in enumerate(p["alphas"][n1:]):
             c0 = 1 + 2 * n1 + 2 * e_i
-            small.setdefault(str(fam[j]) if fam[j] in ("gold_diffmeans", "gold_probe") else f"{fam[j]}#{j}", {})[f"{al:g}"] = \
-                float(((out[:, c0] - out[:, c0 + 1]) / (2 * al)).mean())
-        ctrl_small = {}
-        for name_, d_ in small.items():
-            if "#" in name_:
-                for al_, v_ in d_.items():
-                    ctrl_small.setdefault(name_.split("#")[0], {}).setdefault(al_, []).append(v_)
-        small_real = {k_: v_ for k_, v_ in small.items() if "#" not in k_}
+            v_ = float(((out[:, c0] - out[:, c0 + 1]) / (2 * al)).mean())
+            if fam[j] in ("gold_diffmeans", "gold_probe"):
+                small.setdefault(str(fam[j]), {})[f"{al:g}"] = v_
+            else:
+                ctrl_small.setdefault(str(fam[j]), {}).setdefault(f"{al:g}", []).append(v_)
         for k_, fam_c in (("gold_diffmeans", "within_string_diffmeans"), ("gold_probe", "within_string_probe")):
-            if k_ in small_real and fam_c in ctrl_small:
-                small_real[k_] = {al_: {"slope_per_s": v_, "signed_rank_among_first_controls": int(1 + (np.array(ctrl_small[fam_c][al_]) > v_).sum()),
-                                        "n_controls": len(ctrl_small[fam_c][al_])} for al_, v_ in small_real[k_].items()}
-        tm_items = tm[p["idx"]] if p["full"] else None
-        s = summarise(fam, slopes, p["own_sd"], p["gap_s"], small_real, tm_items, slope_items)
-        s.update(split=p["split"], layer=p["layer"], n_items=int(len(p["idx"])), s_unit=p["s_unit"], probes_converged=p["conv"],
+            if k_ in small and fam_c in ctrl_small:
+                small[k_] = {al_: {"slope_per_s": v_, "signed_rank_among_first_controls": int(1 + (np.array(ctrl_small[fam_c][al_]) > v_).sum()),
+                                   "n_controls": len(ctrl_small[fam_c][al_])} for al_, v_ in small[k_].items()}
+        tm_items = tm[p["idx"]] if p["role"] != "other" else None
+        s = summarise(fam, slopes, p["own_sd"], p["gap_s"], small, tm_items, slope_items)
+        s.update(split=p["split"], layer=p["layer"], role=p["role"], n_items=int(len(p["idx"])), s_unit=p["s_unit"], fitting_notes=p["conv"],
                  fitting_half={0: "selection half (the original split)", 1: "report half (mirror image of the original split)"}.get(p["split"], "random half of the blocks"),
                  baseline_max_abs_diff_vs_cache=float(np.abs(out[:, 0] - ld0[p["idx"]]).max()))
         res["configs"].append(s)
-        raw.update({f"out_{p['split']}_{p['layer']}": p["out"], f"idx_{p['split']}_{p['layer']}": p["idx"], f"fam_{p['split']}_{p['layer']}": fam,
-                    f"own_sd_{p['split']}_{p['layer']}": p["own_sd"], f"alphas_{p['split']}_{p['layer']}": np.array(p["alphas"], np.float64)})
-        if p["split"] == 1 and p["layer"] == layer:
-            cf = {"gold_diffmeans": "within_string_diffmeans", "gold_probe": "within_string_probe"}[a.arm]
+        raw.update({f"out_{p['key']}": p["out"], f"idx_{p['key']}": p["idx"], f"fam_{p['key']}": fam,
+                    f"own_sd_{p['key']}": p["own_sd"], f"alphas_{p['key']}": np.array(p["alphas"], np.float64)})
+        if p["role"] == "primary":
+            cf = f"premise_balanced_{kind}"
             j = int(np.where(fam == a.arm)[0][0])
+            c = slopes[fam == cf]
+            pv = one_sided_p(slopes[j], c, sign)
             res["primary_test"] = {
-                "what": f"split 1 (fitted on the report half, steered on the selection half), layer {layer}, {a.arm} against {int((fam == cf).sum())} "
-                        f"{cf} controls, one-sided in the sign of the 20-control run ({sign:+.0f}), per unit of s",
-                "slope": float(slopes[j]), "p_one_sided": one_sided_p(slopes[j], slopes[fam == cf], sign), **{k_: v_ for k_, v_ in rank_stats(slopes[j], slopes[fam == cf]).items() if k_ != "slope"},
+                "what": f"split 1 (fitted on the report half, steered on the selection half), layer {layer}, {a.arm} against {len(c)} {cf} controls "
+                        f"(labellings with both balances of the gold label), one-sided in the sign of the 20-control run ({sign:+.0f}), per unit of s",
+                "slope": float(slopes[j]), "p_one_sided": pv, "threshold_for_the_most_extreme_of_24_comparisons": 0.05 / N_COMPARISONS,
+                "survives_the_correction_for_24_comparisons": bool(pv <= 0.05 / N_COMPARISONS),
+                "smallest_p_this_many_controls_can_give": 1 / (1 + len(c)),
+                **{k_: v_ for k_, v_ in rank_stats(slopes[j], c, p["own_sd"][j], p["own_sd"][fam == cf]).items() if k_ != "slope"},
+                "p_one_sided_vs_within_string_controls": one_sided_p(slopes[j], slopes[fam == f"within_string_{kind}"], sign),
+                "note": "The direction of this split is not an independent draw: the gold direction fitted on the two halves is nearly one vector. "
+                        "p <= 0.05 here means only that this direction's slope is reproducibly in the tail of its controls, which choosing the most "
+                        "extreme of 24 comparisons would produce by itself; the threshold for that choice is 0.05/24.",
                 "fixed_before_the_run": True}
-    # descriptive: the arm's direction across splits and layers
-    cf = {"gold_diffmeans": "within_string_diffmeans", "gold_probe": "within_string_probe"}[a.arm]
-    res["arm_across_splits_and_layers_descriptive"] = [
-        {"split": c["split"], "layer": c["layer"], "slope": c["real"][a.arm]["slope_per_s"],
-         "p_one_sided_vs_within_string": one_sided_p(c["real"][a.arm]["slope_per_s"],
-                                                     raw_slopes(raw, c["split"], c["layer"], cf), sign),
-         **{k_: c["real"][a.arm]["versus"][cf][k_] for k_ in ("n_controls", "z_vs_controls", "signed_rank_1_is_most_positive", "abs_rank_1_is_largest")}}
-        for c in res["configs"]]
+    cf = f"premise_balanced_{kind}"
+    res["arm_across_splits_and_layers_descriptive"] = []
+    for p, c in zip(plan, res["configs"]):
+        fam, slopes = p["fam"], config_slopes(p).mean(0)
+        e = {"split": c["split"], "layer": c["layer"], "role": c["role"], "slope": c["real"][a.arm]["slope_per_s"]}
+        for f in (cf, f"within_string_{kind}"):
+            if (fam == f).sum() > 1:
+                v = c["real"][a.arm]["versus"][f]
+                e[f] = {"p_one_sided": one_sided_p(e["slope"], slopes[fam == f], sign),
+                        **{k_: v[k_] for k_ in ("n_controls", "z_vs_controls", "signed_rank_1_is_most_positive", "abs_rank_1_is_largest", "abs_rank_per_natural_sd")}}
+        res["arm_across_splits_and_layers_descriptive"].append(e)
     res["minutes"] = round((time.time() - t0) / 60, 1)
     np.savez(raw_path, **raw)
     (RESULTS / f"steering_settle_{a.model}_{TAG}_hyp.json").write_text(json.dumps(res, indent=1))
@@ -362,21 +492,20 @@ def main():
     if "primary_test" in res:
         pt = res["primary_test"]
         print(f"PRIMARY TEST: {pt['what']}\n  slope {pt['slope']:+.3f}; controls mean {pt['control_mean']:+.3f}, SD {pt['control_sd']:.3f}, "
-              f"range {pt['control_min']:+.3f} to {pt['control_max']:+.3f}; one-sided p = {pt['p_one_sided']:.3f}")
-    for c in res["arm_across_splits_and_layers_descriptive"]:
-        print(f"  split {c['split']} layer {c['layer']}: {a.arm} slope {c['slope']:+.3f}, z {c['z_vs_controls']:+.2f}, signed rank {c['signed_rank_1_is_most_positive']}"
-              f"/{c['n_controls'] + 1}, one-sided p {c['p_one_sided_vs_within_string']:.3f}")
-    v = res["configs"][0]["real"][a.arm]["versus"]
-    ws_, wc_ = MATCH[a.arm]
-    if ws_ in v and wc_ in v:
-        print(f"  split 0: {a.arm} vs within-string controls z {v[ws_]['z_vs_controls']:+.2f} (n = {v[ws_]['n_controls']}); "
-              f"vs controls that keep adjacency z {v[wc_]['z_vs_controls']:+.2f} (n = {v[wc_]['n_controls']})")
-
-
-def raw_slopes(raw, k, l, family):
-    out, fam = raw[f"out_{k}_{l}"].astype(np.float64), raw[f"fam_{k}_{l}"]
-    n1 = len(fam)
-    return ((out[:, 1:1 + 2 * n1:2] - out[:, 2:2 + 2 * n1:2]) / 2.0).mean(0)[fam == family]
+              f"range {pt['control_min']:+.3f} to {pt['control_max']:+.3f}; one-sided p = {pt['p_one_sided']:.4f} "
+              f"(threshold {pt['threshold_for_the_most_extreme_of_24_comparisons']:.4f}: {'SURVIVES' if pt['survives_the_correction_for_24_comparisons'] else 'does not survive'}); "
+              f"against within-string controls p = {pt['p_one_sided_vs_within_string_controls']:.3f}")
+    for e in res["arm_across_splits_and_layers_descriptive"]:
+        v = e.get(cf)
+        if v:
+            print(f"  split {e['split']} layer {e['layer']} ({e['role']}): {a.arm} slope {e['slope']:+.3f}, vs {v['n_controls']} premise-balanced controls z {v['z_vs_controls']:+.2f}, "
+                  f"signed rank {v['signed_rank_1_is_most_positive']}/{v['n_controls'] + 1}, one-sided p {v['p_one_sided']:.3f}")
+    for c in res["configs"][:2]:
+        b_ = c["real"].get("gold_beyond_adjacency", {}).get("versus", {}).get("within_cell_residual")
+        w_ = c["real"]["gold_probe"]["versus"].get("within_cell_probe")
+        if b_:
+            print(f"  split {c['split']}: the label beyond adjacency (label minus its string-and-adjacency cell mean): slope {b_['slope']:+.3f}, z {b_['z_vs_controls']:+.2f} "
+                  f"against {b_['n_controls']} controls shuffled within cells" + (f"; gold probe against {w_['n_controls']} within-cell probes z {w_['z_vs_controls']:+.2f}" if w_ else ""))
 
 
 if __name__ == "__main__":

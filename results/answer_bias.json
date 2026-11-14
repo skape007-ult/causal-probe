@@ -1126,5 +1126,167 @@
    "best_threshold_in_sample": 2.7141170501708984,
    "reading": "informative (AUROC CI above 0.5)"
   }
+ },
+ "qwen7b-4bit": {
+  "c2c_test": {
+   "mode": "zero-shot",
+   "n": 1162,
+   "n_clusters": 21,
+   "frac_gold_yes": 0.1549053356282272,
+   "majority": 0.8450946643717728,
+   "yes_rate": 0.08003442340791739,
+   "mean_logit_diff": -15.915072912193207,
+   "accuracy": {
+    "est": 0.7857142857142857,
+    "lo": 0.7406990374165502,
+    "hi": 0.8388092020592021,
+    "n": 1162,
+    "n_groups": 21
+   },
+   "macro_f1": {
+    "est": 0.48325394741776995,
+    "lo": 0.459139709723186,
+    "hi": 0.5076674541713451,
+    "n": 1162,
+    "n_groups": 21
+   },
+   "auroc": {
+    "est": 0.580663045937995,
+    "lo": 0.5453885434601509,
+    "hi": 0.6110220334935779,
+    "n": 1162,
+    "n_groups": 21
+   },
+   "best_threshold_acc": {
+    "est": 0.8442340791738382,
+    "lo": 0.8015646719488463,
+    "hi": 0.896632562455104,
+    "n": 1162,
+    "n_groups": 21
+   },
+   "best_threshold_acc_in_sample": 0.8450946643717728,
+   "best_threshold_in_sample": 6.823848724365234,
+   "reading": "informative (AUROC CI above 0.5)"
+  },
+  "c2c_probe": {
+   "mode": "zero-shot",
+   "n": 2400,
+   "n_clusters": 300,
+   "frac_gold_yes": 0.5,
+   "majority": 0.5,
+   "yes_rate": 0.08541666666666667,
+   "mean_logit_diff": -15.35341969013214,
+   "accuracy": {
+    "est": 0.49625,
+    "lo": 0.4845833333333333,
+    "hi": 0.5083333333333333,
+    "n": 2400,
+    "n_groups": 300
+   },
+   "macro_f1": {
+    "est": 0.39169492502581255,
+    "lo": 0.3766675891249497,
+    "hi": 0.40749608326425324,
+    "n": 2400,
+    "n_groups": 300
+   },
+   "auroc": {
+    "est": 0.5944930555555555,
+    "lo": 0.5723109201388888,
+    "hi": 0.6175027256944444,
+    "n": 2400,
+    "n_groups": 300
+   },
+   "best_threshold_acc": {
+    "est": 0.6008333333333333,
+    "lo": 0.5816666666666667,
+    "hi": 0.6204166666666666,
+    "n": 2400,
+    "n_groups": 300
+   },
+   "best_threshold_acc_in_sample": 0.6045833333333334,
+   "best_threshold_in_sample": -20.527832984924316,
+   "reading": "informative (AUROC CI above 0.5)"
+  },
+  "c2c_debiased": {
+   "mode": "zero-shot",
+   "n": 2400,
+   "n_clusters": 1200,
+   "frac_gold_yes": 0.5,
+   "majority": 0.5,
+   "yes_rate": 0.07208333333333333,
+   "mean_logit_diff": -15.277235830624898,
+   "accuracy": {
+    "est": 0.50625,
+    "lo": 0.49582291666666667,
+    "hi": 0.5166666666666667,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "macro_f1": {
+    "est": 0.39557147717952906,
+    "lo": 0.3807717375036427,
+    "hi": 0.4108811039653148,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "auroc": {
+    "est": 0.5135472222222223,
+    "lo": 0.48987888888888886,
+    "hi": 0.5362512326388889,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "best_threshold_acc": {
+    "est": 0.5245833333333333,
+    "lo": 0.5054166666666666,
+    "hi": 0.5433437499999999,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "best_threshold_acc_in_sample": 0.53125,
+   "best_threshold_in_sample": -19.935157775878906,
+   "reading": "at chance (AUROC CI includes 0.5)"
+  },
+  "cladder": {
+   "mode": "zero-shot",
+   "n": 3000,
+   "n_clusters": 47,
+   "frac_gold_yes": 0.5,
+   "majority": 0.5,
+   "yes_rate": 0.489,
+   "mean_logit_diff": -0.6332202828725179,
+   "accuracy": {
+    "est": 0.5436666666666666,
+    "lo": 0.5203893898456795,
+    "hi": 0.5683095873535686,
+    "n": 3000,
+    "n_groups": 47
+   },
+   "macro_f1": {
+    "est": 0.5436114436513485,
+    "lo": 0.5201405701121175,
+    "hi": 0.5682298171863722,
+    "n": 3000,
+    "n_groups": 47
+   },
+   "auroc": {
+    "est": 0.5702888888888888,
+    "lo": 0.5405332816314031,
+    "hi": 0.6012419740329561,
+    "n": 3000,
+    "n_groups": 47
+   },
+   "best_threshold_acc": {
+    "est": 0.5336666666666666,
+    "lo": 0.5112728763046914,
+    "hi": 0.5549108598267607,
+    "n": 3000,
+    "n_groups": 47
+   },
+   "best_threshold_acc_in_sample": 0.5596666666666666,
+   "best_threshold_in_sample": -6.06251335144043,
+   "reading": "informative (AUROC CI above 0.5)"
+  }
  }
 }

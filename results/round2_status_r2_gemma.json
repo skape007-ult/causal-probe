@@ -1,0 +1,233 @@
+{
+ "stages": {
+  "data": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "ok  corr2cause/train.csv  causal-nlp/corr2cause@42ba12c7  md5 bee2c98caa50f69bee54318d35f0ace4",
+    "ok  corr2cause/dev.csv  causal-nlp/corr2cause@42ba12c7  md5 7a343e9d341b892a7a7b1b1bddd39aa9",
+    "ok  corr2cause/test.csv  causal-nlp/corr2cause@42ba12c7  md5 c318d19ddc585bb4310084e2ce2d241f",
+    "ok  cladder/full_v1.5_default.csv  causal-nlp/CLadder@18d684e4  md5 32815a3e44cbd32fa3db84972d750815"
+   ]
+  },
+  "environment": {
+   "ok": true,
+   "minutes": 0.3,
+   "detail": "ok",
+   "log_tail": [
+    "  15.6",
+    " ],",
+    " \"sae_lens\": \"6.55.4\",",
+    " \"peft\": \"0.21.2\",",
+    " \"bitsandbytes\": \"not available (ModuleNotFoundError)\",",
+    " \"accelerate\": \"1.15.0\",",
+    " \"git_commit\": \"08d99b1b0e971189160a2615cff3f7338d9222bb\"",
+    "}"
+   ]
+  },
+  "r2.gemma2b.cache": {
+   "ok": true,
+   "minutes": 15.0,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] gemma2b/c2c_debiased chunk 4/10 5.72 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 5/10 5.80 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 6/10 5.81 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 7/10 5.79 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 8/10 5.75 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 9/10 5.72 items/s",
+    "[cache] gemma2b/c2c_debiased chunk 10/10 5.69 items/s",
+    "done in 15.0 min"
+   ]
+  },
+  "r2.gemma2b.controls.c2c_debiased": {
+   "ok": true,
+   "minutes": 5.4,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]",
+    "Loading weights:   0%|          | 1/288 [00:01<09:06,  1.90s/it]",
+    "Loading weights:  78%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 225/288 [00:02<00:00, 153.54it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 288/288 [00:02<00:00, 119.07it/s]",
+    "[timing] projected 6.4 min for the remaining 145 items",
+    "gold_probe      slope +0.475/s | vs isotropic: percentile 0.96 | vs shuffled_probe: percentile 1.00, x2.4 its median",
+    "gold_diffmeans  slope -1.799/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 0.95, x2.1 its median",
+    "model_out       slope +1.890/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x9.4 its median"
+   ]
+  },
+  "r2.gemma2b.controls.c2c_probe": {
+   "ok": true,
+   "minutes": 5.4,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:   0%|          | 1/288 [00:01<08:02,  1.68s/it]",
+    "Loading weights:  66%|\u2588\u2588\u2588\u2588\u2588\u2588\u258c   | 190/288 [00:01<00:00, 146.67it/s]",
+    "Loading weights:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 286/288 [00:02<00:00, 146.55it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 288/288 [00:02<00:00, 117.37it/s]",
+    "[timing] projected 3.2 min for the remaining 145 items",
+    "gold_probe      slope +0.276/s | vs isotropic: percentile 0.67 | vs shuffled_probe: percentile 0.75, x2.1 its median",
+    "gold_diffmeans  slope +2.250/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 0.45, x1.0 its median",
+    "model_out       slope +1.832/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x13.7 its median"
+   ]
+  },
+  "r2.gemma2b.controls_hyp.c2c_debiased": {
+   "ok": true,
+   "minutes": 7.1,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]",
+    "Loading weights:   0%|          | 1/288 [00:01<08:16,  1.73s/it]",
+    "Loading weights:  67%|\u2588\u2588\u2588\u2588\u2588\u2588\u258b   | 192/288 [00:01<00:00, 144.46it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 288/288 [00:02<00:00, 118.56it/s]",
+    "[timing] projected 8.2 min for the remaining 145 items",
+    "gold_probe      slope -0.003/s | vs isotropic: percentile 0.19 | vs shuffled_probe: percentile 0.30, x0.4 its median",
+    "gold_diffmeans  slope +0.008/s | vs isotropic: percentile 0.66 | vs shuffled_diffmeans: percentile 0.70, x1.7 its median",
+    "model_out       slope +0.011/s | vs isotropic: percentile 0.81 | vs shuffled_probe: percentile 0.70, x1.8 its median"
+   ]
+  },
+  "r2.gemma2b.controls_hyp.c2c_probe": {
+   "ok": true,
+   "minutes": 7.1,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]",
+    "Loading weights:   0%|          | 1/288 [00:01<07:56,  1.66s/it]",
+    "Loading weights:  66%|\u2588\u2588\u2588\u2588\u2588\u2588\u258b   | 191/288 [00:01<00:00, 150.40it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 288/288 [00:02<00:00, 122.86it/s]",
+    "[timing] projected 3.9 min for the remaining 145 items",
+    "gold_probe      slope -0.136/s | vs isotropic: percentile 0.55 | vs shuffled_probe: percentile 0.80, x1.5 its median",
+    "gold_diffmeans  slope +0.938/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 0.85, x1.4 its median",
+    "model_out       slope +1.092/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x12.0 its median"
+   ]
+  },
+  "r2.gemma2b.adjacency.final.best": {
+   "ok": true,
+   "minutes": 14.7,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     -0.139 -0.083 +0.053 -0.345 -0.229",
+    "    non-parent -0.211 -0.116 +0.064 -0.406 -0.364",
+    "    non-child  -0.442 -0.111 +0.183 -0.418 -0.600",
+    "    has_collid -0.311 -0.087 +0.175 -0.318 -0.462",
+    "    has_confou -0.300 -0.052 +0.157 -0.228 -0.428",
+    "    off-diagonal contrast, target sign +0.0024 [-0.0030, +0.0075]; source sign +0.3100 [+0.3037, +0.3159]",
+    "  positive control (model-answer direction): slope +0.0561 per unit norm, larger in absolute value than 100% of shuffled-label probe directions"
+   ]
+  },
+  "r2.gemma2b.adjacency.content_end.best": {
+   "ok": true,
+   "minutes": 18.0,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     -0.001 +0.000 -0.001 +0.003 +0.000",
+    "    non-parent -0.000 -0.000 -0.001 +0.002 +0.001",
+    "    non-child  -0.001 +0.000 +0.002 +0.003 +0.001",
+    "    has_collid -0.000 +0.000 +0.000 -0.002 -0.000",
+    "    has_confou -0.001 +0.000 +0.001 -0.001 -0.001",
+    "    off-diagonal contrast, target sign +0.0002 [-0.0000, +0.0005]; source sign -0.0002 [-0.0004, -0.0000]",
+    "  positive control (model-answer direction): slope +0.0001 per unit norm, larger in absolute value than 70% of shuffled-label probe directions"
+   ]
+  },
+  "r2.gemma2b.adjacency.final.first50": {
+   "ok": true,
+   "minutes": 14.8,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.005 -0.001 +0.012 -0.006 -0.005",
+    "    non-parent +0.002 +0.001 +0.018 +0.001 +0.004",
+    "    non-child  +0.015 -0.002 -0.048 -0.037 -0.035",
+    "    has_collid -0.003 +0.012 +0.029 +0.025 +0.015",
+    "    has_confou -0.001 +0.012 +0.021 +0.022 +0.014",
+    "    off-diagonal contrast, target sign -0.0118 [-0.0135, -0.0103]; source sign +0.0080 [+0.0072, +0.0088]",
+    "  positive control (model-answer direction): slope +0.0092 per unit norm, larger in absolute value than 90% of shuffled-label probe directions"
+   ]
+  },
+  "r2.gemma2b.adjacency.content_end.first50": {
+   "ok": true,
+   "minutes": 18.7,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.000 -0.011 -0.003 +0.002 +0.007",
+    "    non-parent +0.003 -0.010 +0.016 +0.006 +0.018",
+    "    non-child  -0.001 -0.020 -0.003 -0.014 -0.006",
+    "    has_collid +0.009 -0.022 -0.012 -0.015 -0.009",
+    "    has_confou +0.005 -0.030 -0.012 -0.013 -0.009",
+    "    off-diagonal contrast, target sign +0.0004 [-0.0004, +0.0012]; source sign -0.0006 [-0.0012, -0.0000]",
+    "  positive control (model-answer direction): slope -0.0008 per unit norm, larger in absolute value than 15% of shuffled-label probe directions"
+   ]
+  },
+  "r2.gemma2b.patch_same": {
+   "ok": true,
+   "minutes": 11.8,
+   "detail": "ok",
+   "log_tail": [
+    "[prem] pair 0/60 334s",
+    "[prem] pair 10/60 395s",
+    "[prem] pair 20/60 477s",
+    "[prem] pair 30/60 538s",
+    "[prem] pair 40/60 599s",
+    "[prem] pair 50/60 653s",
+    "[prem] n=60 mean delta -0.218 frac>0 0.42; final-position recovery by layer: 0.00 0.00 0.00 0.00 0.00 0.00 0.01 0.09 0.68 0.90 0.91 0.93 0.97 1.00",
+    "done 11.7 min"
+   ]
+  }
+ },
+ "run": "r2_gemma",
+ "models": [
+  "gemma2b"
+ ],
+ "jobs": [
+  "cache",
+  "controls",
+  "controls_hyp",
+  "adjacency",
+  "patch_same",
+  "export"
+ ],
+ "tiny": false,
+ "planned": [
+  "data",
+  "environment",
+  "r2.gemma2b.cache",
+  "r2.gemma2b.controls.c2c_debiased",
+  "r2.gemma2b.controls.c2c_probe",
+  "r2.gemma2b.controls_hyp.c2c_debiased",
+  "r2.gemma2b.controls_hyp.c2c_probe",
+  "r2.gemma2b.adjacency.final.best",
+  "r2.gemma2b.adjacency.content_end.best",
+  "r2.gemma2b.adjacency.final.first50",
+  "r2.gemma2b.adjacency.content_end.first50",
+  "r2.gemma2b.patch_same"
+ ],
+ "options": {
+  "n_shuf": 20,
+  "sites": "all",
+  "control_tags": "c2c_debiased,c2c_probe",
+  "n_pairs": 60,
+  "no_resid": false
+ },
+ "total_minutes": 118.6,
+ "models_run": [
+  "gemma2b"
+ ],
+ "export": {
+  "positions": [
+   "final",
+   "content_end"
+  ],
+  "bytes_per_cache_dir": {
+   "gemma2b/c2c_debiased": 603437897,
+   "gemma2b/c2c_probe": 1273012
+  },
+  "zip_megabytes": {
+   "cache_r2_gemma_gemma2b.zip": 604.8
+  }
+ },
+ "all_ok": true,
+ "finished": true
+}

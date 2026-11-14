@@ -8,9 +8,13 @@
 | Qwen2.5-1.5B | hyp | label preserved | 60 | 31 / 29 | +0.409 [+0.087, +0.731] | 0.994 | 1.267 / 0.703 | 18 | 0.64 |
 | Qwen2.5-1.5B | prem | label changes (Yes → No) | 40 | – | -0.087 [-0.424, +0.269] | 1.055 | – | 18 | 0.64 |
 | Qwen2.5-1.5B | prem | label preserved | 60 | 31 / 29 | -0.022 [-0.258, +0.190] | 0.686 | 0.787 / 0.577 | 18 | 0.64 |
+| Gemma-2-2B | hyp | label changes (Yes → No) | 40 | – | -0.054 [-0.433, +0.392] | 1.208 | – | 16 | 0.62 |
+| Gemma-2-2B | hyp | label preserved | 60 | 31 / 29 | -0.298 [-0.655, +0.041] | 1.026 | 1.071 / 0.978 | 16 | 0.62 |
+| Gemma-2-2B | prem | label changes (Yes → No) | 40 | – | -0.062 [-0.346, +0.262] | 0.928 | – | 16 | 0.62 |
+| Gemma-2-2B | prem | label preserved | 60 | 31 / 29 | -0.218 [-0.460, +0.026] | 0.724 | 0.735 / 0.712 | 16 | 0.62 |
 | Qwen2.5-3B | hyp | label changes (Yes → No) | 60 | – | +0.673 [-0.022, +1.376] | 1.884 | – | 26 | 0.72 |
 | Qwen2.5-3B | hyp | label preserved | 60 | 31 / 29 | +1.003 [+0.149, +1.886] | 2.643 | 2.899 / 2.370 | 26 | 0.72 |
 | Qwen2.5-3B | prem | label changes (Yes → No) | 60 | – | +0.002 [-0.593, +0.580] | 1.875 | – | 26 | 0.72 |
 | Qwen2.5-3B | prem | label preserved | 60 | 31 / 29 | +0.379 [-0.376, +1.065] | 1.947 | 1.916 / 1.981 | 26 | 0.72 |
 
-<sub>Source: `results/patching_qwen0.5b_same.json`, `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b_same.json`, `results/patching_qwen1.5b.json`, `results/patching_qwen3b_same.json`, `results/patching_qwen3b.json`</sub><br><sub>Mean |D| here is not standardised by hypothesis template; the two kinds of pair have different template mixes. The comparison within template is in `results/patching_by_template_<model>.json` (report 4.2).</sub><br><sub>The label-changing pairs of Qwen2.5-1.5B (40) are from an earlier run on the laptop and are a different draw from the 60 of the other runs.</sub>
+<sub>Source: `results/patching_qwen0.5b_same.json`, `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b_same.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b_same.json`, `results/patching_gemma2b.json`, `results/patching_qwen3b_same.json`, `results/patching_qwen3b.json`</sub><br><sub>Mean |D| here is not standardised by hypothesis template; the two kinds of pair have different template mixes. The comparison within template is in `results/patching_by_template_<model>.json` (report 4.2).</sub><br><sub>The label-changing pairs of Qwen2.5-1.5B (40) are from an earlier run on the laptop and are a different draw from the 60 of the other runs.</sub>

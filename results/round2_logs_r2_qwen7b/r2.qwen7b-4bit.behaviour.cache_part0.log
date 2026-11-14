@@ -1,0 +1,35 @@
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:14<03:44, 74.84s/it]Fetching 4 files: 100%|██████████| 4/4 [01:14<00:00, 18.71s/it]
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:   0%|          | 1/339 [00:00<01:36,  3.50it/s]Loading weights:   1%|          | 2/339 [00:00<02:39,  2.11it/s]Loading weights:   1%|          | 4/339 [00:01<01:47,  3.11it/s]Loading weights:   2%|▏         | 6/339 [00:01<01:05,  5.06it/s]Loading weights:   5%|▌         | 17/339 [00:01<00:16, 19.68it/s]Loading weights:   8%|▊         | 28/339 [00:01<00:08, 34.72it/s]Loading weights:  12%|█▏        | 40/339 [00:01<00:06, 47.64it/s]Loading weights:  15%|█▌        | 52/339 [00:01<00:04, 57.87it/s]Loading weights:  19%|█▉        | 64/339 [00:02<00:04, 65.83it/s]Loading weights:  22%|██▏       | 76/339 [00:02<00:06, 38.63it/s]Loading weights:  24%|██▍       | 83/339 [00:03<00:13, 19.51it/s]Loading weights:  26%|██▌       | 88/339 [00:04<00:14, 17.67it/s]Loading weights:  27%|██▋       | 92/339 [00:04<00:13, 18.23it/s]Loading weights:  30%|██▉       | 101/339 [00:04<00:09, 24.24it/s]Loading weights:  33%|███▎      | 112/339 [00:04<00:06, 32.99it/s]Loading weights:  35%|███▌      | 120/339 [00:04<00:05, 39.55it/s]Loading weights:  37%|███▋      | 126/339 [00:04<00:05, 41.43it/s]Loading weights:  41%|████      | 138/339 [00:05<00:05, 35.13it/s]Loading weights:  42%|████▏     | 144/339 [00:05<00:05, 34.70it/s]Loading weights:  44%|████▍     | 149/339 [00:06<00:12, 15.35it/s]Loading weights:  45%|████▌     | 153/339 [00:06<00:14, 12.94it/s]Loading weights:  46%|████▌     | 156/339 [00:07<00:13, 13.52it/s]Loading weights:  47%|████▋     | 160/339 [00:07<00:15, 11.33it/s]Loading weights:  48%|████▊     | 162/339 [00:08<00:24,  7.14it/s]Loading weights:  51%|█████     | 173/339 [00:08<00:11, 13.99it/s]Loading weights:  52%|█████▏    | 177/339 [00:09<00:12, 12.51it/s]Loading weights:  53%|█████▎    | 180/339 [00:09<00:12, 12.89it/s]Loading weights:  55%|█████▍    | 185/339 [00:09<00:13, 11.41it/s]Loading weights:  55%|█████▌    | 187/339 [00:10<00:17,  8.67it/s]Loading weights:  56%|█████▌    | 190/339 [00:10<00:14, 10.38it/s]Loading weights:  57%|█████▋    | 192/339 [00:10<00:12, 11.38it/s]Loading weights:  58%|█████▊    | 196/339 [00:11<00:15,  9.43it/s]Loading weights:  58%|█████▊    | 198/339 [00:12<00:25,  5.47it/s]Loading weights:  60%|██████    | 204/339 [00:12<00:15,  8.84it/s]Loading weights:  61%|██████▏   | 208/339 [00:12<00:15,  8.73it/s]Loading weights:  62%|██████▏   | 210/339 [00:13<00:22,  5.83it/s]Loading weights:  63%|██████▎   | 214/339 [00:13<00:15,  8.15it/s]Loading weights:  64%|██████▎   | 216/339 [00:13<00:13,  9.19it/s]Loading weights:  65%|██████▍   | 220/339 [00:14<00:14,  8.35it/s]Loading weights:  65%|██████▌   | 222/339 [00:15<00:20,  5.66it/s]Loading weights:  67%|██████▋   | 228/339 [00:15<00:11,  9.77it/s]Loading weights:  68%|██████▊   | 232/339 [00:15<00:10, 10.43it/s]Loading weights:  69%|██████▉   | 235/339 [00:16<00:14,  7.28it/s]Loading weights:  72%|███████▏  | 245/339 [00:16<00:06, 14.13it/s]Loading weights:  76%|███████▌  | 256/339 [00:16<00:03, 22.36it/s]Loading weights:  77%|███████▋  | 261/339 [00:16<00:03, 25.18it/s]Loading weights:  80%|███████▉  | 270/339 [00:16<00:02, 32.52it/s]Loading weights:  83%|████████▎ | 280/339 [00:17<00:02, 27.93it/s]Loading weights:  84%|████████▍ | 285/339 [00:18<00:03, 14.03it/s]Loading weights:  85%|████████▌ | 289/339 [00:18<00:03, 15.02it/s]Loading weights:  86%|████████▌ | 292/339 [00:18<00:03, 15.45it/s]Loading weights:  87%|████████▋ | 295/339 [00:19<00:04, 10.58it/s]Loading weights:  88%|████████▊ | 300/339 [00:19<00:02, 13.28it/s]Loading weights:  90%|████████▉ | 304/339 [00:20<00:03, 11.23it/s]Loading weights:  90%|█████████ | 306/339 [00:20<00:04,  7.12it/s]Loading weights:  91%|█████████▏| 310/339 [00:21<00:03,  9.54it/s]Loading weights:  93%|█████████▎| 314/339 [00:21<00:02, 12.44it/s]Loading weights:  94%|█████████▎| 317/339 [00:22<00:03,  7.05it/s]Loading weights:  94%|█████████▍| 319/339 [00:22<00:03,  6.18it/s]Loading weights:  96%|█████████▌| 324/339 [00:22<00:01,  9.24it/s]Loading weights:  97%|█████████▋| 328/339 [00:22<00:01, 10.94it/s]Loading weights:  97%|█████████▋| 330/339 [00:23<00:01,  8.73it/s]Loading weights:  99%|█████████▉| 336/339 [00:23<00:00, 13.11it/s]Loading weights: 100%|██████████| 339/339 [00:23<00:00, 14.37it/s]
+[cache] qwen7b-4bit/c2c_debiased chunk 1/10 1.94 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 2/10 1.95 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 3/10 1.90 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 4/10 1.90 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 5/10 1.91 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 6/10 1.91 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 7/10 1.89 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 8/10 1.87 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 9/10 1.86 items/s
+[cache] qwen7b-4bit/c2c_debiased chunk 10/10 1.85 items/s
+[cache] qwen7b-4bit/c2c_test chunk 1/5 4.44 items/s
+[cache] qwen7b-4bit/c2c_test chunk 2/5 3.69 items/s
+[cache] qwen7b-4bit/c2c_test chunk 3/5 3.30 items/s
+[cache] qwen7b-4bit/c2c_test chunk 4/5 2.84 items/s
+[cache] qwen7b-4bit/c2c_test chunk 5/5 2.85 items/s
+[cache] qwen7b-4bit/cladder chunk 1/12 5.43 items/s
+[cache] qwen7b-4bit/cladder chunk 2/12 5.82 items/s
+[cache] qwen7b-4bit/cladder chunk 3/12 6.02 items/s
+[cache] qwen7b-4bit/cladder chunk 4/12 5.97 items/s
+[cache] qwen7b-4bit/cladder chunk 5/12 5.89 items/s
+[cache] qwen7b-4bit/cladder chunk 6/12 5.64 items/s
+[cache] qwen7b-4bit/cladder chunk 7/12 5.63 items/s
+[cache] qwen7b-4bit/cladder chunk 8/12 5.70 items/s
+[cache] qwen7b-4bit/cladder chunk 9/12 5.77 items/s
+[cache] qwen7b-4bit/cladder chunk 10/12 5.72 items/s
+[cache] qwen7b-4bit/cladder chunk 11/12 5.73 items/s
+[cache] qwen7b-4bit/cladder chunk 12/12 5.59 items/s
+[cache] qwen7b-4bit/c2c_probe chunk 1/10 1.67 items/s
+[cache] qwen7b-4bit/c2c_probe chunk 2/10 1.86 items/s
+[cache] qwen7b-4bit/c2c_probe chunk 3/10 1.88 items/s
+[cache] qwen7b-4bit/c2c_probe chunk 4/10 1.88 items/s
+[cache] qwen7b-4bit/c2c_probe chunk 5/10 1.85 items/s
+time budget reached; re-run to resume

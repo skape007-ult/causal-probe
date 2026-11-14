@@ -1,0 +1,23 @@
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:06<00:06,  6.30s/it]Fetching 2 files: 100%|██████████| 2/2 [00:31<00:00, 17.39s/it]Fetching 2 files: 100%|██████████| 2/2 [00:31<00:00, 15.72s/it]
+Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]Loading weights:   0%|          | 1/288 [00:01<07:43,  1.62s/it]Loading weights:  55%|█████▍    | 157/288 [00:01<00:01, 126.44it/s]Loading weights:  84%|████████▍ | 242/288 [00:02<00:00, 132.20it/s]Loading weights: 100%|██████████| 288/288 [00:02<00:00, 109.90it/s]
+[cache] gemma2b/c2c_probe chunk 1/10 6.55 items/s
+[cache] gemma2b/c2c_probe chunk 2/10 6.93 items/s
+[cache] gemma2b/c2c_probe chunk 3/10 6.54 items/s
+[cache] gemma2b/c2c_probe chunk 4/10 6.38 items/s
+[cache] gemma2b/c2c_probe chunk 5/10 6.16 items/s
+[cache] gemma2b/c2c_probe chunk 6/10 6.18 items/s
+[cache] gemma2b/c2c_probe chunk 7/10 5.91 items/s
+[cache] gemma2b/c2c_probe chunk 8/10 5.85 items/s
+[cache] gemma2b/c2c_probe chunk 9/10 5.90 items/s
+[cache] gemma2b/c2c_probe chunk 10/10 5.84 items/s
+[cache] gemma2b/c2c_debiased chunk 1/10 5.14 items/s
+[cache] gemma2b/c2c_debiased chunk 2/10 5.68 items/s
+[cache] gemma2b/c2c_debiased chunk 3/10 5.63 items/s
+[cache] gemma2b/c2c_debiased chunk 4/10 5.72 items/s
+[cache] gemma2b/c2c_debiased chunk 5/10 5.80 items/s
+[cache] gemma2b/c2c_debiased chunk 6/10 5.81 items/s
+[cache] gemma2b/c2c_debiased chunk 7/10 5.79 items/s
+[cache] gemma2b/c2c_debiased chunk 8/10 5.75 items/s
+[cache] gemma2b/c2c_debiased chunk 9/10 5.72 items/s
+[cache] gemma2b/c2c_debiased chunk 10/10 5.69 items/s
+done in 15.0 min

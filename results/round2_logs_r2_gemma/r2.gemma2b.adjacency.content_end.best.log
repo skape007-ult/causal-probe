@@ -1,0 +1,59 @@
+[   26s] [select] layer 1: C=0.01 0.592 C=0.1 0.623 C=1 0.638
+[   26s] [select] layer 2: C=0.01 0.674 C=0.1 0.690 C=1 0.679
+[   26s] [select] layer 3: C=0.01 0.688 C=0.1 0.715 C=1 0.721
+[   26s] [select] layer 4: C=0.01 0.696 C=0.1 0.726 C=1 0.726
+[   26s] [select] layer 5: C=0.01 0.729 C=0.1 0.771 C=1 0.773
+[   26s] [select] layer 6: C=0.01 0.744 C=0.1 0.799 C=1 0.808
+[   26s] [select] layer 7: C=0.01 0.817 C=0.1 0.845 C=1 0.841
+[   26s] [select] layer 8: C=0.01 0.909 C=0.1 0.923 C=1 0.914
+[   26s] [select] layer 9: C=0.01 0.900 C=0.1 0.916 C=1 0.908
+[   26s] [select] layer 10: C=0.01 0.908 C=0.1 0.928 C=1 0.922
+[   26s] [select] layer 11: C=0.01 0.929 C=0.1 0.943 C=1 0.941
+[   26s] [select] layer 12: C=0.01 0.927 C=0.1 0.947 C=1 0.946
+[   26s] [select] layer 13: C=0.01 0.931 C=0.1 0.945 C=1 0.943
+[   26s] [select] layer 14: C=0.01 0.948 C=0.1 0.962 C=1 0.960
+[   26s] [select] layer 15: C=0.01 0.956 C=0.1 0.964 C=1 0.963
+[   26s] [select] layer 16: C=0.01 0.961 C=0.1 0.972 C=1 0.971
+[   26s] [select] layer 17: C=0.01 0.959 C=0.1 0.972 C=1 0.973
+[   26s] [select] layer 18: C=0.01 0.959 C=0.1 0.973 C=1 0.973
+[   26s] [select] layer 19: C=0.01 0.953 C=0.1 0.971 C=1 0.974
+[   26s] [select] layer 20: C=0.01 0.945 C=0.1 0.967 C=1 0.969
+[   26s] [select] layer 21: C=0.01 0.941 C=0.1 0.963 C=1 0.967
+[   26s] [select] layer 22: C=0.01 0.939 C=0.1 0.963 C=1 0.967
+[   26s] [select] layer 23: C=0.01 0.932 C=0.1 0.956 C=1 0.959
+[   26s] [select] layer 24: C=0.01 0.927 C=0.1 0.951 C=1 0.953
+[   26s] [select] layer 25: C=0.01 0.926 C=0.1 0.947 C=1 0.948
+[   26s] [select] layer 26: C=0.01 0.926 C=0.1 0.947 C=1 0.949
+[   26s] site hyp_best: layer 19, C 1, selection-half AUROC 0.974
+[   34s] [leace] lambda 0.0001 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.029
+[   42s] [leace] lambda 0.001 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.030
+[   50s] [leace] lambda 0.01 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.029
+[   58s] [leace] lambda 0.1 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.029
+[   64s] adjacency AUROC of a fresh probe on the report half: 0.963 before, 0.483 after LEACE, 0.956 after removing the probe direction only
+[  128s] directions fitted (44 step directions, 21 translations, 21 erasers)
+Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]Loading weights:   0%|          | 1/288 [00:01<08:40,  1.81s/it]Loading weights:  74%|███████▍  | 213/288 [00:01<00:00, 155.00it/s]Loading weights: 100%|██████████| 288/288 [00:02<00:00, 123.55it/s]
+[  137s] self-check, shortcut vs full forward pass: max |difference| 0.0079 logits; unsteered vs cache 0.0225
+[  146s] [timing] 1.50 s/item (246 vectors) -> 12.3 min for the remaining 494 items; 52.6 min left of 55
+[  228s] 50/500
+[  314s] 100/500
+[  409s] 150/500
+[  498s] 200/500
+[  594s] 250/500
+[  682s] 300/500
+[  774s] 350/500
+[  865s] 400/500
+[  955s] 450/500
+[ 1047s] 500/500
+gemma2b/c2c_debiased hyp_best: layer 19/26; fresh-probe adjacency AUROC 0.963 -> 0.483 after erasure; self-check 0.0079
+  observational gap : parent -0.199[-0.29,-0.10] non-parent -0.069[-0.16,+0.03] non-child  +0.201[+0.06,+0.32] has_collid -0.488[-0.64,-0.33] has_confou -0.659[-0.93,-0.39]
+  translation effect: parent -0.001 non-parent -0.000 non-child  +0.002 has_collid -0.002 has_confou -0.001 | contrast +0.0012 (benchmark 0.386; controls below: 1.00)
+  probe across gap  : parent -0.0000 non-parent -0.0001 non-child  -0.0001 has_collid +0.0000 has_confou +0.0000 | contrast -0.0000
+  erasure, gap change: parent +0.001 non-parent -0.001 non-child  -0.001 has_collid +0.001 has_confou +0.001 | reduction contrast +0.0009 (full removal +0.401)
+  transfer (rows = item's template, columns = template the vector came from):
+    parent     -0.001 +0.000 -0.001 +0.003 +0.000
+    non-parent -0.000 -0.000 -0.001 +0.002 +0.001
+    non-child  -0.001 +0.000 +0.002 +0.003 +0.001
+    has_collid -0.000 +0.000 +0.000 -0.002 -0.000
+    has_confou -0.001 +0.000 +0.001 -0.001 -0.001
+    off-diagonal contrast, target sign +0.0002 [-0.0000, +0.0005]; source sign -0.0002 [-0.0004, -0.0000]
+  positive control (model-answer direction): slope +0.0001 per unit norm, larger in absolute value than 70% of shuffled-label probe directions

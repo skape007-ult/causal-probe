@@ -22,9 +22,12 @@ CACHE_DIR="${CAUSAL_PROBE_CACHE:-cache}"
 $PY scripts/download_data.py
 $PY scripts/14_benchmark_baselines.py                      # text-only baselines on the benchmarks
 for M in qwen0.5b qwen1.5b gemma2b qwen3b qwen7b-4bit gemma9b; do
-  if [ -e "$CACHE_DIR/$M/c2c_probe/meta.json" ]; then
+  if [ -e "$CACHE_DIR/$M/c2c_probe/resid.npy" ]; then
     echo "=== $M ==="
     nice ./scripts/run_tier1.sh "$M" "$J"                  # behaviour, lens, probes, confound (all cached item sets)
+  elif [ -e "$CACHE_DIR/$M/c2c_debiased/resid.npy" ]; then
+    echo "=== $M (activations for the debiased pool only) ==="
+    nice ./scripts/run_debiased.sh "$M" "$J"               # probes and the audited comparison on that pool; answers: 15_answer_bias.py below
   else
     echo "=== $M: no cache, skipped ==="
   fi

@@ -40,10 +40,20 @@ def num(x, d=3, signed=False):
     return f"{x:{'+' if signed else ''}.{d}f}"
 
 
+OTHER_DRAW = {"qwen3b"}     # models whose CLadder results are on the GPU machine's draw of the sample (decision D28)
+
+
+def ds_(m, tag):
+    """Dataset label; CLadder rows on the other draw of the sample carry a dagger."""
+    return DS[tag] + (" †" if m in OTHER_DRAW and tag.startswith("cladder") else "")
+
+
 def table(header, rows, sources):
     lines = ["| " + " | ".join(header) + " |", "|" + "|".join(["---"] * len(header)) + "|"]
     lines += ["| " + " | ".join(str(c) for c in r) + " |" for r in rows]
-    lines += ["", f"<sub>Source: {', '.join(f'`results/{s}`' for s in sources)}</sub>", ""]
+    dagger = any("†" in str(c) for r in rows for c in r)
+    lines += ["", f"<sub>Source: {', '.join(f'`results/{s}`' for s in sources)}</sub>"
+              + ("<br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>" if dagger else ""), ""]
     return "\n".join(lines)
 
 
@@ -62,7 +72,7 @@ def t_behaviour(models=MODELS):
         src.append(f"behaviour_{m}.json")
         for tag in ("c2c_test", "cladder"):
             z = r["zero_shot"][tag]; s = z["logit_scored"]
-            rows.append([LAB[m], DS[tag], z["n"], z["n_groups"], ci(s["accuracy"]), ci(s["macro_f1"]), ci(s["auroc_logit_diff"]),
+            rows.append([LAB[m], ds_(m, tag), z["n"], z["n_groups"], ci(s["accuracy"]), ci(s["macro_f1"]), ci(s["auroc_logit_diff"]),
                          num(s["frac_pred_yes"], 2), num(z["baselines"]["majority"]["accuracy"]),
                          num(z["baselines"]["majority"]["macro_f1"]), num(z["baselines"]["random"]["macro_f1"])])
     write("behaviour_zero_shot", table(
@@ -75,7 +85,7 @@ def t_behaviour(models=MODELS):
         if not r:
             continue
         for tag, f in r["few_shot"].items():
-            rows.append([LAB[m], DS[tag.removesuffix("_sub_fewshot")], f["n"], ci(f["zero_shot_same_items"]["accuracy"]),
+            rows.append([LAB[m], ds_(m, tag.removesuffix("_sub_fewshot")), f["n"], ci(f["zero_shot_same_items"]["accuracy"]),
                          ci(f["logit_scored"]["accuracy"]), ci(f["delta_accuracy_fewshot_minus_zeroshot"], signed=True),
                          ci(f["zero_shot_same_items"]["macro_f1"]), ci(f["logit_scored"]["macro_f1"]),
                          num(f["logit_scored"]["frac_pred_yes"], 2)])
@@ -134,7 +144,7 @@ def t_probes(models=MODELS, name="probes_summary"):
             src += [f"confound_{m}_{tag}.json", f"probes_{m}_{tag}_C{c['selected_C_gold']:g}.json"]
             L = c["selected_layer_gold"]; a = c["all_items"]
             lay = p["layers"]
-            rows.append([LAB[m], DS[tag], f"{L}/{p['n_layers_plus_embed'] - 1}", f"{c['selected_C_gold']:g}",
+            rows.append([LAB[m], ds_(m, tag), f"{L}/{p['n_layers_plus_embed'] - 1}", f"{c['selected_C_gold']:g}",
                          ci(a["gold_probe"]["accuracy"]), ci(a["tfidf"]["accuracy"]), ci(a["type_prior"]["accuracy"]),
                          ci(a.get("random_init_probe", {}).get("accuracy")),
                          num(lay["shuffled"][L]["accuracy"]["est"]), num(lay["control"][L]["accuracy"]["est"]),
@@ -158,10 +168,10 @@ def t_confound(models=MODELS, suffix="", name="confound"):
             for label, root in (("raw", c), ("calibrated", c["calibrated"])):
                 w = root["model_wrong"]
                 if "gold_probe" not in w:
-                    rows.append([LAB[m], DS[tag], label, w["n"]] + ["–"] * 10)
+                    rows.append([LAB[m], ds_(m, tag), label, w["n"]] + ["–"] * 10)
                     continue
                 v = c["verdict"] if label == "raw" else c["verdict"]["calibrated"]
-                rows.append([LAB[m], DS[tag], label, w["n"], num(w.get("frac_gold_yes"), 2),
+                rows.append([LAB[m], ds_(m, tag), label, w["n"], num(w.get("frac_gold_yes"), 2),
                              ci(w["gold_probe"].get("balanced_accuracy")),
                              ci(w["gold_probe"]["accuracy"]), ci(w["tfidf"]["accuracy"]),
                              ci(w["type_prior"]["accuracy"]), ci(w["gold_probe_minus_tfidf"]["accuracy"], signed=True),
@@ -173,7 +183,7 @@ def t_confound(models=MODELS, suffix="", name="confound"):
                     b = root[sname]
                     if "gold_probe" not in b:
                         continue
-                    rows2.append([LAB[m], DS[tag], label, sname.replace("model_said_", "said "), b["n"], ci(b["gold_probe"]["auroc"]),
+                    rows2.append([LAB[m], ds_(m, tag), label, sname.replace("model_said_", "said "), b["n"], ci(b["gold_probe"]["auroc"]),
                                   ci(b["tfidf"]["auroc"]), ci(b["type_prior"]["auroc"]), ci(b["model_logit_diff"]["auroc"]),
                                   ci(b["gold_probe_minus_tfidf"]["auroc"], signed=True),
                                   ci(b.get("structural", {}).get("auroc")),
@@ -196,13 +206,13 @@ def t_audited(models=MODELS):
             src.append(f"confound_{m}_{tag}.json")
             v = c["verdict"]["audited"]; a = c["all_items"]; tb = c["text_baselines_all_items"]
             st = v["calibrated_strata_probe_minus_best_text_auroc"]
-            rows.append([LAB[m], DS[tag], ci(a["gold_probe"]["accuracy"]), v["best_text_baseline"].replace("_", " "),
+            rows.append([LAB[m], ds_(m, tag), ci(a["gold_probe"]["accuracy"]), v["best_text_baseline"].replace("_", " "),
                          ci(a["best_text"]["accuracy"]), ci(v["all_items_probe_minus_best_text_accuracy"], signed=True),
                          ci(st.get("model_said_yes"), signed=True), ci(st.get("model_said_no"), signed=True),
                          "**yes**" if v["represents_beyond_best_text_baseline"] else "no",
                          "yes" if c["verdict"]["represents_but_doesnt_say"] else "no",
                          "yes" if v["raw_wrong_items_criterion_applicable"] else f"no ({v['raw_wrong_items_frac_gold_yes']:.0%} gold-Yes)"])
-            rows2.append([LAB[m], DS[tag], ci(a["gold_probe"]["accuracy"])] +
+            rows2.append([LAB[m], ds_(m, tag), ci(a["gold_probe"]["accuracy"])] +
                          [ci(a[k]["accuracy"]) if k in a else "–" for k in ("tfidf", "type_prior", "tfidf_query", "hyp_prior", "structural")] +
                          [ci(a.get("random_init_probe", {}).get("accuracy")), ci(a["model_logit_diff"]["accuracy"])])
     write("audited_verdict", table(
@@ -219,7 +229,7 @@ def t_audited(models=MODELS):
             if not c or "content_end" not in c.get("positions", {}):
                 continue
             a = c["all_items"]; ps = c["positions"]
-            rows.append([LAB[m], DS[tag], ci(a["gold_probe"]["accuracy"]), ci(ps["content_end"]["accuracy"]),
+            rows.append([LAB[m], ds_(m, tag), ci(a["gold_probe"]["accuracy"]), ci(ps["content_end"]["accuracy"]),
                          ci(ps["premise_end"]["accuracy"]), ci(ps["premise_end"]["final_minus_this_accuracy"], signed=True),
                          ci(ps["content_end"]["final_minus_this_accuracy"], signed=True),
                          ci(a.get("random_init_probe", {}).get("accuracy")), ci(ps["content_end"].get("random_init_accuracy")),
@@ -264,12 +274,12 @@ def t_steering():
             for d, lab in dnames:
                 x = r["directions"][d]
                 f4 = next(v for v in x["flip_rate"] if v["alpha"] == 4.0)
-                rows.append([LAB[m], DS[tag], site, lab, ci(x["slope_per_s_at_alpha_1"], signed=True),
+                rows.append([LAB[m], ds_(m, tag), site, lab, ci(x["slope_per_s_at_alpha_1"], signed=True),
                              num(x["frac_items_with_positive_slope_at_alpha_1"], 2), num(x["alpha_1_in_own_sd"], 1),
                              num(x["slope_per_own_sd_at_alpha_1"], 4, signed=True),
                              num(x["effect_of_natural_class_gap_on_logit_diff"], 4, signed=True),
                              num(x["auroc_gold_report_half"]), num(x["auroc_model_answer_report_half"])])
-                rows2.append([LAB[m], DS[tag], site, lab, ci(f4["plus"], 2), ci(f4["minus"], 2),
+                rows2.append([LAB[m], ds_(m, tag), site, lab, ci(f4["plus"], 2), ci(f4["minus"], 2),
                               ci(f4["controllability_toward_gold"], 2), ci(f4["controllability_away_from_gold"], 2),
                               num(x["ablation"]["mean_abs_delta_logit_diff"], 4), num(r["ablation_noise_floor_logit_diff"], 4),
                               "yes" if x["ablation"]["above_noise_floor"] else "no"])
@@ -280,7 +290,7 @@ def t_steering():
             src3.append(f"steering_controls_{m}_{tag}{hyp}.json")
             for d, lab in names:
                 x = c["real"][d]; mf = x["matched_control_family"]; fam = c["families"]
-                rows3.append([LAB[m], DS[tag], "end of hypothesis" if hyp else "final", c["layer"], lab, ci(x["slope_per_s"], signed=True),
+                rows3.append([LAB[m], ds_(m, tag), "end of hypothesis" if hyp else "final", c["layer"], lab, ci(x["slope_per_s"], signed=True),
                               f"{100 * x['versus']['isotropic']['percentile_of_abs_slope_per_s']:.0f}",
                               num(fam["isotropic"]["abs_slope_per_s"]["median"]), num(fam["isotropic"]["abs_slope_per_s"]["max"]),
                               mf.replace("_", "-label ", 1).replace("diffmeans", "difference of means"),
@@ -348,7 +358,7 @@ def t_cross_model():
     rows = []
     for m, row in r["models"].items():
         for tag, d in row["datasets"].items():
-            rows.append([LAB[m], row["params_billion"], DS[tag], num(d["model_accuracy"]), ci(d["gold_probe_accuracy"]),
+            rows.append([LAB[m], row["params_billion"], ds_(m, tag), num(d["model_accuracy"]), ci(d["gold_probe_accuracy"]),
                          ci(d.get("probe_minus_best_text_accuracy"), signed=True), ci(d.get("probe_minus_random_init_accuracy"), signed=True),
                          f"{d['selected_layer']}/{d['n_layers']} ({d['selected_layer_relative_depth']:.2f})",
                          num(d["first_layer_within_1pt_relative_depth"], 2), num(d["selectivity_at_selected_layer"], signed=True)])
@@ -422,7 +432,7 @@ def t_answer_bias():
     rows = []
     for m, tags in r.items():
         for tag, v in tags.items():
-            rows.append([LAB[m], DS[tag], v["mode"], v["n"], num(v["yes_rate"], 2), ci(v["accuracy"]), num(v["majority"]),
+            rows.append([LAB[m], ds_(m, tag), v["mode"], v["n"], num(v["yes_rate"], 2), ci(v["accuracy"]), num(v["majority"]),
                          ci(v["auroc"]), ci(v["best_threshold_acc"]), v["reading"]])
     write("answer_bias", table(
         ["Model", "Item set", "Prompt", "Items", "Yes-rate", "Accuracy", "Majority-class accuracy", "AUROC of Yes−No logit difference",

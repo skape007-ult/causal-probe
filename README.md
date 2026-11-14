@@ -60,12 +60,12 @@ Behaviour, separating bias from chance:
 | Qwen2.5-3B | Corr2Cause test | zero-shot | 1162 | 0.05 | 0.812 [0.768, 0.862] | 0.845 | 0.534 [0.493, 0.573] | 0.838 [0.794, 0.892] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-3B | Corr2Cause pool | zero-shot | 2400 | 0.05 | 0.509 [0.500, 0.519] | 0.500 | 0.581 [0.559, 0.603] | 0.593 [0.573, 0.613] | informative (AUROC CI above 0.5) |
 | Qwen2.5-3B | Corr2Cause debiased pool | zero-shot | 2400 | 0.04 | 0.495 [0.487, 0.503] | 0.500 | 0.507 [0.484, 0.530] | 0.506 [0.490, 0.524] | at chance (AUROC CI includes 0.5) |
-| Qwen2.5-3B | CLadder | zero-shot | 3000 | 0.50 | 0.526 [0.502, 0.548] | 0.500 | 0.543 [0.518, 0.568] | 0.507 [0.487, 0.528] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | CLadder † | zero-shot | 3000 | 0.50 | 0.526 [0.502, 0.548] | 0.500 | 0.543 [0.518, 0.568] | 0.507 [0.487, 0.528] | informative (AUROC CI above 0.5) |
 | Qwen2.5-3B | Corr2Cause test, variables renamed | zero-shot, variables renamed | 1162 | 0.04 | 0.822 [0.783, 0.868] | 0.845 | 0.512 [0.463, 0.553] | 0.844 [0.802, 0.896] | at chance (AUROC CI includes 0.5) |
 | Qwen2.5-3B | Corr2Cause test (500 items) | 4-shot | 500 | 0.46 | 0.556 [0.517, 0.596] | 0.840 | 0.538 [0.507, 0.569] | 0.838 [0.797, 0.890] | informative (AUROC CI above 0.5) |
-| Qwen2.5-3B | CLadder (500 items) | 4-shot | 500 | 0.56 | 0.560 [0.518, 0.602] | 0.500 | 0.564 [0.517, 0.608] | 0.510 [0.476, 0.543] | informative (AUROC CI above 0.5) |
+| Qwen2.5-3B | CLadder (500 items) † | 4-shot | 500 | 0.56 | 0.560 [0.518, 0.602] | 0.500 | 0.564 [0.517, 0.608] | 0.510 [0.476, 0.543] | informative (AUROC CI above 0.5) |
 
-<sub>Source: `results/answer_bias.json`</sub>
+<sub>Source: `results/answer_bias.json`</sub><br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>
 
 Probe versus strongest text-only baseline (report half; "Corr2Cause debiased pool" rows appear once those runs finish):
 
@@ -81,10 +81,10 @@ Probe versus strongest text-only baseline (report half; "Corr2Cause debiased poo
 | Gemma-2-2B | CLadder | 0.626 [0.590, 0.664] | structural | 0.800 [0.767, 0.839] | -0.174 [-0.220, -0.133] | -0.159 [-0.215, -0.100] | -0.237 [-0.297, -0.185] | no | yes | yes |
 | Gemma-2-2B | Corr2Cause debiased pool | 0.763 [0.739, 0.787] | structural | 0.816 [0.792, 0.837] | -0.053 [-0.081, -0.023] | -0.049 [-0.091, -0.010] | -0.076 [-0.103, -0.050] | no | yes | yes |
 | Qwen2.5-3B | Corr2Cause pool | 0.862 [0.843, 0.880] | structural | 0.919 [0.902, 0.935] | -0.057 [-0.077, -0.038] | -0.039 [-0.064, -0.015] | -0.018 [-0.032, -0.004] | no | no | no (96% gold-Yes) |
-| Qwen2.5-3B | CLadder | 0.628 [0.600, 0.654] | structural | 0.763 [0.733, 0.800] | -0.135 [-0.176, -0.096] | -0.225 [-0.277, -0.179] | -0.151 [-0.227, -0.087] | no | no | yes |
+| Qwen2.5-3B | CLadder † | 0.628 [0.600, 0.654] | structural | 0.763 [0.733, 0.800] | -0.135 [-0.176, -0.096] | -0.225 [-0.277, -0.179] | -0.151 [-0.227, -0.087] | no | no | yes |
 | Qwen2.5-3B | Corr2Cause debiased pool | 0.765 [0.743, 0.788] | structural | 0.816 [0.792, 0.837] | -0.050 [-0.079, -0.020] | -0.039 [-0.080, +0.000] | -0.074 [-0.103, -0.047] | no | yes | no (95% gold-Yes) |
 
-<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_probe.json`, `results/confound_qwen3b_cladder.json`, `results/confound_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/confound_qwen0.5b_c2c_probe.json`, `results/confound_qwen0.5b_cladder.json`, `results/confound_qwen0.5b_c2c_debiased.json`, `results/confound_qwen1.5b_c2c_probe.json`, `results/confound_qwen1.5b_cladder.json`, `results/confound_qwen1.5b_c2c_debiased.json`, `results/confound_gemma2b_c2c_probe.json`, `results/confound_gemma2b_cladder.json`, `results/confound_gemma2b_c2c_debiased.json`, `results/confound_qwen3b_c2c_probe.json`, `results/confound_qwen3b_cladder.json`, `results/confound_qwen3b_c2c_debiased.json`</sub><br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>
 
 What the text alone gives away on Corr2Cause (official splits):
 

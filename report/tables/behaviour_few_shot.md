@@ -7,6 +7,6 @@
 | Gemma-2-2B | Corr2Cause test | 500 | 0.604 [0.555, 0.656] | 0.486 [0.445, 0.526] | -0.118 [-0.186, -0.054] | 0.480 [0.434, 0.515] | 0.436 [0.391, 0.474] | 0.54 |
 | Gemma-2-2B | CLadder | 500 | 0.502 [0.465, 0.536] | 0.504 [0.458, 0.546] | +0.002 [-0.035, +0.042] | 0.490 [0.453, 0.525] | 0.443 [0.397, 0.486] | 0.83 |
 | Qwen2.5-3B | Corr2Cause test | 500 | 0.808 [0.767, 0.859] | 0.556 [0.517, 0.596] | -0.252 [-0.315, -0.200] | 0.502 [0.466, 0.542] | 0.479 [0.436, 0.517] | 0.46 |
-| Qwen2.5-3B | CLadder | 500 | 0.532 [0.496, 0.567] | 0.560 [0.518, 0.602] | +0.028 [-0.009, +0.065] | 0.532 [0.496, 0.567] | 0.559 [0.515, 0.600] | 0.56 |
+| Qwen2.5-3B | CLadder † | 500 | 0.532 [0.496, 0.567] | 0.560 [0.518, 0.602] | +0.028 [-0.009, +0.065] | 0.532 [0.496, 0.567] | 0.559 [0.515, 0.600] | 0.56 |
 
-<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub>
+<sub>Source: `results/behaviour_qwen0.5b.json`, `results/behaviour_qwen1.5b.json`, `results/behaviour_gemma2b.json`, `results/behaviour_qwen3b.json`</sub><br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>

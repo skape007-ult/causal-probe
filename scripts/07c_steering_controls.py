@@ -79,8 +79,22 @@ def main():
     add("model_out", steer.probe_direction(X[sel], mcal[sel], C))
     for _ in range(N_ISO):
         add("isotropic", rng.standard_normal(X.shape[1]))
+    # On the debiased pool the gold label is balanced within every hypothesis string; a shuffle over the whole
+    # pool is not, so its directions carry information about which hypothesis is asked (fifth audit, F8).
+    # There the labels are shuffled within hypothesis string. On the other item sets the shuffle is global, as before.
+    within = a.tag == "c2c_debiased"
+    strs_sel = np.array([i["query"] for i in items])[sel]
+
+    def shuffled(lab):
+        if not within:
+            return rng.permutation(lab)
+        out_ = lab.copy()
+        for s_ in np.unique(strs_sel):
+            m_ = np.where(strs_sel == s_)[0]
+            out_[m_] = lab[rng.permutation(m_)]
+        return out_
     for _ in range(N_SHUF):
-        ys = rng.permutation(y[sel])
+        ys = shuffled(y[sel])
         add("shuffled_probe", steer.probe_direction(X[sel], ys, C))
         add("shuffled_diffmeans", steer.diff_of_means(X[sel], ys))
     D = np.stack(D).astype(np.float32)
@@ -121,6 +135,7 @@ def main():
 
     res = {"model": a.model, "tag": a.tag, "position": a.position, "layer": int(layer), "layer_selection": how,
            "n_layers": int(resid.shape[1] - 1), "probe_C": C, "alpha": ALPHA, "s_unit": s_unit,
+           "control_labels_shuffled": "within hypothesis string" if within else "over the whole item set",
            "n_items": int(len(idx)), "baseline_max_abs_diff_vs_cache": float(np.abs(out[:, 0] - ld0[idx]).max()),
            "families": {}, "real": {}}
     for f in ("isotropic", "shuffled_probe", "shuffled_diffmeans"):

@@ -40,17 +40,19 @@ def main():
             z = np.load(f, allow_pickle=True)
             d = z[f"{kind}_ld_clean"] - z[f"{kind}_ld_cor"]
             grp = z[f"{kind}_groups"]
-            if f"{kind}_template" in z.files:
+            if f"{kind}_template" in z.files and f"{kind}_swap" in z.files:
                 tpl = np.array([str(t) for t in z[f"{kind}_template"]])
+                later = np.array([str(w)[1] > str(w)[0] for w in z[f"{kind}_swap"]])
             else:
                 pairs = rebuild(tok, kind, len(d), mode, json.loads(j.read_text())["max_vars"])
                 assert [p["group"] for p in pairs] == [str(g) for g in grp] or [str(p["group"]) for p in pairs] == [str(g) for g in grp], \
                     "rebuilt pair list does not match the saved run"
                 tpl = np.array([p["clean"]["template"] for p in pairs])
-            rows[mode] = (d, tpl, grp)
+                later = np.array([p["swap"][1] > p["swap"][0] for p in pairs])      # the letter is replaced by a LATER one
+            rows[mode] = (d, tpl, grp, later)
         if len(rows) < 2:
             continue
-        (dc, tc, gc), (ds, ts, gs) = rows["change"], rows["same"]
+        (dc, tc, gc, lc), (ds, ts, gs, ls) = rows["change"], rows["same"]
         tc, ts = np.array([str(t) for t in tc]), np.array([str(t) for t in ts])
         common = sorted(set(tc.tolist()) & set(ts.tolist()))
         res = {"templates_in_both_kinds": common, "by_template": {}}
@@ -84,6 +86,23 @@ def main():
         res["unstandardised"] = {"mean_abs_D_label_changing": float(np.abs(dc).mean()), "mean_abs_D_label_preserving": float(np.abs(ds).mean()),
                                  "mean_D_label_changing": stats.bootstrap_ci(lambda v: float(v.mean()), (dc,), gc, n_boot=1000),
                                  "mean_D_label_preserving": stats.bootstrap_ci(lambda v: float(v.mean()), (ds,), gs, n_boot=1000)}
+        # direction of the letter change (fifth audit, F6): label-preserving pairs are built with later-letter swaps only
+        def sd(d, m, grp):
+            return ({**stats.bootstrap_ci(lambda v: float(v.mean()), (d[m],), grp[m], n_boot=1000), "n_pairs": int(m.sum()),
+                     "share_positive": float((d[m] > 0).mean())} if m.any() else {"n_pairs": 0})
+        res["signed_D_by_direction_of_letter_change"] = {
+            "label_changing_later_letter": sd(dc, lc, gc), "label_changing_earlier_letter": sd(dc, ~lc, gc),
+            "label_preserving_later_letter": sd(ds, ls, gs), "label_preserving_earlier_letter": sd(ds, ~ls, gs),
+            "note": "D = answer logit of the original prompt minus that of the edited one. The label-preserving pair list keeps only "
+                    "edits in which the hypothesis letter is replaced by a later letter (patch.build_pairs counts each unordered pair once), "
+                    "so its mean D must be compared with the later-letter half of the label-changing pairs."}
+        if lc.any() and ls.any():
+            a_, b_ = dc[lc], ds[ls]
+            rng2 = np.random.default_rng(SEED + 1)
+            boots = [a_[rng2.integers(0, len(a_), len(a_))].mean() - b_[rng2.integers(0, len(b_), len(b_))].mean() for _ in range(2000)]
+            res["signed_D_by_direction_of_letter_change"]["label_changing_minus_label_preserving_later_letter"] = {
+                "est": float(a_.mean() - b_.mean()), "lo": float(np.quantile(boots, 0.025)), "hi": float(np.quantile(boots, 0.975)),
+                "note": "pairs resampled individually; the two sets share some premises"}
         out["kinds"][kind] = res
         s = res["standardised_over_common_templates"]
         print(f"{a.model} {kind}: within-template |D| label-changing {s['mean_abs_D_label_changing']['est']:.3f}, label-preserving "

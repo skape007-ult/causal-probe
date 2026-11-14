@@ -109,7 +109,7 @@ def residual_auroc(Xc_tr, t_tr, tm_tr, Xc_te, t_te, tm_te, C):
     return out
 
 
-def fit(X, sel, t, y, mcal, tm, strs, items, C, n_shuf, log):
+def fit(X, sel, t, y, mcal, tm, strs, items, C, n_shuf, log, ld=None):
     rng = np.random.default_rng(SEED + 311)
     rep = ~sel
     tm_idx = np.array([TEMPLATES.index(g) for g in tm])
@@ -187,6 +187,15 @@ def fit(X, sel, t, y, mcal, tm, strs, items, C, n_shuf, log):
     # class gap along the probe direction, per template (selection half), in activation units
     out["gap_probe"] = np.array([float((Xs[(tms == g) & (ts == 1)] @ out["probe"]).mean() - (Xs[(tms == g) & (ts == 0)] @ out["probe"]).mean())
                                  for g in TEMPLATES])
+    # the direction along which the within-string answer is linearly predictable at this site (ridge, selection half)
+    if ld is not None:
+        from sklearn.linear_model import Ridge
+        ldc = ld.astype(np.float64).copy()
+        for s_ in np.unique(strs):
+            m_ = strs == s_
+            ldc[m_] -= ld[sel & m_].mean()
+        coef = Ridge(alpha=1.0).fit(Xs, ldc[sel]).coef_
+        out["answer_dir"] = coef / (np.linalg.norm(coef) + 1e-12)
     out["auroc_probe_direction_by_template"] = [stats.auroc(t[rep & (tm == g)], Xc[rep & (tm == g)] @ out["probe"]) for g in TEMPLATES]
     out["auroc_dom_direction_by_template"] = [stats.auroc(t[rep & (tm == g)], Xc[rep & (tm == g)] @ out["delta"][gi]) for gi, g in enumerate(TEMPLATES)]
     return out
@@ -212,7 +221,16 @@ def item_vectors(F, i, t_i, n_shuf):
         return -dl[g] * float(W[g] @ x) / float(W[g] @ dl[g])
     erase = np.stack([er(F["delta"], F["W"])] + [er(dl, W) for dl, W in zip(F["shuf_delta"], F["shuf_W"])])
     xfer = sgn * F["delta"]                                              # [5, d]: every template's class-mean difference
-    V = np.concatenate([np.zeros((1, D.shape[1])), small, -small, large, -large, trans, erase, xfer]).astype(np.float32)
+    blocks = [np.zeros((1, D.shape[1])), small, -small, large, -large, trans, erase, xfer]
+    if "answer_dir" in F:
+        # (a) the translation split into its component along the answer-predictive direction and the remainder
+        u = F["answer_dir"]; along = (F["delta"][g] @ u) * u
+        blocks.append(np.stack([sgn * along, sgn * (F["delta"][g] - along)]))
+        # (b) fair control for the erasure, measured directly: the item's real coefficient, a shuffled-label direction, the real norm
+        c_i = float(F["W"][g] @ x) / float(F["W"][g] @ F["delta"][g])
+        nr = np.linalg.norm(F["delta"][g])
+        blocks.append(np.stack([-c_i * dl[g] * nr / (np.linalg.norm(dl[g]) + 1e-12) for dl in F["shuf_delta"]]))
+    V = np.concatenate(blocks).astype(np.float32)
     return V, np.linalg.norm(V, axis=1)
 
 
@@ -266,7 +284,7 @@ def within_string_gap(ld, t, strs):
     return float(np.mean(v)) if v else float("nan")
 
 
-def audit5_checks(z, X, sel, idx, t_all, tm_all, str_all, grp_all, ld_all, items, base, tr, tr_n, er, sgn, gm, G, Glo, Ghi, n_shuf):
+def audit5_checks(z, X, sel, idx, t_all, tm_all, str_all, grp_all, ld_all, items, base, tr, tr_n, er, sgn, gm, G, Glo, Ghi, n_shuf, er_fair_direct=None):
     """Readouts added after the fifth audit. (1) The erasure is the translation scaled by a per-item
     coefficient; its fair control keeps that coefficient and replaces the direction. (2) How well the
     eraser works on held-out items. (3) Gaps before and after, per template, with one definition
@@ -288,7 +306,11 @@ def audit5_checks(z, X, sel, idx, t_all, tm_all, str_all, grp_all, ld_all, items
     slope_ctrl = sgn[:, None] * (tr[:, 1:] - base[:, None]) * (tr_n[:, :1] / tr_n[:, 1:])   # effect of a control direction at the real norm
     pred = -c * slope_real
     obs = er[:, 0] - base
-    er_fair = base[:, None] - c[:, None] * slope_ctrl                     # answers after the fair control "erasures"
+    er_fair = base[:, None] - c[:, None] * slope_ctrl                     # answers after the fair control "erasures" (linear extrapolation)
+    out["fair_control_measured_directly"] = er_fair_direct is not None
+    if er_fair_direct is not None:
+        out["fair_control_direct_vs_extrapolated_r"] = float(np.corrcoef((er_fair_direct - base[:, None]).ravel(), (er_fair - base[:, None]).ravel())[0, 1])
+        er_fair = er_fair_direct
     out["erasure_is_translation"] = {
         "pearson_r_observed_vs_minus_coefficient_times_translation": float(np.corrcoef(obs, pred)[0, 1]),
         "regression_slope": float(np.polyfit(pred, obs, 1)[0]),
@@ -386,8 +408,9 @@ def analyse(a, z, meta, items, t_all, layer, layer_info, X=None, sel=None):
     n_shuf = int(z["n_shuf"]); n = 4 + 2 * n_shuf
     idx, out, norms = z["idx"], z["out"].astype(np.float64), z["norms"].astype(np.float64)
     K0 = 1 + 4 * n + 2 * (1 + n_shuf)
-    assert out.shape == norms.shape and out.shape[0] == len(idx) and out.shape[1] in (K0, K0 + len(TEMPLATES)), out.shape
-    has_xfer = out.shape[1] == K0 + len(TEMPLATES)
+    K1 = K0 + len(TEMPLATES); K2 = K1 + 2 + n_shuf
+    assert out.shape == norms.shape and out.shape[0] == len(idx) and out.shape[1] in (K0, K1, K2), out.shape
+    has_xfer = out.shape[1] >= K1; has_extra = out.shape[1] == K2
     assert len(idx) >= int(z["min_items"]), f"only {len(idx)} items in the raw file"
     y_all = np.array(meta["labels"]); ld_all = np.array(meta["logit_diff"])
     tm_all = np.array([i["template"] for i in items]); str_all = np.array([i["query"] for i in items])
@@ -403,7 +426,7 @@ def analyse(a, z, meta, items, t_all, layer, layer_info, X=None, sel=None):
     noise_small = np.abs((ps + ms_) / 2 - base[:, None])       # symmetric part: zero for a linear response
     tr = out[:, 1 + 4 * n: 1 + 4 * n + 1 + n_shuf]; tr_n = norms[:, 1 + 4 * n: 1 + 4 * n + 1 + n_shuf]
     er = out[:, 1 + 4 * n + 1 + n_shuf: K0]; er_n = norms[:, 1 + 4 * n + 1 + n_shuf: K0]
-    xf = out[:, K0:]; xf_n = norms[:, K0:]
+    xf = out[:, K0:K1]; xf_n = norms[:, K0:K1]
     sgn = np.where(t == 0, 1.0, -1.0)
     iP, iD, iG, iM = 0, 1, 2, 3
     cP = np.arange(4, 4 + n_shuf); cD = np.arange(4 + n_shuf, n)
@@ -566,7 +589,19 @@ def analyse(a, z, meta, items, t_all, layer, layer_info, X=None, sel=None):
                     "source-sign contrast."}
     # ---- 5. checks added after the fifth audit (notes/audit_round2_results_raw.md); they need the activations
     if X is not None:
-        res["audit5"] = audit5_checks(z, X, sel, idx, t_all, tm_all, str_all, grp_all, ld_all, items, base, tr, tr_n, er, sgn, gm, G, Glo, Ghi, n_shuf)
+        res["audit5"] = audit5_checks(z, X, sel, idx, t_all, tm_all, str_all, grp_all, ld_all, items, base, tr, tr_n, er, sgn, gm, G, Glo, Ghi, n_shuf,
+                                      er_fair_direct=out[:, K1 + 2:K2] if has_extra else None)
+    if has_extra:
+        e_al, e_re = sgn * (out[:, K1] - base), sgn * (out[:, K1 + 1] - base)
+        res["translation_split_by_answer_direction"] = {
+            "by_template": {g: {"along_answer_predictive_direction": ci(e_al, gm[gi]), "remainder": ci(e_re, gm[gi]),
+                                "whole_translation": ci(sgn * (tr[:, 0] - base), gm[gi]),
+                                "norm_over_s": {"along": float(norms[gm[gi], K1].mean() / float(z["s_unit"])),
+                                                "remainder": float(norms[gm[gi], K1 + 1].mean() / float(z["s_unit"]))}}
+                            for gi, g in enumerate(TEMPLATES)},
+            "note": "the class-mean difference split into its component along the direction from which the within-string answer is linearly "
+                    "predicted at this site (ridge, selection half) and the rest. If the class difference acts only as an answer shift, "
+                    "the effect sits in the first component; if adjacency information that is not yet answer-like is used, in the second."}
     res["minutes_gpu"] = float(z["minutes"])
     (RESULTS / f"adjacency_{a.model}_{a.tag}_{a.site}.json").write_text(json.dumps(res, indent=1))
 
@@ -657,7 +692,7 @@ def main():
     X = probes.layer_features(resid, layer, pi)
     mcal = (ld0[sel] > np.median(ld0[sel])).astype(int)
     mcal_full = np.zeros(len(X), int); mcal_full[sel] = mcal
-    F = fit(X, sel, t, y, mcal_full, tm, strs, items, C, a.n_shuf, log)
+    F = fit(X, sel, t, y, mcal_full, tm, strs, items, C, a.n_shuf, log, ld=ld0)
     log(f"directions fitted ({4 + 2 * a.n_shuf} step directions, {1 + a.n_shuf} translations, {1 + a.n_shuf} erasers)")
 
     rng = np.random.default_rng(SEED + 17)

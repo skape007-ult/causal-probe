@@ -113,6 +113,45 @@
      "n": 60,
      "n_groups": 50
     }
+   },
+   "signed_D_by_direction_of_letter_change": {
+    "label_changing_later_letter": {
+     "est": 0.14878583837438514,
+     "lo": 0.03537508078983852,
+     "hi": 0.26519978859415455,
+     "n": 27,
+     "n_groups": 25,
+     "n_pairs": 27,
+     "share_positive": 0.6666666666666666
+    },
+    "label_changing_earlier_letter": {
+     "est": -0.10603962522564513,
+     "lo": -0.19076146334409713,
+     "hi": -0.0220773996625628,
+     "n": 33,
+     "n_groups": 30,
+     "n_pairs": 33,
+     "share_positive": 0.36363636363636365
+    },
+    "label_preserving_later_letter": {
+     "est": 0.0836610476175944,
+     "lo": 0.013229008263976105,
+     "hi": 0.15689326260082587,
+     "n": 60,
+     "n_groups": 50,
+     "n_pairs": 60,
+     "share_positive": 0.6166666666666667
+    },
+    "label_preserving_earlier_letter": {
+     "n_pairs": 0
+    },
+    "note": "D = answer logit of the original prompt minus that of the edited one. The label-preserving pair list keeps only edits in which the hypothesis letter is replaced by a later letter (patch.build_pairs counts each unordered pair once), so its mean D must be compared with the later-letter half of the label-changing pairs.",
+    "label_changing_minus_label_preserving_later_letter": {
+     "est": 0.06512479075679074,
+     "lo": -0.07464467958167746,
+     "hi": 0.2027187096631085,
+     "note": "pairs resampled individually; the two sets share some premises"
+    }
    }
   },
   "prem": {
@@ -226,6 +265,45 @@
      "hi": 0.26844724437646694,
      "n": 60,
      "n_groups": 50
+    }
+   },
+   "signed_D_by_direction_of_letter_change": {
+    "label_changing_later_letter": {
+     "est": 0.2520460199426722,
+     "lo": 0.1807085396169306,
+     "hi": 0.33218729742642106,
+     "n": 27,
+     "n_groups": 25,
+     "n_pairs": 27,
+     "share_positive": 1.0
+    },
+    "label_changing_earlier_letter": {
+     "est": -0.16470388932661575,
+     "lo": -0.23792311780592973,
+     "hi": -0.08612382061058475,
+     "n": 33,
+     "n_groups": 30,
+     "n_pairs": 33,
+     "share_positive": 0.24242424242424243
+    },
+    "label_preserving_later_letter": {
+     "est": 0.22343956629435222,
+     "lo": 0.17349448574000392,
+     "hi": 0.26844724437646694,
+     "n": 60,
+     "n_groups": 50,
+     "n_pairs": 60,
+     "share_positive": 0.8833333333333333
+    },
+    "label_preserving_earlier_letter": {
+     "n_pairs": 0
+    },
+    "note": "D = answer logit of the original prompt minus that of the edited one. The label-preserving pair list keeps only edits in which the hypothesis letter is replaced by a later letter (patch.build_pairs counts each unordered pair once), so its mean D must be compared with the later-letter half of the label-changing pairs.",
+    "label_changing_minus_label_preserving_later_letter": {
+     "est": 0.028606453648319957,
+     "lo": -0.06112779113981459,
+     "hi": 0.12581739363846953,
+     "note": "pairs resampled individually; the two sets share some premises"
     }
    }
   }

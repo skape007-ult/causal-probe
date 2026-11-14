@@ -43,10 +43,10 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
          what="ONLY needed if notebook C was launched at commit 9fdec33 or earlier: the corrected adjacency test at four sites",
          est="1 to 1.5 hours"),
     dict(file="colab_r2_qwen1.5b.ipynb", platform="colab", run="r2_qwen15b", models="qwen1.5b",
-         jobs="cache,controls_hyp,adjacency,patch_same,export", fallback="", token=False,
+         jobs="cache,controls,controls_hyp,adjacency,patch_same,export", fallback="", token=False,
          title="Round 2 / C: Qwen2.5-1.5B interventions (Colab)",
-         what="steering controls at the end-of-hypothesis token, the adjacency causal test, label-preserving patching pairs "
-              "(this model's final-token controls already ran on the laptop)", est="1.5 to 3 hours"),
+         what="matched steering controls at both tokens (the debiased-pool controls shuffled within hypothesis string), the adjacency "
+              "test, label-preserving patching pairs", est="2 to 3 hours"),
 ]
 
 

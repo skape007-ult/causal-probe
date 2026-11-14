@@ -1,4 +1,4 @@
-| Model | Pair kind | Pairs | n | of which Yes/Yes, No/No | Mean D = LD(first) − LD(second) | Mean |D| | Mean |D|: Yes/Yes, No/No | First layer with ≥ 0.5 recovery at final token | …as relative depth |
+| Model | Pair kind | Pairs | n | of which Yes/Yes, No/No | Mean D = LD(original) − LD(edited) | Mean |D| | Mean |D|: Yes/Yes, No/No | First layer with ≥ 0.5 recovery at final token | …as relative depth |
 |---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | hyp | label changes (Yes → No) | 60 | – | +0.009 [-0.060, +0.078] | 0.253 | – | 15 | 0.62 |
 | Qwen2.5-0.5B | hyp | label preserved | 60 | 31 / 29 | +0.084 [+0.012, +0.156] | 0.233 | 0.219 / 0.249 | 16 | 0.67 |

@@ -545,7 +545,7 @@ def t_patching_same():
                              first if first is not None else "–", f"{first / r['layers'][-1]:.2f}" if first is not None else "–"])
     if rows:
         write("patching_label_preserving", table(
-            ["Model", "Pair kind", "Pairs", "n", "of which Yes/Yes, No/No", "Mean D = LD(first) − LD(second)", "Mean |D|",
+            ["Model", "Pair kind", "Pairs", "n", "of which Yes/Yes, No/No", "Mean D = LD(original) − LD(edited)", "Mean |D|",
              "Mean |D|: Yes/Yes, No/No", "First layer with ≥ 0.5 recovery at final token", "…as relative depth"], rows, src))
 
 

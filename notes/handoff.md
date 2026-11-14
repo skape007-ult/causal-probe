@@ -1,0 +1,21 @@
+# Handoff for the week after 15 November
+
+Started Sat 14 Nov; the sections "What is finished" and "What to verify yourself before using any of this in an application" are written at packaging on Sunday, when the last runs are in. This file is for the owner; nothing in it is a result that is not also in `results/` and the report.
+
+## Next phase (nothing of it is built)
+
+**Why there is a next phase at all.** The two largest models, Qwen2.5-7B (4-bit) and Gemma-2-9B, are the first whose answers follow validity inside a hypothesis string on the debiased pool (mean AUROC within string 0.549 and 0.542; the 9B figure is not yet audited as this is written). Ranked across all items at once both are at chance, and the effect is small: the valid item of a premise gets the higher answer logit in 53.6% and 52.6% of premises. These two results are the motivation for D1 (generated data, with a power calculation before every run) and for D3 (fine-tuning): they are the first sign of a model doing some of the task, and the present pool cannot carry an intervention on it (`notes/power_7b_option_b.md`: reviewed power about 0.2, and the tested direction is confounded with prompt length).
+
+**The first question to settle there.** The two models disagree by hypothesis type. The 7B model follows the label for the two indirect-causation types (0.673 and 0.649) and goes against it for direct causation (0.442). The 9B model follows it for direct causation (0.616) and common cause (0.634) and goes against it for indirect causation through an ancestor (0.437). Whether that difference is more than noise across hypothesis strings is being put to the audit of the 9B run; if it is, it is unexplained, and it is the first thing to settle on data where each type has enough items and prompts are balanced for length.
+
+**The three proposals, as costed on 14 November (the costing is in the chat of that day and in `notes/log.md`).**
+
+| | What | Work | GPU | Depends on |
+|---|---|---|---|---|
+| D1 | A generator that reproduces the Corr2Cause construction and is accepted only if it regenerates a sample of official items with exactly their labels; then a difficulty ladder (2 to 6 variables), a debiased pool at least ten times the present one (balanced within hypothesis template, balanced for prompt length inside cells of hypothesis and adjacency, no one-class cells, held out by graph), and minimal pairs that differ in causal structure only | 20 to 25 hours over 3 to 5 days | 25 to 35 hours | Nothing; the generator is CPU-only |
+| D2 | `scripts/kaggle_run.py`: push a notebook, poll, download, check STATUS.txt, ingest; two-session limit; never relaunch automatically | 2 to 3 hours and one supervised dry run | about 15 minutes | A Kaggle API token placed by the owner in `~/.kaggle/`; two things unverified against the current API (choosing T4 ×2, attaching a secret without the web editor) |
+| D3 | LoRA fine-tune a Qwen model on Corr2Cause until it does the task in distribution, then ask with the existing tools what it learned: the structure or the hypothesis-wording shortcut | 16 to 20 hours | 15 to 25 hours | The official training split has 205,734 items but only 2,338 premises, and the debiased pool uses 1,200 of them: those must be kept out of fine-tuning, and held-out premises are scarce until D1's generator exists |
+
+**Order I would take.** D3's first pass on official data and D1's generator in parallel (one needs the GPU, the other the CPU); D2 at the start, because D1 and D3 together are 15 to 25 runs. Then the 7B and 9B interventions and the fine-tuned model on D1's pool, each with a registered test and a power calculation reviewed before it runs.
+
+**Known risks, in one line each.** With two or three variables there are only 2 and 11 distinct graph classes, so "held out by graph" means little at the easy end. A text-only classifier improves with data on a deterministic synthetic task, so every "the probe adds x" must name its text model and have it tuned. The easy regime may not exist for models of this size. A fine-tuned model may simply have learned the wording shortcut, which the original paper's perturbation results already suggest. The 4-bit and two-GPU code paths have run once each.

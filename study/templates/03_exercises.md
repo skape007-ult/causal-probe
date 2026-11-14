@@ -111,4 +111,20 @@ The controls are {{steering_controls_qwen1.5b_c2c_probe.json|families/shuffled_p
 
 ---
 
-When you have done all five, write down which of your predictions were wrong and, in one line each, what you had assumed. Then read `study/04_exercise_answers.md`.
+## Exercise 6 (added 14 November). How many "beyond all controls" does chance give?
+
+**Setup.** On the debiased pool, a gold-label direction was compared with 20 matched control directions in 12 cases: three models (Qwen 0.5B, 1.5B, 3B), two token positions (final token, end of the hypothesis), two kinds of direction (probe weights, difference of class means). In each case the question is where the real direction's slope falls among the 21.
+
+**Question.** (a) If no gold direction differed from its controls, how many of the 12 would be expected to rank first? (b) How many did? (c) What is the probability of at least that many by chance? (d) The strongest of them is the difference of class means in Qwen 3B at the end of the hypothesis. Where does the same kind of direction rank at the final token of the same model? (e) In how many of the 12 comparisons across both pools is the slope of the gold difference of class means positive?
+
+**Your prediction:** (a) ____ ; (b) ____ ; (c) ____ ; (d) ____ ; (e) ____ ; because ____
+
+**Look it up.** File `results/steering_controls_multiplicity.json`. Key paths: `summary` → `debiased_pool` → `expected_rank_1_by_chance`, `n_rank_1_in_absolute_slope`, `p_at_least_this_many_rank_1`; `by_arm` → `qwen3b.c2c_debiased.final.gold_diffmeans` → `abs_rank_1_is_largest`; `summary` → `all` → `gold_diffmeans_slopes_positive`.
+
+```bash
+.venv/bin/python -c "import json; m=json.load(open('results/steering_controls_multiplicity.json')); d=m['summary']['debiased_pool']; print(d['expected_rank_1_by_chance'], d['n_rank_1_in_absolute_slope'], d['p_at_least_this_many_rank_1'], d['rank_1_arms']); print(m['by_arm']['qwen3b.c2c_debiased.final.gold_diffmeans']['abs_rank_1_is_largest'], m['summary']['all']['gold_diffmeans_slopes_positive'])"
+```
+
+---
+
+When you have done all six, write down which of your predictions were wrong and, in one line each, what you had assumed. Then read `study/04_exercise_answers.md`.

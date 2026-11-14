@@ -196,7 +196,21 @@ After that hour you should be able to say these five sentences from memory.
 
 *Self-test:* Explain to someone why the first summary of the adjacency test ("a sixth of the dependence, beyond all controls") was wrong, without looking. Then answer study questions 45 to 47.
 
+## Session 7 (added 14 November). One result that beats its controls: what is it worth?
+
+*Read:* report section 4.1 from "Qwen2.5-1.5B and Qwen2.5-3B at both tokens" to "Three cautions on the table"; section 4.4, points 10 to 14 and the transfer summary table; `notes/audit_round2_runs_raw.md`, the part headed "Q1" (it answers four questions in order: is it real, is it one arm among many, does it replicate, does it survive the shuffle); `notes/claim3_proposed_rewording.md`; `notes/log.md`, the three entries of Saturday 14 November. EXPLAINER primer entries "First among 20 controls, and how many times you looked" and "What a shuffled control keeps and what it destroys"; questions 44 to 46.
+
+*Ideas to come away with:*
+- "Beyond all 20 controls" is p = 1/21 for one comparison. Count the comparisons before reading any of them.
+- A result can be perfectly consistent across items and still be uncertain: here the uncertainty is in the draw of the direction, not in the items.
+- A shuffled control tests against whatever the shuffle destroys. Know what else it destroys besides the thing you care about.
+- More of the same control sharpens a percentile. An independent draw of the direction is a replication.
+- Write the test and the decision rule down before the run that could embarrass you.
+
+*Self-test:* Without looking, say how many first places among 12 comparisons chance gives, and what the probability of two or more is. Then do exercise 6, and answer study questions 49 to 52.
+
 ## Still to be added
 
-- Qwen 3B, Qwen 1.5B and Gemma 2B: matched steering controls, label-preserving pairs, the adjacency test
-- Qwen 7B behaviour
+- Gemma 2B: matched steering controls, label-preserving pairs, the adjacency test
+- Qwen 7B behaviour and its probe comparison on the debiased pool
+- The settle run for the Qwen 3B steering arm, if it is run

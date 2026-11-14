@@ -84,7 +84,7 @@ Read this only after you have written your predictions in `study/03_exercises.md
 
 **Result.** (a) The slope is negative: -0.346 [-0.357, -0.334] logits per unit of s. Pushing towards "valid" makes the model lean towards No. The share of items with a positive slope is 0%. (b) 80% of the control directions have a smaller absolute slope. The gold slope is 1.75 times the controls' median and 0.64 of their maximum. (c) Yes. Per natural standard deviation, 100% of the controls are smaller, and the gold direction is 5.51 times their median.
 
-**What it means.** Per unit of s, the gold direction moves the answer by an amount within the range of the control directions, which carry no label information. With twenty controls and one site, this neither shows nor excludes a causal role. The answer to (c) is the one case, out of four, in which the gold direction stands out, and it is on the original pool, where the gold label is confounded with the hypothesis sentence. On the debiased pool the same comparison gives 45% per unit of s and 50% per natural standard deviation for this model. Keep the scale in mind too: one unit of s is about 63 natural standard deviations along this direction. Moving an item across the whole natural gap between valid and invalid items would change the answer score by -0.009 logits.
+**What it means.** Per unit of s, the gold direction moves the answer by an amount within the range of the control directions, which carry no label information. With twenty controls and one site, this neither shows nor excludes a causal role. (Added after the eighth audit: for probe directions the comparison per natural standard deviation is not matched. The real probe's direction has a larger natural spread than probes fitted to shuffled labels whatever it does causally, so a high percentile in that unit can come from the spread alone. Read (c) as arithmetic, not as evidence.) The answer to (c) is the one case, out of four, in which the gold direction stands out, and it is on the original pool, where the gold label is confounded with the hypothesis sentence. On the debiased pool the same comparison gives 45% per unit of s and 50% per natural standard deviation for this model. Keep the scale in mind too: one unit of s is about 63 natural standard deviations along this direction. Moving an item across the whole natural gap between valid and invalid items would change the answer score by -0.009 logits.
 
 **The wrong intuitions.**
 
@@ -95,3 +95,21 @@ Read this only after you have written your predictions in `study/03_exercises.md
 **The lesson about method.** The author's first table showed pushes of one sign only, compared with three random directions, and concluded that the direction was "inert". Both signs, a control of the same kind, and two units were needed before any sentence about this experiment could be defended.
 
 **Where it is in the repository.** `report/report.md`, "4.1 Steering: what does adding a decodable direction do to the answer?", points 1 to 3 under "What the data show" and the list "What may and may not be concluded"; `notes/log.md`, "11:58 Expectations before the matched-control steering run" and "14:10 Matched-control steering runs"; `notes/audit_tier2_raw.md`, finding 1.
+
+---
+
+## Exercise 6. How many "beyond all controls" does chance give?
+
+**Result.** (a) 0.57: each comparison has 1 chance in 21, and there are 12. (b) 2. (c) 0.109. (d) Rank 5 of 21. (e) 12/12.
+
+**What it means.** Two first places where half of one is expected is not unusual (about one time in nine). Neither first place repeats in a neighbouring comparison. The one regularity that does repeat everywhere, the positive sign of the gold difference of class means, was noticed after looking and has a dull explanation: within a hypothesis string the gold label goes with adjacency, and the adjacency contrast of direct-causation questions pushes towards Yes in every model.
+
+**The wrong intuitions.**
+
+- *"It beat every control, so it is significant."* Against 20 controls the best possible result is p = 1/21. After 12 comparisons that is nothing.
+- *"It is the same for all 150 items and in every block, so it is solid."* That removes one source of uncertainty, the items. The direction was fitted once and the 20 controls were drawn once; that is where the uncertainty is, and it is about two standard deviations of the control family.
+- *"Then run more controls."* More controls on the same split sharpen one percentile of the same draw. A replication is a new draw of the direction: fit it on other data.
+
+**The lesson about method.** The author's first note on this result said it went "against the plain reading of claim 3" and reached for a run with 100 controls. An auditor given only code and numbers counted the comparisons, checked the neighbours, asked what the direction was, and showed the planned remedy would not have decided anything.
+
+**Where it is in the repository.** `report/report.md`, "4.1", from "End of the hypothesis, debiased pool: two first ranks"; `notes/audit_round2_runs_raw.md`, Q1; `notes/log.md`, Saturday 14 November; `notes/claim3_proposed_rewording.md`.

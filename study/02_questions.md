@@ -185,7 +185,7 @@ It can move in one direction only. A stronger text baseline makes "the activatio
 
 ---
 
-## Round 2 (added 13 November; Qwen 0.5B results, the larger models are added as their GPU runs return)
+## Round 2 (added 13 November; Qwen 0.5B results)
 
 These eight questions are at levels 3 and 4. Read report sections 4.1 (last paragraphs), 4.2 (label-preserving pairs), 4.4 and Appendix C first, and EXPLAINER questions 36 to 43.
 
@@ -213,7 +213,26 @@ A control whose result is fixed by its construction, whatever the truth is. Thre
 **48. What does the SAE tier show, and why does it bear so little weight?**
 In Gemma 2B the sparse features most associated with a type of causal graph are mostly not specific to it, and removing them shifts the answer somewhat more than removing three sets of matched random features in four of five cases. The dictionaries reconstruct most of each activation but leave 67% of what differs *between items* unexplained at block 12, three random sets are too few (one of them moves the answer more than any selected set), and the run used a different draw of the CLadder sample. Evidence: report Appendix C.
 
+## Round 2, the larger models (added 14 November)
+
+**49. In Qwen 3B a gold-label direction at the end of the hypothesis moves the answer more than all 20 of its controls. State the number, and then give four reasons not to call it a finding.**
+Slope +0.738 [+0.641, +0.832] logits per unit of s; the largest of 20 controls shuffled within hypothesis string is 0.595. (1) It is one of 12 such comparisons on the debiased pool; 0.57 first places are expected by chance, 2 were observed, and that or more happens with probability 0.109. (2) It is not first in any neighbouring comparison: rank 5 of 21 at the final token of the same model. (3) The direction has cosine 0.69 with the adjacency contrast of direct-causation items, and the within-string shuffle destroys the label's link to adjacency together with validity, so the comparison cannot tell the two apart. (4) Across the natural gap between valid and invalid items it is worth +0.023 logits, where the unsteered answer has mean -15.09.
+**Evidence:** `report/report.md`, "4.1", paragraphs from "End of the hypothesis, debiased pool: two first ranks"; `results/steering_controls_multiplicity.json`; `results/direction_geometry_qwen3b_c2c_debiased_hyp.json`; `notes/audit_round2_runs_raw.md`, Q1.
+
+**50. Why would a run with 100 controls not have settled it, and what would?**
+The first 20 of the 100 controls are the same shuffles, and the direction and the items are the same, so it refines one percentile of one draw. The smallest p it can give is 1/101; a correction for 12 comparisons needs about 0.004. What would: fit the direction on the other half of the blocks and steer items it has not seen (an independent draw); compare with controls shuffled within (hypothesis string, adjacent or not), which keep the label's link to adjacency; steer along the adjacency direction itself; look at the two neighbouring layers; and report the size at natural scale. One test, one-sided, with its decision rule written down first.
+**Evidence:** `notes/audit_round2_runs_raw.md`, Q1 (f); `notes/log.md`, "Pre-registration of the settle run"; `scripts/07d_steering_settle.py` (docstring); EXPLAINER decision D33.
+
+**51. At the answer position of Qwen 3B the adjacency shift is beyond every control. Why is that not evidence that adjacency is "used"?**
+The contrast is +0.775 of a possible 1.375, and the controls range from -0.597 to +0.422. But at that site the within-question answer is a linear function of the activation (held-out R² 0.96), so adding the difference between two groups of activations reproduces the difference between their answers; that is arithmetic. And the shift taken from one hypothesis type pushes items of every type the same way: on the cells of the transfer table where "follows the item's type" and "follows the vector's type" predict opposite signs, the sign is the vector's. That is an answer shift, located; a variable that is read according to the question would follow the item.
+**Evidence:** `report/report.md`, "4.4", points 11 and 12; table `adjacency_transfer_summary.md`, columns "Target-sign contrast on those cells" and "Source-sign contrast on those cells".
+
+**52. The table has a column "percentile among matched controls, per natural SD". Why is it marked as not a matched comparison for probe directions?**
+A probe fitted to a label that can be decoded finds a direction along which the activations really differ; a probe fitted to shuffled labels finds a direction along which they hardly vary. So the natural spread along the real probe direction is larger (1.0 to 5.5 times in these runs) whatever the direction does causally, and multiplying each slope by its own spread favours the real one. The comparison per unit of norm is matched; the one per natural SD is not, for probe directions. For differences of class means the two families have similar spread and both columns can be read.
+**Evidence:** `notes/audit_round2_runs_raw.md`, F2; note ‡ under table `steering_controls.md`.
+
 ## Still to be added
 
-- Qwen 3B, Qwen 1.5B and Gemma 2B: matched steering controls, label-preserving pairs, the adjacency test
-- Qwen 7B behaviour
+- Gemma 2B: matched steering controls, label-preserving pairs, the adjacency test
+- Qwen 7B behaviour and its probe comparison on the debiased pool
+- The settle run for the Qwen 3B steering arm, if it is run

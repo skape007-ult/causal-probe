@@ -6,7 +6,7 @@ within template. The label-changing runs made before 13 Nov did not save the pai
 are recovered here by rebuilding the pair list exactly as scripts/08_patching.py does (same pool,
 seed and tokenizer filter; no model needed) and checking it against the saved premise ids.
 
-Writes results/patching_by_template_<model>.json.
+Writes results/patching_by_template_<model>.json (with --suffix _n240: the same for the runs on all available pairs).
 """
 import argparse
 import json
@@ -27,12 +27,14 @@ def rebuild(tok, kind, n_pairs, label_mode, max_vars=5):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True, choices=ALL_MODELS)
+    ap.add_argument("--suffix", default="", help="e.g. _n240: read patching_<model>_n240 and patching_<model>_same_n240 "
+                                                 "(the runs on all available pairs) and write patching_by_template_<model>_n240.json")
     a = ap.parse_args()
     tok = models.load_tokenizer(a.model)
     out = {"model": a.model, "kinds": {}}
     for kind in ("hyp", "prem"):
         rows = {}
-        for mode, suffix in (("change", ""), ("same", "_same")):
+        for mode, suffix in (("change", a.suffix), ("same", "_same" + a.suffix)):
             f = cache.CACHE / a.model / f"patching{suffix}.npz"
             j = RESULTS / f"patching_{a.model}{suffix}.json"
             if not (f.exists() and j.exists()):
@@ -108,7 +110,7 @@ def main():
         print(f"{a.model} {kind}: within-template |D| label-changing {s['mean_abs_D_label_changing']['est']:.3f}, label-preserving "
               f"{s['mean_abs_D_label_preserving']['est']:.3f}, difference {s['preserving_minus_changing']['est']:+.3f} "
               f"[{s['preserving_minus_changing']['lo']:+.3f}, {s['preserving_minus_changing']['hi']:+.3f}] over {common}")
-    (RESULTS / f"patching_by_template_{a.model}.json").write_text(json.dumps(out, indent=1))
+    (RESULTS / f"patching_by_template_{a.model}{a.suffix}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

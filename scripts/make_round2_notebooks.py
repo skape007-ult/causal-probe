@@ -114,6 +114,22 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
               "controls on the debiased pool and the adjacency test at the two best-layer sites, with 100 shuffled-label control "
               "directions instead of 20, so that a result near the edge of 20 controls can be placed among 100. Same sites as the "
               "20-control run", est="2.5 to 4.5 hours"),
+    # ---------------- after the eighth audit (Sat 14 Nov): what would decide the one steering arm that stood out
+    dict(file="kaggle_r3_settle_qwen3b.ipynb", platform="kaggle", run="r3s_qwen3b", models="qwen3b",
+         jobs="cache,settle,export", fallback="", token=False, extra="--settle-arm gold_diffmeans --no-resid",
+         title="Round 3 / H: Qwen2.5-3B, the steering arm that ranked first among 20 controls",
+         what="at the last token of the hypothesis on the debiased pool, layer 25: the gold difference of class means refitted on other "
+              "halves of the blocks and steered on the rest (primary test: the mirror image of the original split, one-sided, against "
+              "100 controls shuffled within hypothesis string); controls that keep the association of the label with adjacency; the "
+              "adjacency direction itself; two neighbouring layers; smaller steps. The original split is rerun with 100 controls, "
+              "so this run contains the 100-control answer for this arm", est="about 1.5 hours (17 minutes of cache, about 50 of steering)"),
+    dict(file="kaggle_r3_settle_qwen1.5b.ipynb", platform="kaggle", run="r3s_qwen15b", models="qwen1.5b",
+         jobs="cache,settle,export", fallback="", token=False, extra="--settle-arm gold_probe --no-resid",
+         title="Round 3 / H: Qwen2.5-1.5B, the steering arm that ranked first among 20 controls",
+         what="at the last token of the hypothesis on the debiased pool, layer 19: the gold probe direction (which had a negative slope, "
+              "larger in absolute value than all 20 controls) refitted on other halves of the blocks and steered on the rest (primary "
+              "test: the mirror image of the original split, one-sided in that sign, against 100 controls); controls that keep "
+              "adjacency; the adjacency direction; two neighbouring layers; smaller steps", est="about 1 hour"),
 ]
 
 

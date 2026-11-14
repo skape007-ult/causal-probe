@@ -15,7 +15,7 @@ from causal_probe import cache
 from causal_probe.config import RESULTS, ROOT
 
 
-def environment():
+def environment(out_name: str = "kaggle_environment.json"):
     import sklearn
     import torch
     import transformers
@@ -35,7 +35,7 @@ def environment():
         info["git_commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     except Exception:
         info["git_commit"] = None
-    (RESULTS / "kaggle_environment.json").write_text(json.dumps(info, indent=1))
+    (RESULTS / out_name).write_text(json.dumps(info, indent=1))
     print(json.dumps(info, indent=1))
 
 
@@ -68,6 +68,7 @@ def agreement(model: str):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--agreement", default=None)
+    ap.add_argument("--out", default="kaggle_environment.json", help="file name under results/ for the environment record")
     a = ap.parse_args()
     RESULTS.mkdir(parents=True, exist_ok=True)
-    agreement(a.agreement) if a.agreement else environment()
+    agreement(a.agreement) if a.agreement else environment(a.out)

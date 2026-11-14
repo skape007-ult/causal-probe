@@ -100,7 +100,7 @@ Read this only after you have written your predictions in `study/03_exercises.md
 
 ## Exercise 6. How many "beyond all controls" does chance give?
 
-**Result.** (a) 0.57: each comparison has 1 chance in 21, and there are 12. (b) 2. (c) 0.109. (d) Rank 5 of 21. (e) 12/12.
+**Result.** (a) 0.76: each comparison has 1 chance in 21, and there are 16. (b) 3. (c) 0.038. (d) Rank 5 of 21. (e) 15/16.
 
 **What it means.** Two first places where half of one is expected is not unusual (about one time in nine). Neither first place repeats in a neighbouring comparison. The one regularity that does repeat everywhere, the positive sign of the gold difference of class means, was noticed after looking and has a dull explanation: within a hypothesis string the gold label goes with adjacency, and the adjacency contrast of direct-causation questions pushes towards Yes in every model.
 

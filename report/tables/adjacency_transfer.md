@@ -40,6 +40,26 @@
 | Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | descendant | -0.096 | +0.014 | +0.009 | -0.000 | -0.016 | -0.013 |
 | Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | collider | -0.362 | -0.007 | +0.007 | +0.006 | +0.005 | +0.001 |
 | Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | confounder | -0.232 | +0.003 | +0.013 | +0.013 | +0.008 | +0.001 |
+| Gemma-2-2B | final token, best layer (16/26) | parent | -0.199 | -0.139 | -0.083 | +0.053 | -0.345 | -0.229 |
+| Gemma-2-2B | final token, best layer (16/26) | ancestor | -0.069 | -0.211 | -0.116 | +0.064 | -0.406 | -0.364 |
+| Gemma-2-2B | final token, best layer (16/26) | descendant | +0.201 | -0.442 | -0.111 | +0.183 | -0.418 | -0.600 |
+| Gemma-2-2B | final token, best layer (16/26) | collider | -0.488 | -0.311 | -0.087 | +0.175 | -0.318 | -0.462 |
+| Gemma-2-2B | final token, best layer (16/26) | confounder | -0.659 | -0.300 | -0.052 | +0.157 | -0.228 | -0.428 |
+| Gemma-2-2B | end of hypothesis, best layer (19/26) | parent | -0.199 | -0.001 | +0.000 | -0.001 | +0.003 | +0.000 |
+| Gemma-2-2B | end of hypothesis, best layer (19/26) | ancestor | -0.069 | -0.000 | -0.000 | -0.001 | +0.002 | +0.001 |
+| Gemma-2-2B | end of hypothesis, best layer (19/26) | descendant | +0.201 | -0.001 | +0.000 | +0.002 | +0.003 | +0.001 |
+| Gemma-2-2B | end of hypothesis, best layer (19/26) | collider | -0.488 | -0.000 | +0.000 | +0.000 | -0.002 | -0.000 |
+| Gemma-2-2B | end of hypothesis, best layer (19/26) | confounder | -0.659 | -0.001 | +0.000 | +0.001 | -0.001 | -0.001 |
+| Gemma-2-2B | final token, earlier layer (8/26) | parent | -0.199 | +0.005 | -0.001 | +0.012 | -0.006 | -0.005 |
+| Gemma-2-2B | final token, earlier layer (8/26) | ancestor | -0.069 | +0.002 | +0.001 | +0.018 | +0.001 | +0.004 |
+| Gemma-2-2B | final token, earlier layer (8/26) | descendant | +0.201 | +0.015 | -0.002 | -0.048 | -0.037 | -0.035 |
+| Gemma-2-2B | final token, earlier layer (8/26) | collider | -0.488 | -0.003 | +0.012 | +0.029 | +0.025 | +0.015 |
+| Gemma-2-2B | final token, earlier layer (8/26) | confounder | -0.659 | -0.001 | +0.012 | +0.021 | +0.022 | +0.014 |
+| Gemma-2-2B | end of hypothesis, earlier layer (5/26) | parent | -0.199 | +0.000 | -0.011 | -0.003 | +0.002 | +0.007 |
+| Gemma-2-2B | end of hypothesis, earlier layer (5/26) | ancestor | -0.069 | +0.003 | -0.010 | +0.016 | +0.006 | +0.018 |
+| Gemma-2-2B | end of hypothesis, earlier layer (5/26) | descendant | +0.201 | -0.001 | -0.020 | -0.003 | -0.014 | -0.006 |
+| Gemma-2-2B | end of hypothesis, earlier layer (5/26) | collider | -0.488 | +0.009 | -0.022 | -0.012 | -0.015 | -0.009 |
+| Gemma-2-2B | end of hypothesis, earlier layer (5/26) | confounder | -0.659 | +0.005 | -0.030 | -0.012 | -0.013 | -0.009 |
 | Qwen2.5-3B | final token, best layer (25/36) | parent | +0.899 | +0.386 | +0.224 | +0.150 | +0.184 | -0.032 |
 | Qwen2.5-3B | final token, best layer (25/36) | ancestor | +1.613 | +1.385 | +0.663 | +0.388 | +0.527 | -0.913 |
 | Qwen2.5-3B | final token, best layer (25/36) | descendant | +0.643 | +1.200 | +0.589 | +0.426 | +0.530 | -0.754 |
@@ -61,4 +81,4 @@
 | Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | collider | +0.210 | -0.029 | -0.037 | -0.005 | -0.006 | +0.035 |
 | Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | confounder | -2.344 | +0.013 | -0.015 | -0.013 | -0.028 | +0.002 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen3b_c2c_debiased_final_best.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen3b_c2c_debiased_final_first50.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_gemma2b_c2c_debiased_final_best.json`, `results/adjacency_gemma2b_c2c_debiased_hyp_best.json`, `results/adjacency_gemma2b_c2c_debiased_final_first50.json`, `results/adjacency_gemma2b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen3b_c2c_debiased_final_best.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen3b_c2c_debiased_final_first50.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_first50.json`</sub>

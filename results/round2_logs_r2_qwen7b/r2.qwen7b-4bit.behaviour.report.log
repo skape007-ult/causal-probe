@@ -1,0 +1,4 @@
+qwen7b-4bit c2c_test               yes 0.08 acc 0.786 (maj 0.845) auroc 0.581 [0.545,0.611] best-thr acc 0.844 -> informative (AUROC CI above 0.5)
+qwen7b-4bit c2c_probe              yes 0.09 acc 0.496 (maj 0.500) auroc 0.594 [0.572,0.618] best-thr acc 0.601 -> informative (AUROC CI above 0.5)
+qwen7b-4bit c2c_debiased           yes 0.07 acc 0.506 (maj 0.500) auroc 0.514 [0.490,0.536] best-thr acc 0.525 -> at chance (AUROC CI includes 0.5)
+qwen7b-4bit cladder                yes 0.49 acc 0.544 (maj 0.500) auroc 0.570 [0.541,0.601] best-thr acc 0.534 -> informative (AUROC CI above 0.5)

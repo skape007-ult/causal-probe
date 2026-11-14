@@ -128,6 +128,12 @@ def git_blob(commit: str, path: str) -> bytes | None:
     return r.stdout if r.returncode == 0 else None
 
 
+# Result files that cover every model at once. A run's checkout has the logits of its own models only, so its copy
+# would replace the complete file with a partial one (it did, for run r2_qwen7b on 14 Nov; restored from git).
+AGGREGATES = {"results/answer_bias.json": "scripts/15_answer_bias.py", "results/cross_model.json": "scripts/09_cross_model.py",
+              "results/steering_controls_multiplicity.json": "scripts/07e_steering_multiplicity.py"}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", default=None, help="round-2 run name (r2_qwen3b, r2_qwen7b, r2_gemma, r2_qwen15b); "
@@ -184,9 +190,17 @@ def main():
             older_pin = okc = anc("3c7b87d", got) and anc(got, "HEAD")
             if older_pin:
                 notes.append(f"run used an earlier round-2 pin ({got[:7]}); current pin is {str(commit)[:7]}")
-                print(f"  note: run used the earlier round-2 pin {got[:7]} (current: {str(commit)[:7]}); accepted. Its result JSONs come from an older "
-                      f"analysis: re-run the analysis steps listed in notes/kaggle_ingest.md. Its steering controls on the debiased pool (07c) "
-                      f"cannot be re-analysed into the within-string version; they need the follow-up run.")
+                if anc("bab7d1b", got):
+                    changed = subprocess.run(["git", "diff", "--name-only", got, "HEAD", "--", "src", "scripts/07c_steering_controls.py",
+                                              "scripts/17_adjacency_test.py", "scripts/08_patching.py", "scripts/02_behaviour.py"],
+                                             cwd=ROOT, capture_output=True, text=True).stdout.split()
+                    print(f"  note: run used the earlier round-2 pin {got[:7]} (current: {str(commit)[:7]}); accepted. That pin already has the "
+                          f"within-string controls and the complete adjacency analysis. Model and stage code changed since then: "
+                          f"{', '.join(changed) if changed else 'none'}.")
+                else:
+                    print(f"  note: run used the earlier round-2 pin {got[:7]} (current: {str(commit)[:7]}); accepted. Its result JSONs come from an older "
+                          f"analysis: re-run the analysis steps listed in notes/kaggle_ingest.md. Its steering controls on the debiased pool (07c) "
+                          f"cannot be re-analysed into the within-string version; they need the follow-up run.")
         print(f"  run used commit {got[:12] or '?'}; expected {str(commit)[:12]}  -> {'ok' if okc else 'MISMATCH'}")
         print(f"  torch {env.get('torch')}, transformers {env.get('transformers')}, GPU {env.get('gpus')}")
         if not okc:
@@ -315,13 +329,16 @@ def main():
     run_commit = ((env or {}).get("git_commit") or "") if env else ""
     if not re.fullmatch(r"[0-9a-f]{40}", run_commit or ""):
         run_commit = commit
-    new, skipped, conflicts = [], 0, []
+    new, skipped, conflicts, aggregates = [], 0, [], []
     for n in sorted(names):
         if n.endswith("/") or not n.startswith("results/"):
             continue
         if a.run and (n in ("results/kaggle_environment.json", "results/kaggle_run_status.json", "results/kaggle_ingest_report.json")
                       or n.startswith("results/kaggle_logs/")):
             continue                           # round-1 records; this run's own are round2_*_<run>
+        if n in AGGREGATES:
+            aggregates.append(n)               # one file over all models: the run's copy holds the run's models only
+            continue
         blob = R.read(n)
         # Compare with the commit the RUN used (not the current pin): the zip holds results/ as of that commit. Comparing
         # with a newer pin would take every file changed locally since for "changed by the run" and overwrite it with a
@@ -338,6 +355,8 @@ def main():
         dst.write_bytes(blob)
         new.append(n)
     print(f"  wrote {len(new)} files, skipped {skipped} unchanged")
+    for n in aggregates:
+        print(f"  not taken from the run: {n} (computed over all models; recompute it here with {AGGREGATES[n]})")
     for c in conflicts:
         print(f"  CONFLICT: {c} exists locally in a different version; the run's copy saved as {c}.kaggle (compare and keep the right one)")
     report.update(results_written=new, conflicts=conflicts)

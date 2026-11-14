@@ -1,0 +1,248 @@
+[   28s] [select] layer 1: C=0.01 0.597 C=0.1 0.599 C=1 0.575
+[   28s] [select] layer 2: C=0.01 0.623 C=0.1 0.615 C=1 0.598
+[   28s] [select] layer 3: C=0.01 0.616 C=0.1 0.614 C=1 0.602
+[   28s] [select] layer 4: C=0.01 0.636 C=0.1 0.637 C=1 0.617
+[   28s] [select] layer 5: C=0.01 0.650 C=0.1 0.667 C=1 0.666
+[   28s] [select] layer 6: C=0.01 0.636 C=0.1 0.658 C=1 0.670
+[   28s] [select] layer 7: C=0.01 0.638 C=0.1 0.663 C=1 0.688
+[   28s] [select] layer 8: C=0.01 0.675 C=0.1 0.729 C=1 0.745
+[   28s] [select] layer 9: C=0.01 0.696 C=0.1 0.757 C=1 0.778
+[   28s] [select] layer 10: C=0.01 0.668 C=0.1 0.751 C=1 0.774
+[   28s] [select] layer 11: C=0.01 0.756 C=0.1 0.820 C=1 0.842
+[   28s] [select] layer 12: C=0.01 0.766 C=0.1 0.813 C=1 0.825
+[   28s] [select] layer 13: C=0.01 0.766 C=0.1 0.812 C=1 0.823
+[   28s] [select] layer 14: C=0.01 0.849 C=0.1 0.885 C=1 0.889
+[   28s] [select] layer 15: C=0.01 0.866 C=0.1 0.888 C=1 0.888
+[   28s] [select] layer 16: C=0.01 0.906 C=0.1 0.930 C=1 0.932
+[   28s] [select] layer 17: C=0.01 0.898 C=0.1 0.923 C=1 0.929
+[   28s] [select] layer 18: C=0.01 0.886 C=0.1 0.910 C=1 0.917
+[   28s] [select] layer 19: C=0.01 0.879 C=0.1 0.900 C=1 0.906
+[   28s] [select] layer 20: C=0.01 0.874 C=0.1 0.896 C=1 0.904
+[   28s] [select] layer 21: C=0.01 0.874 C=0.1 0.899 C=1 0.906
+[   28s] [select] layer 22: C=0.01 0.870 C=0.1 0.895 C=1 0.902
+[   28s] [select] layer 23: C=0.01 0.869 C=0.1 0.894 C=1 0.899
+[   28s] [select] layer 24: C=0.01 0.868 C=0.1 0.895 C=1 0.902
+[   28s] [select] layer 25: C=0.01 0.869 C=0.1 0.892 C=1 0.896
+[   28s] [select] layer 26: C=0.01 0.877 C=0.1 0.900 C=1 0.904
+[   28s] site final_best: layer 16, C 1, selection-half AUROC 0.932
+[   39s] [leace] lambda 0.0001 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.028
+[   49s] [leace] lambda 0.001 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.030
+[   59s] [leace] lambda 0.01 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.030
+[   69s] [leace] lambda 0.1 x mean eigenvalue: held-out |AUROC - 0.5| after erasure 0.029
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[   79s] adjacency AUROC of a fresh probe on the report half: 0.939 before, 0.515 after LEACE, 0.937 after removing the probe direction only
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/kaggle/temp/venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 300 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=300).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[  151s] directions fitted (44 step directions, 21 translations, 21 erasers)
+Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]Loading weights:   0%|          | 1/288 [00:01<07:48,  1.63s/it]Loading weights:  67%|██████▋   | 193/288 [00:01<00:00, 155.21it/s]Loading weights: 100%|██████████| 288/288 [00:02<00:00, 126.27it/s]
+[  161s] self-check, shortcut vs full forward pass: max |difference| 0.0138 logits; unsteered vs cache 0.0273
+[  168s] [timing] 1.18 s/item (246 vectors) -> 9.7 min for the remaining 494 items; 52.2 min left of 55
+[  226s] 50/500
+[  292s] 100/500
+[  363s] 150/500
+[  429s] 200/500
+[  500s] 250/500
+[  566s] 300/500
+[  634s] 350/500
+[  702s] 400/500
+[  769s] 450/500
+[  837s] 500/500
+gemma2b/c2c_debiased final_best: layer 16/26; fresh-probe adjacency AUROC 0.939 -> 0.515 after erasure; self-check 0.0138
+  observational gap : parent -0.199[-0.29,-0.10] non-parent -0.069[-0.16,+0.03] non-child  +0.201[+0.06,+0.32] has_collid -0.488[-0.64,-0.33] has_confou -0.659[-0.93,-0.39]
+  translation effect: parent -0.139 non-parent -0.116 non-child  +0.183 has_collid -0.318 has_confou -0.428 | contrast +0.2672 (benchmark 0.386; controls below: 0.95)
+  probe across gap  : parent +0.0087 non-parent +0.0081 non-child  +0.0054 has_collid +0.0125 has_confou +0.0070 | contrast -0.0057
+  erasure, gap change: parent +0.113 non-parent +0.055 non-child  -0.146 has_collid +0.259 has_confou +0.372 | reduction contrast +0.2224 (full removal +0.401)
+  transfer (rows = item's template, columns = template the vector came from):
+    parent     -0.139 -0.083 +0.053 -0.345 -0.229
+    non-parent -0.211 -0.116 +0.064 -0.406 -0.364
+    non-child  -0.442 -0.111 +0.183 -0.418 -0.600
+    has_collid -0.311 -0.087 +0.175 -0.318 -0.462
+    has_confou -0.300 -0.052 +0.157 -0.228 -0.428
+    off-diagonal contrast, target sign +0.0024 [-0.0030, +0.0075]; source sign +0.3100 [+0.3037, +0.3159]
+  positive control (model-answer direction): slope +0.0561 per unit norm, larger in absolute value than 100% of shuffled-label probe directions

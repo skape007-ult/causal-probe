@@ -1,0 +1,16 @@
+Loading weights:   0%|          | 0/288 [00:00<?, ?it/s]Loading weights:   0%|          | 1/288 [00:01<06:20,  1.33s/it]Loading weights:  55%|█████▍    | 157/288 [00:01<00:00, 147.55it/s]Loading weights:  78%|███████▊  | 226/288 [00:01<00:00, 150.05it/s]Loading weights:  94%|█████████▍| 271/288 [00:02<00:00, 152.64it/s]Loading weights: 100%|██████████| 288/288 [00:02<00:00, 128.43it/s]
+[hyp] pair 0/60 23s
+[hyp] pair 10/60 74s
+[hyp] pair 20/60 139s
+[hyp] pair 30/60 187s
+[hyp] pair 40/60 236s
+[hyp] pair 50/60 280s
+[hyp] n=60 mean delta -0.298 frac>0 0.47; final-position recovery by layer: 0.00 0.00 -0.00 0.00 0.00 0.00 0.00 0.09 0.69 0.90 0.91 0.93 0.97 1.00
+[prem] pair 0/60 334s
+[prem] pair 10/60 395s
+[prem] pair 20/60 477s
+[prem] pair 30/60 538s
+[prem] pair 40/60 599s
+[prem] pair 50/60 653s
+[prem] n=60 mean delta -0.218 frac>0 0.42; final-position recovery by layer: 0.00 0.00 0.00 0.00 0.00 0.00 0.01 0.09 0.68 0.90 0.91 0.93 0.97 1.00
+done 11.7 min

@@ -1,0 +1,10 @@
+OK
+run: r2_qwen7b
+commit: 08d99b1b0e971189160a2615cff3f7338d9222bb
+platform: kaggle
+output directory: /kaggle/working/kaggle_out
+written: 2026-11-14T06:23:20Z
+archives:
+  results_r2_qwen7b.zip  1479202 bytes
+  cache_r2_qwen7b_qwen7b-4bit.zip  1001326833 bytes
+problems: none

@@ -1,0 +1,10 @@
+OK
+run: r2_gemma
+commit: 08d99b1b0e971189160a2615cff3f7338d9222bb
+platform: kaggle
+output directory: /kaggle/working/kaggle_out
+written: 2026-11-14T07:14:39Z
+archives:
+  results_r2_gemma.zip  1576722 bytes
+  cache_r2_gemma_gemma2b.zip  604821375 bytes
+problems: none

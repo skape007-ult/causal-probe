@@ -393,6 +393,16 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 
 **What it costs.** The tidy scope sentence ("models that cannot do the task") is gone. And I gave the user a wrong one-line answer to the one question they had asked to have answered first.
 
+### D36. Option B or C for the 7B model is decided by a power calculation with a threshold fixed first (Sat 14 Nov, 08:45; user's rule)
+
+**Context.** After D35 I sent three options for the 7B model: A (the standard interventions), B (A plus one pre-registered test of the label direction beyond adjacency), C (none). The user dropped A and fixed a rule before seeing any number: estimate the power of B's test for (a) an effect the size of the 7B answers' dependence on validity and (b) half that; have the calculation reviewed independently; power for (a) of at least 0.6 means build B, less means C, with the intervention moved to a next phase on generated data.
+
+**Decision.** The calculation is `scripts/18_power_option_b.py` and `notes/power_7b_option_b.md`. Under the literal reading of (a) (the tested direction carries the whole dependence, linearly up to the step of the test) the power is 1.00. I do not trust that reading: it implies a steering slope of 9.5 to 16.5 logits per unit step where the largest positive control at that token in the smaller models is 0.81, and in those models a shift at such a site carried 1 to 12% of a dependence that is certainly there. At that share the power is 0.14 to 0.44. Which reading the rule applies to is put to the independent review; I act on the review's answer, not on mine.
+
+**Alternatives.** *Report the 1.00 and build B:* it satisfies the rule as written and uses 4 to 5.5 GPU hours on a test whose realistic power I believe is under one half. *Quietly redefine (a) so that the answer is C:* then the rule would have been bent after the fact by the person it constrains. Hence the review.
+
+**What it costs.** An hour of the last full day on a calculation instead of the write-up, and possibly the only chance before the deadline to intervene on the one model that does some of the task.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.

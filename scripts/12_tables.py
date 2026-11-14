@@ -586,8 +586,11 @@ def STEER_NOTES():
 
 
 def t_settle():
-    """The held-out test of the two steering arms that ranked first of 21 (scripts/07d_steering_settle.py). The three outcomes
-    and what each is taken to mean were fixed before the run (notes/log.md, 14 Nov 01:40, 02:45 and 07:56)."""
+    """The held-out test of the two steering arms that ranked first of 21 (scripts/07d_steering_settle.py). The test, its
+    threshold and its three outcomes were fixed before any run (notes/log.md, 14 Nov 01:40 and 02:45). The sentence each
+    outcome is given in the write-up was recorded at 07:56, while the first run was in progress and before any of its output
+    existed (fifteenth review, F6). The figures in the notes (cosines, outcome frequencies) are the ninth and tenth audits',
+    typed here, not read from a result file; only those of models that have a row are printed."""
     rows, src = [], []
     for m in MODELS:
         r = load(f"steering_settle_{m}_c2c_debiased_hyp.json")
@@ -620,17 +623,22 @@ def t_settle():
                      "; ".join(cut) or "complete"])
     if not rows:
         return
+    have = [m_ for m_ in MODELS if (RESULTS / f"steering_settle_{m_}_c2c_debiased_hyp.json").exists() and m_ in ("qwen1.5b", "qwen3b")]
+    COS = {"qwen3b": "0.84", "qwen1.5b": "0.53"}
+    FREQ = {"qwen3b": "3% / 51% / 46% and 25% / 67% / 9%", "qwen1.5b": "2% / 26% / 72% and 48% / 44% / 8%"}
     notes = ["One test per model, fixed before the run: the direction that ranked first of 21 is refitted on the other half of the data, steered on 150 items it was not "
              "fitted on, and compared, one-sided in the sign it had before, with control directions of the same kind fitted to labellings that keep both balances of the "
              "gold label (half valid within every hypothesis string; one valid and one invalid item per premise). p = (1 + controls at least as extreme) / (controls + 1).",
-             "The refitted direction is not an independent draw (cosine 0.84 with the first one for Qwen2.5-3B, 0.53 for Qwen2.5-1.5B), so the slope coming out again shows nothing; the comparison with the controls is the test.",
-             "How often each outcome occurs, computed before the run for the arm as it was chosen (beyond all 500 / in between / p > 0.05). Nothing label-specific: "
-             "3% / 51% / 46% for Qwen2.5-3B and 2% / 26% / 72% for Qwen2.5-1.5B. A real effect of the size first observed: 25% / 67% / 9% and 48% / 44% / 8%. "
-             "**The outcome in between is evidence for neither account.** The first row of figures assumes a response to label-free directions that is the same in all directions; "
-             "with the unevenness the first run allows, 1 to 12% (`notes/audit_settle_code2_raw.md`).",
+             "The refitted direction is not an independent draw (cosine with the first one: " + "; ".join(f"{LAB[m_]} {COS[m_]}" for m_ in have) + "), so the slope coming out "
+             "again with the same sign shows nothing by itself; the comparison with the controls is the test. Accordingly 'p > 0.05' means that the slope does not stand out from "
+             "its controls. It does not mean that the slope failed to come out again, and it is evidence against an effect of the size first observed only, not against a smaller one.",
+             "How often each outcome occurs, computed before the run for the arm as it was chosen (beyond all 500 / in between / p > 0.05), with nothing label-specific and with a "
+             "real effect of the size first observed: " + "; ".join(f"{LAB[m_]} {FREQ[m_]}" for m_ in have) + ". **The outcome in between is evidence for neither account.** "
+             "The 'nothing label-specific' frequencies assume a response to label-free directions that is the same in all directions; with the unevenness the first run allows, "
+             "'beyond all 500' would occur in 1 to 12% of runs instead (`notes/audit_settle_code2_raw.md`).",
              "The threshold counts the 24 comparisons that existed when the two arms were chosen. Over all 32 comparisons now in the steering-controls table it would be 0.0016, "
              "below the smallest p that 500 controls can give (0.0020).",
-             "Second question (registered with its reading): the label with the adjacency direction projected out, against 100 controls from labels shuffled within "
+             "Second question (registered with its reading; by the rule it matters only if the primary test is passed, and is shown for completeness): the label with the adjacency direction projected out, against 100 controls from labels shuffled within "
              "(hypothesis string, adjacency) cells. 'Stands out' (p ≤ 0.05) means an effect beyond the one linear adjacency direction, not beyond graph structure; 'does not stand out' means nothing (little power).",
              "Added after the review of 14 Nov (`notes/audit_power_option_b_raw.md`, F1), before the Qwen2.5-3B run's output was seen: inside cells of hypothesis string and adjacency the label is "
              "correlated with prompt length, and the second question's direction loads on a prompt-length direction far more than its controls do. A 'stands out' there could be a response to "

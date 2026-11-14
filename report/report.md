@@ -1125,16 +1125,18 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | final token, best layer (15/24) | 500 | 0.876 | 0.434 | 0.873 | 0.872 to 0.877 | 0.79 to 0.96 | 0.60 to 0.74 | 0.099 | 0.031 to 0.049 | 0.006 | 0.05 | 0.39 |
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | 500 | 0.926 | 0.535 | 0.918 | 0.923 to 0.926 | 0.82 to 0.99 | 0.62 to 0.87 | 0.067 | 0.019 to 0.028 | 0.008 | 0.04 | 0.39 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | 500 | 0.764 | 0.421 | 0.743 | 0.761 to 0.764 | 0.71 to 0.85 | 0.56 to 0.70 | 0.094 | 0.035 to 0.061 | 0.010 | 0.05 | 0.39 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | 500 | 0.797 | 0.564 | 0.807 | 0.794 to 0.796 | 0.70 to 0.87 | 0.55 to 0.71 | 0.048 | 0.014 to 0.025 | 0.007 | 0.04 | 0.39 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
 
 | Model | Site (layer) | Templates in the contrast | Full-mediation benchmark (mean |observed gap|) | Translation: contrast | …as a share of the benchmark | …controls, same norm (range) | Controls smaller in absolute value (%) | …controls as fitted (range) | Probe direction across the gap: contrast | …controls (range) | Erasure: reduction of the dependence (contrast) | …what full removal would give on these items | …control erasures, same edit size (range) | Controls smaller in absolute value (%) | Positive control: model-answer direction, slope per unit norm (share of controls it exceeds) | Linearity check: small-step / large-step slope, class-mean difference |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | final token, best layer (15/24) | parent, descendant, collider, confounder | 0.112 | +0.110 [+0.109, +0.111] | 0.99 | -0.069 to +0.091 | 100 | -0.025 to +0.039 | -0.0002 [-0.0003, -0.0002] | -0.0007 to +0.0006 | +0.096 | +0.105 | -0.009 to +0.021 | 100 | +1.258 (100%) | 1.00 |
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | parent, descendant, collider, confounder | 0.112 | +0.013 [+0.012, +0.014] | 0.11 | -0.021 to +0.011 | 95 | -0.007 to +0.004 | -0.0007 [-0.0008, -0.0006] | -0.0012 to +0.0015 | +0.016 | +0.105 | -0.003 to +0.008 | 100 | +0.209 (100%) | 1.03 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | parent, descendant, collider, confounder | 0.112 | +0.000 [-0.001, +0.001] | 0.00 | -0.025 to +0.019 | 5 | -0.007 to +0.010 | +0.0000 [-0.0000, +0.0000] | -0.0001 to +0.0001 | -0.001 | +0.105 | -0.005 to +0.004 | 75 | +0.255 (95%) | 0.96 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent, descendant, collider, confounder | 0.112 | +0.004 [+0.004, +0.005] | 0.04 | -0.003 to +0.010 | 80 | -0.001 to +0.004 | +0.0000 [+0.0000, +0.0000] | -0.0001 to +0.0001 | +0.004 | +0.105 | -0.002 to +0.005 | 85 | +0.011 (35%) | 1.02 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
 
 | Model | Site (layer) | Template | Observed gap in the answer logit, adjacent − not adjacent | Predicted sign | Translation by the class-mean difference: effect towards Yes per move towards adjacent | …20 controls, same norm (range) | Controls smaller in absolute value (%) | Moving across the class gap along the probe direction | …20 controls, same distance (range) | Gap on evaluated items: before | …after erasure | Change in gap | …20 control erasures rescaled to the same edit size (range of change) | Controls smaller in absolute value (%) |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -1153,8 +1155,13 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | descendant | +0.055 [+0.024, +0.084] | + | +0.013 [+0.011, +0.015] | -0.039 to +0.064 | 35 | -0.0007 [-0.0007, -0.0007] | -0.0013 to +0.0011 | +0.041 | +0.034 | -0.007 [-0.013, -0.002] | -0.006 to +0.006 | 100 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | collider | -0.230 [-0.281, -0.177] | − | +0.020 [+0.016, +0.023] | -0.060 to +0.049 | 65 | -0.0006 [-0.0006, -0.0006] | -0.0016 to +0.0011 | -0.312 | -0.329 | -0.018 [-0.027, -0.009] | -0.019 to +0.013 | 95 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | confounder | -0.113 [-0.190, -0.033] | − | -0.004 [-0.006, -0.001] | -0.042 to +0.022 | 5 | -0.0007 [-0.0007, -0.0007] | -0.0016 to +0.0012 | +0.029 | +0.031 | +0.002 [-0.001, +0.005] | -0.005 to +0.006 | 65 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent | +0.050 [+0.005, +0.096] | + | +0.009 [+0.008, +0.011] | -0.014 to +0.016 | 45 | +0.0001 [+0.0001, +0.0001] | -0.0004 to +0.0006 | +0.097 | +0.088 | -0.009 [-0.011, -0.006] | -0.018 to +0.004 | 70 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | ancestor | -0.042 [-0.098, +0.015] | none | -0.010 [-0.011, -0.008] | -0.010 to +0.013 | 90 | +0.0001 [+0.0001, +0.0001] | -0.0004 to +0.0005 | -0.031 | -0.026 | +0.005 [+0.001, +0.008] | -0.007 to +0.009 | 70 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | descendant | +0.055 [+0.024, +0.084] | + | -0.002 [-0.003, -0.001] | -0.010 to +0.010 | 30 | -0.0000 [-0.0000, -0.0000] | -0.0002 to +0.0001 | +0.042 | +0.042 | -0.000 [-0.003, +0.003] | -0.007 to +0.004 | 0 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | collider | -0.230 [-0.281, -0.177] | − | -0.005 [-0.007, -0.004] | -0.016 to +0.016 | 40 | +0.0000 [+0.0000, +0.0000] | -0.0002 to +0.0001 | -0.313 | -0.309 | +0.004 [+0.001, +0.006] | -0.003 to +0.007 | 85 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | confounder | -0.113 [-0.190, -0.033] | − | -0.005 [-0.006, -0.004] | -0.008 to +0.008 | 65 | -0.0000 [-0.0000, +0.0000] | -0.0002 to +0.0001 | +0.031 | +0.034 | +0.003 [+0.001, +0.006] | -0.008 to +0.001 | 65 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
 
 ![adjacency final](../figures/fig11_adjacency_final.png)
 ![adjacency hyp](../figures/fig12_adjacency_end_of_hypothesis.png)
@@ -1166,13 +1173,15 @@ Activations are centred by hypothesis string first, so that no direction can enc
 3. *That is a statement about where the answer is, not about an adjacency feature.* Near the end of the network the answer is close to a linear function of the final-token activation, so translating by the difference between two classes' mean activations must reproduce the difference between their mean answers, whatever defines the classes. Two checks say this is what happened. The class-mean differences of the five hypothesis types are not one direction: for direct causation it has cosine -0.62 with that for common effects at the earlier layer and is anti-parallel to the other four at the best layer (`adjacency_transfer_summary` below), and each is aligned with the direction along which the answer logit varies. And in the transfer arm, translating an item of one hypothesis type by another type's class difference has an effect that depends only on the type the vector came from (see the matrix below).
 4. *At the final token, four layers earlier: nothing.* At layer 11, where adjacency is only weakly decodable (0.764), the translation contrast is +0.000 [-0.001, +0.001] and the erasure reduction -0.001. The adjacency-dependent part of the answer arrives at the final token between these two layers, which is where the patching of Section 4.2 put the arrival of prompt differences.
 5. *At the end of the hypothesis: a small part of the dependence, specific to the encoding.* Here the answer is not yet formed at the steered token, and whatever is done must be carried forward by later layers. Erasing adjacency at layer 13 reduces the dependence by +0.016 of +0.105 (size-matched control erasures: -0.003 to +0.008): for common-effect hypotheses the gap changes by +0.042 [+0.034, +0.051] and for common-cause hypotheses by +0.028 [+0.024, +0.032], both outside all 20 size-matched controls. Translation gives a contrast of +0.013 [+0.012, +0.014], which 95% of the size-matched controls stay below in absolute value: one control is larger, so translation alone would not carry the claim.
-6. *The probe's weight vector is inert everywhere.* Moving an item across the whole class gap along it changes the answer by about a thousandth of a logit at every site. A read-out direction is chosen to ignore the directions in which activations vary most, so this says little about use; it does mean that the steering nulls of Section 4.1, which used probe weight vectors, were uninformative for the same reason.
+6. *At the end of the hypothesis, early (layer 5): uninformative.* Translation contrast +0.004 [+0.004, +0.005], erasure reduction +0.004. At this site the positive control fails too: the model-answer direction's slope is larger than only 35% of its controls. Nothing added at one token this early has a measurable, direction-specific effect on the answer, so the null says nothing about adjacency.
+7. *The probe's weight vector is inert everywhere.* Moving an item across the whole class gap along it changes the answer by about a thousandth of a logit at every site. A read-out direction is chosen to ignore the directions in which activations vary most, so this says little about use; it does mean that the steering nulls of Section 4.1, which used probe weight vectors, were uninformative for the same reason.
 
 | Model | Site (layer) | Off-diagonal contrast with the target template's sign | …with the source template's sign | Full-mediation benchmark | Cosines between the five class-mean differences (range) | Cosine of the direct-causation difference with each of the others |
 |---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | -0.002 [-0.002, -0.001] | +0.001 [+0.001, +0.001] | 0.112 | -0.75 to +0.94 | ancestor -0.34 · descendant -0.64 · collider -0.62 · confounder -0.75 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | -0.002 [-0.003, -0.002] | +0.002 [+0.002, +0.002] | 0.112 | -0.67 to +0.92 | ancestor -0.28 · descendant -0.58 · collider -0.67 · confounder -0.62 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
 
 | Model | Site (layer) | Item's template (target) | Target's observed gap | Vector from: parent | Vector from: ancestor | Vector from: descendant | Vector from: collider | Vector from: confounder |
 |---|---|---|---|---|---|---|---|---|
@@ -1181,8 +1190,13 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | descendant | +0.055 | -0.003 | +0.007 | +0.013 | +0.016 | +0.001 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | collider | -0.230 | +0.004 | +0.002 | +0.018 | +0.020 | -0.005 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | confounder | -0.113 | +0.001 | +0.002 | +0.012 | +0.014 | -0.004 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent | +0.050 | +0.009 | -0.009 | -0.009 | -0.015 | -0.011 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | ancestor | -0.042 | +0.008 | -0.010 | -0.007 | -0.012 | -0.008 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | descendant | +0.055 | -0.003 | +0.003 | -0.002 | +0.001 | -0.007 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | collider | -0.230 | +0.002 | -0.004 | -0.007 | -0.005 | -0.009 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | confounder | -0.113 | +0.001 | -0.003 | -0.004 | -0.003 | -0.005 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
 
 **What may and may not be concluded (Qwen2.5-0.5B).**
 

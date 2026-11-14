@@ -5,5 +5,10 @@
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | descendant | +0.055 | -0.003 | +0.007 | +0.013 | +0.016 | +0.001 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | collider | -0.230 | +0.004 | +0.002 | +0.018 | +0.020 | -0.005 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | confounder | -0.113 | +0.001 | +0.002 | +0.012 | +0.014 | -0.004 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent | +0.050 | +0.009 | -0.009 | -0.009 | -0.015 | -0.011 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | ancestor | -0.042 | +0.008 | -0.010 | -0.007 | -0.012 | -0.008 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | descendant | +0.055 | -0.003 | +0.003 | -0.002 | +0.001 | -0.007 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | collider | -0.230 | +0.002 | -0.004 | -0.007 | -0.005 | -0.009 |
+| Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | confounder | -0.113 | +0.001 | -0.003 | -0.004 | -0.003 | -0.005 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>

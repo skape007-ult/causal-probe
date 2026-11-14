@@ -44,6 +44,21 @@
     "    off-diagonal contrast, target sign -0.0016 [-0.0024, -0.0008]; source sign +0.0010 [+0.0006, +0.0015]",
     "  positive control (model-answer direction): slope +0.2551 per unit norm, larger in absolute value than 95% of shuffled-label probe directions"
    ]
+  },
+  "r2.qwen0.5b.adjacency.content_end.first50": {
+   "ok": true,
+   "minutes": 16.1,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.009 -0.009 -0.009 -0.015 -0.011",
+    "    non-parent +0.008 -0.010 -0.007 -0.012 -0.008",
+    "    non-child  -0.003 +0.003 -0.002 +0.001 -0.007",
+    "    has_collid +0.002 -0.004 -0.007 -0.005 -0.009",
+    "    has_confou +0.001 -0.003 -0.004 -0.003 -0.005",
+    "    off-diagonal contrast, target sign -0.0021 [-0.0027, -0.0015]; source sign +0.0020 [+0.0016, +0.0023]",
+    "  positive control (model-answer direction): slope +0.0113 per unit norm, larger in absolute value than 35% of shuffled-label probe directions"
+   ]
   }
  },
  "run": "r2_qwen05b",
@@ -60,7 +75,8 @@
   "environment",
   "r2.qwen0.5b.adjacency.final.best",
   "r2.qwen0.5b.adjacency.content_end.best",
-  "r2.qwen0.5b.adjacency.final.first50"
+  "r2.qwen0.5b.adjacency.final.first50",
+  "r2.qwen0.5b.adjacency.content_end.first50"
  ],
- "total_minutes": 35.6
+ "total_minutes": 51.8
 }

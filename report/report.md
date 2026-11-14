@@ -728,6 +728,8 @@ The steering evidence is in Section 4.1 and the test of the adjacency encoding i
 
 ## 4. Tier 2 results
 
+> **Not yet audited (Sat 14 Nov, 00:30).** The rows for Qwen2.5-1.5B and Qwen2.5-3B in the tables of 4.1 (steering controls at both tokens), 4.2 (label-preserving pairs) and 4.4 (adjacency test), and the three-model versions of figures 10 to 12, come from two GPU runs ingested on Sat 14 Nov. They are shown as they came back. The text of these sections still describes Qwen2.5-0.5B and has not been revised for them; `RESULTS.md` does not use them. An independent audit of these rows is under way (log, Sat 00:30).
+
 This section was rewritten after the second independent audit (Section 6), which showed that my first summary of the steering results ("the gold-probe direction is inert, the model-output direction flips answers") did not survive scrutiny as stated. The analysis below uses the audit's metrics and adds the controls it asked for. Results for Gemma-2-2B and Qwen2.5-3B come from the Kaggle run and are added when it returns; that run used three random directions only, so the matched controls exist for the two local Qwen models.
 
 ### 4.1 Steering: what does adding a decodable direction do to the answer?
@@ -879,22 +881,40 @@ This section was rewritten after the second independent audit (Section 6), which
 | Qwen2.5-0.5B | Corr2Cause debiased pool | end of hypothesis | 13 | gold-label probe weights | +0.095 [+0.074, +0.115] | 61 | 0.069 | 0.320 | shuffled-label probe | 45 | 0.099 | 0.182 | 1.0 | 0.0063 | 0.0052 | 55 | 1.1 | within hypothesis string |
 | Qwen2.5-0.5B | Corr2Cause debiased pool | end of hypothesis | 13 | gold difference of class means | +0.287 [+0.262, +0.313] | 99 | 0.069 | 0.320 | shuffled-label difference of means | 80 | 0.106 | 0.420 | 2.7 | 0.1323 | 0.1341 | 85 | 3.1 | within hypothesis string |
 | Qwen2.5-0.5B | Corr2Cause debiased pool | end of hypothesis | 13 | model-answer probe weights (positive control) | +0.756 [+0.709, +0.807] | 100 | 0.069 | 0.320 | shuffled-label probe | 100 | 0.099 | 0.182 | 7.6 | 0.0280 | 0.0052 | 100 | 38.4 | within hypothesis string |
-| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | gold-label probe weights | -0.367 [-0.382, -0.351] | 84 | 0.162 | 1.043 | shuffled-label probe | 85 | 0.206 | 0.533 | 1.8 | 0.0159 | 0.0052 | 100 | 5.6 | over the whole item set |
-| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | gold difference of class means | +1.981 [+1.925, +2.042] | 100 | 0.162 | 1.043 | shuffled-label difference of means | 85 | 1.131 | 2.685 | 1.8 | 0.5324 | 0.3511 | 85 | 2.3 | over the whole item set |
-| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | model-answer probe weights (positive control) | +2.360 [+2.305, +2.424] | 100 | 0.162 | 1.043 | shuffled-label probe | 100 | 0.206 | 0.533 | 11.5 | 0.3503 | 0.0052 | 100 | 800.8 | over the whole item set |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | gold-label probe weights | -0.201 [-0.226, -0.178] | 55 | 0.184 | 0.850 | shuffled-label probe | 65 | 0.113 | 0.449 | 1.8 | 0.0035 | 0.0026 | 75 | 2.4 | over the whole item set |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | gold difference of class means | +1.897 [+1.865, +1.930] | 100 | 0.184 | 0.850 | shuffled-label difference of means | 80 | 1.330 | 2.674 | 1.4 | 0.3543 | 0.4113 | 60 | 1.4 | over the whole item set |
-| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | model-answer probe weights (positive control) | +1.711 [+1.684, +1.743] | 100 | 0.184 | 0.850 | shuffled-label probe | 100 | 0.113 | 0.449 | 15.1 | 0.3029 | 0.0026 | 100 | 1798.5 | over the whole item set |
+| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | gold-label probe weights | -0.346 [-0.357, -0.334] | 81 | 0.167 | 1.042 | shuffled-label probe | 80 | 0.198 | 0.536 | 1.7 | 0.0158 | 0.0052 | 100 | 5.5 | over the whole item set |
+| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | gold difference of class means | +2.008 [+1.965, +2.045] | 100 | 0.167 | 1.042 | shuffled-label difference of means | 85 | 1.144 | 2.708 | 1.8 | 0.5327 | 0.3500 | 85 | 2.3 | over the whole item set |
+| Qwen2.5-1.5B | Corr2Cause pool | final | 21 | model-answer probe weights (positive control) | +2.379 [+2.334, +2.419] | 100 | 0.167 | 1.042 | shuffled-label probe | 100 | 0.198 | 0.536 | 12.0 | 0.3484 | 0.0052 | 100 | 833.7 | over the whole item set |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | gold-label probe weights | -0.142 [-0.161, -0.126] | 39 | 0.184 | 0.853 | shuffled-label probe | 45 | 0.178 | 0.809 | 0.8 | 0.0035 | 0.0025 | 50 | 1.1 | within hypothesis string |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | gold difference of class means | +1.888 [+1.850, +1.921] | 100 | 0.184 | 0.853 | shuffled-label difference of means | 95 | 0.991 | 2.040 | 1.9 | 0.3554 | 0.2879 | 90 | 2.5 | within hypothesis string |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | final | 22 | model-answer probe weights (positive control) | +1.788 [+1.759, +1.818] | 100 | 0.184 | 0.853 | shuffled-label probe | 100 | 0.178 | 0.809 | 10.0 | 0.2754 | 0.0025 | 100 | 1072.3 | within hypothesis string |
+| Qwen2.5-1.5B | Corr2Cause pool | end of hypothesis | 17 | gold-label probe weights | +0.693 [+0.650, +0.739] | 81 | 0.307 | 1.654 | shuffled-label probe | 95 | 0.340 | 0.848 | 2.0 | 0.0143 | 0.0026 | 100 | 10.9 | over the whole item set |
+| Qwen2.5-1.5B | Corr2Cause pool | end of hypothesis | 17 | gold difference of class means | +0.502 [+0.451, +0.552] | 72 | 0.307 | 1.654 | shuffled-label difference of means | 30 | 0.784 | 2.507 | 0.6 | 0.4795 | 0.3844 | 45 | 0.8 | over the whole item set |
+| Qwen2.5-1.5B | Corr2Cause pool | end of hypothesis | 17 | model-answer probe weights (positive control) | +3.714 [+3.535, +3.896] | 100 | 0.307 | 1.654 | shuffled-label probe | 100 | 0.340 | 0.848 | 10.9 | 0.0568 | 0.0026 | 100 | 233.3 | over the whole item set |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | end of hypothesis | 19 | gold-label probe weights | -0.251 [-0.272, -0.231] | 100 | 0.055 | 0.194 | shuffled-label probe | 100 | 0.061 | 0.155 | 4.1 | 0.0079 | 0.0045 | 100 | 7.1 | within hypothesis string |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | end of hypothesis | 19 | gold difference of class means | +0.095 [+0.078, +0.112] | 78 | 0.055 | 0.194 | shuffled-label difference of means | 55 | 0.089 | 0.188 | 1.1 | 0.1376 | 0.1508 | 45 | 0.9 | within hypothesis string |
+| Qwen2.5-1.5B | Corr2Cause debiased pool | end of hypothesis | 19 | model-answer probe weights (positive control) | +0.506 [+0.474, +0.538] | 100 | 0.055 | 0.194 | shuffled-label probe | 100 | 0.061 | 0.155 | 8.3 | 0.0667 | 0.0045 | 100 | 121.7 | within hypothesis string |
+| Qwen2.5-3B | Corr2Cause pool | final | 25 | gold-label probe weights | -0.802 [-0.859, -0.744] | 72 | 0.537 | 2.058 | shuffled-label probe | 80 | 0.439 | 1.526 | 1.8 | 0.0155 | 0.0051 | 100 | 5.8 | over the whole item set |
+| Qwen2.5-3B | Corr2Cause pool | final | 25 | gold difference of class means | +4.745 [+4.208, +5.274] | 100 | 0.537 | 2.058 | shuffled-label difference of means | 85 | 3.696 | 5.666 | 1.3 | 0.5849 | 0.4511 | 85 | 1.7 | over the whole item set |
+| Qwen2.5-3B | Corr2Cause pool | final | 25 | model-answer probe weights (positive control) | +4.702 [+4.222, +5.198] | 100 | 0.537 | 2.058 | shuffled-label probe | 100 | 0.439 | 1.526 | 10.7 | 0.2888 | 0.0051 | 100 | 627.0 | over the whole item set |
+| Qwen2.5-3B | Corr2Cause debiased pool | final | 25 | gold-label probe weights | -0.229 [-0.324, -0.131] | 22 | 0.546 | 1.942 | shuffled-label probe | 20 | 0.415 | 1.655 | 0.6 | 0.0044 | 0.0028 | 45 | 0.9 | within hypothesis string |
+| Qwen2.5-3B | Corr2Cause debiased pool | final | 25 | gold difference of class means | +4.022 [+3.611, +4.384] | 100 | 0.546 | 1.942 | shuffled-label difference of means | 80 | 2.375 | 7.674 | 1.7 | 0.2203 | 0.2224 | 70 | 1.9 | within hypothesis string |
+| Qwen2.5-3B | Corr2Cause debiased pool | final | 25 | model-answer probe weights (positive control) | +5.288 [+4.841, +5.680] | 100 | 0.546 | 1.942 | shuffled-label probe | 100 | 0.415 | 1.655 | 12.8 | 0.1950 | 0.0028 | 100 | 868.0 | within hypothesis string |
+| Qwen2.5-3B | Corr2Cause pool | end of hypothesis | 25 | gold-label probe weights | -0.268 [-0.306, -0.230] | 86 | 0.149 | 0.551 | shuffled-label probe | 85 | 0.143 | 0.411 | 1.9 | 0.0179 | 0.0047 | 100 | 7.2 | over the whole item set |
+| Qwen2.5-3B | Corr2Cause pool | end of hypothesis | 25 | gold difference of class means | +0.222 [+0.180, +0.270] | 79 | 0.149 | 0.551 | shuffled-label difference of means | 30 | 0.389 | 0.790 | 0.6 | 0.4188 | 0.4095 | 30 | 0.5 | over the whole item set |
+| Qwen2.5-3B | Corr2Cause pool | end of hypothesis | 25 | model-answer probe weights (positive control) | +0.873 [+0.770, +0.987] | 100 | 0.149 | 0.551 | shuffled-label probe | 100 | 0.143 | 0.411 | 6.1 | 0.0899 | 0.0047 | 100 | 117.7 | over the whole item set |
+| Qwen2.5-3B | Corr2Cause debiased pool | end of hypothesis | 25 | gold-label probe weights | -0.080 [-0.107, -0.054] | 29 | 0.153 | 0.578 | shuffled-label probe | 25 | 0.217 | 0.489 | 0.4 | 0.0070 | 0.0042 | 35 | 0.6 | within hypothesis string |
+| Qwen2.5-3B | Corr2Cause debiased pool | end of hypothesis | 25 | gold difference of class means | +0.738 [+0.641, +0.832] | 100 | 0.153 | 0.578 | shuffled-label difference of means | 100 | 0.323 | 0.595 | 2.3 | 0.0871 | 0.0979 | 100 | 1.9 | within hypothesis string |
+| Qwen2.5-3B | Corr2Cause debiased pool | end of hypothesis | 25 | model-answer probe weights (positive control) | +0.810 [+0.723, +0.885] | 100 | 0.153 | 0.578 | shuffled-label probe | 100 | 0.217 | 0.489 | 3.7 | 0.0582 | 0.0042 | 100 | 51.0 | within hypothesis string |
 
-<sub>Source: `results/steering_controls_qwen0.5b_c2c_probe.json`, `results/steering_controls_qwen0.5b_c2c_debiased.json`, `results/steering_controls_qwen0.5b_c2c_probe_hyp.json`, `results/steering_controls_qwen0.5b_c2c_debiased_hyp.json`, `results/steering_controls_qwen1.5b_c2c_probe.json`, `results/steering_controls_qwen1.5b_c2c_debiased.json`</sub>
+<sub>Source: `results/steering_controls_qwen0.5b_c2c_probe.json`, `results/steering_controls_qwen0.5b_c2c_debiased.json`, `results/steering_controls_qwen0.5b_c2c_probe_hyp.json`, `results/steering_controls_qwen0.5b_c2c_debiased_hyp.json`, `results/steering_controls_qwen1.5b_c2c_probe.json`, `results/steering_controls_qwen1.5b_c2c_debiased.json`, `results/steering_controls_qwen1.5b_c2c_probe_hyp.json`, `results/steering_controls_qwen1.5b_c2c_debiased_hyp.json`, `results/steering_controls_qwen3b_c2c_probe.json`, `results/steering_controls_qwen3b_c2c_debiased.json`, `results/steering_controls_qwen3b_c2c_probe_hyp.json`, `results/steering_controls_qwen3b_c2c_debiased_hyp.json`</sub>
 
 **What the data show.**
 
-1. *The gold-probe weight direction shifts the answer by an amount within the range of label-free directions of the same kind.* Slope, with its place among 20 probe directions fitted to shuffled labels: original pool -0.049 [-0.056, -0.042] (20% percentile of 20; 0.38 times their median, 0.17 of their maximum) for Qwen2.5-0.5B and -0.367 [-0.382, -0.351] (85% percentile of 20; 1.78 times their median, 0.69 of their maximum) for Qwen2.5-1.5B; debiased pool -0.229 [-0.235, -0.222] (75% percentile of 20; 1.32 times their median, 0.60 of their maximum) and -0.201 [-0.226, -0.178] (65% percentile of 20; 1.77 times their median, 0.45 of their maximum). The slope is small but not zero: it is negative in all four cases and has the same sign for nearly every item (pushing "towards valid" lowers the Yes logit; my first table showed one sign only and hid this). Twenty controls cannot exclude an effect two or three times the control median, so the statement is "within the range of", not "no more than".
-2. *The comparison depends on the unit.* The shuffled-label directions have the same natural spread as the gold direction on the debiased pool, but on the original pool the gold direction is about three times wider. Per natural standard deviation, the gold direction for Qwen2.5-1.5B on the original pool exceeds all 20 shuffled controls (5.63 times their median); in the other three cases it is at the 50%, 75% and 75% percentile. The original pool is the one in which the gold label is confounded with the hypothesis string.
+1. *The gold-probe weight direction shifts the answer by an amount within the range of label-free directions of the same kind.* Slope, with its place among 20 probe directions fitted to shuffled labels: original pool -0.049 [-0.056, -0.042] (20% percentile of 20; 0.38 times their median, 0.17 of their maximum) for Qwen2.5-0.5B and -0.346 [-0.357, -0.334] (80% percentile of 20; 1.75 times their median, 0.64 of their maximum) for Qwen2.5-1.5B; debiased pool -0.229 [-0.235, -0.222] (75% percentile of 20; 1.32 times their median, 0.60 of their maximum) and -0.142 [-0.161, -0.126] (45% percentile of 20; 0.80 times their median, 0.18 of their maximum). The slope is small but not zero: it is negative in all four cases and has the same sign for nearly every item (pushing "towards valid" lowers the Yes logit; my first table showed one sign only and hid this). Twenty controls cannot exclude an effect two or three times the control median, so the statement is "within the range of", not "no more than".
+2. *The comparison depends on the unit.* The shuffled-label directions have the same natural spread as the gold direction on the debiased pool, but on the original pool the gold direction is about three times wider. Per natural standard deviation, the gold direction for Qwen2.5-1.5B on the original pool exceeds all 20 shuffled controls (5.51 times their median); in the other three cases it is at the 50%, 75% and 50% percentile. The original pool is the one in which the gold label is confounded with the hypothesis string.
 3. *At natural scale the effect is negligible either way.* One unit of s is 119.00 (Qwen2.5-0.5B) and 63.08 (Qwen2.5-1.5B) natural standard deviations along the gold-probe direction on the original pool, and 322.89 and 280.42 on the debiased pool. Moving an item across the whole natural gap between valid and invalid items along that direction would change LD by -0.001 and -0.009 logits (original pool), against a standard deviation of LD across items of 0.41 and 2.28.
-4. *The difference-of-means direction moves the answer, mostly not because it separates valid from invalid items.* Original pool: +0.865 [+0.855, +0.875] (100% percentile of 20; 4.59 times their median, 1.38 of their maximum) for Qwen2.5-0.5B and +1.981 [+1.925, +2.042] (85% percentile of 20; 1.75 times their median, 0.74 of their maximum) for Qwen2.5-1.5B; debiased pool: +0.150 [+0.144, +0.157] (70% percentile of 20; 1.87 times their median, 0.59 of their maximum) and +1.897 [+1.865, +1.930] (80% percentile of 20; 1.43 times their median, 0.71 of their maximum). A difference of class means lies in the high-variance part of activation space, and so does a difference of means for random labels. On the original pool it separates the model's own answer at least as well as the gold label (AUROC 0.942 against 0.650 for Qwen2.5-1.5B).
-5. *The positive control works, with one qualification.* The model-answer probe direction exceeds all 100 isotropic and all 20 shuffled-label probe directions in every case. It does not have the largest slope of anything steered: for Qwen2.5-1.5B on the debiased pool the gold difference of means is larger (+1.897 against +1.711), and the largest shuffled-label difference of means there has |slope| 2.674. Differences of means, for real or shuffled labels, point into the high-variance directions that the answer is most sensitive to; a probe direction is the fairer comparison for a probe direction. (An earlier version of this sentence said "largest slope everywhere"; that was wrong.)
+4. *The difference-of-means direction moves the answer, mostly not because it separates valid from invalid items.* Original pool: +0.865 [+0.855, +0.875] (100% percentile of 20; 4.59 times their median, 1.38 of their maximum) for Qwen2.5-0.5B and +2.008 [+1.965, +2.045] (85% percentile of 20; 1.76 times their median, 0.74 of their maximum) for Qwen2.5-1.5B; debiased pool: +0.150 [+0.144, +0.157] (70% percentile of 20; 1.87 times their median, 0.59 of their maximum) and +1.888 [+1.850, +1.921] (95% percentile of 20; 1.91 times their median, 0.93 of their maximum). A difference of class means lies in the high-variance part of activation space, and so does a difference of means for random labels. On the original pool it separates the model's own answer at least as well as the gold label (AUROC 0.942 against 0.650 for Qwen2.5-1.5B).
+5. *The positive control works, with one qualification.* The model-answer probe direction exceeds all 100 isotropic and all 20 shuffled-label probe directions in every case. It does not have the largest slope of anything steered: for Qwen2.5-1.5B on the debiased pool the gold difference of means is larger (+1.888 against +1.788), and the largest shuffled-label difference of means there has |slope| 2.040. Differences of means, for real or shuffled labels, point into the high-variance directions that the answer is most sensitive to; a probe direction is the fairer comparison for a probe direction. (An earlier version of this sentence said "largest slope everywhere"; that was wrong.)
 
 **What may and may not be concluded.**
 
@@ -1048,8 +1068,10 @@ Flip rates and the earlier "accuracy when pushed towards gold" (now called contr
 | Qwen2.5-1.5B | prem | 40 | -0.087 [-0.424, +0.269] | 0.47 [0.33, 0.61] | 0.03 | 18 | 0.64 | 0.19 | 1.00 | 6 |
 | Gemma-2-2B | hyp | 40 | -0.054 [-0.433, +0.392] | 0.47 [0.32, 0.62] | 0.05 | 16 | 0.62 | 0.69 | 2.42 | 10 |
 | Gemma-2-2B | prem | 40 | -0.062 [-0.346, +0.262] | 0.57 [0.42, 0.72] | 0.03 | 16 | 0.62 | 0.80 | 0.45 | 10 |
+| Qwen2.5-3B | hyp | 60 | +0.673 [-0.022, +1.376] | 0.60 [0.48, 0.71] | 0.00 | 26 | 0.72 | 0.87 | 0.69 | 16 |
+| Qwen2.5-3B | prem | 60 | +0.002 [-0.593, +0.580] | 0.52 [0.40, 0.64] | 0.00 | 26 | 0.72 | 0.55 | 2.01 | 16 |
 
-<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b.json`</sub>
+<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b.json`, `results/patching_qwen3b.json`</sub>
 
 ![patching prem](../figures/fig7_patching_prem.png)
 ![patching hyp](../figures/fig7_patching_hyp.png)
@@ -1070,8 +1092,16 @@ Attribution patching of individual attention heads and MLPs, and its validation 
 | Qwen2.5-0.5B | hyp | label preserved | 60 | 31 / 29 | +0.084 [+0.012, +0.156] | 0.233 | 0.219 / 0.249 | 16 | 0.67 |
 | Qwen2.5-0.5B | prem | label changes (Yes → No) | 60 | – | +0.023 [-0.042, +0.090] | 0.236 | – | 15 | 0.62 |
 | Qwen2.5-0.5B | prem | label preserved | 60 | 31 / 29 | +0.223 [+0.173, +0.270] | 0.239 | 0.264 / 0.212 | 16 | 0.67 |
+| Qwen2.5-1.5B | hyp | label changes (Yes → No) | 40 | – | -0.088 [-0.420, +0.267] | 1.110 | – | 18 | 0.64 |
+| Qwen2.5-1.5B | hyp | label preserved | 60 | 31 / 29 | +0.409 [+0.087, +0.731] | 0.994 | 1.267 / 0.703 | 18 | 0.64 |
+| Qwen2.5-1.5B | prem | label changes (Yes → No) | 40 | – | -0.087 [-0.424, +0.269] | 1.055 | – | 18 | 0.64 |
+| Qwen2.5-1.5B | prem | label preserved | 60 | 31 / 29 | -0.022 [-0.258, +0.190] | 0.686 | 0.787 / 0.577 | 18 | 0.64 |
+| Qwen2.5-3B | hyp | label changes (Yes → No) | 60 | – | +0.673 [-0.022, +1.376] | 1.884 | – | 26 | 0.72 |
+| Qwen2.5-3B | hyp | label preserved | 60 | 31 / 29 | +1.003 [+0.149, +1.886] | 2.643 | 2.899 / 2.370 | 26 | 0.72 |
+| Qwen2.5-3B | prem | label changes (Yes → No) | 60 | – | +0.002 [-0.593, +0.580] | 1.875 | – | 26 | 0.72 |
+| Qwen2.5-3B | prem | label preserved | 60 | 31 / 29 | +0.379 [-0.376, +1.065] | 1.947 | 1.916 / 1.981 | 26 | 0.72 |
 
-<sub>Source: `results/patching_qwen0.5b_same.json`, `results/patching_qwen0.5b.json`</sub>
+<sub>Source: `results/patching_qwen0.5b_same.json`, `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b_same.json`, `results/patching_qwen1.5b.json`, `results/patching_qwen3b_same.json`, `results/patching_qwen3b.json`</sub>
 
 ![label preserving](../figures/fig10_patching_label_preserving.png)
 
@@ -1117,8 +1147,16 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | 500 | 0.79 | 0.912 | 0.702 | 0.912 | 0.640 | 0.535 | 0.918 | 0.939 | 0.008 | 0.39 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | 500 | 0.43 | 0.773 | 0.692 | 0.745 | 0.642 | 0.421 | 0.743 | 0.876 | 0.010 | 0.39 |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | 500 | 0.31 | 0.793 | 0.691 | 0.757 | 0.618 | 0.564 | 0.807 | 0.549 | 0.007 | 0.39 |
+| Qwen2.5-1.5B | final token, best layer (19/28) | 500 | 0.98 | 0.953 | 0.752 | 0.940 | 0.677 | 0.439 | 0.955 | 0.999 | 0.010 | 2.03 |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | 500 | 0.91 | 0.966 | 0.718 | 0.959 | 0.682 | 0.568 | 0.960 | 0.983 | 0.006 | 2.03 |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | 500 | 0.38 | 0.792 | 0.700 | 0.778 | 0.657 | 0.417 | 0.784 | 0.893 | 0.005 | 2.03 |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | 500 | 0.51 | 0.815 | 0.701 | 0.801 | 0.647 | 0.569 | 0.814 | 0.373 | 0.014 | 2.03 |
+| Qwen2.5-3B | final token, best layer (25/36) | 500 | 0.96 | 0.964 | 0.736 | 0.952 | 0.699 | 0.512 | 0.947 | 0.999 | 0.027 | 7.83 |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | 500 | 0.89 | 0.980 | 0.761 | 0.972 | 0.672 | 0.554 | 0.965 | 0.974 | 0.016 | 7.83 |
+| Qwen2.5-3B | final token, earlier layer (19/36) | 500 | 0.40 | 0.828 | 0.702 | 0.827 | 0.669 | 0.427 | 0.818 | 0.984 | 0.026 | 7.83 |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | 500 | 0.41 | 0.827 | 0.724 | 0.786 | 0.648 | 0.428 | 0.817 | 0.439 | 0.019 | 7.83 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen3b_c2c_debiased_final_best.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen3b_c2c_debiased_final_first50.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_first50.json`</sub>
 
 | Model | Site (layer) | Templates in the pre-specified contrast | Full-mediation benchmark (mean |observed gap|) | Translation: pre-specified contrast | …20 random directions of the same size (range) | Controls smaller in absolute value (%) | Same with one sign for all types (adjacent → No) | Controls smaller (%) | Translation effects towards No | Mean absolute gap on evaluated items, before → after erasure | Reduction (interval over items) | Fair controls smaller in absolute value (%) | Positive control: model-answer direction, slope per unit norm (share of controls it exceeds) |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -1126,8 +1164,16 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | parent, descendant, collider, confounder | 0.112 | +0.013 | -0.021 to +0.011 | 95 | +0.016 | 95 | 5/5 | 0.102 → 0.097 | +0.005 [-0.000, +0.015] | 55 | +0.209 (100%) |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | parent, descendant, collider, confounder | 0.112 | +0.000 | -0.025 to +0.019 | 5 | -0.007 | 55 | 1/5 | 0.102 → 0.102 | -0.000 [-0.006, +0.002] | 5 | +0.255 (95%) |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent, descendant, collider, confounder | 0.112 | +0.004 | -0.003 to +0.010 | 80 | +0.002 | 40 | 4/5 | 0.102 → 0.099 | +0.004 [-0.001, +0.005] | 95 | +0.011 (35%) |
+| Qwen2.5-1.5B | final token, best layer (19/28) | parent, ancestor, collider, confounder | 0.353 | +0.225 | -0.266 to +0.356 | 85 | -0.004 | 0 | 4/5 | 0.393 → 0.256 | +0.137 [+0.086, +0.152] | 85 | +0.478 (100%) |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | parent, ancestor, collider, confounder | 0.353 | +0.020 | -0.053 to +0.053 | 45 | -0.038 | 85 | 0/5 | 0.392 → 0.383 | +0.009 [+0.005, +0.019] | 30 | +0.110 (100%) |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | parent, ancestor, collider, confounder | 0.353 | +0.008 | -0.014 to +0.018 | 40 | +0.010 | 65 | 5/5 | 0.393 → 0.392 | +0.000 [-0.003, +0.005] | 5 | +0.012 (40%) |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | parent, ancestor, collider, confounder | 0.353 | -0.003 | -0.008 to +0.008 | 40 | +0.000 | 15 | 3/5 | 0.392 → 0.394 | -0.001 [-0.004, +0.001] | 35 | +0.011 (90%) |
+| Qwen2.5-3B | final token, best layer (25/36) | parent, ancestor, descendant, confounder | 1.375 | +0.775 | -0.597 to +0.422 | 100 | -0.038 | 5 | 1/5 | 1.490 → 0.925 | +0.565 [+0.289, +0.593] | 100 | +0.603 (100%) |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | parent, ancestor, descendant, confounder | 1.375 | +0.008 | -0.095 to +0.096 | 5 | +0.069 | 65 | 4/5 | 1.491 → 1.502 | -0.011 [-0.016, +0.035] | 5 | +0.044 (100%) |
+| Qwen2.5-3B | final token, earlier layer (19/36) | parent, ancestor, descendant, confounder | 1.375 | -0.021 | -0.037 to +0.048 | 35 | -0.063 | 100 | 1/5 | 1.490 → 1.467 | +0.023 [-0.056, +0.038] | 45 | +0.023 (40%) |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | parent, ancestor, descendant, confounder | 1.375 | -0.006 | -0.008 to +0.012 | 70 | +0.005 | 65 | 3/5 | 1.491 → 1.495 | -0.004 [-0.009, +0.002] | 55 | -0.019 (80%) |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen3b_c2c_debiased_final_best.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen3b_c2c_debiased_final_first50.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_first50.json`</sub>
 
 | Model | Site (layer) | Template | Observed gap in the answer logit, adjacent − not adjacent (all items) | Translation by the class-mean difference: effect towards Yes per move towards adjacent | …20 random directions of the same size (range) | Controls smaller in absolute value (%) | Gap on evaluated items: before | …after erasure | Change in absolute gap | …20 fair controls: same per-item coefficients, random direction (range) | Controls smaller in absolute value (%) | Moving across the class gap along the probe's weight vector |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -1151,8 +1197,48 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | descendant | +0.055 [+0.024, +0.084] | -0.002 [-0.003, -0.001] | -0.010 to +0.010 | 30 | +0.056 | +0.056 | +0.000 | -0.008 to +0.006 | 0 | -0.0000 [-0.0000, -0.0000] |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | collider | -0.230 [-0.281, -0.177] | -0.005 [-0.007, -0.004] | -0.016 to +0.016 | 40 | -0.264 | -0.260 | -0.004 | -0.009 to +0.013 | 40 | +0.0000 [+0.0000, +0.0000] |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | confounder | -0.113 [-0.190, -0.033] | -0.005 [-0.006, -0.004] | -0.008 to +0.008 | 65 | -0.010 | -0.005 | -0.005 | -0.005 to +0.003 | 100 | -0.0000 [-0.0000, +0.0000] |
+| Qwen2.5-1.5B | final token, best layer (19/28) | parent | +0.659 [+0.541, +0.781] | +0.470 [+0.429, +0.512] | -0.253 to +0.413 | 100 | +0.641 | +0.374 | -0.267 | -0.238 to +0.139 | 100 | +0.0062 [+0.0056, +0.0068] |
+| Qwen2.5-1.5B | final token, best layer (19/28) | ancestor | -0.159 [-0.300, -0.013] | -0.024 [-0.027, -0.021] | -0.354 to +0.446 | 15 | -0.313 | -0.301 | -0.012 | -0.164 to +0.211 | 15 | +0.0058 [+0.0055, +0.0060] |
+| Qwen2.5-1.5B | final token, best layer (19/28) | descendant | -0.096 [-0.239, +0.028] | -0.017 [-0.023, -0.011] | -0.472 to +0.321 | 10 | -0.087 | -0.074 | -0.013 | -0.077 to +0.252 | 10 | +0.0030 [+0.0028, +0.0032] |
+| Qwen2.5-1.5B | final token, best layer (19/28) | collider | -0.362 [-0.503, -0.236] | -0.244 [-0.251, -0.236] | -0.865 to +0.772 | 30 | -0.626 | -0.374 | -0.251 | -0.402 to +0.803 | 25 | +0.0043 [+0.0041, +0.0045] |
+| Qwen2.5-1.5B | final token, best layer (19/28) | confounder | -0.232 [-0.450, -0.014] | -0.164 [-0.169, -0.159] | -0.421 to +0.453 | 40 | -0.296 | -0.156 | -0.140 | -0.275 to +0.394 | 40 | +0.0057 [+0.0055, +0.0058] |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | parent | +0.659 [+0.541, +0.781] | +0.128 [+0.117, +0.140] | -0.132 to +0.181 | 85 | +0.640 | +0.538 | -0.102 | -0.140 to +0.105 | 85 | -0.0087 [-0.0096, -0.0079] |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | ancestor | -0.159 [-0.300, -0.013] | +0.008 [+0.006, +0.010] | -0.104 to +0.121 | 15 | -0.313 | -0.316 | +0.003 | -0.057 to +0.070 | 10 | -0.0077 [-0.0079, -0.0074] |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | descendant | -0.096 [-0.239, +0.028] | +0.018 [+0.016, +0.019] | -0.069 to +0.056 | 25 | -0.088 | -0.103 | +0.015 | -0.067 to +0.050 | 10 | -0.0059 [-0.0060, -0.0058] |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | collider | -0.362 [-0.503, -0.236] | +0.018 [+0.017, +0.020] | -0.187 to +0.162 | 10 | -0.625 | -0.644 | +0.019 | -0.190 to +0.168 | 10 | -0.0108 [-0.0112, -0.0105] |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | confounder | -0.232 [-0.450, -0.014] | +0.020 [+0.018, +0.022] | -0.102 to +0.148 | 40 | -0.296 | -0.317 | +0.021 | -0.100 to +0.141 | 45 | -0.0127 [-0.0131, -0.0123] |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | parent | +0.659 [+0.541, +0.781] | -0.009 [-0.012, -0.006] | -0.016 to +0.012 | 50 | +0.641 | +0.647 | +0.006 | -0.006 to +0.012 | 75 | -0.0003 [-0.0003, -0.0002] |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | ancestor | -0.159 [-0.300, -0.013] | -0.014 [-0.017, -0.012] | -0.022 to +0.025 | 70 | -0.313 | -0.310 | -0.003 | -0.004 to +0.006 | 65 | -0.0002 [-0.0002, -0.0001] |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | descendant | -0.096 [-0.239, +0.028] | -0.001 [-0.009, +0.007] | -0.057 to +0.040 | 0 | -0.087 | -0.093 | +0.006 | -0.020 to +0.018 | 50 | -0.0002 [-0.0002, -0.0002] |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | collider | -0.362 [-0.503, -0.236] | -0.004 [-0.011, +0.002] | -0.033 to +0.036 | 15 | -0.626 | -0.624 | -0.002 | -0.018 to +0.017 | 5 | -0.0000 [-0.0000, +0.0000] |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | confounder | -0.232 [-0.450, -0.014] | -0.020 [-0.029, -0.012] | -0.039 to +0.020 | 80 | -0.296 | -0.288 | -0.008 | -0.018 to +0.011 | 70 | -0.0000 [-0.0001, -0.0000] |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | parent | +0.659 [+0.541, +0.781] | -0.008 [-0.010, -0.005] | -0.014 to +0.007 | 65 | +0.640 | +0.647 | +0.007 | -0.004 to +0.011 | 70 | +0.0001 [+0.0000, +0.0001] |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | ancestor | -0.159 [-0.300, -0.013] | -0.001 [-0.003, +0.001] | -0.021 to +0.023 | 25 | -0.313 | -0.314 | +0.001 | -0.005 to +0.008 | 10 | +0.0001 [+0.0000, +0.0001] |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | descendant | -0.096 [-0.239, +0.028] | -0.000 [-0.002, +0.001] | -0.041 to +0.028 | 0 | -0.088 | -0.085 | -0.003 | -0.010 to +0.014 | 35 | -0.0002 [-0.0002, -0.0002] |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | collider | -0.362 [-0.503, -0.236] | +0.005 [+0.003, +0.008] | -0.015 to +0.018 | 35 | -0.625 | -0.628 | +0.003 | -0.008 to +0.006 | 40 | -0.0000 [-0.0000, +0.0000] |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | confounder | -0.232 [-0.450, -0.014] | +0.001 [-0.002, +0.004] | -0.014 to +0.014 | 5 | -0.296 | -0.294 | -0.002 | -0.008 to +0.004 | 45 | +0.0000 [+0.0000, +0.0000] |
+| Qwen2.5-3B | final token, best layer (25/36) | parent | +0.899 [+0.708, +1.106] | +0.386 [+0.284, +0.509] | -0.631 to +0.631 | 80 | +0.660 | +0.323 | -0.336 | -0.552 to +0.535 | 80 | -0.0237 [-0.0304, -0.0178] |
+| Qwen2.5-3B | final token, best layer (25/36) | ancestor | +1.613 [+0.936, +2.213] | +0.663 [+0.615, +0.713] | -1.002 to +0.870 | 70 | +3.349 | +2.913 | -0.436 | -0.572 to +0.642 | 70 | -0.0497 [-0.0542, -0.0453] |
+| Qwen2.5-3B | final token, best layer (25/36) | descendant | +0.643 [+0.270, +1.019] | +0.426 [+0.411, +0.442] | -0.942 to +1.009 | 45 | +0.745 | +0.393 | -0.352 | -0.724 to +0.773 | 45 | -0.0463 [-0.0486, -0.0440] |
+| Qwen2.5-3B | final token, best layer (25/36) | collider | +0.210 [-0.317, +0.736] | +0.339 [+0.313, +0.361] | -1.933 to +1.925 | 25 | +0.501 | +0.160 | -0.341 | -0.239 to +1.935 | 45 | -0.0990 [-0.1018, -0.0961] |
+| Qwen2.5-3B | final token, best layer (25/36) | confounder | -2.344 [-2.876, -1.820] | -1.624 [-1.713, -1.537] | -1.194 to +1.528 | 100 | -2.195 | -0.836 | -1.359 | -0.991 to +1.210 | 100 | -0.0458 [-0.0508, -0.0412] |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | parent | +0.899 [+0.708, +1.106] | +0.001 [-0.003, +0.006] | -0.073 to +0.030 | 10 | +0.653 | +0.647 | -0.006 | -0.028 to +0.058 | 15 | -0.0026 [-0.0030, -0.0021] |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | ancestor | +1.613 [+0.936, +2.213] | -0.007 [-0.010, -0.004] | -0.061 to +0.087 | 15 | +3.361 | +3.364 | +0.003 | -0.070 to +0.046 | 5 | +0.0026 [+0.0021, +0.0031] |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | descendant | +0.643 [+0.270, +1.019] | -0.111 [-0.118, -0.105] | -0.124 to +0.095 | 95 | +0.740 | +0.849 | +0.109 | -0.098 to +0.111 | 95 | +0.0018 [+0.0013, +0.0023] |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | collider | +0.210 [-0.317, +0.736] | -0.081 [-0.087, -0.075] | -0.194 to +0.301 | 20 | +0.510 | +0.593 | +0.082 | -0.315 to +0.195 | 20 | +0.0078 [+0.0065, +0.0093] |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | confounder | -2.344 [-2.876, -1.820] | -0.148 [-0.155, -0.141] | -0.272 to +0.330 | 60 | -2.193 | -2.059 | -0.134 | -0.256 to +0.296 | 55 | +0.0172 [+0.0160, +0.0185] |
+| Qwen2.5-3B | final token, earlier layer (19/36) | parent | +0.899 [+0.708, +1.106] | +0.012 [+0.006, +0.016] | -0.022 to +0.038 | 75 | +0.660 | +0.655 | -0.005 | -0.019 to +0.011 | 35 | +0.0005 [+0.0005, +0.0006] |
+| Qwen2.5-3B | final token, earlier layer (19/36) | ancestor | +1.613 [+0.936, +2.213] | -0.004 [-0.008, -0.001] | -0.032 to +0.029 | 25 | +3.349 | +3.356 | +0.008 | -0.008 to +0.016 | 70 | +0.0008 [+0.0006, +0.0009] |
+| Qwen2.5-3B | final token, earlier layer (19/36) | descendant | +0.643 [+0.270, +1.019] | +0.029 [+0.021, +0.038] | -0.107 to +0.124 | 30 | +0.745 | +0.728 | -0.017 | -0.029 to +0.024 | 55 | +0.0001 [+0.0000, +0.0002] |
+| Qwen2.5-3B | final token, earlier layer (19/36) | collider | +0.210 [-0.317, +0.736] | +0.158 [+0.144, +0.172] | -0.135 to +0.214 | 90 | +0.501 | +0.332 | -0.169 | -0.211 to +0.126 | 95 | +0.0014 [+0.0012, +0.0016] |
+| Qwen2.5-3B | final token, earlier layer (19/36) | confounder | -2.344 [-2.876, -1.820] | +0.121 [+0.109, +0.131] | -0.176 to +0.165 | 70 | -2.195 | -2.262 | +0.067 | -0.100 to +0.090 | 80 | +0.0016 [+0.0015, +0.0018] |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | parent | +0.899 [+0.708, +1.106] | +0.000 [-0.003, +0.005] | -0.015 to +0.010 | 10 | +0.653 | +0.653 | +0.000 | -0.004 to +0.014 | 0 | -0.0003 [-0.0004, -0.0002] |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | ancestor | +1.613 [+0.936, +2.213] | -0.010 [-0.014, -0.006] | -0.017 to +0.022 | 35 | +3.361 | +3.364 | +0.003 | -0.016 to +0.010 | 30 | -0.0004 [-0.0004, -0.0003] |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | descendant | +0.643 [+0.270, +1.019] | -0.012 [-0.016, -0.007] | -0.025 to +0.016 | 70 | +0.740 | +0.749 | +0.010 | -0.017 to +0.016 | 65 | -0.0001 [-0.0002, -0.0001] |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | collider | +0.210 [-0.317, +0.736] | -0.006 [-0.011, -0.000] | -0.019 to +0.059 | 10 | +0.510 | +0.510 | -0.000 | -0.053 to +0.029 | 0 | +0.0003 [+0.0002, +0.0004] |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | confounder | -2.344 [-2.876, -1.820] | +0.002 [-0.004, +0.007] | -0.034 to +0.034 | 0 | -2.193 | -2.198 | +0.005 | -0.017 to +0.012 | 25 | +0.0007 [+0.0006, +0.0008] |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen3b_c2c_debiased_final_best.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen3b_c2c_debiased_final_first50.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_first50.json`</sub>
 
 ![adjacency final](../figures/fig11_adjacency_final.png)
 ![adjacency hyp](../figures/fig12_adjacency_end_of_hypothesis.png)
@@ -1175,8 +1261,16 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | -0.001 [-0.002, -0.001] | +0.010 [+0.009, +0.010] | 0.112 | -0.44 to +0.74 | ancestor +0.02 · descendant -0.44 · collider -0.10 · confounder -0.07 |
 | Qwen2.5-0.5B | final token, earlier layer (11/24) | -0.002 [-0.002, -0.001] | +0.001 [+0.001, +0.001] | 0.112 | -0.75 to +0.94 | ancestor -0.34 · descendant -0.64 · collider -0.62 · confounder -0.75 |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | -0.002 [-0.003, -0.002] | +0.002 [+0.002, +0.002] | 0.112 | -0.67 to +0.92 | ancestor -0.28 · descendant -0.58 · collider -0.67 · confounder -0.62 |
+| Qwen2.5-1.5B | final token, best layer (19/28) | -0.093 [-0.095, -0.090] | +0.221 [+0.216, +0.225] | 0.353 | -0.03 to +0.86 | ancestor +0.31 · descendant -0.02 · collider -0.03 · confounder -0.03 |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | -0.029 [-0.030, -0.028] | +0.014 [+0.013, +0.014] | 0.353 | +0.26 to +0.73 | ancestor +0.66 · descendant +0.26 · collider +0.47 · confounder +0.43 |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | +0.004 [+0.002, +0.005] | +0.011 [+0.009, +0.013] | 0.353 | -0.85 to +0.95 | ancestor -0.46 · descendant -0.73 · collider -0.82 · confounder -0.85 |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | -0.000 [-0.001, +0.000] | -0.004 [-0.005, -0.003] | 0.353 | -0.54 to +0.83 | ancestor -0.36 · descendant -0.47 · collider -0.54 · confounder -0.50 |
+| Qwen2.5-3B | final token, best layer (25/36) | +0.110 [+0.097, +0.124] | +0.546 [+0.512, +0.581] | 1.375 | +0.09 to +0.74 | ancestor +0.68 · descendant +0.15 · collider +0.31 · confounder +0.09 |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | -0.010 [-0.012, -0.008] | -0.024 [-0.025, -0.022] | 1.375 | +0.23 to +0.75 | ancestor +0.55 · descendant +0.23 · collider +0.46 · confounder +0.41 |
+| Qwen2.5-3B | final token, earlier layer (19/36) | -0.014 [-0.016, -0.012] | +0.018 [+0.016, +0.019] | 1.375 | -0.82 to +0.88 | ancestor -0.14 · descendant -0.77 · collider -0.67 · confounder -0.82 |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | -0.004 [-0.006, -0.002] | -0.002 [-0.004, -0.001] | 1.375 | -0.24 to +0.72 | ancestor +0.38 · descendant -0.23 · collider -0.08 · confounder -0.24 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen3b_c2c_debiased_final_best.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen3b_c2c_debiased_final_first50.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_first50.json`</sub>
 
 | Model | Site (layer) | Item's template (target) | Target's observed gap | Vector from: parent | Vector from: ancestor | Vector from: descendant | Vector from: collider | Vector from: confounder |
 |---|---|---|---|---|---|---|---|---|
@@ -1200,8 +1294,48 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | descendant | +0.055 | -0.003 | +0.003 | -0.002 | +0.001 | -0.007 |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | collider | -0.230 | +0.002 | -0.004 | -0.007 | -0.005 | -0.009 |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | confounder | -0.113 | +0.001 | -0.003 | -0.004 | -0.003 | -0.005 |
+| Qwen2.5-1.5B | final token, best layer (19/28) | parent | +0.659 | +0.470 | -0.038 | -0.066 | -0.201 | -0.038 |
+| Qwen2.5-1.5B | final token, best layer (19/28) | ancestor | -0.159 | +0.538 | -0.024 | -0.041 | -0.239 | -0.074 |
+| Qwen2.5-1.5B | final token, best layer (19/28) | descendant | -0.096 | +0.514 | -0.003 | -0.017 | -0.271 | -0.126 |
+| Qwen2.5-1.5B | final token, best layer (19/28) | collider | -0.362 | +0.496 | -0.027 | -0.032 | -0.244 | -0.104 |
+| Qwen2.5-1.5B | final token, best layer (19/28) | confounder | -0.232 | +0.568 | -0.014 | -0.006 | -0.312 | -0.164 |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | parent | +0.659 | +0.128 | +0.010 | +0.013 | +0.044 | +0.051 |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | ancestor | -0.159 | +0.114 | +0.008 | +0.024 | +0.026 | +0.036 |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | descendant | -0.096 | +0.084 | +0.018 | +0.018 | +0.032 | +0.051 |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | collider | -0.362 | +0.118 | -0.003 | -0.007 | +0.018 | +0.023 |
+| Qwen2.5-1.5B | end of hypothesis, best layer (18/28) | confounder | -0.232 | +0.129 | -0.003 | +0.009 | +0.014 | +0.020 |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | parent | +0.659 | -0.009 | -0.016 | -0.039 | -0.032 | -0.019 |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | ancestor | -0.159 | -0.003 | -0.014 | -0.028 | -0.033 | -0.027 |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | descendant | -0.096 | -0.005 | -0.005 | -0.001 | -0.016 | -0.015 |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | collider | -0.362 | -0.014 | -0.001 | +0.003 | -0.004 | -0.005 |
+| Qwen2.5-1.5B | final token, earlier layer (10/28) | confounder | -0.232 | -0.006 | -0.003 | -0.000 | -0.017 | -0.020 |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | parent | +0.659 | -0.008 | -0.004 | +0.008 | +0.002 | +0.003 |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | ancestor | -0.159 | -0.016 | -0.001 | +0.002 | -0.003 | -0.001 |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | descendant | -0.096 | +0.014 | +0.009 | -0.000 | -0.016 | -0.013 |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | collider | -0.362 | -0.007 | +0.007 | +0.006 | +0.005 | +0.001 |
+| Qwen2.5-1.5B | end of hypothesis, earlier layer (7/28) | confounder | -0.232 | +0.003 | +0.013 | +0.013 | +0.008 | +0.001 |
+| Qwen2.5-3B | final token, best layer (25/36) | parent | +0.899 | +0.386 | +0.224 | +0.150 | +0.184 | -0.032 |
+| Qwen2.5-3B | final token, best layer (25/36) | ancestor | +1.613 | +1.385 | +0.663 | +0.388 | +0.527 | -0.913 |
+| Qwen2.5-3B | final token, best layer (25/36) | descendant | +0.643 | +1.200 | +0.589 | +0.426 | +0.530 | -0.754 |
+| Qwen2.5-3B | final token, best layer (25/36) | collider | +0.210 | +1.471 | +0.719 | +0.341 | +0.339 | -2.052 |
+| Qwen2.5-3B | final token, best layer (25/36) | confounder | -2.344 | +0.625 | +0.296 | -0.008 | -0.004 | -1.624 |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | parent | +0.899 | +0.001 | -0.014 | -0.063 | -0.005 | -0.003 |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | ancestor | +1.613 | +0.012 | -0.007 | -0.083 | -0.051 | -0.032 |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | descendant | +0.643 | -0.010 | -0.045 | -0.111 | -0.140 | -0.099 |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | collider | +0.210 | +0.091 | -0.014 | -0.216 | -0.081 | -0.092 |
+| Qwen2.5-3B | end of hypothesis, best layer (25/36) | confounder | -2.344 | +0.075 | -0.052 | -0.236 | -0.123 | -0.148 |
+| Qwen2.5-3B | final token, earlier layer (19/36) | parent | +0.899 | +0.012 | -0.013 | +0.020 | +0.008 | -0.016 |
+| Qwen2.5-3B | final token, earlier layer (19/36) | ancestor | +1.613 | +0.015 | -0.004 | -0.019 | -0.024 | -0.028 |
+| Qwen2.5-3B | final token, earlier layer (19/36) | descendant | +0.643 | +0.008 | +0.009 | +0.029 | +0.020 | +0.005 |
+| Qwen2.5-3B | final token, earlier layer (19/36) | collider | +0.210 | -0.066 | +0.041 | +0.192 | +0.158 | +0.093 |
+| Qwen2.5-3B | final token, earlier layer (19/36) | confounder | -2.344 | -0.083 | +0.046 | +0.189 | +0.168 | +0.121 |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | parent | +0.899 | +0.000 | -0.006 | -0.019 | -0.016 | -0.014 |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | ancestor | +1.613 | -0.013 | -0.010 | +0.014 | +0.004 | -0.004 |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | descendant | +0.643 | -0.003 | -0.010 | -0.012 | -0.001 | -0.005 |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | collider | +0.210 | -0.029 | -0.037 | -0.005 | -0.006 | +0.035 |
+| Qwen2.5-3B | end of hypothesis, earlier layer (6/36) | confounder | -2.344 | +0.013 | -0.015 | -0.013 | -0.028 | +0.002 |
 
-<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
+<sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen1.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen1.5b_c2c_debiased_hyp_first50.json`, `results/adjacency_qwen3b_c2c_debiased_final_best.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen3b_c2c_debiased_final_first50.json`, `results/adjacency_qwen3b_c2c_debiased_hyp_first50.json`</sub>
 
 **What may and may not be concluded (Qwen2.5-0.5B).**
 
@@ -1445,8 +1579,10 @@ LoRA fine-tuning (the optional second half of Tier 3) was dropped when the heavy
 | Qwen2.5-1.5B | prem | 20 | 0.99 | 0.93 | 0.368 | 0.052 | L17H0 (+0.60), L15H10 (+0.47), MLP18 (+0.42), MLP27 (-0.39), MLP11 (+0.33) |
 | Gemma-2-2B | hyp | 20 | 0.98 | 0.99 | 0.410 | 0.032 | L15H2 (+0.62), MLP15 (+0.53), L12H3 (+0.47), MLP17 (+0.43), L13H2 (+0.41) |
 | Gemma-2-2B | prem | 20 | 0.99 | 1.00 | 0.391 | 0.040 | L13H2 (+0.59), L15H2 (+0.50), MLP15 (+0.48), MLP17 (+0.46), L12H3 (+0.40) |
+| Qwen2.5-3B | hyp | 20 | 0.99 | 0.97 | 0.286 | 0.022 | L18H9 (+0.40), MLP24 (+0.33), L20H14 (+0.32), L23H1 (+0.32), MLP31 (+0.28) |
+| Qwen2.5-3B | prem | 20 | 0.99 | 0.98 | 0.297 | 0.020 | MLP19 (+0.41), MLP24 (+0.36), L19H13 (+0.32), L23H1 (+0.31), MLP31 (+0.30) |
 
-<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b.json`</sub>
+<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b.json`, `results/patching_qwen3b.json`</sub>
 
 ![attribution](../figures/fig8_attribution_validation.png)
 

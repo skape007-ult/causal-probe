@@ -1,0 +1,311 @@
+{
+ "model": "qwen1.5b",
+ "kinds": {
+  "hyp": {
+   "templates_in_both_kinds": [
+    "has_collider",
+    "has_confounder",
+    "non-child descendant",
+    "non-parent ancestor",
+    "parent"
+   ],
+   "by_template": {
+    "child": {
+     "label_changing": {
+      "n_pairs": 0,
+      "mean_abs_D": null
+     },
+     "label_preserving": {
+      "n_pairs": 8,
+      "mean_abs_D": 0.7667138576507568
+     }
+    },
+    "has_collider": {
+     "label_changing": {
+      "n_pairs": 7,
+      "mean_abs_D": 1.923321315220424
+     },
+     "label_preserving": {
+      "n_pairs": 17,
+      "mean_abs_D": 0.6951111064237707
+     }
+    },
+    "has_confounder": {
+     "label_changing": {
+      "n_pairs": 4,
+      "mean_abs_D": 0.31258201599121094
+     },
+     "label_preserving": {
+      "n_pairs": 2,
+      "mean_abs_D": 0.26184558868408203
+     }
+    },
+    "non-child descendant": {
+     "label_changing": {
+      "n_pairs": 3,
+      "mean_abs_D": 0.5280647277832031
+     },
+     "label_preserving": {
+      "n_pairs": 6,
+      "mean_abs_D": 0.4181524912516276
+     }
+    },
+    "non-parent ancestor": {
+     "label_changing": {
+      "n_pairs": 2,
+      "mean_abs_D": 0.6889457702636719
+     },
+     "label_preserving": {
+      "n_pairs": 6,
+      "mean_abs_D": 0.7633851369222006
+     }
+    },
+    "parent": {
+     "label_changing": {
+      "n_pairs": 24,
+      "mean_abs_D": 1.1133040587107341
+     },
+     "label_preserving": {
+      "n_pairs": 21,
+      "mean_abs_D": 1.6238830203101748
+     }
+    }
+   },
+   "standardised_over_common_templates": {
+    "weights": {
+     "has_collider": 7,
+     "has_confounder": 2,
+     "non-child descendant": 3,
+     "non-parent ancestor": 2,
+     "parent": 21
+    },
+    "mean_abs_D_label_changing": {
+     "est": 1.1551395484379359,
+     "lo": 0.8341229942866734,
+     "hi": 1.419283934093657
+    },
+    "mean_abs_D_label_preserving": {
+     "est": 1.207778288469929,
+     "lo": 0.8879496993569767,
+     "hi": 1.5611070931339677
+    },
+    "preserving_minus_changing": {
+     "est": 0.0526387400319932,
+     "lo": -0.3475177166737664,
+     "hi": 0.4927830392841064
+    },
+    "ratio_preserving_over_changing": 1.0455691609755506
+   },
+   "unstandardised": {
+    "mean_abs_D_label_changing": 1.1098740100860596,
+    "mean_abs_D_label_preserving": 0.994417667388916,
+    "mean_D_label_changing": {
+     "est": -0.08836550712585449,
+     "lo": -0.4185812915243754,
+     "hi": 0.26045065543390433,
+     "n": 40,
+     "n_groups": 28
+    },
+    "mean_D_label_preserving": {
+     "est": 0.4090110460917155,
+     "lo": 0.07203355878471271,
+     "hi": 0.7392861362443662,
+     "n": 60,
+     "n_groups": 50
+    }
+   },
+   "signed_D_by_direction_of_letter_change": {
+    "label_changing_later_letter": {
+     "est": -0.6708882649739584,
+     "lo": -1.3269367613511927,
+     "hi": -0.00720715364989121,
+     "n": 18,
+     "n_groups": 16,
+     "n_pairs": 18,
+     "share_positive": 0.3888888888888889
+    },
+    "label_changing_earlier_letter": {
+     "est": 0.3882440220225941,
+     "lo": -0.14897390495647084,
+     "hi": 0.8662131981416182,
+     "n": 22,
+     "n_groups": 20,
+     "n_pairs": 22,
+     "share_positive": 0.6818181818181818
+    },
+    "label_preserving_later_letter": {
+     "est": 0.4090110460917155,
+     "lo": 0.07203355878471271,
+     "hi": 0.7392861362443662,
+     "n": 60,
+     "n_groups": 50,
+     "n_pairs": 60,
+     "share_positive": 0.6
+    },
+    "label_preserving_earlier_letter": {
+     "n_pairs": 0
+    },
+    "note": "D = answer logit of the original prompt minus that of the edited one. The label-preserving pair list keeps only edits in which the hypothesis letter is replaced by a later letter (patch.build_pairs counts each unordered pair once), so its mean D must be compared with the later-letter half of the label-changing pairs.",
+    "label_changing_minus_label_preserving_later_letter": {
+     "est": -1.0798993110656738,
+     "lo": -1.8399178518189323,
+     "hi": -0.34363011625078127,
+     "note": "pairs resampled individually; the two sets share some premises"
+    }
+   }
+  },
+  "prem": {
+   "templates_in_both_kinds": [
+    "has_collider",
+    "has_confounder",
+    "non-child descendant",
+    "non-parent ancestor",
+    "parent"
+   ],
+   "by_template": {
+    "child": {
+     "label_changing": {
+      "n_pairs": 0,
+      "mean_abs_D": null
+     },
+     "label_preserving": {
+      "n_pairs": 8,
+      "mean_abs_D": 0.8011281490325928
+     }
+    },
+    "has_collider": {
+     "label_changing": {
+      "n_pairs": 7,
+      "mean_abs_D": 1.715463365827288
+     },
+     "label_preserving": {
+      "n_pairs": 17,
+      "mean_abs_D": 0.6569161134607652
+     }
+    },
+    "has_confounder": {
+     "label_changing": {
+      "n_pairs": 4,
+      "mean_abs_D": 0.2085094451904297
+     },
+     "label_preserving": {
+      "n_pairs": 2,
+      "mean_abs_D": 0.29731178283691406
+     }
+    },
+    "non-child descendant": {
+     "label_changing": {
+      "n_pairs": 3,
+      "mean_abs_D": 0.8164285024007162
+     },
+     "label_preserving": {
+      "n_pairs": 6,
+      "mean_abs_D": 0.2955741882324219
+     }
+    },
+    "non-parent ancestor": {
+     "label_changing": {
+      "n_pairs": 2,
+      "mean_abs_D": 0.9484195709228516
+     },
+     "label_preserving": {
+      "n_pairs": 6,
+      "mean_abs_D": 0.35091272989908856
+     }
+    },
+    "parent": {
+     "label_changing": {
+      "n_pairs": 24,
+      "mean_abs_D": 1.0423825581868489
+     },
+     "label_preserving": {
+      "n_pairs": 21,
+      "mean_abs_D": 0.9089055742536273
+     }
+    }
+   },
+   "standardised_over_common_templates": {
+    "weights": {
+     "has_collider": 7,
+     "has_confounder": 2,
+     "non-child descendant": 3,
+     "non-parent ancestor": 2,
+     "parent": 21
+    },
+    "mean_abs_D_label_changing": {
+     "est": 1.1046120234898158,
+     "lo": 0.8217774324041963,
+     "hi": 1.3777508253225217
+    },
+    "mean_abs_D_label_preserving": {
+     "est": 0.7391028983920228,
+     "lo": 0.5695046532429805,
+     "hi": 0.9319485481002114
+    },
+    "preserving_minus_changing": {
+     "est": -0.365509125097793,
+     "lo": -0.7222845988316492,
+     "hi": -0.033221607808539555
+    },
+    "ratio_preserving_over_changing": 0.6691063311595731
+   },
+   "unstandardised": {
+    "mean_abs_D_label_changing": 1.055139684677124,
+    "mean_abs_D_label_preserving": 0.6856193542480469,
+    "mean_D_label_changing": {
+     "est": -0.08733668327331542,
+     "lo": -0.42661051627751945,
+     "hi": 0.2690000022329935,
+     "n": 40,
+     "n_groups": 28
+    },
+    "mean_D_label_preserving": {
+     "est": -0.022450955708821614,
+     "lo": -0.25915727983821524,
+     "hi": 0.19436127333904368,
+     "n": 60,
+     "n_groups": 50
+    }
+   },
+   "signed_D_by_direction_of_letter_change": {
+    "label_changing_later_letter": {
+     "est": -0.7473460303412544,
+     "lo": -1.258022846297214,
+     "hi": -0.2664567136764527,
+     "n": 18,
+     "n_groups": 16,
+     "n_pairs": 18,
+     "share_positive": 0.2222222222222222
+    },
+    "label_changing_earlier_letter": {
+     "est": 0.4526709643277255,
+     "lo": -0.07012625050235104,
+     "hi": 0.9116958423094316,
+     "n": 22,
+     "n_groups": 20,
+     "n_pairs": 22,
+     "share_positive": 0.6818181818181818
+    },
+    "label_preserving_later_letter": {
+     "est": -0.022450955708821614,
+     "lo": -0.25915727983821524,
+     "hi": 0.19436127333904368,
+     "n": 60,
+     "n_groups": 50,
+     "n_pairs": 60,
+     "share_positive": 0.45
+    },
+    "label_preserving_earlier_letter": {
+     "n_pairs": 0
+    },
+    "note": "D = answer logit of the original prompt minus that of the edited one. The label-preserving pair list keeps only edits in which the hypothesis letter is replaced by a later letter (patch.build_pairs counts each unordered pair once), so its mean D must be compared with the later-letter half of the label-changing pairs.",
+    "label_changing_minus_label_preserving_later_letter": {
+     "est": -0.7248950746324327,
+     "lo": -1.3408073382907444,
+     "hi": -0.13664093150032933,
+     "note": "pairs resampled individually; the two sets share some premises"
+    }
+   }
+  }
+ }
+}

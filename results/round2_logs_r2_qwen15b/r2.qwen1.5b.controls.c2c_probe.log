@@ -1,0 +1,7 @@
+site: final, layer 21, C 0.1 (main steering run)
+143 directions fitted [57s]
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<03:02,  1.84it/s]Loading weights:  44%|████▍     | 148/338 [00:00<00:00, 288.06it/s]Loading weights:  63%|██████▎   | 214/338 [00:00<00:00, 289.38it/s]Loading weights:  78%|███████▊  | 263/338 [00:01<00:00, 288.83it/s]Loading weights:  90%|████████▉ | 304/338 [00:01<00:00, 270.76it/s]Loading weights: 100%|██████████| 338/338 [00:01<00:00, 252.26it/s]
+[timing] projected 2.1 min for the remaining 145 items
+gold_probe      slope -0.346/s | vs isotropic: percentile 0.81 | vs shuffled_probe: percentile 0.80, x1.7 its median
+gold_diffmeans  slope +2.008/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 0.85, x1.8 its median
+model_out       slope +2.379/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x12.0 its median

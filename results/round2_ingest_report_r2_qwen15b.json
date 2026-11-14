@@ -1,0 +1,66 @@
+{
+ "dir": "kaggle_out/r2_qwen15b",
+ "expected_commit": "08d99b1b0e971189160a2615cff3f7338d9222bb",
+ "environment": {
+  "python": "3.12.3",
+  "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+  "torch": "2.15.0+cu132",
+  "transformers": "5.22.2",
+  "sklearn": "1.9.1",
+  "numpy": "2.5.4",
+  "cuda": true,
+  "gpus": [
+   "Tesla T4",
+   "Tesla T4"
+  ],
+  "gpu_memory_gb": [
+   15.6,
+   15.6
+  ],
+  "sae_lens": "6.55.4",
+  "peft": "0.21.2",
+  "bitsandbytes": "not available (ModuleNotFoundError)",
+  "accelerate": "1.15.0",
+  "git_commit": "6d9ce8dbe7146b10c10e7285c276a786d3727fd2"
+ },
+ "output_status": null,
+ "missing": [],
+ "failed": [],
+ "run_finished": true,
+ "notes": [
+  "run used an earlier round-2 pin (6d9ce8d); current pin is 08d99b1",
+  "run predates STATUS.txt (its notebook did not write one); accepted without it"
+ ],
+ "results_written": [
+  "results/adjacency_qwen1.5b_c2c_debiased_final_best.json",
+  "results/adjacency_qwen1.5b_c2c_debiased_final_first50.json",
+  "results/adjacency_qwen1.5b_c2c_debiased_hyp_best.json",
+  "results/adjacency_qwen1.5b_c2c_debiased_hyp_first50.json",
+  "results/feature_select_qwen1.5b_c2c_debiased_adj_content_end.json",
+  "results/feature_select_qwen1.5b_c2c_debiased_adj_final.json",
+  "results/patching_qwen1.5b_same.json",
+  "results/round2_environment_r2_qwen15b.json",
+  "results/round2_logs_r2_qwen15b/data.log",
+  "results/round2_logs_r2_qwen15b/environment.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.adjacency.content_end.best.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.adjacency.content_end.first50.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.adjacency.final.best.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.adjacency.final.first50.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.cache.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.controls.c2c_debiased.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.controls.c2c_probe.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.controls_hyp.c2c_debiased.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.controls_hyp.c2c_probe.log",
+  "results/round2_logs_r2_qwen15b/r2.qwen1.5b.patch_same.log",
+  "results/round2_status_r2_qwen15b.json",
+  "results/steer_select_qwen1.5b_c2c_debiased_content_end.json",
+  "results/steer_select_qwen1.5b_c2c_probe_content_end.json",
+  "results/steering_controls_qwen1.5b_c2c_debiased.json",
+  "results/steering_controls_qwen1.5b_c2c_debiased_hyp.json",
+  "results/steering_controls_qwen1.5b_c2c_probe.json",
+  "results/steering_controls_qwen1.5b_c2c_probe_hyp.json"
+ ],
+ "conflicts": [],
+ "caches_loaded": [],
+ "problems": []
+}

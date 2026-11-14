@@ -1,0 +1,243 @@
+{
+ "stages": {
+  "data": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "ok  corr2cause/train.csv  causal-nlp/corr2cause@42ba12c7  md5 bee2c98caa50f69bee54318d35f0ace4",
+    "ok  corr2cause/dev.csv  causal-nlp/corr2cause@42ba12c7  md5 7a343e9d341b892a7a7b1b1bddd39aa9",
+    "ok  corr2cause/test.csv  causal-nlp/corr2cause@42ba12c7  md5 c318d19ddc585bb4310084e2ce2d241f",
+    "ok  cladder/full_v1.5_default.csv  causal-nlp/CLadder@18d684e4  md5 32815a3e44cbd32fa3db84972d750815"
+   ]
+  },
+  "environment": {
+   "ok": true,
+   "minutes": 0.3,
+   "detail": "ok",
+   "log_tail": [
+    "  15.6",
+    " ],",
+    " \"sae_lens\": \"6.55.4\",",
+    " \"peft\": \"0.21.2\",",
+    " \"bitsandbytes\": \"not available (ModuleNotFoundError)\",",
+    " \"accelerate\": \"1.15.0\",",
+    " \"git_commit\": \"cdb08d7ca71f7236c7cada2f7ffc238067e7143f\"",
+    "}"
+   ]
+  },
+  "r2.qwen3b.cache": {
+   "ok": true,
+   "minutes": 16.8,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] qwen3b/c2c_debiased chunk 4/10 5.12 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 5/10 5.19 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 6/10 5.19 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 7/10 5.16 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 8/10 5.13 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 9/10 5.11 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 10/10 5.08 items/s",
+    "done in 16.8 min"
+   ]
+  },
+  "r2.qwen3b.controls.c2c_debiased": {
+   "ok": true,
+   "minutes": 4.5,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  87%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b | 379/434 [00:02<00:00, 146.55it/s]",
+    "Loading weights:  92%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f| 399/434 [00:02<00:00, 152.30it/s]",
+    "Loading weights:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 423/434 [00:02<00:00, 154.24it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 434/434 [00:02<00:00, 152.16it/s]",
+    "[timing] projected 3.9 min for the remaining 145 items",
+    "gold_probe      slope -0.229/s | vs isotropic: percentile 0.22 | vs shuffled_probe: percentile 0.20, x0.6 its median",
+    "gold_diffmeans  slope +4.022/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 0.80, x1.7 its median",
+    "model_out       slope +5.288/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x12.8 its median"
+   ]
+  },
+  "r2.qwen3b.controls.c2c_probe": {
+   "ok": true,
+   "minutes": 4.2,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  86%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b | 375/434 [00:02<00:00, 169.23it/s]",
+    "Loading weights:  92%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f| 399/434 [00:02<00:00, 163.28it/s]",
+    "Loading weights:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 423/434 [00:02<00:00, 170.26it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 434/434 [00:02<00:00, 157.35it/s]",
+    "[timing] projected 2.7 min for the remaining 145 items",
+    "gold_probe      slope -0.802/s | vs isotropic: percentile 0.72 | vs shuffled_probe: percentile 0.80, x1.8 its median",
+    "gold_diffmeans  slope +4.745/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 0.85, x1.3 its median",
+    "model_out       slope +4.702/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x10.7 its median"
+   ]
+  },
+  "r2.qwen3b.controls_hyp.c2c_debiased": {
+   "ok": true,
+   "minutes": 6.9,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  86%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b | 375/434 [00:02<00:00, 160.00it/s]",
+    "Loading weights:  90%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 | 392/434 [00:02<00:00, 160.39it/s]",
+    "Loading weights:  95%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d| 412/434 [00:02<00:00, 155.95it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 434/434 [00:02<00:00, 155.31it/s]",
+    "[timing] projected 7.0 min for the remaining 145 items",
+    "gold_probe      slope -0.080/s | vs isotropic: percentile 0.29 | vs shuffled_probe: percentile 0.25, x0.4 its median",
+    "gold_diffmeans  slope +0.738/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 1.00, x2.3 its median",
+    "model_out       slope +0.810/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x3.7 its median"
+   ]
+  },
+  "r2.qwen3b.controls_hyp.c2c_probe": {
+   "ok": true,
+   "minutes": 7.0,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  88%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a | 380/434 [00:02<00:00, 157.64it/s]",
+    "Loading weights:  92%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f| 399/434 [00:02<00:00, 164.68it/s]",
+    "Loading weights:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 423/434 [00:02<00:00, 166.96it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 434/434 [00:02<00:00, 156.16it/s]",
+    "[timing] projected 4.2 min for the remaining 145 items",
+    "gold_probe      slope -0.268/s | vs isotropic: percentile 0.86 | vs shuffled_probe: percentile 0.85, x1.9 its median",
+    "gold_diffmeans  slope +0.222/s | vs isotropic: percentile 0.79 | vs shuffled_diffmeans: percentile 0.30, x0.6 its median",
+    "model_out       slope +0.873/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x6.1 its median"
+   ]
+  },
+  "r2.qwen3b.adjacency.final.best": {
+   "ok": true,
+   "minutes": 11.3,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.386 +0.224 +0.150 +0.184 -0.032",
+    "    non-parent +1.385 +0.663 +0.388 +0.527 -0.913",
+    "    non-child  +1.200 +0.589 +0.426 +0.530 -0.754",
+    "    has_collid +1.471 +0.719 +0.341 +0.339 -2.052",
+    "    has_confou +0.625 +0.296 -0.008 -0.004 -1.624",
+    "    off-diagonal contrast, target sign +0.1104 [+0.0970, +0.1244]; source sign +0.5458 [+0.5120, +0.5813]",
+    "  positive control (model-answer direction): slope +0.6026 per unit norm, larger in absolute value than 100% of shuffled-label probe directions"
+   ]
+  },
+  "r2.qwen3b.adjacency.content_end.best": {
+   "ok": true,
+   "minutes": 17.5,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.001 -0.014 -0.063 -0.005 -0.003",
+    "    non-parent +0.012 -0.007 -0.083 -0.051 -0.032",
+    "    non-child  -0.010 -0.045 -0.111 -0.140 -0.099",
+    "    has_collid +0.091 -0.014 -0.216 -0.081 -0.092",
+    "    has_confou +0.075 -0.052 -0.236 -0.123 -0.148",
+    "    off-diagonal contrast, target sign -0.0102 [-0.0122, -0.0084]; source sign -0.0235 [-0.0246, -0.0224]",
+    "  positive control (model-answer direction): slope +0.0444 per unit norm, larger in absolute value than 100% of shuffled-label probe directions"
+   ]
+  },
+  "r2.qwen3b.adjacency.final.first50": {
+   "ok": true,
+   "minutes": 12.1,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.012 -0.013 +0.020 +0.008 -0.016",
+    "    non-parent +0.015 -0.004 -0.019 -0.024 -0.028",
+    "    non-child  +0.008 +0.009 +0.029 +0.020 +0.005",
+    "    has_collid -0.066 +0.041 +0.192 +0.158 +0.093",
+    "    has_confou -0.083 +0.046 +0.189 +0.168 +0.121",
+    "    off-diagonal contrast, target sign -0.0142 [-0.0162, -0.0120]; source sign +0.0175 [+0.0160, +0.0191]",
+    "  positive control (model-answer direction): slope +0.0228 per unit norm, larger in absolute value than 40% of shuffled-label probe directions"
+   ]
+  },
+  "r2.qwen3b.adjacency.content_end.first50": {
+   "ok": true,
+   "minutes": 17.4,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.000 -0.006 -0.019 -0.016 -0.014",
+    "    non-parent -0.013 -0.010 +0.014 +0.004 -0.004",
+    "    non-child  -0.003 -0.010 -0.012 -0.001 -0.005",
+    "    has_collid -0.029 -0.037 -0.005 -0.006 +0.035",
+    "    has_confou +0.013 -0.015 -0.013 -0.028 +0.002",
+    "    off-diagonal contrast, target sign -0.0039 [-0.0057, -0.0023]; source sign -0.0025 [-0.0038, -0.0013]",
+    "  positive control (model-answer direction): slope -0.0189 per unit norm, larger in absolute value than 80% of shuffled-label probe directions"
+   ]
+  },
+  "r2.qwen3b.patch_same": {
+   "ok": true,
+   "minutes": 18.2,
+   "detail": "ok",
+   "log_tail": [
+    "[prem] pair 0/60 509s",
+    "[prem] pair 10/60 602s",
+    "[prem] pair 20/60 723s",
+    "[prem] pair 30/60 819s",
+    "[prem] pair 40/60 915s",
+    "[prem] pair 50/60 1001s",
+    "[prem] n=60 mean delta 0.379 frac>0 0.65; final-position recovery by layer: -0.01 -0.01 -0.01 -0.01 -0.01 -0.00 -0.00 -0.00 -0.01 -0.00 -0.00 0.03 0.10 0.81 0.94 0.99 0.99 0.99 1.00",
+    "done 18.1 min"
+   ]
+  },
+  "r2.qwen3b.patch": {
+   "ok": true,
+   "minutes": 24.0,
+   "detail": "ok",
+   "log_tail": [
+    "[prem] pair 10/60 811s",
+    "[prem] pair 20/60 902s",
+    "[prem] pair 30/60 1024s",
+    "[prem] pair 40/60 1138s",
+    "[prem] pair 50/60 1276s",
+    "[prem] n=60 mean delta 0.002 frac>0 0.52; final-position recovery by layer: -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.01 0.03 0.12 0.77 0.92 0.97 0.98 0.98 1.00",
+    "[prem] components: top ['MLP19', 'MLP24', 'L19H13', 'L23H1', 'L20H14', 'MLP31', 'MLP30', 'L26H3', 'L24H5', 'MLP20'] pearson 0.99",
+    "done 23.9 min"
+   ]
+  }
+ },
+ "run": "r2_qwen3b",
+ "models": [
+  "qwen3b"
+ ],
+ "jobs": [
+  "cache",
+  "controls",
+  "controls_hyp",
+  "adjacency",
+  "patch_same",
+  "patch",
+  "export"
+ ],
+ "tiny": false,
+ "planned": [
+  "data",
+  "environment",
+  "r2.qwen3b.cache",
+  "r2.qwen3b.controls.c2c_debiased",
+  "r2.qwen3b.controls.c2c_probe",
+  "r2.qwen3b.controls_hyp.c2c_debiased",
+  "r2.qwen3b.controls_hyp.c2c_probe",
+  "r2.qwen3b.adjacency.final.best",
+  "r2.qwen3b.adjacency.content_end.best",
+  "r2.qwen3b.adjacency.final.first50",
+  "r2.qwen3b.adjacency.content_end.first50",
+  "r2.qwen3b.patch_same",
+  "r2.qwen3b.patch"
+ ],
+ "total_minutes": 140.5,
+ "models_run": [
+  "qwen3b"
+ ],
+ "export": {
+  "positions": [
+   "final",
+   "content_end"
+  ],
+  "bytes_per_cache_dir": {
+   "qwen3b/c2c_debiased": 733541570,
+   "qwen3b/c2c_probe": 1228424
+  },
+  "zip_megabytes": {
+   "cache_r2_qwen3b_qwen3b.zip": 735.2
+  }
+ },
+ "all_ok": true,
+ "finished": true
+}

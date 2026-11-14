@@ -271,6 +271,8 @@ The steering evidence is in Section 4.1 and the test of the adjacency encoding i
 
 ## 4. Tier 2 results
 
+> **Not yet audited (Sat 14 Nov, 00:30).** The rows for Qwen2.5-1.5B and Qwen2.5-3B in the tables of 4.1 (steering controls at both tokens), 4.2 (label-preserving pairs) and 4.4 (adjacency test), and the three-model versions of figures 10 to 12, come from two GPU runs ingested on Sat 14 Nov. They are shown as they came back. The text of these sections still describes Qwen2.5-0.5B and has not been revised for them; `RESULTS.md` does not use them. An independent audit of these rows is under way (log, Sat 00:30).
+
 This section was rewritten after the second independent audit (Section 6), which showed that my first summary of the steering results ("the gold-probe direction is inert, the model-output direction flips answers") did not survive scrutiny as stated. The analysis below uses the audit's metrics and adds the controls it asked for. Results for Gemma-2-2B and Qwen2.5-3B come from the Kaggle run and are added when it returns; that run used three random directions only, so the matched controls exist for the two local Qwen models.
 
 ### 4.1 Steering: what does adding a decodable direction do to the answer?

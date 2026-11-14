@@ -1,0 +1,226 @@
+{
+ "stages": {
+  "data": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "ok  corr2cause/train.csv  causal-nlp/corr2cause@42ba12c7  md5 bee2c98caa50f69bee54318d35f0ace4",
+    "ok  corr2cause/dev.csv  causal-nlp/corr2cause@42ba12c7  md5 7a343e9d341b892a7a7b1b1bddd39aa9",
+    "ok  corr2cause/test.csv  causal-nlp/corr2cause@42ba12c7  md5 c318d19ddc585bb4310084e2ce2d241f",
+    "ok  cladder/full_v1.5_default.csv  causal-nlp/CLadder@18d684e4  md5 32815a3e44cbd32fa3db84972d750815"
+   ]
+  },
+  "environment": {
+   "ok": true,
+   "minutes": 0.3,
+   "detail": "ok",
+   "log_tail": [
+    "  15.6",
+    " ],",
+    " \"sae_lens\": \"6.55.4\",",
+    " \"peft\": \"0.21.2\",",
+    " \"bitsandbytes\": \"not available (ModuleNotFoundError)\",",
+    " \"accelerate\": \"1.15.0\",",
+    " \"git_commit\": \"6d9ce8dbe7146b10c10e7285c276a786d3727fd2\"",
+    "}"
+   ]
+  },
+  "r2.qwen1.5b.cache": {
+   "ok": true,
+   "minutes": 8.4,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] qwen1.5b/c2c_debiased chunk 4/10 10.59 items/s",
+    "[cache] qwen1.5b/c2c_debiased chunk 5/10 10.67 items/s",
+    "[cache] qwen1.5b/c2c_debiased chunk 6/10 10.65 items/s",
+    "[cache] qwen1.5b/c2c_debiased chunk 7/10 10.63 items/s",
+    "[cache] qwen1.5b/c2c_debiased chunk 8/10 10.58 items/s",
+    "[cache] qwen1.5b/c2c_debiased chunk 9/10 10.55 items/s",
+    "[cache] qwen1.5b/c2c_debiased chunk 10/10 10.49 items/s",
+    "done in 8.4 min"
+   ]
+  },
+  "r2.qwen1.5b.controls.c2c_debiased": {
+   "ok": true,
+   "minutes": 3.5,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  66%|\u2588\u2588\u2588\u2588\u2588\u2588\u258c   | 223/338 [00:00<00:00, 286.23it/s]",
+    "Loading weights:  82%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f | 277/338 [00:01<00:00, 286.53it/s]",
+    "Loading weights:  95%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d| 321/338 [00:01<00:00, 272.76it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 338/338 [00:01<00:00, 251.31it/s]",
+    "[timing] projected 2.5 min for the remaining 145 items",
+    "gold_probe      slope -0.142/s | vs isotropic: percentile 0.39 | vs shuffled_probe: percentile 0.45, x0.8 its median",
+    "gold_diffmeans  slope +1.888/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 0.95, x1.9 its median",
+    "model_out       slope +1.788/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x10.0 its median"
+   ]
+  },
+  "r2.qwen1.5b.controls.c2c_probe": {
+   "ok": true,
+   "minutes": 3.2,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  63%|\u2588\u2588\u2588\u2588\u2588\u2588\u258e   | 214/338 [00:00<00:00, 289.38it/s]",
+    "Loading weights:  78%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 263/338 [00:01<00:00, 288.83it/s]",
+    "Loading weights:  90%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589 | 304/338 [00:01<00:00, 270.76it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 338/338 [00:01<00:00, 252.26it/s]",
+    "[timing] projected 2.1 min for the remaining 145 items",
+    "gold_probe      slope -0.346/s | vs isotropic: percentile 0.81 | vs shuffled_probe: percentile 0.80, x1.7 its median",
+    "gold_diffmeans  slope +2.008/s | vs isotropic: percentile 1.00 | vs shuffled_diffmeans: percentile 0.85, x1.8 its median",
+    "model_out       slope +2.379/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x12.0 its median"
+   ]
+  },
+  "r2.qwen1.5b.controls_hyp.c2c_debiased": {
+   "ok": true,
+   "minutes": 4.2,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  72%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f  | 245/338 [00:01<00:00, 254.57it/s]",
+    "Loading weights:  84%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d | 285/338 [00:01<00:00, 260.01it/s]",
+    "Loading weights:  95%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d| 321/338 [00:01<00:00, 248.68it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 338/338 [00:01<00:00, 237.05it/s]",
+    "[timing] projected 4.0 min for the remaining 145 items",
+    "gold_probe      slope -0.251/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x4.1 its median",
+    "gold_diffmeans  slope +0.095/s | vs isotropic: percentile 0.78 | vs shuffled_diffmeans: percentile 0.55, x1.1 its median",
+    "model_out       slope +0.506/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x8.3 its median"
+   ]
+  },
+  "r2.qwen1.5b.controls_hyp.c2c_probe": {
+   "ok": true,
+   "minutes": 4.4,
+   "detail": "ok",
+   "log_tail": [
+    "Loading weights:  71%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588   | 239/338 [00:01<00:00, 254.68it/s]",
+    "Loading weights:  82%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f | 278/338 [00:01<00:00, 263.97it/s]",
+    "Loading weights:  93%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e| 314/338 [00:01<00:00, 264.97it/s]",
+    "Loading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 338/338 [00:01<00:00, 236.48it/s]",
+    "[timing] projected 2.4 min for the remaining 145 items",
+    "gold_probe      slope +0.693/s | vs isotropic: percentile 0.81 | vs shuffled_probe: percentile 0.95, x2.0 its median",
+    "gold_diffmeans  slope +0.502/s | vs isotropic: percentile 0.72 | vs shuffled_diffmeans: percentile 0.30, x0.6 its median",
+    "model_out       slope +3.714/s | vs isotropic: percentile 1.00 | vs shuffled_probe: percentile 1.00, x10.9 its median"
+   ]
+  },
+  "r2.qwen1.5b.adjacency.final.best": {
+   "ok": true,
+   "minutes": 9.2,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.470 -0.038 -0.066 -0.201 -0.038",
+    "    non-parent +0.538 -0.024 -0.041 -0.239 -0.074",
+    "    non-child  +0.514 -0.003 -0.017 -0.271 -0.126",
+    "    has_collid +0.496 -0.027 -0.032 -0.244 -0.104",
+    "    has_confou +0.568 -0.014 -0.006 -0.312 -0.164",
+    "    off-diagonal contrast, target sign -0.0925 [-0.0954, -0.0895]; source sign +0.2208 [+0.2163, +0.2250]",
+    "  positive control (model-answer direction): slope +0.4782 per unit norm, larger in absolute value than 100% of shuffled-label probe directions"
+   ]
+  },
+  "r2.qwen1.5b.adjacency.content_end.best": {
+   "ok": true,
+   "minutes": 10.7,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.128 +0.010 +0.013 +0.044 +0.051",
+    "    non-parent +0.114 +0.008 +0.024 +0.026 +0.036",
+    "    non-child  +0.084 +0.018 +0.018 +0.032 +0.051",
+    "    has_collid +0.118 -0.003 -0.007 +0.018 +0.023",
+    "    has_confou +0.129 -0.003 +0.009 +0.014 +0.020",
+    "    off-diagonal contrast, target sign -0.0290 [-0.0302, -0.0279]; source sign +0.0136 [+0.0127, +0.0144]",
+    "  positive control (model-answer direction): slope +0.1105 per unit norm, larger in absolute value than 100% of shuffled-label probe directions"
+   ]
+  },
+  "r2.qwen1.5b.adjacency.final.first50": {
+   "ok": true,
+   "minutes": 9.3,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     -0.009 -0.016 -0.039 -0.032 -0.019",
+    "    non-parent -0.003 -0.014 -0.028 -0.033 -0.027",
+    "    non-child  -0.005 -0.005 -0.001 -0.016 -0.015",
+    "    has_collid -0.014 -0.001 +0.003 -0.004 -0.005",
+    "    has_confou -0.006 -0.003 -0.000 -0.017 -0.020",
+    "    off-diagonal contrast, target sign +0.0036 [+0.0021, +0.0051]; source sign +0.0109 [+0.0086, +0.0131]",
+    "  positive control (model-answer direction): slope +0.0116 per unit norm, larger in absolute value than 40% of shuffled-label probe directions"
+   ]
+  },
+  "r2.qwen1.5b.adjacency.content_end.first50": {
+   "ok": true,
+   "minutes": 10.9,
+   "detail": "ok",
+   "log_tail": [
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     -0.008 -0.004 +0.008 +0.002 +0.003",
+    "    non-parent -0.016 -0.001 +0.002 -0.003 -0.001",
+    "    non-child  +0.014 +0.009 -0.000 -0.016 -0.013",
+    "    has_collid -0.007 +0.007 +0.006 +0.005 +0.001",
+    "    has_confou +0.003 +0.013 +0.013 +0.008 +0.001",
+    "    off-diagonal contrast, target sign -0.0004 [-0.0013, +0.0005]; source sign -0.0038 [-0.0046, -0.0030]",
+    "  positive control (model-answer direction): slope +0.0111 per unit norm, larger in absolute value than 90% of shuffled-label probe directions"
+   ]
+  },
+  "r2.qwen1.5b.patch_same": {
+   "ok": true,
+   "minutes": 6.8,
+   "detail": "ok",
+   "log_tail": [
+    "[prem] pair 0/60 195s",
+    "[prem] pair 10/60 229s",
+    "[prem] pair 20/60 274s",
+    "[prem] pair 30/60 308s",
+    "[prem] pair 40/60 343s",
+    "[prem] pair 50/60 374s",
+    "[prem] n=60 mean delta -0.022 frac>0 0.45; final-position recovery by layer: 0.01 0.00 0.01 0.01 0.01 0.01 0.00 0.00 0.02 0.62 0.83 0.94 0.99 1.00 1.00",
+    "done 6.7 min"
+   ]
+  }
+ },
+ "run": "r2_qwen15b",
+ "models": [
+  "qwen1.5b"
+ ],
+ "jobs": [
+  "cache",
+  "controls",
+  "controls_hyp",
+  "adjacency",
+  "patch_same",
+  "export"
+ ],
+ "tiny": false,
+ "planned": [
+  "data",
+  "environment",
+  "r2.qwen1.5b.cache",
+  "r2.qwen1.5b.controls.c2c_debiased",
+  "r2.qwen1.5b.controls.c2c_probe",
+  "r2.qwen1.5b.controls_hyp.c2c_debiased",
+  "r2.qwen1.5b.controls_hyp.c2c_probe",
+  "r2.qwen1.5b.adjacency.final.best",
+  "r2.qwen1.5b.adjacency.content_end.best",
+  "r2.qwen1.5b.adjacency.final.first50",
+  "r2.qwen1.5b.adjacency.content_end.first50",
+  "r2.qwen1.5b.patch_same"
+ ],
+ "total_minutes": 71.0,
+ "models_run": [
+  "qwen1.5b"
+ ],
+ "export": {
+  "positions": [
+   "final",
+   "content_end"
+  ],
+  "bytes_per_cache_dir": {
+   "qwen1.5b/c2c_debiased": 433478138,
+   "qwen1.5b/c2c_probe": 1205664
+  },
+  "zip_megabytes": {
+   "cache_r2_qwen15b_qwen1.5b.zip": 434.8
+  }
+ },
+ "all_ok": true,
+ "finished": true
+}

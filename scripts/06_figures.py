@@ -210,7 +210,8 @@ def fig_selectivity_positions():
         axes[0].set_title("Selectivity = gold acc. − control-task acc.")
         axes[0].set_xlabel("relative depth (0 = embeddings, 1 = last layer)"); axes[0].set_ylabel("accuracy points")
         axes[0].legend(fontsize=8)
-        m = ms[-1]
+        # the largest model that has activations at all three token positions (models run on Kaggle export the final token only)
+        m = [x for x in ms if "gold@content_end" in load(probes_file(x, tag))["layers"]][-1]
         r = load(probes_file(m, tag))
         for key, col, lab in (("gold", "#2a78d6", "final prompt token"),
                               ("gold@content_end", "#1baf7a", "end of hypothesis / question"),
@@ -461,7 +462,7 @@ def fig_adjacency(site="final_best", name="fig11_adjacency_final.png", where="fi
     ms = [m for m in MODELS if (RESULTS / f"adjacency_{m}_c2c_debiased_{site}.json").exists()]
     if not ms:
         return
-    fig, axes = plt.subplots(3, len(ms), figsize=(max(4.3 * len(ms) + 0.8, 8.6), 8.6), squeeze=False, sharex=True)
+    fig, axes = plt.subplots(3, len(ms), figsize=(max(4.6 * len(ms) + 0.8, 8.6), 9.0), squeeze=False, sharex=True)
     x = np.arange(len(TEMPLATE_ORDER))
     for j, m in enumerate(ms):
         r = load(f"adjacency_{m}_c2c_debiased_{site}.json")
@@ -498,12 +499,12 @@ def fig_adjacency(site="final_best", name="fig11_adjacency_final.png", where="fi
                 ax.errorbar(t_, v["est"], yerr=[[v["est"] - v["lo"]], [v["hi"] - v["est"]]], fmt="o", ms=5, color=col, ecolor=col,
                             elinewidth=1.4, capsize=2.5, zorder=3)
             ax.axhline(0, color=AXIS, lw=0.8)
-            ax.set_title(f"{lab} · {note}", fontsize=7, fontweight="normal", color=INK2, loc="left")
+            ax.set_title(f"{lab}\n{note}", fontsize=6.8, fontweight="normal", color=INK2, loc="left")      # two lines: one line overlaps the next panel
         if j == 0:
             axes[0, 0].set_ylabel("observed: Yes−No logit,\nadjacent minus not adjacent")
             axes[1, 0].set_ylabel("effect towards Yes\nper move towards adjacent")
             axes[2, 0].set_ylabel("change in |gap| after erasure\n(evaluated items; < 0 = smaller)")
-        axes[2, j].set_xticks(x, [TEMPLATE_LAB[k] for k in TEMPLATE_ORDER], fontsize=6.5 if len(ms) > 2 else 7.5)
+        axes[2, j].set_xticks(x, [TEMPLATE_LAB[k] for k in TEMPLATE_ORDER], fontsize=6 if len(ms) > 2 else 7.5)
         axes[2, j].set_xlim(-0.6, len(x) - 0.4)
     fig.suptitle(f"Is the adjacency information used? Interventions at the {where}, debiased Corr2Cause pool.\n"
                  "Top: how the answer depends on adjacency of the queried pair, by hypothesis type (bars, 95% CI). Middle and bottom: what changing or erasing\n"

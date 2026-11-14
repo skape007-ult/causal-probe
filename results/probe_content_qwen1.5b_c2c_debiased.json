@@ -393,6 +393,36 @@
      "n": 1248,
      "n_groups": 624
     }
+   },
+   "text_only_parse_plus_4grams_tuned": {
+    "accuracy": {
+     "est": 0.8870192307692307,
+     "lo": 0.8693910256410257,
+     "hi": 0.9030649038461538,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.9567615877712032,
+     "lo": 0.9450515696909928,
+     "hi": 0.9670578053090073,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_accuracy": {
+     "est": -0.13461538461538458,
+     "lo": -0.16107772435897444,
+     "hi": -0.11057692307692313,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_auroc": {
+     "est": -0.12760159845496388,
+     "lo": -0.15038253513313599,
+     "hi": -0.10755773339907959,
+     "n": 1248,
+     "n_groups": 624
+    }
    }
   },
   "summary": {
@@ -407,7 +437,8 @@
    "binding_references_above_the_probe": [
     "per_string_premise_4grams",
     "hand_parse_all_features",
-    "strongest_text_only_parse_plus_4grams"
+    "strongest_text_only_parse_plus_4grams",
+    "text_only_parse_plus_4grams_tuned"
    ]
   }
  },
@@ -522,6 +553,82 @@
     "n": 2400,
     "n_groups": 1200
    }
+  },
+  "over_tuned_text_only": {
+   "base": {
+    "accuracy": {
+     "est": 0.8870192307692307,
+     "lo": 0.8693910256410257,
+     "hi": 0.9030649038461538,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.9567615877712032,
+     "lo": 0.9450515696909928,
+     "hi": 0.9670578053090073,
+     "n": 1248,
+     "n_groups": 624
+    }
+   },
+   "with_probe": {
+    "accuracy": {
+     "est": 0.8910256410256411,
+     "lo": 0.8725961538461539,
+     "hi": 0.9078525641025641,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.9580508300460223,
+     "lo": 0.9466721754807692,
+     "hi": 0.9680396326429981,
+     "n": 1248,
+     "n_groups": 624
+    }
+   },
+   "gain_accuracy": {
+    "est": 0.004006410256410353,
+    "lo": -0.004807692307692291,
+    "hi": 0.012820512820512775,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "gain_auroc": {
+    "est": 0.0012892422748190802,
+    "lo": -0.0004638190335304825,
+    "hi": 0.003064325998520664,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "gain_accuracy_all_items": {
+    "est": -0.0004166666666666208,
+    "lo": -0.0062604166666666424,
+    "hi": 0.0050000000000000044,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "ngram_C_chosen_on_selection_half": 100.0,
+   "selection_half_accuracy_of_text_only_stack_by_ngram_C": {
+    "1": 0.8576388888888888,
+    "10": 0.8654513888888888,
+    "100": 0.8723958333333334
+   },
+   "gain_accuracy_selection_half": {
+    "est": -0.00520833333333337,
+    "lo": -0.013042534722222256,
+    "hi": 0.0026041666666666297,
+    "n": 1152,
+    "n_groups": 576
+   },
+   "note": "fourteenth review, finding 10: the text-only stack with the n-gram regularisation chosen on the selection half"
+  },
+  "over_strongest_text_only_selection_half": {
+   "est": -0.0017361111111110494,
+   "lo": -0.01215277777777779,
+   "hi": 0.00868055555555558,
+   "n": 1152,
+   "n_groups": 576
   },
   "gbm_plus_one_column_insensitive": {
    "gain_accuracy": {
@@ -1907,5 +2014,5 @@
    "n_groups": 624
   }
  },
- "minutes": 8.2
+ "minutes": 9.3
 }

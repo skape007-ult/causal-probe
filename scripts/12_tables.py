@@ -487,7 +487,8 @@ def t_probe_content():
             "per_string_premise_bigrams": "Per hypothesis string: bag of premise 1–2-grams (no parser)",
             "per_string_premise_4grams": "Per hypothesis string: bag of premise 1–4-grams (no parser)",
             "hand_parse_all_features": "Hand-written parse, all features (gradient boosting)",
-            "strongest_text_only_parse_plus_4grams": "Hand parse stacked with per-string 4-grams (strongest text-only model here)"}
+            "strongest_text_only_parse_plus_4grams": "Hand parse stacked with per-string 4-grams, fixed settings",
+            "text_only_parse_plus_4grams_tuned": "Hand parse stacked with per-string 4-grams, n-gram regularisation chosen on the selection half"}
     plab = {"pair_correlated": "queried pair correlates", "pair_adjacent_in_skeleton": "queried pair adjacent in the skeleton (never separated)",
             "pair_has_common_neighbour": "pair has a common neighbour", "common_neighbour_in_a_separating_set": "a common neighbour lies in a separating set",
             "common_neighbour_in_no_separating_set": "a common neighbour lies in no separating set", "six_variables": "premise has six variables",
@@ -515,10 +516,14 @@ def t_probe_content():
                 else:
                     rA.append([LAB[m], glab[g], blab[k], f"{v['mean']:.3f} ± {v['sd']:.3f} (max {v['max']:.3f})", "–", "–"])
         iv = r["incremental_value"]
-        for key, lab in (("over_hand_parse", "hand-written parse"), ("over_strongest_text_only", "strongest text-only model (parse + per-string 4-grams)")):
+        for key, lab in (("over_hand_parse", "hand-written parse"), ("over_strongest_text_only", "parse + per-string 4-grams, fixed settings"),
+                         ("over_tuned_text_only", "parse + per-string 4-grams, n-gram regularisation chosen on the selection half")):
+            if key not in iv:
+                continue
             g = iv[key]
+            selh = g.get("gain_accuracy_selection_half") or (iv.get("over_strongest_text_only_selection_half") if key == "over_strongest_text_only" else None)
             rB.append([LAB[m], lab, ci(g["base"]["accuracy"]), ci(g["with_probe"]["accuracy"]), ci(g["gain_accuracy"], signed=True),
-                       ci(g["gain_auroc"], signed=True), ci(g["gain_accuracy_all_items"], signed=True)])
+                       ci(selh, signed=True) if selh else "–", ci(g["gain_auroc"], signed=True), ci(g["gain_accuracy_all_items"], signed=True)])
         for k, v in r["properties"]["by_property"].items():
             x = v["at_gold_probe_layer"]
             rC.append([LAB[m], plab[k], num(v["majority_rate"], 2), ci(x["trained"]["auroc"]),
@@ -546,8 +551,14 @@ def t_probe_content():
         return
     write("debiased_ladder", table(["Model", "Group", "Scorer", "Accuracy", "AUROC", "Gold probe − this (accuracy, paired)"], rA, src))
     write("debiased_incremental", table(
-        ["Model", "Probe added to", "Base accuracy", "Base + probe", "Gain in accuracy (report half)", "Gain in AUROC (report half)",
-         "Gain in accuracy (all items)"], rB, src))
+        ["Model", "Probe added to", "Base accuracy", "Base + probe", "Gain in accuracy (report half)", "Gain in accuracy (selection half)", "Gain in AUROC (report half)",
+         "Gain in accuracy (all items)"], rB, src,
+        notes=["Each row is a gain relative to a named text-only model. The label is a deterministic function of premise and hypothesis, so a good enough text model reaches 1.0 and "
+               "any probe then adds nothing; 'the probe adds x' and 'the probe adds nothing' both hold only relative to the model in the second column.",
+               "The stack with fixed settings is the one this project called 'the strongest text-only model' until the fourteenth review, which found it under-tuned "
+               "(`notes/audit_7b_probe_gain_raw.md`, finding 10). The tuned stack chooses one hyperparameter (the n-gram classifier's C among 1, 10, 100) on the selection half.",
+               "Five models and several statistics are shown without adjustment. The fourteenth review puts the one accuracy gain over the fixed stack whose interval clearly excludes zero "
+               "(Qwen2.5-7B, report half) at p = 0.015 before correction and 0.077 after a correction over the five models."]))
     write("debiased_properties", table(
         ["Model", "Property of the item", "Majority rate", "Probe AUROC, trained model", "Shuffled-label null (mean ± SD, 10 shuffles)",
          "Random-init model, same layer", "Random-init, its best layer", "Text, no binding (per template: premise counts + string id)",

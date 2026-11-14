@@ -448,7 +448,7 @@ Asked for by the user's rule that nothing new enters `RESULTS.md` unaudited. The
 
 **What I have not done.** The 100-control adjacency run uses the script's full layout, so each item costs about 4.3 times as many forward passes as before (1,126 vectors against 259); the script shortens itself to a template-balanced prefix that fits its time limit, so on the larger models fewer than 500 items may be evaluated. A layout that spends the extra controls only on the translation and erasure arms would be cheaper, but it changes the analysis code in many places and I judged that too risky the night before packaging.
 
-## Sat 2026-11-14 00:05 — Seventh independent audit: the round-3 code, before any of it ran on a GPU (raw report: `notes/audit_round3_code_raw.md`)
+## Fri 2026-11-13 23:30 — Seventh independent audit: the round-3 code, before any of it ran on a GPU (raw report: `notes/audit_round3_code_raw.md`)
 
 Asked for because almost none of tonight's code can run on the laptop. The reviewer read the two-GPU path against the installed transformers and accelerate, computed the device map for a Gemma-2-9B-shaped model without weights, ran the runner, the preflight, the 100-shuffle fitting and analysis, and the ingest on CPU with scratch folders. One critical finding, eight major, six minor. All fixed in `08d99b1` except where noted.
 

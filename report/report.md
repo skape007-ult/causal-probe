@@ -16,7 +16,7 @@ Technical report. Every number in a table comes from `results/*.json` via `scrip
 5. *Steering.* At the probed layer and final token (Qwen2.5-0.5B and 1.5B), and at the end of the hypothesis (Qwen2.5-0.5B), adding the gold probe's weight direction shifts the answer by an amount within the range of probe directions fitted to shuffled labels, and a movement of natural size along it changes nothing measurable. This neither shows nor excludes a causal role. The difference-of-class-means direction moves the answer about as much as differences of means for shuffled labels on the debiased pool, and more than all 20 on the original pool for Qwen2.5-0.5B (Section 4.1; rewritten after the second audit, wording tightened after the third).
 6. *Patching.* A change of one variable in the prompt reaches the answer position at about 0.6 of the network's depth in three models. With pairs whose correct answer does not change (Qwen2.5-0.5B so far), the answer logit moves as much, and its sign follows which variable letter is asked about. This locates the arrival of a prompt difference, not a causal judgement (Section 4.2).
 7. *Is the adjacency information used? (Qwen2.5-0.5B so far.)* No evidence of an adjacency feature. At the final token from layer 15 of 24 the within-question answer is a linear function of the activation, and the part that goes with adjacency for common-effect hypotheses can be moved and removed there, beyond every control; at the end of the hypothesis the same intervention is not distinguishable from a random direction of the same size. Two earlier readings of this experiment were wrong and were corrected by the fourth and fifth audits (Section 4.4).
-8. *Sparse-autoencoder features (Gemma-2-2B, CLadder).* The public SAEs reconstruct most of each activation but little of what differs between items. The features most associated with a causal graph type are not specific to it (one partial exception, for collision), and removing them shifts the answer somewhat more than removing three sets of matched random features in four of five cases (Section 5).
+8. *Sparse-autoencoder features (Gemma-2-2B, CLadder).* The public SAEs reconstruct most of each activation but little of what differs between items. The features most associated with a causal graph type are not specific to it (one partial exception, for collision), and removing them shifts the answer somewhat more than removing three sets of matched random features in four of five cases (Appendix C).
 9. *Remote runs.* Gemma-2-2B interventions and everything for Qwen2.5-3B ran on a Kaggle GPU and are included. A second round (Qwen2.5-7B behaviour; matched steering controls for Gemma and Qwen2.5-3B; steering at the end of the hypothesis; label-preserving patching pairs; a causal test of the adjacency information) is reported where its results have arrived and marked as pending where they have not.
 
 **Pre-registration status.** Pre-registered before any probe was run: the wrong-items criterion (D11) with TF-IDF and template-prior baselines, grouped cross-validation, split-half selection, cluster bootstrap. Added after seeing results, each making the claim harder to pass or narrowing it: stronger text baselines (D18), the audited criterion (D19), the debiased pool (D21), the steering metric and matched controls (D24), the two-group reading and its three tests (D25). The pre-registered analysis is reported in full alongside.
@@ -215,10 +215,7 @@ By rung and query type (CLadder) and by template (Corr2Cause test):
 
 ### 3.2 Logit lens
 
-![lens](../figures/fig2_logit_lens.png)
-![lens auroc](../figures/fig2b_lens_auroc.png)
-
-The first figure shows the Yes−No logit difference the model would produce if it stopped at each layer, for gold-Yes and gold-No items separately. In every panel the curves move together: the lens shows a shared drift towards one answer, not a separation by the correct answer. The second figure removes the drift by asking only whether the lens value ranks gold-Yes above gold-No items (AUROC). On the Corr2Cause pool it never exceeds 0.60 at any layer for the three local models (the maxima are 0.59 to 0.60, reached in the second half of the network) and reaches 0.63 for Qwen2.5-3B; on CLadder it stays between 0.47 and 0.53 at every layer for the local models and reaches 0.54 for Qwen2.5-3B (`results/lens_*.json`, key `auroc_gold_by_layer`). The lens at the last layer reproduces the model's actual answer logits (maximum error and sign agreement are in `results/lens_*.json`). So the lens gives no sign of a correct answer that forms in the middle of the network and is then overwritten.
+Moved to Appendix A: it supports none of the three headline claims of `RESULTS.md`. In one line: read through the unembedding at every layer, the answer never separates valid from invalid items; there is no correct answer that forms in the middle of the network and is then overwritten.
 
 ### 3.3 Probes and controls
 
@@ -1063,20 +1060,7 @@ Gemma-2-2B, patched on Kaggle with 40 pairs per kind, shows the same thing: mean
 
 **The random-donor row is not a control.** Only 16 of 60 (Qwen2.5-0.5B) and 6 of 40 (Qwen2.5-1.5B) pairs have a donor prompt of equal length, half of the donors carry the same token as the clean prompt at the changed position, and the statistic is not zero under the null. It is shown and not used.
 
-| Model | Pair kind | Pairs | Pearson r (attr. vs real) | Spearman | Mean |real| top-10 | Mean |real| random-10 | Largest real effects |
-|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | hyp | 30 | 1.00 | 0.98 | 0.449 | 0.034 | L14H5 (+0.76), MLP23 (-0.67), MLP12 (+0.50), MLP14 (+0.45), L12H2 (+0.44) |
-| Qwen2.5-0.5B | prem | 30 | 1.00 | 0.98 | 0.495 | 0.039 | L14H5 (+0.87), MLP9 (+0.72), MLP23 (-0.69), MLP12 (+0.65), L12H2 (+0.43) |
-| Qwen2.5-1.5B | hyp | 20 | 1.00 | 0.98 | 0.412 | 0.043 | L17H0 (+0.71), MLP18 (+0.50), MLP12 (+0.47), L15H10 (+0.43), MLP27 (-0.40) |
-| Qwen2.5-1.5B | prem | 20 | 0.99 | 0.93 | 0.368 | 0.052 | L17H0 (+0.60), L15H10 (+0.47), MLP18 (+0.42), MLP27 (-0.39), MLP11 (+0.33) |
-| Gemma-2-2B | hyp | 20 | 0.98 | 0.99 | 0.410 | 0.032 | L15H2 (+0.62), MLP15 (+0.53), L12H3 (+0.47), MLP17 (+0.43), L13H2 (+0.41) |
-| Gemma-2-2B | prem | 20 | 0.99 | 1.00 | 0.391 | 0.040 | L13H2 (+0.59), L15H2 (+0.50), MLP15 (+0.48), MLP17 (+0.46), L12H3 (+0.40) |
-
-<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b.json`</sub>
-
-![attribution](../figures/fig8_attribution_validation.png)
-
-**Components.** Attribution patching (one gradient) agrees with real patching for the ten highest-ranked components of each model and pair kind. Among ten random components the agreement is driven by one or two large ones; without them the two estimates can disagree in sign. So: accurate for the largest components, not a complete ranking. Component names such as L14H5 are block numbers; residual index 15 is the output of block 14.
+Attribution patching of individual attention heads and MLPs, and its validation against real patching, is in Appendix D.
 
 **Label-preserving pairs (second round; so far Qwen2.5-0.5B).** The control this section lacked: pairs with the same kind of edit (one variable letter in the hypothesis, or the matching relabelling of the premise) whose two prompts have the *same* gold label, half of them valid/valid and half invalid/invalid.
 
@@ -1099,39 +1083,7 @@ Three cautions. The patching curves of the two kinds of pair look alike, and tha
 
 ### 4.3 Cross-model comparison
 
-| Model | Params (B) | Dataset | Model acc. | Gold probe acc. | Probe − strongest text baseline | Probe − random-init | Selected layer (rel. depth) | First layer within 1 pt (rel.) | Selectivity |
-|---|---|---|---|---|---|---|---|---|---|
-| Qwen2.5-0.5B | 0.494 | Corr2Cause pool | 0.501 | 0.807 [0.784, 0.828] | -0.113 [-0.136, -0.091] | +0.186 [+0.156, +0.219] | 15/24 (0.62) | 0.62 | +0.117 |
-| Qwen2.5-0.5B | 0.494 | CLadder | 0.506 | 0.561 [0.534, 0.586] | -0.240 [-0.285, -0.203] | +0.063 [+0.024, +0.099] | 16/24 (0.67) | 0.67 | -0.234 |
-| Qwen2.5-1.5B | 1.54 | Corr2Cause pool | 0.505 | 0.870 [0.850, 0.890] | -0.049 [-0.068, -0.032] | +0.276 [+0.244, +0.307] | 21/28 (0.75) | 0.64 | +0.088 |
-| Qwen2.5-1.5B | 1.54 | CLadder | 0.506 | 0.605 [0.580, 0.631] | -0.196 [-0.234, -0.162] | +0.096 [+0.061, +0.134] | 24/28 (0.86) | 0.79 | -0.221 |
-| Gemma-2-2B | 2.61 | Corr2Cause pool | 0.507 | 0.863 [0.841, 0.886] | -0.056 [-0.078, -0.033] | +0.267 [+0.236, +0.302] | 18/26 (0.69) | 0.62 | +0.071 |
-| Gemma-2-2B | 2.61 | CLadder | 0.506 | 0.626 [0.590, 0.664] | -0.174 [-0.220, -0.133] | +0.107 [+0.064, +0.150] | 20/26 (0.77) | 0.65 | -0.194 |
-| Qwen2.5-3B | 3.09 | Corr2Cause pool | 0.509 | 0.862 [0.843, 0.880] | -0.057 [-0.077, -0.038] | +0.251 [+0.220, +0.282] | 27/36 (0.75) | 0.69 | +0.071 |
-| Qwen2.5-3B | 3.09 | CLadder † | 0.528 | 0.628 [0.600, 0.654] | -0.135 [-0.176, -0.096] | +0.112 [+0.078, +0.145] | 27/36 (0.75) | 0.75 | -0.195 |
-
-<sub>Source: `results/cross_model.json`</sub><br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>
-
-| Comparison (gold-probe accuracy, paired) | Difference |
-|---|---|
-| c2c_probe:qwen1.5b_minus_qwen0.5b | +0.063 [+0.040, +0.087] |
-| c2c_probe:gemma2b_minus_qwen0.5b | +0.057 [+0.033, +0.081] |
-| c2c_probe:qwen3b_minus_qwen0.5b | +0.055 [+0.032, +0.079] |
-| c2c_probe:gemma2b_minus_qwen1.5b | -0.007 [-0.029, +0.017] |
-| c2c_probe:qwen3b_minus_qwen1.5b | -0.008 [-0.028, +0.012] |
-| c2c_probe:qwen3b_minus_gemma2b | -0.002 [-0.023, +0.019] |
-| cladder:qwen1.5b_minus_qwen0.5b | +0.044 [+0.014, +0.076] |
-| cladder:gemma2b_minus_qwen0.5b | +0.065 [+0.029, +0.103] |
-| cladder:qwen3b_minus_qwen0.5b | +0.089 [+0.056, +0.126] |
-| cladder:gemma2b_minus_qwen1.5b | +0.021 [-0.013, +0.056] |
-| cladder:qwen3b_minus_qwen1.5b | +0.036 [-0.002, +0.074] |
-| cladder:qwen3b_minus_gemma2b | +0.015 [-0.024, +0.052] |
-
-<sub>Source: `results/cross_model.json`</sub>
-
-![cross model](../figures/fig9_cross_model.png)
-
-A descriptive comparison of four models from two families, not a scaling law. On the original item sets gold-probe accuracy is higher for the three larger models than for Qwen2.5-0.5B and does not differ among them (Corr2Cause pool 0.86 to 0.87), and the probe trails the strongest text baseline for every model. The selected layer lies at relative depth 0.6 to 0.9. Qwen2.5-3B's CLadder point is on the other draw of the CLadder sample; its paired differences to the other models use the 2,271 shared items (`results/cross_model.json`, `n_items_paired`). On the debiased pool (Section 3.6) the step from Qwen2.5-0.5B to Qwen2.5-1.5B is larger and is the more informative comparison, since it is not inflated by the hypothesis-string cue; from 1.5B to 3B nothing changes there either.
+Moved to Appendix B. In one line: the three larger models do not differ in what a probe reads, on the original or on the debiased item sets; four models are a description, not a scaling law.
 
 ### 4.4 Is the adjacency information used? (second round)
 
@@ -1172,7 +1124,7 @@ Activations are centred by hypothesis string first, so that no direction can enc
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Qwen2.5-0.5B | final token, best layer (15/24) | parent, descendant, collider, confounder | 0.112 | +0.110 | -0.069 to +0.091 | 100 | +0.096 | 100 | 4/5 | 0.102 → 0.070 | +0.032 [-0.010, +0.077] | 75 | +1.258 (100%) |
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | parent, descendant, collider, confounder | 0.112 | +0.013 | -0.021 to +0.011 | 95 | +0.016 | 95 | 5/5 | 0.102 → 0.097 | +0.005 [-0.000, +0.015] | 55 | +0.209 (100%) |
-| Qwen2.5-0.5B | final token, earlier layer (11/24) | parent, descendant, collider, confounder | 0.112 | +0.000 | -0.025 to +0.019 | 5 | -0.007 | 55 | 1/5 | 0.102 → 0.102 | -0.000 [-0.006, +0.002] | 10 | +0.255 (95%) |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | parent, descendant, collider, confounder | 0.112 | +0.000 | -0.025 to +0.019 | 5 | -0.007 | 55 | 1/5 | 0.102 → 0.102 | -0.000 [-0.006, +0.002] | 5 | +0.255 (95%) |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent, descendant, collider, confounder | 0.112 | +0.004 | -0.003 to +0.010 | 80 | +0.002 | 40 | 4/5 | 0.102 → 0.099 | +0.004 [-0.001, +0.005] | 85 | +0.011 (35%) |
 
 <sub>Source: `results/adjacency_qwen0.5b_c2c_debiased_final_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_best.json`, `results/adjacency_qwen0.5b_c2c_debiased_final_first50.json`, `results/adjacency_qwen0.5b_c2c_debiased_hyp_first50.json`</sub>
@@ -1189,11 +1141,11 @@ Activations are centred by hypothesis string first, so that no direction can enc
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | descendant | +0.055 [+0.024, +0.084] | -0.003 [-0.004, -0.002] | -0.016 to +0.038 | 20 | +0.056 | +0.057 | +0.001 | -0.016 to +0.009 | 15 | +0.0002 [+0.0002, +0.0002] |
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | collider | -0.230 [-0.281, -0.177] | -0.037 [-0.040, -0.035] | -0.046 to +0.053 | 85 | -0.264 | -0.221 | -0.043 | -0.052 to +0.061 | 85 | +0.0033 [+0.0031, +0.0035] |
 | Qwen2.5-0.5B | end of hypothesis, best layer (13/24) | confounder | -0.113 [-0.190, -0.033] | -0.026 [-0.028, -0.025] | -0.043 to +0.038 | 80 | -0.010 | +0.018 | +0.008 | -0.010 to +0.039 | 35 | +0.0022 [+0.0020, +0.0023] |
-| Qwen2.5-0.5B | final token, earlier layer (11/24) | parent | +0.050 [+0.005, +0.096] | +0.005 [+0.003, +0.006] | -0.021 to +0.016 | 15 | +0.078 | +0.075 | -0.002 | -0.009 to +0.009 | 10 | -0.0006 [-0.0006, -0.0006] |
-| Qwen2.5-0.5B | final token, earlier layer (11/24) | ancestor | -0.042 [-0.098, +0.015] | +0.000 [-0.001, +0.001] | -0.019 to +0.020 | 10 | -0.105 | -0.107 | +0.002 | -0.006 to +0.007 | 70 | -0.0005 [-0.0006, -0.0005] |
-| Qwen2.5-0.5B | final token, earlier layer (11/24) | descendant | +0.055 [+0.024, +0.084] | +0.013 [+0.011, +0.015] | -0.039 to +0.064 | 35 | +0.054 | +0.041 | -0.013 | -0.043 to +0.033 | 40 | -0.0007 [-0.0007, -0.0007] |
-| Qwen2.5-0.5B | final token, earlier layer (11/24) | collider | -0.230 [-0.281, -0.177] | +0.020 [+0.016, +0.023] | -0.060 to +0.049 | 65 | -0.263 | -0.280 | +0.016 | -0.045 to +0.041 | 65 | -0.0006 [-0.0006, -0.0006] |
-| Qwen2.5-0.5B | final token, earlier layer (11/24) | confounder | -0.113 [-0.190, -0.033] | -0.004 [-0.006, -0.001] | -0.042 to +0.022 | 5 | -0.011 | -0.010 | -0.002 | -0.010 to +0.011 | 10 | -0.0007 [-0.0007, -0.0007] |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | parent | +0.050 [+0.005, +0.096] | +0.005 [+0.003, +0.006] | -0.021 to +0.016 | 15 | +0.078 | +0.075 | -0.002 | -0.010 to +0.010 | 20 | -0.0006 [-0.0006, -0.0006] |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | ancestor | -0.042 [-0.098, +0.015] | +0.000 [-0.001, +0.001] | -0.019 to +0.020 | 10 | -0.105 | -0.107 | +0.002 | -0.004 to +0.007 | 75 | -0.0005 [-0.0006, -0.0005] |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | descendant | +0.055 [+0.024, +0.084] | +0.013 [+0.011, +0.015] | -0.039 to +0.064 | 35 | +0.054 | +0.041 | -0.013 | -0.045 to +0.026 | 50 | -0.0007 [-0.0007, -0.0007] |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | collider | -0.230 [-0.281, -0.177] | +0.020 [+0.016, +0.023] | -0.060 to +0.049 | 65 | -0.263 | -0.280 | +0.016 | -0.046 to +0.037 | 65 | -0.0006 [-0.0006, -0.0006] |
+| Qwen2.5-0.5B | final token, earlier layer (11/24) | confounder | -0.113 [-0.190, -0.033] | -0.004 [-0.006, -0.001] | -0.042 to +0.022 | 5 | -0.011 | -0.010 | -0.002 | -0.011 to +0.010 | 5 | -0.0007 [-0.0007, -0.0007] |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | parent | +0.050 [+0.005, +0.096] | +0.009 [+0.008, +0.011] | -0.014 to +0.016 | 45 | +0.077 | +0.070 | -0.007 | -0.013 to +0.009 | 45 | +0.0001 [+0.0001, +0.0001] |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | ancestor | -0.042 [-0.098, +0.015] | -0.010 [-0.011, -0.008] | -0.010 to +0.013 | 90 | -0.105 | -0.103 | -0.002 | -0.005 to +0.006 | 55 | +0.0001 [+0.0001, +0.0001] |
 | Qwen2.5-0.5B | end of hypothesis, earlier layer (5/24) | descendant | +0.055 [+0.024, +0.084] | -0.002 [-0.003, -0.001] | -0.010 to +0.010 | 30 | +0.056 | +0.056 | +0.000 | -0.009 to +0.007 | 0 | -0.0000 [-0.0000, -0.0000] |
@@ -1262,7 +1214,140 @@ Activations are centred by hypothesis string first, so that no direction can enc
 
 ## 5. Tier 3 results
 
-### 5.1 Sparse-autoencoder features for causal graph type (Gemma-2-2B, CLadder)
+The sparse-autoencoder tier is in Appendix C: it supports none of the three headline claims. In one line: with dictionaries that reconstruct little of what differs between items, no feature specific to a causal graph type was found, and none can be ruled out.
+
+## 6. Audits
+
+Each tier was reviewed by a fresh reviewer agent that received the code, the result files and the raw outputs, but not the author's conclusions. Raw reports: `notes/audit_tier1_raw.md`, `notes/audit_tier2_raw.md`, `notes/audit_debiased_raw.md`. Responses, finding by finding: `notes/log.md`.
+
+**Tier 1 audit (Friday 00:05; Qwen models).** Confirmed: no fold leakage, no premise shared between pool and test, baselines fitted on training folds only, positions, layer indexing and sign conventions, all tables regenerate from the result files. Found:
+
+| Finding | Consequence |
+|---|---|
+| The hypothesis string alone predicts the label at 0.86 in the balanced pool; my baselines (whole-prompt TF-IDF, six-template prior) were too weak | Hypothesis-string, question-only and parsed-feature baselines added; "audited criterion" = probe versus strongest text baseline; the positive verdict I had logged (Qwen2.5-1.5B on Corr2Cause) was retracted. Which cells pass the pre-registered criterion "as coded" changed when this audit also widened the TF-IDF regularisation grid; the current list is in Section 3.4 |
+| "Accuracy above 0.5 on items the model gets wrong" is not a chance test when those items are mostly one class | Balanced accuracy and class balance reported; criterion flagged not applicable outside 20–80% balance |
+| With model answers nearly independent of the gold label, the wrong-items design reduces to probe versus text baseline | Said plainly; audited criterion is exactly that comparison |
+| On CLadder the probe's signal is present before the question is read | Probe accuracy by token position added |
+| The gold-signed logit-lens figure showed answer bias, not knowledge | Figure replaced; AUROC version is the headline |
+| Stale figures and result files | Everything regenerated |
+
+**Tier 2 audit (Friday 11:37; Qwen models).** Confirmed: every number reproduces from the raw outputs; selection and report halves are disjoint; layer indexing is consistent; the key-value-cache shortcut is equivalent to a full forward pass by code reading. The claim I had asked it to attack ("the gold-probe direction is inert while the model-output direction flips answers") **did not survive as stated**:
+
+| Finding | Consequence |
+|---|---|
+| For Qwen2.5-1.5B on Corr2Cause the gold-probe direction has a consistent, wrong-signed effect that my table hid by showing one sign only | Re-analysis with signed slopes and both signs (`scripts/07b_steering_analysis.py`) |
+| Three random directions cannot support "no more than random" | 100 isotropic and 2 × 20 label-shuffled control directions (`scripts/07c_steering_controls.py`) |
+| Steps were tens to hundreds of the probe direction's natural SDs; `s` was mislabelled as a typical deviation | Natural-scale quantities reported; labels corrected |
+| The probe weights and the difference of class means are two views of one discriminant; "weights inert" is not "information unused" | Wording |
+| The difference-of-means effect is not specific to the gold label | Shuffled-label control; wording |
+| CLadder steering rows are vacuous (the direction barely decodes gold) | Conclusions restricted to Corr2Cause |
+| Qwen2.5-0.5B steering had been run at an outdated layer and regularisation | Rerun |
+| Flip rate and "accuracy towards gold" are poor metrics for near-constant answerers | Signed slope is the headline; column renamed "controllability" |
+| Ablation effects are at the float16 noise floor | No ablation claim; noise floor reported |
+| Patching localises where a prompt difference reaches the final token, not where the answer is determined; the random-donor control is invalid as run | Section retitled and reworded; control removed from the argument |
+| Attribution patching is validated for the largest components only | Wording |
+
+**Third audit (Friday 14:45; the debiased-pool analysis and the steering wording).** Raw report: `notes/audit_debiased_raw.md`. Confirmed with its own code: the pool is exactly balanced for every hypothesis string and premise in all 30 training and test folds; the headline probe accuracy reproduces (0.752 [0.730, 0.775]); no selection contamination; the parser is correct; steering numbers reproduce. Four of the seven sentences I had proposed did not survive:
+
+| Finding | Consequence |
+|---|---|
+| My test of what the probe adds to the parser (one extra column in gradient boosting) could not detect a two-point gain; I had concluded "nothing measurable" | Nested logistic stacking: about two points over the hand parse, nothing over a stronger text-only model (Section 3.6.2) |
+| The "shallow confound controls" I listed are at 0.50 by construction in this pool and prove nothing | A ladder of interaction baselines; the probe is placed on it (Section 3.6.1) |
+| "The answers do not express this information" is false below the pooled level | Per-template analysis of the answers (Section 3.6.5) |
+| Twenty control directions support "within the range of", not "no more than"; the effect is not zero; per natural SD one case exceeds all controls | Section 4.1 reworded; per-natural-SD percentiles added to the table |
+| For Qwen2.5-0.5B the final-token signal is absent, not "weaker" | Wording |
+| Adjacency is largely decodable from per-variable statement counts; single shuffles are not a null distribution; near-duplicate properties; uninformative strata | Text baselines per property, end-of-premise check, repeated shuffles, merged properties, score strata (Sections 3.6.3, 3.6.4) |
+
+**Fourth audit (Friday 17:30; the round-2 experiment code, before it ran on rented GPUs).** Raw report: `notes/audit_round2_code_raw.md`. Verified the layout of the intervention arrays against every slice of the analysis, the selection/report separation, and that the label-changing patching pairs were unchanged. Found:
+
+| Finding | Consequence |
+|---|---|
+| The first adjacency experiment's "removal" left adjacency readable at AUROC 0.84; its pooled class-mean direction did not separate the classes for direct-causation hypotheses; its summary compared a real change with the mean of controls whose signs cancel | Experiment rewritten (`17_adjacency_test.py`): string-centred, per-template class differences, LEACE, control distributions (Section 4.4) |
+| A smoke test could be ingested as a real run; a cut-short run could pass as complete | Runner and ingest hardened (applied in commit `cdb08d7`; I had reported it done two hours earlier when it was not) |
+| `09_cross_model.py` paired models by position although one model is on another draw of the CLadder sample | Pairing by item id |
+
+**Fifth audit (Friday 19:30; the round-2 results for Qwen2.5-0.5B, the four-model debiased-pool text, the SAE section, and a claims pass over the summary, README and EXPLAINER).** Raw report: `notes/audit_round2_results_raw.md`. Verified every Section 3.6 sentence for four models and the raw-file-to-table chain. Found:
+
+| Finding | Consequence |
+|---|---|
+| "Erasing adjacency at the end of the hypothesis removes about a sixth of the dependence, beyond all 20 controls": the erasure is the translation scaled per item; its control could not fail; the summary counted a gap moving away from zero as a reduction; the erasure was checked on the half it was fitted on | Claim withdrawn; fair control, gaps before and after, held-out erasure quality (Section 4.4, decision D29) |
+| The +0.22 mean difference in label-preserving premise pairs is produced by the one-sided construction of that pair set; my explanation was wrong | Direction-matched comparison (Section 4.2) |
+| Steering controls on the debiased pool were shuffled over the whole pool, not within hypothesis string | Controls redone for Qwen2.5-0.5B (Section 4.1); in the notebooks from `bab7d1b` |
+| "Fully accounted for by text" too strong; SAE section inexact in four places; Qwen2.5-3B CLadder rows not flagged as being on another draw; stale sentences | Reworded; daggers in the tables |
+
+**What the audits did not cover.** Gemma-2-2B's Tier 1 results on the original item sets were produced after the Tier 1 audit by the same, already-audited code. The corrected analysis of Section 4.4 and the reruns that followed the fifth audit (within-string steering controls, the split by answer direction) have not been audited. Results from GPU runs that return after this was written are audited before they enter `RESULTS.md`.
+
+## 7. Limitations
+
+- **Models and scale.** Three models of 0.5 to 2.6 billion parameters (plus one larger model run remotely), all at chance on both tasks. Nothing here says what a model that can do the task would show.
+- **One probe family.** Linear probes (L2 logistic regression) at three token positions. A non-linear or multi-position read-out could find more; a negative probing result is weak evidence.
+- **Post-hoc analysis.** The stronger text baselines, the audited criterion and the debiased pool were introduced after seeing results (decisions D18, D19, D21). They make the claim harder to pass, but they are not pre-registered.
+- **Multiplicity.** Many model × dataset × criterion cells are reported with unadjusted 95% intervals.
+- **Few clusters.** The Corr2Cause test set has 21 premises, CLadder 47 stories (24 in a report half); cluster-bootstrap intervals with so few clusters under-cover.
+- **Numerics.** Activations are cached in float16 from float16 models; for the two larger local models no float32 reference fits in memory. Probe fits at C = 1 are stopped at 300 iterations (bias against the probe of under one point on the one fold checked).
+- **Two machines.** Gemma's probes on the original item sets use activations cached on the laptop; its steering, patching, SAE results and its debiased-pool activations were computed on a Kaggle GPU. Agreement of the answer logits between the two is reported in `results/cache_agreement_gemma2b.json`.
+- **Two draws of the CLadder sample.** The stratified sampler broke a four-way tie differently on the laptop and on Kaggle (decision D28), so Qwen2.5-3B's CLadder results and Gemma's CLadder steering and SAE results are computed on a different draw of 3,000 items (2,271 shared; same strata definition, with graph-type and story composition differing by up to 13 items per graph type). They are valid on their own but not item-for-item comparable with the laptop models' CLadder results; every Qwen2.5-3B CLadder row in the tables of Sections 3 and 4 is on that draw, as are its random-init control and its 500-item few-shot subset. On the 2,271 shared items Qwen2.5-3B's CLadder accuracy is 0.532, against 0.49 to 0.51 for the other three models (computed by the fifth audit; `notes/audit_round2_results_raw.md`). Nothing on Corr2Cause is affected. The sample is now pinned.
+- **Remote caches hold the final token only.** For the larger model, and for Gemma on the debiased pool, the position comparison is unavailable.
+- **Steering.** One layer (plus two fixed depths for some models); final token, and for Qwen2.5-0.5B also the last token of the hypothesis; directions fitted on about 1,200 items; float16. Debiased-pool controls were shuffled over the whole pool, not within hypothesis string (Section 4.1).
+- **Adjacency test.** One model so far; 20 shuffles; the eraser removes about half of the linearly readable adjacency on held-out items; four sites and three arms without adjustment for multiplicity.
+- **Patching.** 40 to 60 minimal pairs from at most five-variable premises; the models do not distinguish the pairs by gold label; every second layer for the 1.5B model.
+- **Gemma generation check** is first-token-only on 100 items per set.
+- **Labels as released.** Public reports of label errors in both benchmarks exist and were not checked.
+- **CLadder few-shot demonstrations** come from stories that also occur among the evaluated items.
+- **No fine-tuning tier.** The planned LoRA comparison was dropped for compute reasons (decision D20).
+
+## 8. Interpretation and what I'd do next
+
+*(Deliberately left empty: to be written by the project owner.)*
+
+## Appendix
+
+Sections moved here on 13 November because they support none of the three headline claims in `RESULTS.md`. Their content is unchanged apart from the headings.
+
+### Appendix A. Logit lens (formerly Section 3.2)
+
+![lens](../figures/fig2_logit_lens.png)
+![lens auroc](../figures/fig2b_lens_auroc.png)
+
+The first figure shows the Yes−No logit difference the model would produce if it stopped at each layer, for gold-Yes and gold-No items separately. In every panel the curves move together: the lens shows a shared drift towards one answer, not a separation by the correct answer. The second figure removes the drift by asking only whether the lens value ranks gold-Yes above gold-No items (AUROC). On the Corr2Cause pool it never exceeds 0.60 at any layer for the three local models (the maxima are 0.59 to 0.60, reached in the second half of the network) and reaches 0.63 for Qwen2.5-3B; on CLadder it stays between 0.47 and 0.53 at every layer for the local models and reaches 0.54 for Qwen2.5-3B (`results/lens_*.json`, key `auroc_gold_by_layer`). The lens at the last layer reproduces the model's actual answer logits (maximum error and sign agreement are in `results/lens_*.json`). So the lens gives no sign of a correct answer that forms in the middle of the network and is then overwritten.
+
+### Appendix B. Cross-model comparison (formerly Section 4.3)
+
+| Model | Params (B) | Dataset | Model acc. | Gold probe acc. | Probe − strongest text baseline | Probe − random-init | Selected layer (rel. depth) | First layer within 1 pt (rel.) | Selectivity |
+|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | 0.494 | Corr2Cause pool | 0.501 | 0.807 [0.784, 0.828] | -0.113 [-0.136, -0.091] | +0.186 [+0.156, +0.219] | 15/24 (0.62) | 0.62 | +0.117 |
+| Qwen2.5-0.5B | 0.494 | CLadder | 0.506 | 0.561 [0.534, 0.586] | -0.240 [-0.285, -0.203] | +0.063 [+0.024, +0.099] | 16/24 (0.67) | 0.67 | -0.234 |
+| Qwen2.5-1.5B | 1.54 | Corr2Cause pool | 0.505 | 0.870 [0.850, 0.890] | -0.049 [-0.068, -0.032] | +0.276 [+0.244, +0.307] | 21/28 (0.75) | 0.64 | +0.088 |
+| Qwen2.5-1.5B | 1.54 | CLadder | 0.506 | 0.605 [0.580, 0.631] | -0.196 [-0.234, -0.162] | +0.096 [+0.061, +0.134] | 24/28 (0.86) | 0.79 | -0.221 |
+| Gemma-2-2B | 2.61 | Corr2Cause pool | 0.507 | 0.863 [0.841, 0.886] | -0.056 [-0.078, -0.033] | +0.267 [+0.236, +0.302] | 18/26 (0.69) | 0.62 | +0.071 |
+| Gemma-2-2B | 2.61 | CLadder | 0.506 | 0.626 [0.590, 0.664] | -0.174 [-0.220, -0.133] | +0.107 [+0.064, +0.150] | 20/26 (0.77) | 0.65 | -0.194 |
+| Qwen2.5-3B | 3.09 | Corr2Cause pool | 0.509 | 0.862 [0.843, 0.880] | -0.057 [-0.077, -0.038] | +0.251 [+0.220, +0.282] | 27/36 (0.75) | 0.69 | +0.071 |
+| Qwen2.5-3B | 3.09 | CLadder † | 0.528 | 0.628 [0.600, 0.654] | -0.135 [-0.176, -0.096] | +0.112 [+0.078, +0.145] | 27/36 (0.75) | 0.75 | -0.195 |
+
+<sub>Source: `results/cross_model.json`</sub><br><sub>† computed on the GPU machine's draw of the 3,000-item CLadder sample (2,271 items shared with the other models' draw; Section 7).</sub>
+
+| Comparison (gold-probe accuracy, paired) | Difference |
+|---|---|
+| c2c_probe:qwen1.5b_minus_qwen0.5b | +0.063 [+0.040, +0.087] |
+| c2c_probe:gemma2b_minus_qwen0.5b | +0.057 [+0.033, +0.081] |
+| c2c_probe:qwen3b_minus_qwen0.5b | +0.055 [+0.032, +0.079] |
+| c2c_probe:gemma2b_minus_qwen1.5b | -0.007 [-0.029, +0.017] |
+| c2c_probe:qwen3b_minus_qwen1.5b | -0.008 [-0.028, +0.012] |
+| c2c_probe:qwen3b_minus_gemma2b | -0.002 [-0.023, +0.019] |
+| cladder:qwen1.5b_minus_qwen0.5b | +0.044 [+0.014, +0.076] |
+| cladder:gemma2b_minus_qwen0.5b | +0.065 [+0.029, +0.103] |
+| cladder:qwen3b_minus_qwen0.5b | +0.089 [+0.056, +0.126] |
+| cladder:gemma2b_minus_qwen1.5b | +0.021 [-0.013, +0.056] |
+| cladder:qwen3b_minus_qwen1.5b | +0.036 [-0.002, +0.074] |
+| cladder:qwen3b_minus_gemma2b | +0.015 [-0.024, +0.052] |
+
+<sub>Source: `results/cross_model.json`</sub>
+
+![cross model](../figures/fig9_cross_model.png)
+
+A descriptive comparison of four models from two families, not a scaling law. On the original item sets gold-probe accuracy is higher for the three larger models than for Qwen2.5-0.5B and does not differ among them (Corr2Cause pool 0.86 to 0.87), and the probe trails the strongest text baseline for every model. The selected layer lies at relative depth 0.6 to 0.9. Qwen2.5-3B's CLadder point is on the other draw of the CLadder sample; its paired differences to the other models use the 2,271 shared items (`results/cross_model.json`, `n_items_paired`). On the debiased pool (Section 3.6) the step from Qwen2.5-0.5B to Qwen2.5-1.5B is larger and is the more informative comparison, since it is not inflated by the hypothesis-string cue; from 1.5B to 3B nothing changes there either.
+
+### Appendix C. Sparse-autoencoder features for causal graph type (Gemma-2-2B, CLadder; formerly Section 5.1)
 
 **Question.** Does Gemma-2-2B have sparse features that mark the causal graph a CLadder question is about (confounding, collision, chain, fork, mediation), and does removing them change the answer more than removing other features?
 
@@ -1350,72 +1435,22 @@ Removing the ten selected features changes the answer logit difference by 0.190 
 
 LoRA fine-tuning (the optional second half of Tier 3) was dropped when the heavy runs moved to Kaggle (decision D20).
 
-## 6. Audits
+### Appendix D. Components: attribution patching and its validation (formerly part of Section 4.2)
 
-Each tier was reviewed by a fresh reviewer agent that received the code, the result files and the raw outputs, but not the author's conclusions. Raw reports: `notes/audit_tier1_raw.md`, `notes/audit_tier2_raw.md`, `notes/audit_debiased_raw.md`. Responses, finding by finding: `notes/log.md`.
+| Model | Pair kind | Pairs | Pearson r (attr. vs real) | Spearman | Mean |real| top-10 | Mean |real| random-10 | Largest real effects |
+|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | hyp | 30 | 1.00 | 0.98 | 0.449 | 0.034 | L14H5 (+0.76), MLP23 (-0.67), MLP12 (+0.50), MLP14 (+0.45), L12H2 (+0.44) |
+| Qwen2.5-0.5B | prem | 30 | 1.00 | 0.98 | 0.495 | 0.039 | L14H5 (+0.87), MLP9 (+0.72), MLP23 (-0.69), MLP12 (+0.65), L12H2 (+0.43) |
+| Qwen2.5-1.5B | hyp | 20 | 1.00 | 0.98 | 0.412 | 0.043 | L17H0 (+0.71), MLP18 (+0.50), MLP12 (+0.47), L15H10 (+0.43), MLP27 (-0.40) |
+| Qwen2.5-1.5B | prem | 20 | 0.99 | 0.93 | 0.368 | 0.052 | L17H0 (+0.60), L15H10 (+0.47), MLP18 (+0.42), MLP27 (-0.39), MLP11 (+0.33) |
+| Gemma-2-2B | hyp | 20 | 0.98 | 0.99 | 0.410 | 0.032 | L15H2 (+0.62), MLP15 (+0.53), L12H3 (+0.47), MLP17 (+0.43), L13H2 (+0.41) |
+| Gemma-2-2B | prem | 20 | 0.99 | 1.00 | 0.391 | 0.040 | L13H2 (+0.59), L15H2 (+0.50), MLP15 (+0.48), MLP17 (+0.46), L12H3 (+0.40) |
 
-**Tier 1 audit (Friday 00:05; Qwen models).** Confirmed: no fold leakage, no premise shared between pool and test, baselines fitted on training folds only, positions, layer indexing and sign conventions, all tables regenerate from the result files. Found:
+<sub>Source: `results/patching_qwen0.5b.json`, `results/patching_qwen1.5b.json`, `results/patching_gemma2b.json`</sub>
 
-| Finding | Consequence |
-|---|---|
-| The hypothesis string alone predicts the label at 0.86 in the balanced pool; my baselines (whole-prompt TF-IDF, six-template prior) were too weak | Hypothesis-string, question-only and parsed-feature baselines added; "audited criterion" = probe versus strongest text baseline; the positive verdict I had logged (Qwen2.5-1.5B on Corr2Cause) was retracted. Which cells pass the pre-registered criterion "as coded" changed when this audit also widened the TF-IDF regularisation grid; the current list is in Section 3.4 |
-| "Accuracy above 0.5 on items the model gets wrong" is not a chance test when those items are mostly one class | Balanced accuracy and class balance reported; criterion flagged not applicable outside 20–80% balance |
-| With model answers nearly independent of the gold label, the wrong-items design reduces to probe versus text baseline | Said plainly; audited criterion is exactly that comparison |
-| On CLadder the probe's signal is present before the question is read | Probe accuracy by token position added |
-| The gold-signed logit-lens figure showed answer bias, not knowledge | Figure replaced; AUROC version is the headline |
-| Stale figures and result files | Everything regenerated |
+![attribution](../figures/fig8_attribution_validation.png)
 
-**Tier 2 audit (Friday 11:37; Qwen models).** Confirmed: every number reproduces from the raw outputs; selection and report halves are disjoint; layer indexing is consistent; the key-value-cache shortcut is equivalent to a full forward pass by code reading. The claim I had asked it to attack ("the gold-probe direction is inert while the model-output direction flips answers") **did not survive as stated**:
-
-| Finding | Consequence |
-|---|---|
-| For Qwen2.5-1.5B on Corr2Cause the gold-probe direction has a consistent, wrong-signed effect that my table hid by showing one sign only | Re-analysis with signed slopes and both signs (`scripts/07b_steering_analysis.py`) |
-| Three random directions cannot support "no more than random" | 100 isotropic and 2 × 20 label-shuffled control directions (`scripts/07c_steering_controls.py`) |
-| Steps were tens to hundreds of the probe direction's natural SDs; `s` was mislabelled as a typical deviation | Natural-scale quantities reported; labels corrected |
-| The probe weights and the difference of class means are two views of one discriminant; "weights inert" is not "information unused" | Wording |
-| The difference-of-means effect is not specific to the gold label | Shuffled-label control; wording |
-| CLadder steering rows are vacuous (the direction barely decodes gold) | Conclusions restricted to Corr2Cause |
-| Qwen2.5-0.5B steering had been run at an outdated layer and regularisation | Rerun |
-| Flip rate and "accuracy towards gold" are poor metrics for near-constant answerers | Signed slope is the headline; column renamed "controllability" |
-| Ablation effects are at the float16 noise floor | No ablation claim; noise floor reported |
-| Patching localises where a prompt difference reaches the final token, not where the answer is determined; the random-donor control is invalid as run | Section retitled and reworded; control removed from the argument |
-| Attribution patching is validated for the largest components only | Wording |
-
-**Third audit (Friday 14:45; the debiased-pool analysis and the steering wording).** Raw report: `notes/audit_debiased_raw.md`. Confirmed with its own code: the pool is exactly balanced for every hypothesis string and premise in all 30 training and test folds; the headline probe accuracy reproduces (0.752 [0.730, 0.775]); no selection contamination; the parser is correct; steering numbers reproduce. Four of the seven sentences I had proposed did not survive:
-
-| Finding | Consequence |
-|---|---|
-| My test of what the probe adds to the parser (one extra column in gradient boosting) could not detect a two-point gain; I had concluded "nothing measurable" | Nested logistic stacking: about two points over the hand parse, nothing over a stronger text-only model (Section 3.6.2) |
-| The "shallow confound controls" I listed are at 0.50 by construction in this pool and prove nothing | A ladder of interaction baselines; the probe is placed on it (Section 3.6.1) |
-| "The answers do not express this information" is false below the pooled level | Per-template analysis of the answers (Section 3.6.5) |
-| Twenty control directions support "within the range of", not "no more than"; the effect is not zero; per natural SD one case exceeds all controls | Section 4.1 reworded; per-natural-SD percentiles added to the table |
-| For Qwen2.5-0.5B the final-token signal is absent, not "weaker" | Wording |
-| Adjacency is largely decodable from per-variable statement counts; single shuffles are not a null distribution; near-duplicate properties; uninformative strata | Text baselines per property, end-of-premise check, repeated shuffles, merged properties, score strata (Sections 3.6.3, 3.6.4) |
-
-**What the audits did not cover.** Gemma-2-2B's Tier 1 results were produced after the Tier 1 audit by the same, already-audited code and were reviewed by the author only. The new experiment code for the second round of GPU runs was reviewed by a fourth independent reviewer before those runs were launched (`notes/audit_round2_code_raw.md`); the results of the first Kaggle run (Gemma steering, patching and SAEs; Qwen2.5-3B) and of the second round are covered by that audit's follow-up. *(Findings and responses are added below as they arrive.)*
-
-## 7. Limitations
-
-- **Models and scale.** Three models of 0.5 to 2.6 billion parameters (plus one larger model run remotely), all at chance on both tasks. Nothing here says what a model that can do the task would show.
-- **One probe family.** Linear probes (L2 logistic regression) at three token positions. A non-linear or multi-position read-out could find more; a negative probing result is weak evidence.
-- **Post-hoc analysis.** The stronger text baselines, the audited criterion and the debiased pool were introduced after seeing results (decisions D18, D19, D21). They make the claim harder to pass, but they are not pre-registered.
-- **Multiplicity.** Many model × dataset × criterion cells are reported with unadjusted 95% intervals.
-- **Few clusters.** The Corr2Cause test set has 21 premises, CLadder 47 stories (24 in a report half); cluster-bootstrap intervals with so few clusters under-cover.
-- **Numerics.** Activations are cached in float16 from float16 models; for the two larger local models no float32 reference fits in memory. Probe fits at C = 1 are stopped at 300 iterations (bias against the probe of under one point on the one fold checked).
-- **Two machines.** Gemma's probes on the original item sets use activations cached on the laptop; its steering, patching, SAE results and its debiased-pool activations were computed on a Kaggle GPU. Agreement of the answer logits between the two is reported in `results/cache_agreement_gemma2b.json`.
-- **Two draws of the CLadder sample.** The stratified sampler broke a four-way tie differently on the laptop and on Kaggle (decision D28), so Qwen2.5-3B's CLadder results and Gemma's CLadder steering and SAE results are computed on a different draw of 3,000 items (2,271 shared; same strata definition, with graph-type and story composition differing by up to 13 items per graph type). They are valid on their own but not item-for-item comparable with the laptop models' CLadder results; every Qwen2.5-3B CLadder row in the tables of Sections 3 and 4 is on that draw, as are its random-init control and its 500-item few-shot subset. On the 2,271 shared items Qwen2.5-3B's CLadder accuracy is 0.532, against 0.49 to 0.51 for the other three models (computed by the fifth audit; `notes/audit_round2_results_raw.md`). Nothing on Corr2Cause is affected. The sample is now pinned.
-- **Remote caches hold the final token only.** For the larger model, and for Gemma on the debiased pool, the position comparison is unavailable.
-- **Steering.** One layer (plus two fixed depths for some models); final token, and for Qwen2.5-0.5B also the last token of the hypothesis; directions fitted on about 1,200 items; float16. Debiased-pool controls were shuffled over the whole pool, not within hypothesis string (Section 4.1).
-- **Adjacency test.** One model so far; 20 shuffles; the eraser removes about half of the linearly readable adjacency on held-out items; four sites and three arms without adjustment for multiplicity.
-- **Patching.** 40 to 60 minimal pairs from at most five-variable premises; the models do not distinguish the pairs by gold label; every second layer for the 1.5B model.
-- **Gemma generation check** is first-token-only on 100 items per set.
-- **Labels as released.** Public reports of label errors in both benchmarks exist and were not checked.
-- **CLadder few-shot demonstrations** come from stories that also occur among the evaluated items.
-- **No fine-tuning tier.** The planned LoRA comparison was dropped for compute reasons (decision D20).
-
-## 8. Interpretation and what I'd do next
-
-*(Deliberately left empty: to be written by the project owner.)*
+**Components.** Attribution patching (one gradient) agrees with real patching for the ten highest-ranked components of each model and pair kind. Among ten random components the agreement is driven by one or two large ones; without them the two estimates can disagree in sign. So: accurate for the largest components, not a complete ranking. Component names such as L14H5 are block numbers; residual index 15 is the output of block 14.
 
 ## References
 

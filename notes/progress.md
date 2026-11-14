@@ -1,6 +1,6 @@
 # Progress (read this first after a restart)
 
-## MORNING STATUS, Saturday 14 November (written 01:45, updated about 03:00; nothing was started that needs your input)
+## MORNING STATUS, Saturday 14 November (written 01:45, updated 02:45; nothing was started that needs your input)
 
 **In one line.** Qwen 3B and Qwen 1.5B are ingested and audited. One steering result beats its 20 controls and is undecided. `RESULTS.md` is unchanged. A run designed to decide it is ready for you to launch or not.
 

@@ -2,7 +2,7 @@
 
 Do small open-weight language models internally represent the correct answer to formal causal-reasoning questions that they answer wrongly? A probing, steering and patching study on Corr2Cause and CLadder, run on an 8 GB laptop plus free Kaggle and Colab GPU sessions.
 
-**Status:** work in progress until Sunday 15 November 2026, 14:00 (Toronto). GPU runs for two models (Gemma-2-2B's second round, the Qwen2.5-7B behaviour check) are still returning; what has and has not arrived is marked. The results page below was last edited before the Qwen2.5-1.5B and Qwen2.5-3B intervention runs returned on 14 November: its third claim is still worded for one model, and the proposed update is in `notes/claim3_proposed_rewording.md`. The report (Section 4) has the three-model results.
+**Status:** work in progress until Sunday 15 November 2026, 14:00 (Toronto). The results page below was replaced on Saturday 14 November at 11:29, after fifteen reviews; every sentence of it was checked against the result files by a reviewer before it was entered (`notes/audit_results_wording_raw.md`). Three GPU runs launched on 14 November are not in it yet: a held-out test of the Qwen2.5-3B steering case, patching on about 240 pairs, and Gemma-2-9B's answers and probes.
 
 <!-- INCLUDE:RESULTS -->
 
@@ -10,8 +10,8 @@ The same page as a file: `RESULTS.md`. How the story unfolded, in plain language
 
 ## Further results (not headline claims)
 
-- **Behaviour.** All four models answer both benchmarks at or near chance; part of that is answer bias, and the bias-free ranking score is near 0.5 as well (table below).
-- **Patching.** A change of one variable in the prompt reaches the answer position at 60 to 70% of the network's depth (four models). When the edit leaves the correct answer unchanged the answer logit moves by an amount of the same order as when it changes it (three Qwen models); in Qwen2.5-0.5B it moves as much, and its sign follows where the queried variable stands in the premise, not validity (a pattern the two larger models do not reproduce): this locates where a prompt difference arrives, not where a judgement is made.
+- **Behaviour.** The four smaller models answer both benchmarks at or near chance; part of that is answer bias, and the bias-free ranking score is near 0.5 as well (table below). Qwen2.5-7B (4-bit) is at chance on the debiased pool when all items are ranked at once and follows validity weakly inside a hypothesis string (results page, claim 2).
+- **Patching.** A change of one variable in the prompt reaches the answer position at 60 to 70% of the network's depth (four models). When the edit leaves the correct answer unchanged the answer logit moves by an amount of the same order as when it changes it (four models); in Qwen2.5-0.5B it moves as much, and its sign follows where the queried variable stands in the premise, not validity (a pattern the two larger models do not reproduce): this locates where a prompt difference arrives, not where a judgement is made.
 - **In the report's appendix:** logit lens, cross-model comparison, sparse-autoencoder features, attribution patching of components.
 
 ## What was pre-registered, what passed, what was retracted
@@ -45,7 +45,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 ## What this shows / what it does not
 
 *Shows:*
-- For these four models, on these two benchmarks, a linear probe's above-chance accuracy for the gold label is almost entirely accounted for by what text-only classifiers extract from the prompt. On the debiased pool the three larger models' probes add 0.003 to 0.004 AUROC to the strongest text-only model (intervals exclude zero) and zero to one point of accuracy (intervals reach zero).
+- For these models, on these two benchmarks, a linear probe's above-chance accuracy for the gold label is almost entirely accounted for by what text-only classifiers extract from the prompt. On the debiased pool no probe's gain in accuracy over a text-only stack with one tuned setting is demonstrable for any of five models; small gains in AUROC (a few thousandths) are present from Qwen2.5-1.5B upward (report Section 3.6).
 - On the released Corr2Cause data, a classifier that sees only the hypothesis ranks valid above invalid test items with AUROC {{benchmark_baselines.json|corr2cause_official_splits/test/hypothesis_only/auroc|ci}}; this follows from the benchmark's variable-naming construction (details and prior work: `report/benchmark_text_baselines.md`).
 
 *Does not show:*
@@ -65,7 +65,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 | `notes/log.md` | Dated lab notebook: expectation before each experiment, comparison after |
 | `notes/upstream_issues.md` | Bugs and documentation gaps found on the way, with minimal reproductions (not filed) |
 | `notes/prior_work.md` | Prior-work check for the benchmark note: what was opened, what was found, the queries |
-| `notes/audit_*_raw.md` | The raw reports of the independent audits (eight so far), and a claims pass |
+| `notes/audit_*_raw.md` | The raw reports of the independent audits (fifteen), and a claims pass |
 | `study/` | Reading order, 52 graded questions with answers, six predict-then-check exercises |
 | `KAGGLE.md` | How to run the GPU part (first run and round 2) |
 | `YOUR_TURN.md` | Two small experiments left for the reader |

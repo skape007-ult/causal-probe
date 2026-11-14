@@ -31,6 +31,10 @@ Jobs (each applies to every model in --models, in this order):
                 at 50% of the best layer's excess AUROC): scripts/17_adjacency_test.py
   feature       the first version of that test (scripts/16_feature_causal.py), superseded after the
                 code review; kept so that its results can be reproduced
+  settle        one steering arm that ranked first among 20 controls at the end of the hypothesis on the debiased pool:
+                independent draws of the direction (other halves of the blocks), controls that keep adjacency, the
+                adjacency direction itself, neighbouring layers, smaller steps (scripts/07d_steering_settle.py;
+                --settle-arm names the direction of the primary test)
   Options that change the size of the intervention jobs (round 3; the output names get a suffix, so that these
   runs never replace the round-2 results):
     --n-shuf 100       100 shuffled-label control directions instead of 20 in controls, controls_hyp, adjacency
@@ -59,7 +63,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
 T0 = time.time()
-JOBS = ["preflight", "behaviour", "cache", "controls", "controls_hyp", "patch", "patch_same", "adjacency", "feature", "export"]
+JOBS = ["preflight", "behaviour", "cache", "settle", "controls", "controls_hyp", "patch", "patch_same", "adjacency", "feature", "export"]
 SITES = [("final", "best"), ("content_end", "best"), ("final", "first90"), ("content_end", "first90")]      # first version (feature)
 SITES2 = [("final", "best"), ("content_end", "best"), ("final", "first50"), ("content_end", "first50")]    # adjacency
 
@@ -79,6 +83,7 @@ def main():
     ap.add_argument("--sites", default="all", choices=["all", "best"], help="adjacency sites: all four, or the two best-layer sites")
     ap.add_argument("--control-tags", default="c2c_debiased,c2c_probe", help="item sets for the steering controls")
     ap.add_argument("--n-pairs", type=int, default=60, help="patching pairs per kind (patch, patch_same)")
+    ap.add_argument("--settle-arm", default="gold_diffmeans", choices=["gold_diffmeans", "gold_probe"], help="direction of the primary test of the settle job")
     ap.add_argument("--no-resid", action="store_true", help="export no activations (logits and raw intervention outputs only)")
     a = ap.parse_args()
     jobs = [j for j in a.jobs.split(",") if j]
@@ -229,6 +234,10 @@ def main():
         n_c = ["--n", "10"] if a.tiny else ["--n", "150"]
         stride = ["--select-stride", "6" if a.tiny else "2"]
         if have_cache:
+            if "settle" in jobs:
+                stage(f"r2.{M}.settle", "scripts/07d_steering_settle.py", "--model", M, "--arm", a.settle_arm, "--sub-batch", "16",
+                      *(["--n", "10", "--n-shuf", "6", "--n-other", "4", "--n-splits", "3", "--max-minutes", "20", "--allow-new-site"] if a.tiny
+                        else ["--max-minutes", "75"]), minutes=88)
             ctags = [t_ for t_ in a.control_tags.split(",") if t_]
             # 07c runs 1 + 2 x (3 + 100 isotropic + 2 x n_shuf) vectors per item: the time limits grow with that number
             kc = (103 + 2 * a.n_shuf) / 143

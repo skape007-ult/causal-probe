@@ -32,5 +32,13 @@
 | Qwen2.5-3B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.845 [0.826, 0.866] | 0.798 [0.771, 0.826] |
 | Qwen2.5-3B | quintiles of the hand-parse score | 5 | 0.818 | 0.845 [0.826, 0.866] | 0.756 [0.720, 0.791] |
 | Qwen2.5-3B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.845 [0.826, 0.866] | 0.656 [0.605, 0.708] |
+| Qwen2.5-7B (4-bit) | hypothesis template | 5 | 0.500 | 0.863 [0.844, 0.881] | 0.871 [0.850, 0.889] |
+| Qwen2.5-7B (4-bit) | pair adjacent in skeleton | 2 | 0.539 | 0.863 [0.844, 0.881] | 0.857 [0.836, 0.877] |
+| Qwen2.5-7B (4-bit) | pair correlated | 2 | 0.525 | 0.863 [0.844, 0.881] | 0.857 [0.838, 0.877] |
+| Qwen2.5-7B (4-bit) | pair has a common neighbour | 2 | 0.553 | 0.863 [0.844, 0.881] | 0.863 [0.843, 0.882] |
+| Qwen2.5-7B (4-bit) | template × adjacent × common neighbour | 20 | 0.760 | 0.863 [0.844, 0.881] | 0.795 [0.760, 0.828] |
+| Qwen2.5-7B (4-bit) | hand parse's prediction (2 strata) | 2 | 0.817 | 0.863 [0.844, 0.881] | 0.806 [0.776, 0.834] |
+| Qwen2.5-7B (4-bit) | quintiles of the hand-parse score | 5 | 0.818 | 0.863 [0.844, 0.881] | 0.751 [0.712, 0.788] |
+| Qwen2.5-7B (4-bit) | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.863 [0.844, 0.881] | 0.644 [0.589, 0.694] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>

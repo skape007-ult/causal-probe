@@ -531,10 +531,12 @@ def fig_debiased_ladder():
     fig, ax = plt.subplots(figsize=(9.6, 4.8))
     labels, y = [], 0
     for m in ms:                                       # probes on top
-        g = R[m]["gold_probe"]["accuracy"]; r0 = R[m]["A_no_binding_interaction"]["probe_on_random_init_model"]["accuracy"]
+        g = R[m]["gold_probe"]["accuracy"]
+        r0 = R[m]["A_no_binding_interaction"].get("probe_on_random_init_model", {}).get("accuracy")       # no random-init run for the 7B model
         ax.errorbar(g["est"], y, xerr=[[g["est"] - g["lo"]], [g["hi"] - g["est"]]], fmt="o", ms=7, color=MODEL_COL[m], ecolor=MODEL_COL[m],
                     elinewidth=1.6, capsize=3, zorder=3)
-        ax.plot(r0["est"], y, "o", ms=7, mfc=SURF, mec=MODEL_COL[m], mew=1.6, zorder=3)
+        if r0:
+            ax.plot(r0["est"], y, "o", ms=7, mfc=SURF, mec=MODEL_COL[m], mew=1.6, zorder=3)
         ax.text(g["hi"] + 0.006, y, f"{g['est']:.3f}", va="center", fontsize=7.5, color=INK2)
         labels.append(f"probe on {MODEL_LAB[m]} activations"); y += 1
     y += 0.6
@@ -557,7 +559,7 @@ def fig_debiased_ladder():
                        Line2D([], [], marker="s", color=INK2, ls="", label="text-only classifier (no model)")], fontsize=7.5,
               loc="upper center", bbox_to_anchor=(0.5, -0.14), ncol=3)
     fig.suptitle("What a probe reads on the debiased pool, against text-only classifiers of increasing strength\n"
-                 "Whiskers: 95% cluster-bootstrap CI; dashed line: chance. The models' own answers are at chance on this pool.", fontsize=8.5, color=INK2)
+                 "Whiskers: 95% cluster-bootstrap CI; dashed line: chance. Pooled over all items, the models' own answers are at chance on this pool.", fontsize=8.5, color=INK2)
     fig.tight_layout()
     save(fig, "fig13_debiased_ladder.png")
 

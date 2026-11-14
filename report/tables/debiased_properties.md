@@ -36,5 +36,14 @@
 | Qwen2.5-3B | many correlation statements (≥ median) | 0.59 | 1.000 [1.000, 1.000] | 0.497 ± 0.023 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 | Qwen2.5-3B | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.503 ± 0.024 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 | Qwen2.5-3B | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.998, 1.000] | 0.508 ± 0.018 | 1.000 [1.000, 1.000] | 1.000 | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-7B (4-bit) | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.986 [0.980, 0.990] | 0.496 ± 0.021 | – | – | 0.682 [0.653, 0.712] | 0.899 [0.883, 0.916] | – | 0.539 |
+| Qwen2.5-7B (4-bit) | queried pair correlates | 0.92 | 0.996 [0.993, 0.999] | 0.436 ± 0.051 | – | – | 0.946 [0.927, 0.961] | 0.988 [0.974, 0.996] | – | 0.525 |
+| Qwen2.5-7B (4-bit) | pair has a common neighbour | 0.83 | 0.872 [0.849, 0.893] | 0.485 ± 0.036 | – | – | 0.749 [0.713, 0.786] | 0.828 [0.800, 0.857] | – | 0.553 |
+| Qwen2.5-7B (4-bit) | a common neighbour lies in a separating set | 0.70 | 0.964 [0.954, 0.973] | 0.503 ± 0.022 | – | – | 0.718 [0.686, 0.748] | 0.871 [0.848, 0.892] | – | 0.506 |
+| Qwen2.5-7B (4-bit) | a common neighbour lies in no separating set | 0.84 | 0.949 [0.932, 0.963] | 0.508 ± 0.021 | – | – | 0.799 [0.770, 0.826] | 0.864 [0.839, 0.890] | – | 0.510 |
+| Qwen2.5-7B (4-bit) | premise has six variables | 0.97 | 1.000 [1.000, 1.000] | 0.485 ± 0.066 | – | – | 1.000 [0.999, 1.000] | 1.000 [0.999, 1.000] | – | 0.500 |
+| Qwen2.5-7B (4-bit) | many correlation statements (≥ median) | 0.59 | 1.000 [1.000, 1.000] | 0.504 ± 0.023 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-7B (4-bit) | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.501 ± 0.023 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Qwen2.5-7B (4-bit) | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.999, 1.000] | 0.514 ± 0.024 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>

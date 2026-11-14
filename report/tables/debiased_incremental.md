@@ -8,5 +8,7 @@
 | Gemma-2-2B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.874 [0.855, 0.891] | +0.009 [-0.002, +0.019] | +0.003 [+0.001, +0.006] | +0.007 [+0.000, +0.014] |
 | Qwen2.5-3B | hand-written parse | 0.817 [0.794, 0.840] | 0.850 [0.829, 0.869] | +0.033 [+0.018, +0.047] | +0.022 [+0.016, +0.029] | +0.020 [+0.008, +0.031] |
 | Qwen2.5-3B | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.874 [0.856, 0.893] | +0.009 [+0.000, +0.018] | +0.004 [+0.002, +0.007] | +0.005 [-0.002, +0.012] |
+| Qwen2.5-7B (4-bit) | hand-written parse | 0.817 [0.794, 0.840] | 0.863 [0.842, 0.881] | +0.046 [+0.026, +0.065] | +0.024 [+0.016, +0.032] | +0.032 [+0.019, +0.044] |
+| Qwen2.5-7B (4-bit) | strongest text-only model (parse + per-string 4-grams) | 0.865 [0.845, 0.884] | 0.880 [0.862, 0.897] | +0.014 [+0.004, +0.026] | +0.005 [+0.002, +0.008] | +0.012 [+0.003, +0.020] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>

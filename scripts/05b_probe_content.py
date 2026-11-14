@@ -228,6 +228,18 @@ def main():
     s_parse, s_parse_probe = stk(["parse"]), stk(["parse", "probe"])
     s_text, s_text_probe = stk(["parse", "ngram4"]), stk(["parse", "ngram4", "probe"])
     ladder["B_binding_text_reference"]["strongest_text_only_parse_plus_4grams"] = s_text
+    # Fourteenth review (notes/audit_7b_probe_gain_raw.md, finding 10): the n-gram component above has a fixed regularisation
+    # (C = 1), so "strongest text-only" was an under-tuned model. Here its C is chosen among 1, 10, 100 by the accuracy of the
+    # text-only stack on the SELECTION half (the half that also chooses the probe's layer and C); scored on the report half.
+    NG_CS = (1.0, 10.0, 100.0)
+    for c_ in NG_CS[1:]:
+        nest[f"ngram4_C{c_:g}"] = Parallel(n_jobs=a.jobs)(delayed(nested)(by_key_bow(strs, prem, (1, 4), C=c_), f, y, items) for f in seed_folds)
+    nest["ngram4_C1"] = nest["ngram4"]
+    tuned = {c_: stk(["parse", f"ngram4_C{c_:g}"]) for c_ in NG_CS}
+    sel_acc = {c_: float(((v[~rep] > 0) == y[~rep]).mean()) for c_, v in tuned.items()}
+    ng_c = max(NG_CS, key=lambda c_: (sel_acc[c_], -c_))
+    s_tuned, s_tuned_probe = tuned[ng_c], stk(["parse", f"ngram4_C{ng_c:g}", "probe"])
+    ladder["B_binding_text_reference"]["text_only_parse_plus_4grams_tuned"] = s_tuned
     log("A/B': nested stacks done")
 
     def block(s):
@@ -268,6 +280,11 @@ def main():
         "method": "nested logistic stacking of out-of-fold scores (5 outer x 4 inner folds, 3 seeds)",
         "over_hand_parse": gain(s_parse, s_parse_probe),
         "over_strongest_text_only": gain(s_text, s_text_probe),
+        "over_tuned_text_only": {**gain(s_tuned, s_tuned_probe), "ngram_C_chosen_on_selection_half": ng_c,
+                                 "selection_half_accuracy_of_text_only_stack_by_ngram_C": {f"{k:g}": v for k, v in sel_acc.items()},
+                                 "gain_accuracy_selection_half": stats.bootstrap_ci(dacc, (y[~rep], s_tuned_probe[~rep], s_tuned[~rep]), groups[~rep], n_boot=1000),
+                                 "note": "fourteenth review, finding 10: the text-only stack with the n-gram regularisation chosen on the selection half"},
+        "over_strongest_text_only_selection_half": stats.bootstrap_ci(dacc, (y[~rep], s_text_probe[~rep], s_text[~rep]), groups[~rep], n_boot=1000),
         "gbm_plus_one_column_insensitive": {"gain_accuracy": ci(dacc, y, spl, sb), "gain_auroc": ci(dauc, y, spl, sb),
                                             "note": "third audit: this test returns about zero for a synthetic column worth +2 points"},
         "probe_right_when_hand_parse_wrong": float(np.mean(((sp > 0) == y)[rep & ((s_parse > 0) != y)])),

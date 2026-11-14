@@ -8,19 +8,23 @@ Last updated: Fri 2026-11-13 20:30 (Toronto).
 
 **Scope (user, Fri 16:25):** the scope freeze is lifted; push the science until Sunday 10:00, then package (decision D27). Heavy runs on Kaggle and Colab, launched by the user.
 
-## Where things stand
+## Where things stand (Fri 20:55)
 
 | Piece | State |
 |---|---|
-| Tier 1 and Steps 2–3, four models | Done, in the report (3.1–3.6). Qwen 3B probes on the original pool and CLadder finished Fri 20:08 |
-| First Kaggle run (commit `406d994`) | Ingested Fri 16:40, all 25 stages ok |
-| CLadder sample | Pinned (D28); Qwen 3B CLadder rows carry a dagger in every table |
-| Round-2 notebooks | **Pinned to `cdb08d7`** (Fri 20:20). Earlier pins `4d6afe5`, `5c31791`, `bab7d1b` are usable (the ingest accepts them; raw outputs are re-analysed locally); `9fdec33` runs need the `*_r2b_*` follow-up for the adjacency test. Guide: `KAGGLE.md` "Round 2" |
-| Audits | Five done. 4th: round-2 code (`notes/audit_round2_code_raw.md`). 5th: round-2 results and claims (`notes/audit_round2_results_raw.md`); it overturned the positive adjacency claim; responses in `notes/log.md` 20:10 and decision D29 |
-| Qwen 0.5B round 2 on the laptop | Done: label-preserving patching (+ `08b_patching_by_template.py`), steering controls at both tokens with within-string shuffles on the debiased pool. **Running** (`logs/r2_local3.log`): the adjacency test at four sites with the two new arms (direct fair control; split by answer direction) |
-| Report | 3.6 (four models), 4.1, 4.2, 4.4, 5 written to the audited state; Section 8 empty by design |
-| Tier 3 (SAE) | Written (section 5), corrected after the fifth audit |
-| study/ | Draft built; round-2 slots to fill |
+| GPU runs launched by the user | **A (`r2_qwen3b`) and C (`r2_qwen15b`) from pin `5c31791`**, Fri evening. B (7B behaviour) and D (Gemma) not launched yet; current pin for them: `cdb08d7`. Follow-ups A2/C2/D2 (`*_r2b_*`, pin `cdb08d7`: cache, controls, controls_hyp, adjacency, export) are for runs made from earlier pins |
+| Consolidation (user request, D30) | `RESULTS.md` (from `report/RESULTS_template.md`) = top of README; report appendix A–D; fig13. **Sixth audit running** on the consolidation and on everything written after the fifth audit (report: `notes/audit_consolidation_raw.md`) |
+| Tier 1, Steps 2–3, four models | Done |
+| Qwen 0.5B round 2 (laptop) | Done at the audited-and-corrected state: label-preserving patching, within-string steering controls at both tokens, adjacency test at four sites with all arms (last site finishing: `logs/r2_local3.log`) |
+| Audits | Five done and logged; sixth running |
+
+## The user's instructions for arriving runs (Fri 20:40)
+
+1. Ingest and validate (`scripts/kaggle_ingest.py --run <run>`; runs from earlier pins are accepted with a note), then for that model: `17_adjacency_test.py --analyse-only` per site (positions final and content_end; layer-spec best and first50), `08b_patching_by_template.py`, `05b_probe_content.py` if the cache gained the end-of-hypothesis token, `12_tables.py`, `06_figures.py`, `13_build_docs.py`. Report in a few lines what it shows.
+2. **7B rule (D30):** at chance on the debiased pool → state the scope (models up to 7B, these benchmarks, linear probes), finish the write-up, propose no further experiments. Above chance → stop, give a plan with GPU hours, use no more quota until the user answers.
+3. Independent audit on anything new before it goes into `RESULTS.md`.
+4. If a run fails: fix the notebook, give the new commit, say what can be reused.
+5. Before going idle: a short status (done / running / needed from the user).
 
 ## If the laptop restarts
 

@@ -256,7 +256,132 @@ def obs_gaps_point(ld, t, tm, strs):
     return np.array(out)
 
 
-def analyse(a, z, meta, items, t_all, layer, layer_info):
+def within_string_gap(ld, t, strs):
+    """Mean over hypothesis strings (that have both classes) of mean(adjacent) - mean(not adjacent)."""
+    v = []
+    for s_ in np.unique(strs):
+        a_, b_ = ld[(strs == s_) & (t == 1)], ld[(strs == s_) & (t == 0)]
+        if len(a_) and len(b_):
+            v.append(a_.mean() - b_.mean())
+    return float(np.mean(v)) if v else float("nan")
+
+
+def audit5_checks(z, X, sel, idx, t_all, tm_all, str_all, grp_all, ld_all, items, base, tr, tr_n, er, sgn, gm, G, Glo, Ghi, n_shuf):
+    """Readouts added after the fifth audit. (1) The erasure is the translation scaled by a per-item
+    coefficient; its fair control keeps that coefficient and replaces the direction. (2) How well the
+    eraser works on held-out items. (3) Gaps before and after, per template, with one definition
+    (within hypothesis string) and absolute values. (4) How much of the within-string answer is
+    already linearly present at this site. (5) The translation contrast under other sign choices."""
+    from sklearn.linear_model import Ridge
+    rep = ~sel
+    tm_idx = np.array([TEMPLATES.index(g) for g in tm_all])
+    Xc = string_centre(X, str_all, sel)
+    delta, W = z["delta"].astype(np.float64), z["W"].astype(np.float64)
+    C = float(z["C"])
+    t, tm, strs, grp = t_all[idx], tm_all[idx], str_all[idx], grp_all[idx]
+    out = {}
+
+    # (1) erasure = -c_i x translation; fair control = real coefficient, shuffled-label direction, real norm
+    g_i = tm_idx[idx]
+    c = (W[g_i] * Xc[idx]).sum(1) / (W[g_i] * delta[g_i]).sum(1)
+    slope_real = sgn * (tr[:, 0] - base)                                  # effect of +delta_g on item i
+    slope_ctrl = sgn[:, None] * (tr[:, 1:] - base[:, None]) * (tr_n[:, :1] / tr_n[:, 1:])   # effect of a control direction at the real norm
+    pred = -c * slope_real
+    obs = er[:, 0] - base
+    er_fair = base[:, None] - c[:, None] * slope_ctrl                     # answers after the fair control "erasures"
+    out["erasure_is_translation"] = {
+        "pearson_r_observed_vs_minus_coefficient_times_translation": float(np.corrcoef(obs, pred)[0, 1]),
+        "regression_slope": float(np.polyfit(pred, obs, 1)[0]),
+        "mean_coefficient_adjacent": float(c[t == 1].mean()), "mean_coefficient_not_adjacent": float(c[t == 0].mean()),
+        "note": "the erasure moves item i by -c_i x (its template's class-mean difference); with a linear response its effect is "
+                "-c_i x the translation effect, so erasure and translation are one measurement"}
+
+    # (3) gaps before / after, within hypothesis string, on the evaluated items
+    def gaps(ld):
+        return np.array([within_string_gap(ld[m], t[m], strs[m]) for m in gm])
+    g0, g1 = gaps(base), gaps(er[:, 0])
+    gc = np.stack([gaps(er_fair[:, k]) for k in range(n_shuf)], 1)        # [templates, shuffles]
+    used = (Glo > 0) | (Ghi < 0)
+    by = {}
+    for gi, g in enumerate(TEMPLATES):
+        ch = abs(g1[gi]) - abs(g0[gi])
+        by[g] = {"gap_before": float(g0[gi]), "gap_after_erasure": float(g1[gi]), "change_in_absolute_gap": float(ch),
+                 "relative_change_in_absolute_gap": float(ch / abs(g0[gi])) if abs(g0[gi]) > 1e-9 else None,
+                 "fair_controls_change_in_absolute_gap": two_sided(ch, np.abs(gc[gi]) - abs(g0[gi])),
+                 "fair_controls_change_in_signed_gap": two_sided(g1[gi] - g0[gi], gc[gi] - g0[gi])}
+
+    def mean_abs(ld, mask):
+        return float(np.mean([abs(within_string_gap(ld[m], t[m], strs[m])) for m, u in zip(gm, mask) if u]))
+    codes = np.array([TEMPLATES.index(g) for g in tm])
+
+    def red(b_, e_, tt, ss, cc, mask):
+        def ma(ld):
+            return np.mean([abs(within_string_gap(ld[cc == gi], tt[cc == gi], ss[cc == gi])) for gi in range(len(TEMPLATES)) if mask[gi] and (cc == gi).any()])
+        return float(ma(b_) - ma(e_))
+    str_codes = np.unique(strs, return_inverse=True)[1]
+    out["gaps_on_evaluated_items_within_string"] = {"by_template": by}
+    for name, mask in (("templates_in_contrast", used), ("all_five_templates", np.ones(len(TEMPLATES), bool))):
+        before, after = mean_abs(base, mask), mean_abs(er[:, 0], mask)
+        ctrl = np.array([mean_abs(base, mask) - mean_abs(er_fair[:, k], mask) for k in range(n_shuf)])
+        out["gaps_on_evaluated_items_within_string"][f"mean_absolute_gap_{name}"] = {
+            "before": before, "after_erasure": after, "relative_reduction": float((before - after) / before) if before > 0 else None,
+            "reduction": {**stats.bootstrap_ci(lambda b_, e_, tt, ss, cc: red(b_, e_, tt, ss, cc, mask), (base, er[:, 0], t, str_codes, codes), grp, n_boot=1000),
+                          "vs_fair_controls": two_sided(before - after, ctrl)}}
+
+    # (2) erasure quality on held-out items: is adjacency still readable where the eraser was not fitted?
+    E = Xc + erase_vectors(Xc.astype(np.float64), tm_idx, delta, W).astype(np.float32)
+    ridx = np.where(rep)[0]
+    folds = data.grouped_folds([items[j] for j in ridx], 4, SEED)
+
+    def cv_auc(A):
+        sc = np.zeros(len(ridx), np.float32)
+        for tr_, te_ in folds:
+            sc[te_] = probes.fit_predict(A[ridx][tr_], t_all[ridx][tr_], A[ridx][te_], C=C)
+        return float(stats.auroc(t_all[ridx], sc))
+    ev = np.zeros(len(X), bool); ev[idx] = True
+    tr_m, te_m = rep & ~ev, ev
+
+    def split_auc(A):
+        return float(stats.auroc(t_all[te_m], probes.fit_predict(A[tr_m], t_all[tr_m], A[te_m], C=C)))
+    out["erasure_quality_on_held_out_items"] = {
+        "adjacency_auroc_cv_within_report_half": {"before": cv_auc(Xc), "after_erasure": cv_auc(E)},
+        "adjacency_auroc_trained_on_unevaluated_report_items_tested_on_evaluated": {"before": split_auc(Xc), "after_erasure": split_auc(E)},
+        "note": "the eraser is fitted on the selection half; the values under 'leace' come from a probe trained on that half, where the "
+                "class-mean difference is exactly zero after erasure, and overstate the erasure"}
+
+    # (4) how much of the within-string answer is linearly present at this site (selection half -> report half)
+    ldc = ld_all.astype(np.float64).copy()
+    for s_ in np.unique(str_all):
+        m = str_all == s_
+        ldc[m] -= ld_all[sel & m].mean()
+    rd = Ridge(alpha=1.0).fit(Xc[sel], ldc[sel])
+    pr = rd.predict(Xc[rep])
+    out["within_string_answer_linearly_predictable"] = {
+        "held_out_r2": float(1 - ((ldc[rep] - pr) ** 2).sum() / ((ldc[rep] - ldc[rep].mean()) ** 2).sum()),
+        "held_out_pearson_r": float(np.corrcoef(ldc[rep], pr)[0, 1]),
+        "answer_shift_assigned_to_each_class_mean_difference": {g: float(delta[gi] @ rd.coef_) for gi, g in enumerate(TEMPLATES)}}
+
+    # (5) the translation contrast under other choices of sign and membership
+    e_tr = slope_real
+    T = np.array([e_tr[m].mean() for m in gm]); Tc = np.stack([slope_ctrl[m].mean(0) for m in gm])      # [templates], [templates, shuffles]
+    Grep = np.array([within_string_gap(ld_all[rep & (tm_all == g)], t_all[rep & (tm_all == g)], str_all[rep & (tm_all == g)]) for g in TEMPLATES])
+    Gsel = np.array([within_string_gap(ld_all[sel & (tm_all == g)], t_all[sel & (tm_all == g)], str_all[sel & (tm_all == g)]) for g in TEMPLATES])
+    variants = {"pre_specified_signs_where_gap_excludes_zero": np.where(Glo > 0, 1.0, np.where(Ghi < 0, -1.0, 0.0)),
+                "point_estimate_signs_all_five": np.sign(G), "report_half_point_estimate_signs_all_five": np.sign(Grep),
+                "selection_half_point_estimate_signs_all_five": np.sign(Gsel),
+                "uniform_sign_adjacent_towards_no": -np.ones(len(TEMPLATES)),
+                "common_effect_and_common_cause_only": np.array([0, 0, 0, -1.0, -1.0])}
+    out["translation_contrast_under_other_sign_choices"] = {}
+    for name, sg in variants.items():
+        u = sg != 0
+        val = float((sg[u] * T[u]).mean()); cv = (sg[u, None] * Tc[u]).mean(0)
+        out["translation_contrast_under_other_sign_choices"][name] = {"signs": dict(zip(TEMPLATES, map(int, sg))), **two_sided(val, cv)}
+    out["observational_gap_by_half"] = {g: {"selection_half": float(Gsel[gi]), "report_half": float(Grep[gi])} for gi, g in enumerate(TEMPLATES)}
+    out["n_translation_effects_towards_no"] = int((T < 0).sum())
+    return out
+
+
+def analyse(a, z, meta, items, t_all, layer, layer_info, X=None, sel=None):
     assert int(z["layer"]) == layer, f"raw file is for layer {int(z['layer'])}, the selection now gives {layer}: stale file?"
     n_shuf = int(z["n_shuf"]); n = 4 + 2 * n_shuf
     idx, out, norms = z["idx"], z["out"].astype(np.float64), z["norms"].astype(np.float64)
@@ -439,6 +564,9 @@ def analyse(a, z, meta, items, t_all, layer, layer_info):
                     "difference of the column's template. A shared adjacency feature read in a template-specific way predicts a "
                     "positive target-sign contrast; class differences that are each template's own answer shift predict a positive "
                     "source-sign contrast."}
+    # ---- 5. checks added after the fifth audit (notes/audit_round2_results_raw.md); they need the activations
+    if X is not None:
+        res["audit5"] = audit5_checks(z, X, sel, idx, t_all, tm_all, str_all, grp_all, ld_all, items, base, tr, tr_n, er, sgn, gm, G, Glo, Ghi, n_shuf)
     res["minutes_gpu"] = float(z["minutes"])
     (RESULTS / f"adjacency_{a.model}_{a.tag}_{a.site}.json").write_text(json.dumps(res, indent=1))
 
@@ -523,7 +651,7 @@ def main():
         log(f"site {a.site}: the selected layer equals the best layer ({layer}); nothing to add, skipping")
         return
     if a.analyse_only:
-        analyse(a, np.load(raw_path), meta, items, t, layer, layer_info)
+        analyse(a, np.load(raw_path), meta, items, t, layer, layer_info, probes.layer_features(resid, layer, pi), sel)
         return
     log(f"site {a.site}: layer {layer}, C {C:g}, selection-half AUROC {layer_info['selection_auroc_at_layer']:.3f}")
     X = probes.layer_features(resid, layer, pi)
@@ -542,7 +670,7 @@ def main():
         zr = np.load(raw_path)
         if int(zr["layer"]) == layer and abs(float(zr["signature"]) - sig_) < 1e-3 * sig_ and np.array_equal(zr["idx"], idx[: len(zr["idx"])]):
             log("a raw file for exactly this configuration exists; skipping the GPU pass")
-            analyse(a, zr, meta, items, t, layer, layer_info)
+            analyse(a, zr, meta, items, t, layer, layer_info, X, sel)
             return
     tok = models.load_tokenizer(a.model)
     model = models.load_model(a.model)
@@ -616,7 +744,7 @@ def main():
              auroc_probe_dir=F["auroc_probe_direction_by_template"], auroc_dom_dir=F["auroc_dom_direction_by_template"],
              minutes=(time.time() - t0) / 60)
     del model
-    analyse(a, np.load(raw_path), meta, items, t, layer, layer_info)
+    analyse(a, np.load(raw_path), meta, items, t, layer, layer_info, X, sel)
     ckpt.unlink(missing_ok=True)                     # only after the analysis has succeeded
 
 

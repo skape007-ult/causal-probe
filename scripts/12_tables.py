@@ -609,22 +609,22 @@ def t_feature_causal():
                        num(r["baseline_logit_diff_sd"], 2), num(r["baseline_max_abs_diff_vs_cache"], 2)])
     if not src:
         return
-    write("adjacency_sites", table(
+    write("v1_adjacency_sites", table(
         ["Model", "Site (layer)", "Adjacency AUROC, selection half (CV)", "…report half, probe direction", "…report half, difference of means",
          "Class gap along probe direction (own SDs)", "…along difference of means", "cos(probe, diff. of means)",
          "cos(adjacency probe, gold probe)", "cos(adjacency probe, model-answer probe)", "SD of the answer logit difference",
          "Max |unsteered − cached| logit difference"], r4, src))
-    write("adjacency_slopes", table(
+    write("v1_adjacency_slopes", table(
         ["Model", "Site (layer)", "Items", "Direction", "Slope: Δ(Yes−No logit) per natural SD, all templates",
          "Percentile of |slope| among 20 matched controls", "Largest matched-control slope", "Slope by hypothesis template",
          "Signs agreeing with the observational pattern", "Correlation with the observational pattern (5 templates)",
          "Percentile of that correlation among controls", "Range of slopes across templates", "Percentile of that range among controls"], r1, src))
-    write("adjacency_by_template", table(
+    write("v1_adjacency_by_template", table(
         ["Model", "Site (layer)", "Template", "Direction", "Observed: AUROC of answer for adjacency (within string)",
          "Observed: logit-difference gap, adjacent − not adjacent", "Steering slope per natural SD", "Signed percentile among matched controls",
          "Shift to the other class: effect towards Yes per push towards adjacent", "…as a share of the observed gap", "Percentile among matched controls",
          "AUROC of answer for adjacency: unsteered", "…after the shift", "…after the shift, control mean"], r2, src))
-    write("adjacency_ablation", table(
+    write("v1_adjacency_ablation", table(
         ["Model", "Site (layer)", "Removed", "Template", "AUROC of answer for gold label: unsteered", "Change after removal",
          "Change, range over 20 controls", "AUROC of answer for adjacency: unsteered", "Change after removal", "Change, range over 20 controls",
          "Mean |Δ logit difference|", "…largest control"], r3, src))
@@ -640,47 +640,45 @@ def rng_(c, d=3):
 
 
 def t_adjacency():
-    """The corrected adjacency test (round 2, scripts/17_adjacency_test.py)."""
+    """The corrected adjacency test (round 2, scripts/17_adjacency_test.py), with the readouts added after the fifth audit."""
     r1, r2, r3, src = [], [], [], []
     for m in MODELS:
         for site, slab in ADJ_SITES:
             r = load(f"adjacency_{m}_c2c_debiased_{site}.json")
-            if not r:
+            if not r or "audit5" not in r:
                 continue
             src.append(f"adjacency_{m}_c2c_debiased_{site}.json")
             where = f"{slab} ({r['layer']}/{r['n_layers']})"
+            a5 = r["audit5"]; q = a5["erasure_quality_on_held_out_items"]
             lv = r["leace"]["adjacency_auroc_of_fresh_probe_report_half"]
-            da = r["directions"]["auroc_for_adjacency_report_half_by_template"]
-            cc = lv["after_control_erasures_pooled"]
-            r1.append([LAB[m], where, r["n_items"], num(lv["before"]["pooled"]), num(lv["after_erasure"]["pooled"]),
-                       num(lv["after_removing_probe_direction_only"]["pooled"]), f"{min(cc):.3f} to {max(cc):.3f}",
-                       f"{min(da['probe'].values()):.2f} to {max(da['probe'].values()):.2f}",
-                       f"{min(da['dom_own_template'].values()):.2f} to {max(da['dom_own_template'].values()):.2f}",
-                       num(r["erasure"]["norm_of_edit_over_s"]["real"], 3),
-                       f"{r['erasure']['norm_of_edit_over_s']['controls_range'][0]:.3f} to {r['erasure']['norm_of_edit_over_s']['controls_range'][1]:.3f}",
-                       num(r["self_check_shortcut_vs_full_forward_max_abs_diff"], 3), num(r["baseline_max_abs_diff_vs_cache"], 2),
-                       num(r["baseline_logit_diff_sd"], 2)])
+            cv, ev = q["adjacency_auroc_cv_within_report_half"], q["adjacency_auroc_trained_on_unevaluated_report_items_tested_on_evaluated"]
+            r1.append([LAB[m], where, r["n_items"], num(a5["within_string_answer_linearly_predictable"]["held_out_r2"], 2),
+                       num(cv["before"]), num(cv["after_erasure"]), num(ev["before"]), num(ev["after_erasure"]),
+                       num(lv["after_erasure"]["pooled"]), num(lv["after_removing_probe_direction_only"]["pooled"]),
+                       num(a5["erasure_is_translation"]["pearson_r_observed_vs_minus_coefficient_times_translation"], 3),
+                       num(r["self_check_shortcut_vs_full_forward_max_abs_diff"], 3), num(r["baseline_logit_diff_sd"], 2)])
+            gb = a5["gaps_on_evaluated_items_within_string"]["by_template"]
             for g in r["observational"]:
                 o = r["observational"][g]; tr = r["translation"]["by_template"][g]
-                pg = r["probe_direction_across_class_gap"]["by_template"][g]; er = r["erasure"]["by_template"][g]
-                r2.append([LAB[m], where, TSHORT[g], ci(o["gap_adjacent_minus_not"], signed=True), {1: "+", -1: "−", 0: "none"}[o["predicted_sign"]],
+                pg = r["probe_direction_across_class_gap"]["by_template"][g]; e = gb[g]
+                fc = e["fair_controls_change_in_absolute_gap"]
+                r2.append([LAB[m], where, TSHORT[g], ci(o["gap_adjacent_minus_not"], signed=True),
                            ci(tr, signed=True), rng_(tr["vs_controls_norm_matched"]),
                            f"{100 * tr['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
-                           ci(pg, 4, signed=True), rng_(pg["vs_controls"], 4),
-                           num(er["gap_on_evaluation_items_before"], 3, signed=True), num(er["gap_after_erasure"], 3, signed=True),
-                           ci(er["change_in_gap"], signed=True), rng_(er["change_in_gap"]["vs_controls_norm_matched"]),
-                           f"{100 * er['change_in_gap']['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}"])
-            tc = r["translation"]["contrast"]; pc = r["probe_direction_across_class_gap"]["contrast"]; ec = r["erasure"]["contrast_reduction_of_dependence"]
-            mo = r["steps"]["model_out"]["per_unit_norm_from_large_step"]; dm = r["steps"]["dom_own_template"]
+                           num(e["gap_before"], 3, signed=True), num(e["gap_after_erasure"], 3, signed=True),
+                           num(e["change_in_absolute_gap"], 3, signed=True), rng_(fc),
+                           f"{100 * fc['share_of_controls_smaller_in_absolute_value']:.0f}", ci(pg, 4, signed=True)])
+            tc = r["translation"]["contrast"]; v = a5["translation_contrast_under_other_sign_choices"]
+            un = v["uniform_sign_adjacent_towards_no"]; mg = a5["gaps_on_evaluated_items_within_string"]["mean_absolute_gap_all_five_templates"]
+            mo = r["steps"]["model_out"]["per_unit_norm_from_large_step"]
             r3.append([LAB[m], where, ", ".join(TSHORT[g] for g in r["templates_in_contrast"]) or "none", num(r["full_mediation_benchmark"]),
-                       ci(tc, signed=True), num(tc["share_of_full_mediation"], 2) if tc["share_of_full_mediation"] is not None else "–",
-                       rng_(tc["vs_controls_norm_matched"]), f"{100 * tc['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
-                       rng_(tc["vs_controls_as_fitted"]),
-                       ci(pc, 4, signed=True), rng_(pc["vs_controls"], 4),
-                       num(ec["value"], 3, signed=True), num(ec["benchmark_full_removal_on_evaluation_items"], 3, signed=True),
-                       rng_(ec["vs_controls_norm_matched"]), f"{100 * ec['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
-                       f"{mo['est']:+.3f} ({100 * mo['vs_controls']['share_of_controls_smaller_in_absolute_value']:.0f}%)",
-                       num(dm["linearity_ratio_small_over_large_slope"], 2) if dm["linearity_ratio_small_over_large_slope"] is not None else "–"])
+                       num(tc["est"], 3, signed=True), rng_(tc["vs_controls_norm_matched"]),
+                       f"{100 * tc['vs_controls_norm_matched']['share_of_controls_smaller_in_absolute_value']:.0f}",
+                       num(un["value"], 3, signed=True), f"{100 * un['share_of_controls_smaller_in_absolute_value']:.0f}",
+                       f"{a5['n_translation_effects_towards_no']}/5",
+                       f"{num(mg['before'])} → {num(mg['after_erasure'])}", ci(mg["reduction"], signed=True),
+                       f"{100 * mg['reduction']['vs_fair_controls']['share_of_controls_smaller_in_absolute_value']:.0f}",
+                       f"{mo['est']:+.3f} ({100 * mo['vs_controls']['share_of_controls_smaller_in_absolute_value']:.0f}%)"])
     r4, r5, src4 = [], [], []
     for m in MODELS:
         for site, slab in ADJ_SITES:
@@ -709,24 +707,23 @@ def t_adjacency():
     if not src:
         return
     write("adjacency_sites", table(
-        ["Model", "Site (layer)", "Items", "Adjacency AUROC of a fresh probe, report half: before", "…after LEACE erasure",
-         "…after removing the probe direction only", "…after 5 control erasures (shuffled labels)",
-         "AUROC along the probe direction, by template (range)", "AUROC along the template's class-mean difference (range)",
-         "Size of the erasure edit (units of s)", "…control erasures", "Self-check: shortcut vs full forward pass (logits)",
-         "Max |unsteered − cached| logit difference", "SD of the answer logit difference"], r1, src))
+        ["Model", "Site (layer)", "Items", "Within-question answer linearly predictable from this site (held-out R²)",
+         "Adjacency AUROC on held-out items: before", "…after erasure", "Adjacency AUROC on the evaluated items: before", "…after erasure",
+         "(Probe trained on the half the eraser was fitted on: after erasure)", "(…after removing the probe direction only)",
+         "Erasure effect vs −coefficient × translation effect (r over items)", "Self-check: shortcut vs full forward pass (logits)",
+         "SD of the answer logit difference"], r1, src))
     write("adjacency_effects", table(
-        ["Model", "Site (layer)", "Template", "Observed gap in the answer logit, adjacent − not adjacent", "Predicted sign",
-         "Translation by the class-mean difference: effect towards Yes per move towards adjacent", "…20 controls, same norm (range)",
-         "Controls smaller in absolute value (%)", "Moving across the class gap along the probe direction", "…20 controls, same distance (range)",
-         "Gap on evaluated items: before", "…after erasure", "Change in gap", "…20 control erasures rescaled to the same edit size (range of change)",
-         "Controls smaller in absolute value (%)"], r2, src))
+        ["Model", "Site (layer)", "Template", "Observed gap in the answer logit, adjacent − not adjacent (all items)",
+         "Translation by the class-mean difference: effect towards Yes per move towards adjacent", "…20 random directions of the same size (range)",
+         "Controls smaller in absolute value (%)", "Gap on evaluated items: before", "…after erasure", "Change in absolute gap",
+         "…20 fair controls: same per-item coefficients, random direction (range)", "Controls smaller in absolute value (%)",
+         "Moving across the class gap along the probe's weight vector"], r2, src))
     write("adjacency_contrast", table(
-        ["Model", "Site (layer)", "Templates in the contrast", "Full-mediation benchmark (mean |observed gap|)",
-         "Translation: contrast", "…as a share of the benchmark", "…controls, same norm (range)", "Controls smaller in absolute value (%)",
-         "…controls as fitted (range)", "Probe direction across the gap: contrast", "…controls (range)",
-         "Erasure: reduction of the dependence (contrast)", "…what full removal would give on these items", "…control erasures, same edit size (range)",
-         "Controls smaller in absolute value (%)", "Positive control: model-answer direction, slope per unit norm (share of controls it exceeds)",
-         "Linearity check: small-step / large-step slope, class-mean difference"], r3, src))
+        ["Model", "Site (layer)", "Templates in the pre-specified contrast", "Full-mediation benchmark (mean |observed gap|)",
+         "Translation: pre-specified contrast", "…20 random directions of the same size (range)", "Controls smaller in absolute value (%)",
+         "Same with one sign for all types (adjacent → No)", "Controls smaller (%)", "Translation effects towards No",
+         "Mean absolute gap on evaluated items, before → after erasure", "Reduction (interval over items)", "Fair controls smaller in absolute value (%)",
+         "Positive control: model-answer direction, slope per unit norm (share of controls it exceeds)"], r3, src))
 
 
 def t_sae():

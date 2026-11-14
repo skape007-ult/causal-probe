@@ -485,6 +485,12 @@ def fig_adjacency(site="final_best", name="fig11_adjacency_final.png", where="fi
                 ("erasure", f"adjacency partly erased (held-out probe {q['before']:.2f} → {q['after_erasure']:.2f})",
                  f"mean |gap| {mg['before']:.3f} → {mg['after_erasure']:.3f}; larger than "
                  f"{100 * mg['reduction']['vs_fair_controls']['share_of_controls_smaller_in_absolute_value']:.0f}% of controls"))
+        # a site at which even the positive control (a step along the model-answer direction) does not exceed all its controls
+        # is no test: say so in the panel instead of printing a percentile of noise (wording audit W12, eleventh audit F3)
+        if r["steps"]["model_out"]["per_unit_norm_from_large_step"]["vs_controls"]["share_of_controls_smaller_in_absolute_value"] < 1:
+            rows = ((rows[0][0], rows[0][1], f"contrast {tc['est']:+.3f} of {r['full_mediation_benchmark']:.3f}. NO TEST: this layer does not respond\n"
+                                             "(positive control inside its controls)"),
+                    (rows[1][0], rows[1][1], f"mean |gap| {mg['before']:.3f} → {mg['after_erasure']:.3f}. NO TEST (as above)"))
         for i, (key, lab, note) in enumerate(rows):
             ax = axes[i + 1, j]
             for t_, k in enumerate(TEMPLATE_ORDER):

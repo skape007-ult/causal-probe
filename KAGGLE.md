@@ -275,7 +275,7 @@ run shows the result within a minute: it must print `platform: kaggle | archives
 
 Decision D32 in `EXPLAINER.md`. Quota is no longer the limit; two concurrent sessions and Sunday 10:00 are.
 **Nothing is launched after Saturday 18:00 (Toronto).** Every notebook below is one *Save & Run All*, writes its
-archives and `STATUS.txt` to `/kaggle/working/kaggle_out`, and is pinned to commit `df7313e` (shown in its first
+archives and `STATUS.txt` to `/kaggle/working/kaggle_out`, and is pinned to commit `e336431` (shown in its first
 code cell).
 
 | | Notebook | Run folder in `kaggle_in/` | HF secret | GPU hours | State (Sat 14 Nov, morning) |
@@ -284,8 +284,8 @@ code cell).
 | C | `notebooks/kaggle_r2_qwen1.5b.ipynb` | `r2_qwen15b` | no | 1.2 (measured) | **done, ingested, audited** |
 | B | `notebooks/kaggle_r2_qwen7b.ipynb` | `r2_qwen7b` | no | 1.5 – 3 | launched Fri night from pin `6d9ce8d` (see the note on B below) |
 | D | `notebooks/kaggle_r2_gemma.ipynb` | `r2_gemma` | **yes** | 2.5 – 4 | launched Fri night from pin `6d9ce8d` |
-| **H** | `notebooks/kaggle_r3_settle_qwen3b.ipynb` | `r3s_qwen3b` | no | about 1.5 | **your decision; my recommendation is to run it.** Designed to decide the Qwen 3B steering arm; test and threshold fixed in advance; second version, not re-reviewed |
-| H | `notebooks/kaggle_r3_settle_qwen1.5b.ipynb` | `r3s_qwen15b` | no | about 1 | the same for the Qwen 1.5B arm (gold probe, negative slope) |
+| **H** | `notebooks/kaggle_r3_settle_qwen3b.ipynb` | `r3s_qwen3b` | no | about 1.5 | **your decision.** Test and threshold fixed in advance; reviewed twice. It has about one chance in three to one in two of an informative outcome (see below) |
+| H | `notebooks/kaggle_r3_settle_qwen1.5b.ipynb` | `r3s_qwen15b` | no | about 1 | the same for the Qwen 1.5B arm (gold probe, negative slope); the more informative of the two (a little better than even) |
 | E | `notebooks/kaggle_r3_gemma9b.ipynb` | `r3_gemma9b` | **yes** (licence of `google/gemma-2-9b-it` accepted) | 2 – 3.5; ends within about 15 minutes if it cannot run | ready |
 | F | `notebooks/kaggle_r3_patch240_qwen3b.ipynb` | `r3p_qwen3b` | no | about 2 | ready |
 | F | `notebooks/kaggle_r3_patch240_gemma.ipynb` | `r3p_gemma` | **yes** | 1 – 2.5 | ready |
@@ -311,20 +311,26 @@ comparisons on that pool, 24 in all) and a modest real effect, and found that mo
 - **Primary test:** the direction refitted on the mirror half of the 25 blocks and steered on 150 items of the other half, one-sided
   in the sign of the first run, against **500** control directions fitted to labellings that have both balances of the gold label
   (half valid within every hypothesis string; one valid and one invalid item per premise).
-- **Threshold 0.05/24** (the real slope beyond all 500 controls), because this arm was picked as the most extreme of 24. A p between
-  that and 0.05 means only that the direction's slope is reproducibly in the tail of its controls, which picking the most extreme of
-  24 produces by itself: refitting on the other half gives nearly the same vector (cosine 0.84 for Qwen 3B), so it is not a new draw.
-- The label beyond adjacency (the label minus its mean in its string-and-adjacency cell) against 100 controls built the same way;
+- **Threshold 0.05/24** (the real slope beyond all 500 controls), because this arm is one of the first ranks picked out of 24
+  comparisons. Refitting on the other half gives nearly the same vector (cosine 0.84 for Qwen 3B), so it is not a new draw.
+- **What each outcome is worth** (second review, before any run). Beyond all 500: moderate evidence for a real effect (about 3% of
+  runs with nothing label-specific, 25% for Qwen 3B and 48% for Qwen 1.5B with a real effect of the observed size). Above 0.05:
+  moderate evidence against. **Between the two: evidence for neither**, and for Qwen 3B that is the most likely outcome whatever
+  is true (51% and 67%). The Qwen 3B run has about one chance in three to one in two of telling us anything; the Qwen 1.5B run a
+  little better than even.
+- The label beyond adjacency (the label minus its mean in its string-and-adjacency cell, with the adjacency direction projected
+  out) against 100 controls built the same way: "stands out" = one-sided p ≤ 0.05; a null on this question shows nothing;
   the adjacency direction itself; two neighbouring layers; smaller steps; the original split with 100 controls of each kind.
 - The primary configuration runs first, and the directions are saved before the model loads, so a run that is cut short still
   leaves the primary test or at least everything needed to read what was computed.
 
 Test and threshold are in `notes/log.md` ("Ninth independent audit ... and the AMENDED pre-registration"). What each outcome would do
 to the wording of claim 3 is in `notes/claim3_proposed_rewording.md`, option C. The script refuses to start unless the 20-control
-result of the model is in its checkout (it is, from pin df7313e on). **What has and has not been tested:** end to end with a stand-in
+result of the model is in its checkout (it is, from pin e336431 on). **What has and has not been tested:** end to end with a stand-in
 for the model (both arms, smoke configuration, resume from a partial file); every control family checked to be calibrated under a
-response unrelated to any label (exact computation on the Qwen 3B and Qwen 1.5B activations); **not** run on a GPU, and the second
-version has **not** been reviewed again by anyone but me.
+response unrelated to any label, if that response is isotropic (exact computation on the Qwen 3B and Qwen 1.5B activations); the
+second version was reviewed independently (tenth audit, `notes/audit_settle_code2_raw.md`: it can run; five further changes, applied);
+**not** run on a GPU, and those last five changes have been seen by me alone.
 
 The G notebooks for Qwen 1.5B, 3B and Gemma use the sites of the 20-control run, which are recorded in result files
 that only exist in the repository after that run is ingested. I re-pin those three notebooks then. **Launched

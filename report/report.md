@@ -1131,7 +1131,7 @@ Three cautions. The patching curves of the two kinds of pair look alike, and tha
 
 ![cross model](../figures/fig9_cross_model.png)
 
-A descriptive comparison of three models from two families, not a scaling law. On the original item sets gold-probe accuracy is higher for the two larger models than for Qwen2.5-0.5B, and the probe trails the strongest text baseline for every model. The selected layer lies at relative depth 0.6 to 0.9. On the debiased pool (Section 3.6) the difference between Qwen2.5-0.5B and Qwen2.5-1.5B is larger and is the more informative comparison, since it is not inflated by the hypothesis-string cue.
+A descriptive comparison of four models from two families, not a scaling law. On the original item sets gold-probe accuracy is higher for the three larger models than for Qwen2.5-0.5B and does not differ among them (Corr2Cause pool 0.86 to 0.87), and the probe trails the strongest text baseline for every model. The selected layer lies at relative depth 0.6 to 0.9. Qwen2.5-3B's CLadder point is on the other draw of the CLadder sample; its paired differences to the other models use the 2,271 shared items (`results/cross_model.json`, `n_items_paired`). On the debiased pool (Section 3.6) the step from Qwen2.5-0.5B to Qwen2.5-1.5B is larger and is the more informative comparison, since it is not inflated by the hypothesis-string cue; from 1.5B to 3B nothing changes there either.
 
 ### 4.4 Is the adjacency information used? (second round)
 

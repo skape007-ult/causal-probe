@@ -73,7 +73,11 @@ def main():
     from causal_probe import cache as C
     from causal_probe.config import CACHE, RESULTS
 
-    out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
+    out = Path(a.out)
+    # Kaggle keeps only /kaggle/working after a commit run (a run on 13 Nov wrote to /content/out there and lost its output)
+    if (os.environ.get("KAGGLE_KERNEL_RUN_TYPE") or os.path.isdir("/kaggle")) and not (os.path.abspath(out) + "/").startswith("/kaggle/working/"):
+        sys.exit(f"refusing to start: on Kaggle only /kaggle/working is kept, and --out is {out}")
+    out.mkdir(parents=True, exist_ok=True)
     RESULTS.mkdir(parents=True, exist_ok=True)
     logs = RESULTS / f"round2_logs_{a.run}"; logs.mkdir(exist_ok=True)
     marks = CACHE / f"_round2_markers_{a.run}"; marks.mkdir(parents=True, exist_ok=True)

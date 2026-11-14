@@ -10,6 +10,8 @@ import json
 import sys
 from pathlib import Path
 
+from notebook_cells import COLAB_DOWNLOAD, FINAL_CHECK, PLATFORM_SETUP
+
 ROOT = Path(__file__).resolve().parents[1]
 REPO = "https://github.com/skape007-ult/causal-probe.git"
 
@@ -33,7 +35,7 @@ Read `KAGGLE.md` in the repository first. Settings needed on the right-hand pane
 attached to this notebook (the Gemma weights are gated). Then *Save Version → Save & Run All (Commit)*.
 
 Everything heavy happens in `scripts/kaggle_run.py`. Each stage is time-limited, skipped if already
-done, and allowed to fail without stopping the rest. Output: zip files in `/kaggle/working`.
+done, and allowed to fail without stopping the rest. Output: zip files in `/kaggle/working/kaggle_out`; the last cell lists them and fails if one is missing.
 """),
         code(f"""
 # ---- settings ---------------------------------------------------------------
@@ -50,17 +52,8 @@ t_start = time.time()
 gpu = subprocess.run(["nvidia-smi", "--query-gpu=name,memory.total", "--format=csv"], capture_output=True, text=True).stdout if shutil.which("nvidia-smi") else ""
 print(gpu or "NO GPU FOUND: set Accelerator to a GPU in the notebook settings (the run would be far too slow on CPU)")
 
-# Hugging Face token from Kaggle Secrets. It is never printed or written to disk by this notebook.
-try:
-    from kaggle_secrets import UserSecretsClient
-    os.environ["HF_TOKEN"] = UserSecretsClient().get_secret("HF_TOKEN")
-    print("HF_TOKEN loaded from Kaggle Secrets")
-except Exception as e:
-    print("WARNING: no HF_TOKEN secret available (%s). Gemma stages will fail; the Qwen model needs no token." % type(e).__name__)
-
-WORK = "/kaggle/working" if os.path.isdir("/kaggle/working") else os.path.abspath("kaggle_out")
-TEMP = "/kaggle/temp" if os.path.isdir("/kaggle") else os.path.abspath("kaggle_tmp")
-os.makedirs(TEMP, exist_ok=True); os.makedirs(WORK, exist_ok=True)
+NEEDS_TOKEN = RUN_GEMMA
+""" + PLATFORM_SETUP + """
 os.environ["HF_HOME"] = TEMP + "/hf"                 # model downloads (not part of the notebook output)
 os.environ["CAUSAL_PROBE_CACHE"] = TEMP + "/cache"   # full activation cache (not part of the output)
 os.environ["CAUSAL_PROBE_JOBS"] = "4"
@@ -125,15 +118,16 @@ print("runner exit code", p.returncode, "| total %.0f min" % ((time.time() - t_s
         code("""
 # ---- what to download ---------------------------------------------------------
 st = REPO_DIR + "/results/kaggle_run_status.json"
-if os.path.exists(st):
-    s = json.load(open(st))
-    for k, v in s["stages"].items():
-        print(("ok     " if v["ok"] else "FAILED ") + f"{v['minutes']:6.1f} min  {k}" + ("" if v["ok"] else "   <- " + v["detail"]))
-    print("export:", json.dumps(s.get("export", {}).get("zip_megabytes", {})))
-for f in sorted(os.listdir(WORK)):
-    if f.endswith(".zip"):
-        print(f"{WORK}/{f}  {os.path.getsize(WORK + '/' + f) / 1e6:.1f} MB")
+s_ = json.load(open(st)) if os.path.exists(st) else {}
+for k, v in s_.get("stages", {}).items():
+    print(("ok     " if v["ok"] else "FAILED ") + f"{v['minutes']:6.1f} min  {k}" + ("" if v["ok"] else "   <- " + v["detail"]))
+print("export:", json.dumps(s_.get("export", {}).get("zip_megabytes", {})))
+not_finished = "" if "export" in s_ else "the runner did not reach its export step (no export record in " + st + ")"
+expected = list(dict.fromkeys(["results.zip"] + list(s_.get("export", {}).get("zip_megabytes", {}))))
+zips = sorted(f for f in os.listdir(WORK) if f.endswith(".zip"))
 """),
+        code(COLAB_DOWNLOAD),
+        code(FINAL_CHECK),          # always the last cell: lists the output directory, raises if an archive is missing
     ]
     nb = {"cells": cells, "nbformat": 4, "nbformat_minor": 5,
           "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},

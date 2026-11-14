@@ -208,8 +208,21 @@ After that hour you should be able to say these five sentences from memory.
 
 *Self-test:* Without looking, say how many first places among 12 comparisons chance gives, and what the probability of two or more is. Then do exercise 6, and answer study questions 49 to 52.
 
+## Session 8 (added 14 November). Three ways a summary number misleads: pooling, counting, and a control that destroys too much
+
+*Read:* report section 3.1 from "Within a hypothesis string" to the end of the three cautions, with the table before it; section 4.1 from "Gemma-2-2B at both tokens" to "At the end of the hypothesis that explanation does not apply"; section 4.4, points 15 to 17; `notes/audit_runs_b_d_raw.md`, findings F1, F3 and F4; EXPLAINER, the two primer entries after "What a shuffled control keeps and what it destroys", decisions D34 and D35, questions 47 to 49.
+
+*Ideas to come away with:*
+- A pooled score is dominated by its largest source of variation. If that source carries no label information, the score sits at chance whatever the answers do inside it. Compare like with like, then average.
+- A criterion fixed in advance protects against picking the statistic that flatters you. It does not make an insensitive statistic the right one.
+- Counting the comparisons that come first throws away every comparison that comes second or third. The mean rank uses all of them.
+- A control must destroy only what you want to test. A shuffle within question destroys the link between label and answer as well, so beating it can be a behavioural fact in disguise.
+- A site where even the positive control does nothing is not a null result. It is no test.
+
+*Self-test:* Explain to someone how the same answers can have an AUROC of 0.51 and of 0.55. Then say why the gold class-mean difference outranking its controls at the answer position is predicted by one cosine, and answer study questions 53 to 55.
+
 ## Still to be added
 
-- Gemma 2B: matched steering controls, label-preserving pairs, the adjacency test
-- Qwen 7B behaviour and its probe comparison on the debiased pool
+- The held-out test of the two steering cases, the 240-pair patching runs, Gemma-2-9B
+- Qwen 7B: its probe comparison on the debiased pool
 - The settle run for the Qwen 3B steering arm, if it is run

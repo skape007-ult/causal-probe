@@ -231,8 +231,22 @@ The contrast is +0.775 of a possible 1.375, and the controls range from -0.597 t
 A probe fitted to a label that can be decoded finds a direction along which the activations really differ; a probe fitted to shuffled labels finds a direction along which they hardly vary. So the natural spread along the real probe direction is larger (1.0 to 5.5 times in these runs) whatever the direction does causally, and multiplying each slope by its own spread favours the real one. The comparison per unit of norm is matched; the one per natural SD is not, for probe directions. For differences of class means the two families have similar spread and both columns can be read.
 **Evidence:** `notes/audit_round2_runs_raw.md`, F2; note ‡ under table `steering_controls.md`.
 
+## Gemma's second round and the 7B answers (added 14 November)
+
+**53. Qwen 7B's pooled AUROC on the debiased pool is at chance. Give the two numbers that show its answers nevertheless follow validity, and say why the pooled number misses it.**
+Mean AUROC inside the hypothesis strings 0.549 [0.530, 0.569] (permutation p 0.000), and 0.589 [0.560, 0.620] with adjacency of the queried pair held fixed. For the four smaller models the second number is 0.486, 0.436, 0.467, 0.511: none above chance. The pooled AUROC compares every valid item with every invalid one; most such pairs come from different hypothesis strings, whose answer logits differ by far more than anything inside a string and carry no label information (the label is balanced in every string). The effect is small: the valid item of a premise has the higher answer logit in 53.6% of premises.
+**Evidence:** `report/report.md`, "3.1", "Within a hypothesis string"; table `answers_within_string.md`; `notes/audit_runs_b_d_raw.md`, F1; EXPLAINER decision D35.
+
+**54. Over 16 comparisons the gold class-mean difference has a mean rank of 6.44 among 21 (11 expected). Why is that not evidence that validity is used?**
+At the answer position the slope of a class-mean difference is proportional to its cosine with the answer direction: r = 0.90, 0.93 and 0.96 over the 20 controls of Qwen 1.5B, Gemma and Qwen 3B. The gold direction's slope follows from its cosine: for Gemma predicted -1.793, observed -1.799, sign included. The gold direction is aligned with the answer direction because the answers are correlated with the label inside a hypothesis string (through adjacency); the shuffle within string removes that correlation from the controls. So the comparison restates a behavioural fact. At the end of the hypothesis there is no such relation, and the cases there stay open.
+**Evidence:** `report/report.md`, "4.1", "What the 32 comparisons show together" and "Why, at the final token"; `results/steering_slope_vs_answer_alignment.json`; `notes/audit_runs_b_d_raw.md`, F4.
+
+**55. Gemma's contrast at the end of the hypothesis is "larger than 95% of its controls". Why is it reported as no test?**
+Because nothing added at that site moves the answer, the positive control included: the model-answer direction is inside its controls there, and the contrast is about a thousandth of a logit. The layer was chosen because the label is most decodable there; decodability is flat over the upper half of the network, while patching shows that nothing at the hypothesis tokens reaches the answer from about layer 16 on. A high percentile of noise is not an effect, and a zero at a dead site is not a null.
+**Evidence:** `report/report.md`, "4.1", "End of the hypothesis, debiased pool: the site does not respond", and "4.4", point 17; note ◊ under table `adjacency_contrast.md`; `notes/audit_runs_b_d_raw.md`, F3.
+
 ## Still to be added
 
-- Gemma 2B: matched steering controls, label-preserving pairs, the adjacency test
-- Qwen 7B behaviour and its probe comparison on the debiased pool
+- The held-out test of the two steering cases, the 240-pair patching runs, Gemma-2-9B
+- Qwen 7B: its probe comparison on the debiased pool
 - The settle run for the Qwen 3B steering arm, if it is run

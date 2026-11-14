@@ -36,3 +36,4 @@ W1113 19:26:21.449000 39424 .venv/lib/python3.12/site-packages/torch/distributed
 Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights:   0%|          | 1/290 [00:00<04:24,  1.09it/s]Loading weights: 100%|██████████| 290/290 [00:00<00:00, 314.41it/s]
 [    8s] self-check, shortcut vs full forward pass: max |difference| 0.0077 logits; unsteered vs cache 0.0081
 [   17s] [timing] 1.58 s/item (224 vectors) -> 13.0 min for the remaining 494 items; 54.7 min left of 55
+[   91s] 50/500

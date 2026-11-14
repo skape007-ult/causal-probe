@@ -403,6 +403,8 @@ Hewitt & Liang assign a random label per word type. Our unit is a whole prompt, 
 
 **What it costs.** An hour of the last full day on a calculation instead of the write-up, and possibly the only chance before the deadline to intervene on the one model that does some of the task.
 
+**Outcome (09:10).** The user chose the realistic share for the rule, provided the reviewer agreed that it is the right reading. The reviewer, who estimated the power before reading mine, did: about 0.2 for case (a) (0.12 to 0.32), below 0.6. **Option C: no intervention on the 7B model in this phase.** The review also found something my calculation had missed entirely: inside cells of hypothesis string and adjacency the label is correlated with prompt length, the tested direction is mostly a length direction, and a positive result would not have separated validity from length. And it contradicted the reason pencilled into the rule for option C ("needs more items"): more items of the same kind would not help; a pool balanced for length inside the cells would. The report gives the reviewed reason.
+
 ## How to read each figure
 
 All figures are drawn by `scripts/06_figures.py` from `results/*.json`. Shaded bands and whiskers are 95% cluster-bootstrap confidence intervals (premises or stories are resampled). Each model keeps the same colour in every figure.

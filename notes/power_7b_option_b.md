@@ -41,3 +41,21 @@ The calculation says the test cannot miss an effect of size (a). I think that sa
 4. **Nothing has run on a 4-bit model**, and its arithmetic (bfloat16) is noisier than the other models'.
 
 So: under the literal reading of (a) the rule says B. Under the share that the comparable measurements in the smaller models suggest, the power is below 0.5. Which reading is the right one for the rule is what the independent review is asked.
+
+## After the independent review (09:10; raw report: `notes/audit_power_option_b_raw.md`)
+
+The reviewer made their own estimate before reading the script or this note, then reproduced the script's numbers (they reproduce) and reviewed both.
+
+**Verdict: the honest power for (a) is about 0.2 (range 0.12 to 0.32) with the control spread doubled, about 0.1 for (b); with the spread not doubled, about 0.35 and 0.19. Below 0.6.** The reading the reviewer defends is the one the user chose for the rule: the share that comparable end-of-hypothesis sites carried in the smaller models (0.115, 0.058, 0.006, and one site that does not respond). Share needed for power 0.6: 0.14 to 0.23; one of four smaller sites reached 0.115.
+
+What the review found wrong or missing in my calculation:
+
+1. **The tested direction is mostly prompt length, and its controls are not** (critical). Conditioning on adjacency breaks the balance of length against the label: inside (string, adjacency) cells the residual label correlates −0.109 with the token count. The tested direction has cosine −0.55 to −0.75 with the length direction; at most 3 of 100 controls load on length as strongly. The 7B answers depend on length inside cells more than on the label (correlation −0.26 against +0.14). So my row "share 0 → power 0.05" does not hold: a site that responds to length alone would return p ≤ 0.05, and a positive result could not separate validity from prompt length. The calibration I cited from the tenth audit (adjacency-only response) does not cover this.
+2. **The "slope at full share" is an identity** (g × s_unit / the norm of the fitted mean difference). The stand-in direction cancels exactly, so the number says nothing about whether a label direction exists; a shuffled label would give twice the slope.
+3. **Which assumption fails:** A1, not A2. The full-mediation formula predicts the measured slopes of gold class-mean differences at the final token (Qwen 3B: 3.27 predicted, 4.02 measured) and fails at the end of the hypothesis (4.31 predicted, 0.74 measured); responses are linear in the step where measured.
+4. **My note and my code disagreed** about the controls (the code adds a share-proportional term to them, the note says pure noise). The code is the more defensible; at share 1 it implies control spreads ten times anything measured, another sign that share 1 is not a realistic case.
+5. **The dead-site risk** (one in four) was in my text and not in my table.
+
+**Would more items help? No.** An unlimited fitting pool raises the slope by about 12%; item noise is under 1% of the control variance; 100 controls are enough. What limits the test is the share one layer at one token carries, the model's response to arbitrary directions, and whether the site responds. A new pool could remove the length confound and the one-class cells if prompts are balanced for length inside the cells: a change of design, not of size.
+
+**Decision (the user's rule, as the user clarified it at about 09:00): option C.** No intervention on the 7B model in this phase. The reason the user had pencilled in ("it needs more items than the official debiased pool provides") is not what the review supports; the reason written into the report is the reviewed one.

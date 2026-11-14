@@ -631,7 +631,10 @@ def t_settle():
              "The threshold counts the 24 comparisons that existed when the two arms were chosen. Over all 32 comparisons now in the steering-controls table it would be 0.0016, "
              "below the smallest p that 500 controls can give (0.0020).",
              "Second question (registered with its reading): the label with the adjacency direction projected out, against 100 controls from labels shuffled within "
-             "(hypothesis string, adjacency) cells. 'Stands out' (p ≤ 0.05) means an effect beyond the one linear adjacency direction, not beyond graph structure; 'does not stand out' means nothing (little power)."]
+             "(hypothesis string, adjacency) cells. 'Stands out' (p ≤ 0.05) means an effect beyond the one linear adjacency direction, not beyond graph structure; 'does not stand out' means nothing (little power).",
+             "Added after the review of 14 Nov (`notes/audit_power_option_b_raw.md`, F1), before the Qwen2.5-3B run's output was seen: inside cells of hypothesis string and adjacency the label is "
+             "correlated with prompt length, and the second question's direction loads on a prompt-length direction far more than its controls do. A 'stands out' there could be a response to "
+             "prompt length and would not be read as an effect of the label."]
     write("steering_settle", table(
         ["Model", "Direction tested", "Layer", "Slope in the 20-control run", "Items steered", "Slope with the direction refitted on the other half", "Controls",
          "Controls: mean ± SD", "Controls: range", "z against controls", "p (one-sided)", "Threshold (0.05/24)", "Outcome", "20 isotropic directions at the same site (range)",

@@ -1,6 +1,6 @@
 # Power of option B's test on the 7B model, computed before anything is built
 
-Written Sat 14 Nov, about 08:50, at the user's request, to decide between option B (a pre-registered intervention on Qwen2.5-7B) and option C (none). **Not yet reviewed when first written; the review's verdict is appended at the end.** Script: `scripts/18_power_option_b.py`; every number here is in `results/power_option_b_qwen7b.json`.
+Written Sat 14 Nov, about 08:50, at the user's request, to decide between option B (a pre-registered intervention on Qwen2.5-7B) and option C (none). **Not yet reviewed when first written; the review's verdict is appended at the end.** Script: `scripts/18_power_option_b.py`; every number of this first part is in `results/power_option_b_qwen7b.json` (the numbers of the part added after the review are the reviewer's, from `notes/audit_power_option_b_raw.md`).
 
 ## The test
 
@@ -55,6 +55,7 @@ What the review found wrong or missing in my calculation:
 3. **Which assumption fails:** A1, not A2. The full-mediation formula predicts the measured slopes of gold class-mean differences at the final token (Qwen 3B: 3.27 predicted, 4.02 measured) and fails at the end of the hypothesis (4.31 predicted, 0.74 measured); responses are linear in the step where measured.
 4. **My note and my code disagreed** about the controls (the code adds a share-proportional term to them, the note says pure noise). The code is the more defensible; at share 1 it implies control spreads ten times anything measured, another sign that share 1 is not a realistic case.
 5. **The dead-site risk** (one in four) was in my text and not in my table.
+6. **The 7B data themselves cap the share** along the tested direction at roughly 0.2 to 0.3 (the held-out correlation between the answer and the projection is 0.19 to 0.27, and near zero once the token count is removed from both), and the effect size g = 0.440 is the larger of two candidates: it falls to 0.36 controlling for token count and to 0.26 within string or with the shallow structural features controlled.
 
 **Would more items help? No.** An unlimited fitting pool raises the slope by about 12%; item noise is under 1% of the control variance; 100 controls are enough. What limits the test is the share one layer at one token carries, the model's response to arbitrary directions, and whether the site responds. A new pool could remove the length confound and the one-class cells if prompts are balanced for length inside the cells: a change of design, not of size.
 

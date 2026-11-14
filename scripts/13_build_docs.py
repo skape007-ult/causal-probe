@@ -3,7 +3,7 @@
 Two kinds of marker are replaced, so that no number in the write-up is typed by hand:
   <!-- TABLE:name -->            the table report/tables/name.md (written by 12_tables.py)
   {{file.json|a/b/c|fmt}}        one value from results/file.json at path a -> b -> c
-                                 fmt: ci   "0.895 [0.863, 0.919]"    est  "0.895"
+                                 fmt: ci   "0.895 [0.863, 0.919]"    est  "0.895"    p4 "0.0005" (p-values)
                                       num  "0.895"   num2 "0.90"   pct "86%"   int "1,162"
                                       signed / signedci   with an explicit sign
 A missing file or path becomes a visible "(pending: ...)" note, never a silent blank.
@@ -35,7 +35,7 @@ def value(m):
     if isinstance(v, dict) and "est" in v:
         v = v["est"]
     return {"num": lambda x: f"{x:.3f}", "num2": lambda x: f"{x:.2f}", "pct": lambda x: f"{100 * x:.0f}%",
-            "pct1": lambda x: f"{100 * x:.1f}%", "int": lambda x: f"{int(x):,}", "signed": lambda x: f"{x:+.3f}",
+            "pct1": lambda x: f"{100 * x:.1f}%", "p4": lambda x: f"{x:.4f}", "int": lambda x: f"{int(x):,}", "signed": lambda x: f"{x:+.3f}",
             "str": str}[fmt](v)
 
 

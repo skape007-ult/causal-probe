@@ -63,7 +63,7 @@ Read this only after you have written your predictions in `study/03_exercises.md
 
 ## Exercise 4. What does the probe add to a parser that is better than it?
 
-**Result.** (a) Added to the hand parse: {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/over_hand_parse/gain_accuracy|signedci}} accuracy (in AUROC: {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/over_hand_parse/gain_auroc|signedci}}). (b) Added to the strongest text-only model: {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/over_strongest_text_only/gain_accuracy|signedci}}.
+**Result.** (a) Added to the hand parse: {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/over_hand_parse/gain_accuracy|signedci}} accuracy (in AUROC: {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/over_hand_parse/gain_auroc|signedci}}). (b) Added to the text-only stack with fixed settings (hand parse + 4-grams): {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/over_strongest_text_only/gain_accuracy|signedci}}.
 
 **What it means.** The activations hold a small amount of validity information that this particular hand parse lacks, and nothing measurable that a stronger text-only model lacks. So the gain in (a) says something about the parse's gaps, not about information that is absent from the text.
 
@@ -71,7 +71,7 @@ Read this only after you have written your predictions in `study/03_exercises.md
 
 - *"The probe is worse than the parse, so it cannot add anything."* A weaker predictor adds something whenever its errors differ from the stronger one's. Here they partly do.
 - *"The probe is right on {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/probe_right_when_hand_parse_wrong|pct}} of the parse's errors, so the gain should be large."* The combined model does not know which items the parse gets wrong. It also has to pay for the items where the parse is right and the probe is wrong. With scores that correlate at r = {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/pearson_r_probe_vs_hand_parse_score|num2}}, most of the information is shared.
-- *"A gain over the parse means the model knows something that is not in the text."* The gain disappears against model D. A claim of that kind is only as strong as the strongest text model tried.
+- *"A gain over the parse means the model knows something that is not in the text."* The gain disappears against model D. A claim of that kind is only as strong as the fixed text-only stack tried.
 
 **The lesson about method.** This number was reported three times. The first version was not nested and was withdrawn. The second was nested but added the probe as one column to gradient boosting; it gave {{probe_content_qwen1.5b_c2c_debiased.json|incremental_value/gbm_plus_one_column_insensitive/gain_accuracy|signedci}} and was read as "no gain". The third audit fed that test a made-up column of known value and showed that it reports about zero regardless. The version above is nested and recovers the known value. Before you trust a test that says "no difference", check that it can detect a difference when there is one.
 

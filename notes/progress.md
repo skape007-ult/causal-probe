@@ -1,20 +1,22 @@
 # Progress (read this first after a restart)
 
-## STATUS, Saturday 14 November 08:55 (supersedes the morning status below where they differ)
+## STATUS, Saturday 14 November 11:39 (supersedes everything below where they differ)
 
 **Where things stand.**
-- *Ingested and audited (eleventh audit, `notes/audit_runs_b_d_raw.md`):* run B (Qwen 7B, 4-bit, answers) and run D (Gemma-2-2B round 2), both from pin `08d99b1`. No critical finding.
-- *Qwen 7B:* pooled AUROC on the debiased pool 0.514 [0.490, 0.536] ("at chance" by the coded criterion); inside a hypothesis string 0.549 [0.530, 0.569], with adjacency held fixed 0.589 [0.560, 0.620]; valid item of a premise ranked higher in 53.6% of premises. My first verdict ("at chance") was withdrawn (EXPLAINER D35). Probe ladder done on the laptop: probe 0.784.
-- *Steering comparisons:* 4 of 32 beyond all 20 controls (1.52 by chance), 3 of 16 on the debiased pool. Taken together the gold class-mean differences rank above their controls (mean rank 6.4 of 21); at the answer position this is explained by behaviour (`scripts/07g_slope_vs_answer_alignment.py`), not by use of validity. Gemma's end-of-hypothesis site on the debiased pool responds to nothing.
-- *RESULTS.md:* unchanged since Friday evening. Proposed replacement (three claims, one page) is rendered in the scratchpad and with an independent wording audit, together with the nine stale items. It enters only after that audit.
-- *7B option B or C:* decided by the user's rule (power for case (a) ≥ 0.6 → B). Calculation in `notes/power_7b_option_b.md`: 1.00 under the literal reading, 0.14 to 0.44 at the share the smaller models suggest. With an independent reviewer; nothing is built until the review is back.
-- *The settle run's three outcomes* are tied to wording in `notes/log.md` (07:56), before any output.
+- *RESULTS.md was replaced at 11:29* (commit `028e0da`, small corrections after a claims pass at 11:39): three claims, about 1,100 words. Its draft was checked sentence by sentence (thirteenth review, `notes/audit_results_wording_raw.md`). It differs from wording the user dictated in three places where a review marked that wording unsupported (claim 2's "no more"; "loaded on adjacency rather than validity"; "did not replicate"); put to the user, no answer yet.
+- *Fifteen reviews on file* (`notes/audit_*_raw.md`) and two claims passes (`notes/claims_pass_14nov_raw.md`, `notes/claims_pass_14nov_b_raw.md`).
+- *Qwen 7B (4-bit):* ranked across all items its answers are at chance on the debiased pool (AUROC 0.514); inside a hypothesis string they follow validity weakly (0.549; valid item of a premise higher in 53.6% of premises) and go against it for direct-causation hypotheses. Probe 0.784. Its gain over the text-only stack with fixed settings (+1.4 points) does not survive a correction over five models or tuning of that stack (fourteenth review). **No intervention on the 7B model: option C**, by the user's rule (reviewed power about 0.2; the tested direction is confounded with prompt length; `notes/power_7b_option_b.md`).
+- *The text-only stack is now also built with one tuned setting* (0.887 against 0.865); no probe's accuracy gain over it is demonstrable for any of five models.
+- *Steering comparisons:* 4 of 32 beyond all 20 controls (1.52 by chance), 3 of 16 on the debiased pool; the gold class-mean differences rank above their controls on average (6.4 of 21), which at the answer position on the debiased pool, in three of four models, is the answers' own within-question correlation with the label read back and does not show that validity is used. Unexplained at the end of the hypothesis.
+- *Held-out ("settle") test, Qwen 1.5B:* returned, audited (fifteenth review): p = 0.12 against 500 controls; the slope kept its sign at under half the size and lay inside its controls. Its second question is confounded with prompt length and is not read.
 
-**Running on Kaggle (user's side):** `r3s_qwen15b` (settle, Qwen 1.5B) and `r3_gemma9b`. Next: the two 240-pair patching runs, then settle Qwen 3B; all launched before 18:00. Cut-off for RESULTS.md: Sunday 08:00, audited only. Packaging from Sunday 10:00.
+**Kaggle (user's side).** Returned: `r3s_qwen15b`. Launched and not returned: `r3_gemma9b`. Queued by the user for today, launch before 18:00: the two runs on all available patching pairs, then the settle run for Qwen 3B. Cut-off for RESULTS.md: Sunday 08:00, audited only. Packaging from Sunday 10:00.
 
-**When a run's download arrives:** `scripts/kaggle_ingest.py --run <run> --dir <folder>`; tables: `steering_settle` (settle), `answers_within_string` and the ladder (Gemma-2-9B, after `./scripts/run_debiased.sh gemma9b 2` and `05b_probe_content.py`), `08b_patching_by_template.py --suffix _n240` (patching). Then an independent audit, then the write-up.
+**When a download arrives:** `scripts/kaggle_ingest.py --run <run> --dir <folder>` (it does not take all-model aggregate files from a run and regenerates them). Then: settle → table `steering_settle`; Gemma-2-9B → `./scripts/run_debiased.sh gemma9b 2`, `05b_probe_content.py --model gemma9b`, tables `answers_within_string` and the ladder; patching → `08b_patching_by_template.py --model <m> --suffix _n240`, table `patching_label_preserving`. Then an independent audit, then the write-up, then RESULTS.md.
 
-**Not done:** `scripts/run_all.sh` has not been run end to end since it was changed; the report's new paragraphs (3.1, 4.1, 4.4, Section 9) have had no claims pass; D1 (generated data) and D2 (Kaggle automation) are costed for the user and nothing of them is built.
+**Next phase (nothing built; the user's decision):** D1 generated data, D2 Kaggle automation, D3 fine-tuning study; costed in chat; plan paragraphs in report Section 9.
+
+**Not done:** `scripts/run_all.sh` has not been run end to end since it was changed (it would take hours on the laptop); the probe rows at non-converged sites have not been rerun; no random-initialisation run exists for the 7B model.
 
 ## MORNING STATUS, Saturday 14 November (written 01:45, updated 02:45; nothing was started that needs your input)
 

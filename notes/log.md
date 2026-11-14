@@ -765,3 +765,17 @@ The user asked for this cell to be audited "before it is described as anything":
 **Length.** 1,104 words (840 before today; the first draft this morning had 1,700). Further cuts are possible only by moving one of the four named cases or the retraction table to the report.
 
 **Not in the page yet:** the Qwen 3B settle run, the 240-pair patching runs, Gemma-2-9B (none has arrived). **Not done:** a claims pass over the report's new paragraphs.
+
+## Sat 2026-11-14 11:39 — Second claims pass of the day: everything written on 14 November (raw report: `notes/claims_pass_14nov_b_raw.md`)
+
+A fresh checker read the report text, RESULTS.md, the README, the EXPLAINER entries and the study material written today against the result files and the raw review reports. Every number read from a result file is right. **Twelve sentences had to change and twelve more should; all are mine and all were written today.** Applied:
+1. *Stale:* the report still said two cases "are being put to a held-out test" (one has returned); "no matched controls for Gemma yet" and "Gemma's second-round rows have not arrived" (audited this morning); the progress status of 08:55.
+2. *Wrong about timing:* the report's audit section said the 07:56 entry was "written before any run". It was written during the first run and before any output; the test and threshold (01:40, 02:45) predate the run. The other places already had it right.
+3. *Runs called launched that were only queued:* as far as the log shows, the user has launched the Qwen 1.5B settle run and Gemma-2-9B; the patching runs and the Qwen 3B settle run are queued. RESULTS.md said a test of the Qwen 3B case "is running"; corrected to "undecided".
+4. *Overstated, and a regression in RESULTS.md:* "the four smaller models' answers depend on adjacency, not on validity". Inside cells of string and adjacency the answers of Qwen 1.5B and Gemma do depend on the label, negatively. Now: "do not follow validity (AUROC 0.47 to 0.51); they depend on adjacency". Same in the report (three places).
+5. *Search-and-replace damage of mine:* "which earlier versions of this report called 'that fixed stack'".
+6. *Wrong:* "a small gain in AUROC from Qwen 1.5B upward over every text model tried … in no result file". The gain over the tuned stack is in the result files, and its interval excludes zero for Qwen 3B and 7B only.
+7. *EXPLAINER:* "the audit found the mechanism, and it is not use of validity" (it explains the answer position on the debiased pool in three of four models, 4 of the 16 comparisons behind the mean rank); the two held-out cases were chosen before that audit, not because of it; the registered outcome sentences were misquoted as "held up" / "did not hold up"; "a pool balanced for length would help" (it removes the confound, not the low power).
+8. *README:* "every sentence was checked before it was entered" (the draft was; four sentences were added afterwards on the strength of two later reviews).
+9. *Display:* a permutation p of 0.0005 was printed as "0.000"; p-values now have four decimals.
+10. Smaller: which reviews were given conclusions (the sixth, twelfth and thirteenth reviewed texts of mine); "most probe fits" (about half); the count of comparisons at non-responding sites (four, at two sites); 57% for Qwen 3B and 28% for Qwen 1.5B; Qwen 3B "the only one of the four" above chance on CLadder; "strongest text-only model" in the study material.

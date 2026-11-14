@@ -533,7 +533,9 @@ def fig_debiased_ladder():
             ("binding: per-template lookup of statements naming the pair", text["B_binding_text_reference"]["template_x_statements_naming_the_pair"]),
             ("binding: per-hypothesis premise 4-grams (no parser)", text["B_binding_text_reference"]["per_string_premise_4grams"]),
             ("binding: hand-written parse", text["B_binding_text_reference"]["hand_parse_all_features"]),
-            ("binding: hand parse + 4-grams (strongest text-only)", text["B_binding_text_reference"]["strongest_text_only_parse_plus_4grams"])]
+            ("binding: hand parse + 4-grams, fixed settings", text["B_binding_text_reference"]["strongest_text_only_parse_plus_4grams"])]
+    if "text_only_parse_plus_4grams_tuned" in text["B_binding_text_reference"]:
+        rows.append(("binding: hand parse + 4-grams, tuned on the selection half", text["B_binding_text_reference"]["text_only_parse_plus_4grams_tuned"]))
     fig, ax = plt.subplots(figsize=(9.6, 4.8))
     labels, y = [], 0
     for m in ms:                                       # probes on top

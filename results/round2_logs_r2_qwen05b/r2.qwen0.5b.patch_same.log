@@ -5,3 +5,13 @@ W1113 18:58:10.561000 37198 .venv/lib/python3.12/site-packages/torch/distributed
 [hyp] pair 20/60 206s
 [hyp] pair 30/60 284s
 [hyp] pair 40/60 363s
+[hyp] pair 50/60 433s
+[hyp] n=60 mean delta 0.084 frac>0 0.62; final-position recovery by layer: -0.00 0.01 0.01 0.01 0.01 0.01 0.01 0.09 0.95 0.94 1.00 0.99 1.00
+[prem] pair 0/60 523s
+[prem] pair 10/60 613s
+[prem] pair 20/60 737s
+[prem] pair 30/60 835s
+[prem] pair 40/60 934s
+[prem] pair 50/60 1022s
+[prem] n=60 mean delta 0.223 frac>0 0.88; final-position recovery by layer: 0.00 0.01 0.01 0.01 0.01 0.01 0.00 0.07 0.95 0.94 0.98 1.00 1.00
+done 18.4 min

@@ -1064,7 +1064,22 @@ Gemma-2-2B, patched on Kaggle with 40 pairs per kind, shows the same thing: mean
 
 **Components.** Attribution patching (one gradient) agrees with real patching for the ten highest-ranked components of each model and pair kind. Among ten random components the agreement is driven by one or two large ones; without them the two estimates can disagree in sign. So: accurate for the largest components, not a complete ranking. Component names such as L14H5 are block numbers; residual index 15 is the output of block 14.
 
-**Not done.** A label-preserving minimal-pair control (two prompts that differ in a variable but have the same gold label) would separate "the answer changes" from "the prompt changes". It is the experiment this section most needs.
+**Label-preserving pairs (second round; so far Qwen2.5-0.5B).** The control this section lacked: pairs with the same kind of edit (one variable letter in the hypothesis, or the matching relabelling of the premise) whose two prompts have the *same* gold label, half of them valid/valid and half invalid/invalid.
+
+| Model | Pair kind | Pairs | n | of which Yes/Yes, No/No | Mean D = LD(first) − LD(second) | Mean |D| | Mean |D|: Yes/Yes, No/No | First layer with ≥ 0.5 recovery at final token | …as relative depth |
+|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | hyp | label changes (Yes → No) | 60 | – | +0.009 [-0.060, +0.078] | 0.253 | – | 15 | 0.62 |
+| Qwen2.5-0.5B | hyp | label preserved | 60 | 31 / 29 | +0.084 [+0.012, +0.156] | 0.233 | 0.219 / 0.249 | 16 | 0.67 |
+| Qwen2.5-0.5B | prem | label changes (Yes → No) | 60 | – | +0.023 [-0.042, +0.090] | 0.236 | – | 15 | 0.62 |
+| Qwen2.5-0.5B | prem | label preserved | 60 | 31 / 29 | +0.223 [+0.173, +0.270] | 0.239 | 0.264 / 0.212 | 16 | 0.67 |
+
+<sub>Source: `results/patching_qwen0.5b_same.json`, `results/patching_qwen0.5b.json`</sub>
+
+![label preserving](../figures/fig10_patching_label_preserving.png)
+
+The answer logit moves as much when the correct answer stays the same as when it changes: mean |D| is 0.233 against 0.253 for hypothesis edits and 0.239 against 0.236 for premise relabellings. So the model responds to the edit, not to the change of label. For the relabelled premises there is even a consistent direction with no label change at all: the original premise gets a higher Yes−No logit than its relabelled copy by +0.223 [+0.173, +0.270] on average. Relabelling puts the variable letters out of alphabetical order, and the model reacts to that.
+
+Two cautions. The patching curves of the two kinds of pair look alike, and that is not evidence of anything: recovery is normalised by each pair's own D and is 1 by construction at the changed tokens early and at the final token late, for any two prompts (the independent review made this point before I could draw the wrong conclusion). The label-preserving run patched every second layer, so "layer 16" against "layer 15" in the table is the grid, not a difference. And the two kinds of pair have different mixes of hypothesis types (label-preserving valid/valid pairs exist only for direct-causation and common-effect hypotheses), so the comparison of |D| should be made within type; the per-type values are in the result files (`by_template`) and for the label-changing pairs of the laptop models they come with the next rerun.
 
 ### 4.3 Cross-model comparison
 

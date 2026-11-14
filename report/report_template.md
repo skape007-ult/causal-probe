@@ -333,7 +333,15 @@ Gemma-2-2B, patched on Kaggle with 40 pairs per kind, shows the same thing: mean
 
 **Components.** Attribution patching (one gradient) agrees with real patching for the ten highest-ranked components of each model and pair kind. Among ten random components the agreement is driven by one or two large ones; without them the two estimates can disagree in sign. So: accurate for the largest components, not a complete ranking. Component names such as L14H5 are block numbers; residual index 15 is the output of block 14.
 
-**Not done.** A label-preserving minimal-pair control (two prompts that differ in a variable but have the same gold label) would separate "the answer changes" from "the prompt changes". It is the experiment this section most needs.
+**Label-preserving pairs (second round; so far Qwen2.5-0.5B).** The control this section lacked: pairs with the same kind of edit (one variable letter in the hypothesis, or the matching relabelling of the premise) whose two prompts have the *same* gold label, half of them valid/valid and half invalid/invalid.
+
+<!-- TABLE:patching_label_preserving -->
+
+![label preserving](../figures/fig10_patching_label_preserving.png)
+
+The answer logit moves as much when the correct answer stays the same as when it changes: mean |D| is {{patching_qwen0.5b_same.json|kinds/hyp/behaviour_on_pairs/mean_abs_delta|num}} against {{patching_qwen0.5b.json|kinds/hyp/behaviour_on_pairs/mean_abs_delta|num}} for hypothesis edits and {{patching_qwen0.5b_same.json|kinds/prem/behaviour_on_pairs/mean_abs_delta|num}} against {{patching_qwen0.5b.json|kinds/prem/behaviour_on_pairs/mean_abs_delta|num}} for premise relabellings. So the model responds to the edit, not to the change of label. For the relabelled premises there is even a consistent direction with no label change at all: the original premise gets a higher Yes−No logit than its relabelled copy by {{patching_qwen0.5b_same.json|kinds/prem/behaviour_on_pairs/mean_delta|signedci}} on average. Relabelling puts the variable letters out of alphabetical order, and the model reacts to that.
+
+Two cautions. The patching curves of the two kinds of pair look alike, and that is not evidence of anything: recovery is normalised by each pair's own D and is 1 by construction at the changed tokens early and at the final token late, for any two prompts (the independent review made this point before I could draw the wrong conclusion). The label-preserving run patched every second layer, so "layer 16" against "layer 15" in the table is the grid, not a difference. And the two kinds of pair have different mixes of hypothesis types (label-preserving valid/valid pairs exist only for direct-causation and common-effect hypotheses), so the comparison of |D| should be made within type; the per-type values are in the result files (`by_template`) and for the label-changing pairs of the laptop models they come with the next rerun.
 
 ### 4.3 Cross-model comparison
 

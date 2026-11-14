@@ -1,6 +1,6 @@
 # SAE features: top-activating examples
 
-Features were selected on nonsense stories 0-4 (AUROC for one graph type vs the rest) and are shown with their held-out AUROC on nonsense stories 5-9. 'My reading' is a human-style label written after looking at the examples; 'unclear' is used freely.
+Features were selected on nonsense stories 0-4 (AUROC for one graph type vs the rest) and are shown with their held-out AUROC on nonsense stories 5-9. No interpretive labels are attached here; readings of individual features are in the report (Appendix C) and are the author's. (Header corrected on 13 Nov: it had announced 'My reading' labels that this file never contained.)
 
 
 ## Layer 6 · premise_end · structure = **confounding**

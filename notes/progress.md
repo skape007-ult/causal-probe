@@ -4,11 +4,11 @@ Repo root: this directory. Venv: `.venv` (uv, Python 3.12). Run things as `.venv
 
 **Compute rules (user instruction, Fri 13 Nov):** this 8 GB laptop does light work only: CPU analysis on existing caches, figures, writing, and Qwen 0.5B/1.5B GPU jobs one at a time. `OMP_NUM_THREADS=2`, background jobs under `nice`, stop any job that pushes memory into swap. **No Gemma model passes on this machine. Do not run `scripts/queue_night.sh`.** Gemma interventions, the SAE tier and the larger model run on Kaggle (`KAGGLE.md`), launched by the user.
 
-Last updated: Sat 2026-11-14 00:10 (Toronto).
+Last updated: Fri 2026-11-13 23:30 (Toronto).
 
 **Scope (user, Fri 16:25):** the scope freeze is lifted; push the science until Sunday 10:00, then package (decision D27). Heavy runs on Kaggle and Colab, launched by the user.
 
-## Where things stand (Sat 00:10)
+## Where things stand (Fri 23:30)
 
 | Piece | State |
 |---|---|
@@ -18,7 +18,7 @@ Last updated: Sat 2026-11-14 00:10 (Toronto).
 | Two-GPU path | `ResidCollector` fixed for models split over two GPUs (`041f11e`). **Never run on CUDA.** First real test: the preflight of E, or B's fallback |
 | 7B probe ladder on the laptop | **On hold until the user brings B's zips** (user, Fri 22:45). Then `./scripts/run_debiased.sh qwen7b-4bit 2` (or `qwen7b` if the fallback ran) and `05b` |
 | Analysis still to write for round 3 | `08b_patching_by_template.py` reads only the 60-pair files (needs a suffix option for `_n240`); tables and figures do not read `_c100` / `_n240` files yet. Do this when the first such run arrives, then audit |
-| Seventh audit (round-3 code) | Done, applied in `08d99b1` (log Sat 00:05; raw report `notes/audit_round3_code_raw.md`). One critical (memory check would have refused real T4s), eight major. Nothing of round 3 has run on CUDA |
+| Seventh audit (round-3 code) | Done, applied in `08d99b1` (log Fri 23:30; raw report `notes/audit_round3_code_raw.md`). One critical (memory check would have refused real T4s), eight major. Nothing of round 3 has run on CUDA |
 | Consolidation (D30) | `RESULTS.md` = top of README; audited (sixth audit) and corrected. Not audited: the rewording after the sixth audit |
 | Laptop | CPU only while Kaggle runs go (user). Smoke tests of round 3 ran on CPU with Qwen 0.5B; the swap watchdog stopped one batch of them, the stages were then run one at a time |
 

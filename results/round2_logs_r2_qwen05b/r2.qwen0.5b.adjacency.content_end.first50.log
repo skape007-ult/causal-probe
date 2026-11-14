@@ -223,3 +223,19 @@ W1113 18:42:02.138000 36204 .venv/lib/python3.12/site-packages/torch/distributed
 [  434s] 250/500
 [  535s] 300/500
 [  640s] 350/500
+[  747s] 400/500
+[  846s] 450/500
+[  955s] 500/500
+qwen0.5b/c2c_debiased hyp_first50: layer 5/24; fresh-probe adjacency AUROC 0.797 -> 0.564 after erasure; self-check 0.0067
+  observational gap : parent +0.050[+0.00,+0.10] non-parent -0.042[-0.10,+0.01] non-child  +0.055[+0.02,+0.08] has_collid -0.230[-0.28,-0.18] has_confou -0.113[-0.19,-0.03]
+  translation effect: parent +0.009 non-parent -0.010 non-child  -0.002 has_collid -0.005 has_confou -0.005 | contrast +0.0045 (benchmark 0.112; controls below: 0.80)
+  probe across gap  : parent +0.0001 non-parent +0.0001 non-child  -0.0000 has_collid +0.0000 has_confou -0.0000 | contrast +0.0000
+  erasure, gap change: parent -0.009 non-parent +0.005 non-child  -0.000 has_collid +0.004 has_confou +0.003 | reduction contrast +0.0039 (full removal +0.105)
+  transfer (rows = item's template, columns = template the vector came from):
+    parent     +0.009 -0.009 -0.009 -0.015 -0.011
+    non-parent +0.008 -0.010 -0.007 -0.012 -0.008
+    non-child  -0.003 +0.003 -0.002 +0.001 -0.007
+    has_collid +0.002 -0.004 -0.007 -0.005 -0.009
+    has_confou +0.001 -0.003 -0.004 -0.003 -0.005
+    off-diagonal contrast, target sign -0.0021 [-0.0027, -0.0015]; source sign +0.0020 [+0.0016, +0.0023]
+  positive control (model-answer direction): slope +0.0113 per unit norm, larger in absolute value than 35% of shuffled-label probe directions

@@ -1,5 +1,21 @@
 # Progress (read this first after a restart)
 
+## STATUS, Saturday 14 November 08:55 (supersedes the morning status below where they differ)
+
+**Where things stand.**
+- *Ingested and audited (eleventh audit, `notes/audit_runs_b_d_raw.md`):* run B (Qwen 7B, 4-bit, answers) and run D (Gemma-2-2B round 2), both from pin `08d99b1`. No critical finding.
+- *Qwen 7B:* pooled AUROC on the debiased pool 0.514 [0.490, 0.536] ("at chance" by the coded criterion); inside a hypothesis string 0.549 [0.530, 0.569], with adjacency held fixed 0.589 [0.560, 0.620]; valid item of a premise ranked higher in 53.6% of premises. My first verdict ("at chance") was withdrawn (EXPLAINER D35). Probe ladder done on the laptop: probe 0.784.
+- *Steering comparisons:* 4 of 32 beyond all 20 controls (1.52 by chance), 3 of 16 on the debiased pool. Taken together the gold class-mean differences rank above their controls (mean rank 6.4 of 21); at the answer position this is explained by behaviour (`scripts/07g_slope_vs_answer_alignment.py`), not by use of validity. Gemma's end-of-hypothesis site on the debiased pool responds to nothing.
+- *RESULTS.md:* unchanged since Friday evening. Proposed replacement (three claims, one page) is rendered in the scratchpad and with an independent wording audit, together with the nine stale items. It enters only after that audit.
+- *7B option B or C:* decided by the user's rule (power for case (a) ≥ 0.6 → B). Calculation in `notes/power_7b_option_b.md`: 1.00 under the literal reading, 0.14 to 0.44 at the share the smaller models suggest. With an independent reviewer; nothing is built until the review is back.
+- *The settle run's three outcomes* are tied to wording in `notes/log.md` (07:56), before any output.
+
+**Running on Kaggle (user's side):** `r3s_qwen15b` (settle, Qwen 1.5B) and `r3_gemma9b`. Next: the two 240-pair patching runs, then settle Qwen 3B; all launched before 18:00. Cut-off for RESULTS.md: Sunday 08:00, audited only. Packaging from Sunday 10:00.
+
+**When a run's download arrives:** `scripts/kaggle_ingest.py --run <run> --dir <folder>`; tables: `steering_settle` (settle), `answers_within_string` and the ladder (Gemma-2-9B, after `./scripts/run_debiased.sh gemma9b 2` and `05b_probe_content.py`), `08b_patching_by_template.py --suffix _n240` (patching). Then an independent audit, then the write-up.
+
+**Not done:** `scripts/run_all.sh` has not been run end to end since it was changed; the report's new paragraphs (3.1, 4.1, 4.4, Section 9) have had no claims pass; D1 (generated data) and D2 (Kaggle automation) are costed for the user and nothing of them is built.
+
 ## MORNING STATUS, Saturday 14 November (written 01:45, updated 02:45; nothing was started that needs your input)
 
 **In one line.** Qwen 3B and Qwen 1.5B are ingested and audited. One steering result beats its 20 controls and is undecided. `RESULTS.md` is unchanged. A run designed to decide it is ready for you to launch or not.

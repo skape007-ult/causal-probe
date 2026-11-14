@@ -667,7 +667,7 @@ The reviewer had the code and the result files, not my reading. No critical find
 
 **Could not be checked by the reviewer:** anything that needs a forward pass (the slope of a converged probe direction; the hook's placement directly), dependence between models, the notebooks.
 
-## Sat 2026-11-14 08:55 — The user's decisions after the corrected 7B verdict; power of option B computed before anything is built (not yet reviewed)
+## Sat 2026-11-14 08:52 — The user's decisions after the corrected 7B verdict; power of option B computed before anything is built (not yet reviewed)
 
 **Decisions (user, about 08:45, quoted in part).** (A) "7B model: decide B vs C by power (not A)": estimate the power of option B's pre-registered test for "(a) an effect the size of the 7B answers' dependence on validity, and (b) half that", put the calculation in `notes/` and "have it independently reviewed before acting on it". "Rule, fixed now: power for (a) ≥ 0.6 → build B … Power < 0.6 → option C", with the 7B intervention moved to a next phase "with the reason that it needs more items than the official debiased pool provides". The 7B behaviour finding enters RESULTS.md "only after audit, at its real size". (B) Claim 3: the revised option A with all four cases named as undecided and the multiplicity numbers; audited together with the nine stale items; RESULTS.md stays one page with three claims. (D) Two proposals for a next phase to be costed, nothing built: a generator for Corr2Cause-style data, and automation of the Kaggle queue. (E) A "Next phase" section in the report, as a plan.
 

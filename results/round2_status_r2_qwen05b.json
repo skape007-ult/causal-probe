@@ -5,13 +5,13 @@
    "minutes": 9.0,
    "detail": "ok",
    "log_tail": [
-    "[  472s] 450/500",
-    "[  529s] 500/500",
-    "qwen0.5b/c2c_debiased final_best: layer 15/24; fresh-probe adjacency AUROC 0.876 -> 0.434 after erasure; self-check 0.0057",
-    "  observational gap : parent +0.050[+0.00,+0.10] non-parent -0.042[-0.10,+0.01] non-child  +0.055[+0.02,+0.08] has_collid -0.230[-0.28,-0.18] has_confou -0.113[-0.19,-0.03]",
-    "  translation effect: parent +0.040 non-parent -0.044 non-child  -0.037 has_collid -0.255 has_confou -0.183 | contrast +0.1102 (benchmark 0.112; controls below: 1.00)",
-    "  probe across gap  : parent +0.0009 non-parent +0.0009 non-child  +0.0005 has_collid +0.0011 has_confou +0.0012 | contrast -0.0002",
-    "  erasure, gap change: parent -0.026 non-parent +0.013 non-child  +0.020 has_collid +0.247 has_confou +0.131 | reduction contrast +0.0959 (full removal +0.105)",
+    "  transfer (rows = item's template, columns = template the vector came from):",
+    "    parent     +0.040 -0.047 -0.053 -0.278 -0.197",
+    "    non-parent +0.034 -0.044 -0.043 -0.270 -0.189",
+    "    non-child  +0.032 -0.041 -0.037 -0.263 -0.179",
+    "    has_collid +0.023 -0.040 -0.017 -0.255 -0.176",
+    "    has_confou +0.036 -0.043 -0.038 -0.259 -0.183",
+    "    off-diagonal contrast, target sign -0.0424 [-0.0433, -0.0415]; source sign +0.1112 [+0.1106, +0.1119]",
     "  positive control (model-answer direction): slope +1.2578 per unit norm, larger in absolute value than 100% of shuffled-label probe directions"
    ]
   },
@@ -88,13 +88,9 @@
  "planned": [
   "data",
   "environment",
-  "r2.qwen0.5b.adjacency.final.best",
-  "r2.qwen0.5b.adjacency.content_end.best",
-  "r2.qwen0.5b.adjacency.final.first50",
-  "r2.qwen0.5b.adjacency.content_end.first50",
-  "r2.qwen0.5b.patch_same"
+  "r2.qwen0.5b.adjacency.final.best"
  ],
- "total_minutes": 70.4,
+ "total_minutes": 9.1,
  "models_run": [
   "qwen0.5b"
  ],

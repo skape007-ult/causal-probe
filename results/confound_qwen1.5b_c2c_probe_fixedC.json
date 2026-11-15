@@ -95,6 +95,22 @@
     "hi": -0.04583333333333328,
     "n": 1200,
     "n_groups": 150
+   },
+   "random_init_selected_layer": 24,
+   "random_init_selected_C": 0.01,
+   "random_init_accuracy": {
+    "est": 0.5858333333333333,
+    "lo": 0.5583125,
+    "hi": 0.6141666666666666,
+    "n": 1200,
+    "n_groups": 150
+   },
+   "trained_minus_random_init_accuracy": {
+    "est": 0.29500000000000004,
+    "lo": 0.26416666666666666,
+    "hi": 0.3275,
+    "n": 1200,
+    "n_groups": 150
    }
   },
   "premise_end": {
@@ -111,6 +127,22 @@
     "est": 0.30333333333333334,
     "lo": 0.2783333333333333,
     "hi": 0.32833333333333325,
+    "n": 1200,
+    "n_groups": 150
+   },
+   "random_init_selected_layer": 11,
+   "random_init_selected_C": 0.01,
+   "random_init_accuracy": {
+    "est": 0.5025,
+    "lo": 0.49833333333333335,
+    "hi": 0.5083333333333333,
+    "n": 1200,
+    "n_groups": 150
+   },
+   "trained_minus_random_init_accuracy": {
+    "est": 0.010833333333333361,
+    "lo": -0.007499999999999951,
+    "hi": 0.02999999999999997,
     "n": 1200,
     "n_groups": 150
    }

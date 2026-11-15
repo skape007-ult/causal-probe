@@ -40,5 +40,13 @@
 | Qwen2.5-7B (4-bit) | hand parse's prediction (2 strata) | 2 | 0.817 | 0.863 [0.844, 0.881] | 0.806 [0.776, 0.834] |
 | Qwen2.5-7B (4-bit) | quintiles of the hand-parse score | 5 | 0.818 | 0.863 [0.844, 0.881] | 0.751 [0.712, 0.788] |
 | Qwen2.5-7B (4-bit) | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.863 [0.844, 0.881] | 0.644 [0.589, 0.694] |
+| Gemma-2-9B | hypothesis template | 5 | 0.500 | 0.852 [0.830, 0.871] | 0.859 [0.836, 0.879] |
+| Gemma-2-9B | pair adjacent in skeleton | 2 | 0.539 | 0.852 [0.830, 0.871] | 0.844 [0.821, 0.865] |
+| Gemma-2-9B | pair correlated | 2 | 0.525 | 0.852 [0.830, 0.871] | 0.842 [0.820, 0.863] |
+| Gemma-2-9B | pair has a common neighbour | 2 | 0.553 | 0.852 [0.830, 0.871] | 0.848 [0.826, 0.869] |
+| Gemma-2-9B | template × adjacent × common neighbour | 20 | 0.760 | 0.852 [0.830, 0.871] | 0.782 [0.748, 0.816] |
+| Gemma-2-9B | hand parse's prediction (2 strata) | 2 | 0.817 | 0.852 [0.830, 0.871] | 0.804 [0.776, 0.831] |
+| Gemma-2-9B | quintiles of the hand-parse score | 5 | 0.818 | 0.852 [0.830, 0.871] | 0.740 [0.703, 0.779] |
+| Gemma-2-9B | hand-parse quintile × per-string 4-gram quintile | 25 | 0.877 | 0.852 [0.830, 0.871] | 0.618 [0.563, 0.675] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`, `results/probe_content_gemma9b_c2c_debiased.json`</sub>

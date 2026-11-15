@@ -45,5 +45,14 @@
 | Qwen2.5-7B (4-bit) | many correlation statements (≥ median) | 0.59 | 1.000 [1.000, 1.000] | 0.504 ± 0.023 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 | Qwen2.5-7B (4-bit) | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.501 ± 0.023 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 | Qwen2.5-7B (4-bit) | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.999, 1.000] | 0.514 ± 0.024 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Gemma-2-9B | queried pair adjacent in the skeleton (never separated) | 0.60 | 0.975 [0.967, 0.982] | 0.490 ± 0.016 | – | – | 0.682 [0.653, 0.712] | 0.899 [0.883, 0.916] | – | 0.539 |
+| Gemma-2-9B | queried pair correlates | 0.92 | 0.995 [0.988, 0.999] | 0.421 ± 0.049 | – | – | 0.946 [0.927, 0.961] | 0.988 [0.974, 0.996] | – | 0.525 |
+| Gemma-2-9B | pair has a common neighbour | 0.83 | 0.862 [0.834, 0.887] | 0.463 ± 0.025 | – | – | 0.749 [0.713, 0.786] | 0.828 [0.800, 0.857] | – | 0.553 |
+| Gemma-2-9B | a common neighbour lies in a separating set | 0.70 | 0.950 [0.937, 0.962] | 0.499 ± 0.012 | – | – | 0.718 [0.686, 0.748] | 0.871 [0.848, 0.892] | – | 0.506 |
+| Gemma-2-9B | a common neighbour lies in no separating set | 0.84 | 0.930 [0.911, 0.948] | 0.510 ± 0.035 | – | – | 0.799 [0.770, 0.826] | 0.864 [0.839, 0.890] | – | 0.510 |
+| Gemma-2-9B | premise has six variables | 0.97 | 1.000 [1.000, 1.000] | 0.452 ± 0.057 | – | – | 1.000 [0.999, 1.000] | 1.000 [0.999, 1.000] | – | 0.500 |
+| Gemma-2-9B | many correlation statements (≥ median) | 0.59 | 1.000 [1.000, 1.000] | 0.496 ± 0.020 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Gemma-2-9B | premise states a marginal independence | 0.74 | 1.000 [1.000, 1.000] | 0.501 ± 0.028 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
+| Gemma-2-9B | many conditional-independence statements (≥ median) | 0.53 | 0.999 [0.998, 1.000] | 0.508 ± 0.026 | – | – | 1.000 [1.000, 1.000] | 1.000 [1.000, 1.000] | – | 0.500 |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`, `results/probe_content_gemma9b_c2c_debiased.json`</sub>

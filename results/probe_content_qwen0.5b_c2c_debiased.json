@@ -458,7 +458,7 @@
      "n_groups": 624
     }
    },
-   "template_x_statements_naming_the_pair_plus_length": {
+   "template_x_statements_naming_the_pair_plus_length_one_model": {
     "accuracy": {
      "est": 0.7315705128205128,
      "lo": 0.7067307692307693,
@@ -484,6 +484,36 @@
      "est": -0.17094787557527957,
      "lo": -0.20192288430719932,
      "hi": -0.13996557954265296,
+     "n": 1248,
+     "n_groups": 624
+    }
+   },
+   "template_x_statements_naming_the_pair_plus_length": {
+    "accuracy": {
+     "est": 0.7716346153846154,
+     "lo": 0.7459735576923077,
+     "hi": 0.7940705128205128,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.8439220701840895,
+     "lo": 0.8217218382745727,
+     "hi": 0.8644234621548323,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_accuracy": {
+     "est": -0.13862179487179493,
+     "lo": -0.17309695512820508,
+     "hi": -0.10494791666666665,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_auroc": {
+     "est": -0.1677016559829061,
+     "lo": -0.20026269595455307,
+     "hi": -0.13516912316116036,
      "n": 1248,
      "n_groups": 624
     }
@@ -532,6 +562,7 @@
     "hand_parse_all_features",
     "strongest_text_only_parse_plus_4grams",
     "text_only_parse_plus_4grams_tuned",
+    "template_x_statements_naming_the_pair_plus_length_one_model",
     "template_x_statements_naming_the_pair_plus_length",
     "text_only_parse_plus_4grams_tuned_plus_length"
    ]
@@ -2135,5 +2166,5 @@
    "n_groups": 624
   }
  },
- "minutes": 8.5
+ "minutes": 8.6
 }

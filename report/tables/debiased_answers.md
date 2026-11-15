@@ -30,5 +30,11 @@
 | Qwen2.5-7B (4-bit) | non-child descendant | 450 | 0.649 [0.598, 0.703] | 0.637 | 0.655 | 0.441 [0.379, 0.502] | +0.357 [+0.267, +0.442] | 0.824 [0.784, 0.865] |
 | Qwen2.5-7B (4-bit) | non-parent ancestor | 450 | 0.673 [0.621, 0.726] | 0.694 | 0.669 | 0.333 [0.282, 0.388] | +0.434 [+0.360, +0.510] | 0.818 [0.773, 0.857] |
 | Qwen2.5-7B (4-bit) | parent: "X directly causes Y" | 700 | 0.442 [0.395, 0.485] | 0.426 | 0.435 | 0.439 [0.391, 0.486] | -0.017 [-0.094, +0.055] | 0.930 [0.906, 0.951] |
+| Gemma-2-9B | all templates | 2400 | 0.542 [0.520, 0.565] | – | – | – | +0.140 [+0.101, +0.176] | – |
+| Gemma-2-9B | has_collider | 500 | 0.473 [0.423, 0.526] | 0.488 | 0.460 | 0.693 [0.639, 0.749] | -0.031 [-0.135, +0.075] | 0.770 [0.729, 0.811] |
+| Gemma-2-9B | has_confounder | 300 | 0.634 [0.568, 0.698] | 0.686 | 0.589 | 0.631 [0.559, 0.703] | +0.272 [+0.172, +0.370] | 0.775 [0.716, 0.834] |
+| Gemma-2-9B | non-child descendant | 450 | 0.548 [0.490, 0.600] | 0.542 | 0.548 | 0.435 [0.376, 0.494] | +0.084 [-0.014, +0.175] | 0.839 [0.801, 0.879] |
+| Gemma-2-9B | non-parent ancestor | 450 | 0.437 [0.382, 0.494] | 0.432 | 0.433 | 0.426 [0.368, 0.480] | -0.079 [-0.159, +0.008] | 0.820 [0.776, 0.862] |
+| Gemma-2-9B | parent: "X directly causes Y" | 700 | 0.616 [0.574, 0.660] | 0.579 | 0.640 | 0.588 [0.546, 0.632] | +0.293 [+0.227, +0.355] | 0.934 [0.913, 0.953] |
 
-<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`</sub>
+<sub>Source: `results/probe_content_qwen0.5b_c2c_debiased.json`, `results/probe_content_qwen1.5b_c2c_debiased.json`, `results/probe_content_gemma2b_c2c_debiased.json`, `results/probe_content_qwen3b_c2c_debiased.json`, `results/probe_content_qwen7b-4bit_c2c_debiased.json`, `results/probe_content_gemma9b_c2c_debiased.json`</sub>

@@ -86,7 +86,26 @@
  },
  "structural_accuracy_all_items": 0.8125,
  "structural_auroc_all_items": 0.9013121527777779,
- "positions": {},
+ "positions": {
+  "content_end": {
+   "selected_layer": 25,
+   "selected_C": 0.01,
+   "accuracy": {
+    "est": 0.7708333333333334,
+    "lo": 0.7475961538461539,
+    "hi": 0.7932692307692307,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "final_minus_this_accuracy": {
+    "est": -0.08092948717948723,
+    "lo": -0.10737179487179482,
+    "hi": -0.05368589743589747,
+    "n": 1248,
+    "n_groups": 624
+   }
+  }
+ },
  "selected_layer_random_init": 31,
  "selected_C_random_init": 0.01,
  "corr_gold_probe_score_vs_model_logit_diff": 0.038779967259029845,

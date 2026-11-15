@@ -428,7 +428,7 @@
      "n_groups": 624
     }
    },
-   "template_x_statements_naming_the_pair_plus_length": {
+   "template_x_statements_naming_the_pair_plus_length_one_model": {
     "accuracy": {
      "est": 0.7315705128205128,
      "lo": 0.7067307692307693,
@@ -454,6 +454,36 @@
      "est": 0.015997390696909752,
      "lo": -0.007668648041995393,
      "hi": 0.0390081823224851,
+     "n": 1248,
+     "n_groups": 624
+    }
+   },
+   "template_x_statements_naming_the_pair_plus_length": {
+    "accuracy": {
+     "est": 0.7716346153846154,
+     "lo": 0.7459735576923077,
+     "hi": 0.7940705128205128,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.8439220701840895,
+     "lo": 0.8217218382745727,
+     "hi": 0.8644234621548323,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_accuracy": {
+     "est": 0.012019230769230727,
+     "lo": -0.016826923076923017,
+     "hi": 0.04166666666666663,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_auroc": {
+     "est": 0.01924361028928323,
+     "lo": -0.005498830179569311,
+     "hi": 0.043375265809911225,
      "n": 1248,
      "n_groups": 624
     }
@@ -495,11 +525,12 @@
    "binding_references_the_probe_exceeds": [
     "template_x_per_variable_statement_counts",
     "per_string_premise_bigrams",
-    "template_x_statements_naming_the_pair_plus_length"
+    "template_x_statements_naming_the_pair_plus_length_one_model"
    ],
    "binding_references_not_distinguishable_from_probe": [
     "template_x_statements_naming_the_pair",
-    "per_string_premise_4grams"
+    "per_string_premise_4grams",
+    "template_x_statements_naming_the_pair_plus_length"
    ],
    "binding_references_above_the_probe": [
     "hand_parse_all_features",
@@ -2002,5 +2033,5 @@
    "n_groups": 624
   }
  },
- "minutes": 15.7
+ "minutes": 12.4
 }

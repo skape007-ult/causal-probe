@@ -2,7 +2,7 @@
 
 Do small open-weight language models internally represent the correct answer to formal causal-reasoning questions that they answer wrongly? A probing, steering and patching study on Corr2Cause and CLadder, run on an 8 GB laptop plus free Kaggle and Colab GPU sessions.
 
-**Status:** work in progress until Sunday 15 November 2026, 14:00 (Toronto). The results page below was replaced on Saturday 14 November at 11:29, after fifteen reviews; its draft was checked sentence by sentence against the result files by a reviewer (`notes/audit_results_wording_raw.md`), and the sentences added afterwards rest on two further reviews. Not in it yet: Gemma-2-9B's answers and probes (launched, not returned), and two things that are queued, a held-out test of the Qwen2.5-3B steering case and patching on all available pairs.
+**Status:** final, version **v1.0** (git tag `v1.0`, Sunday 15 November 2026). The results page below was checked sentence by sentence against the result files by an independent reviewer (`notes/audit_results_wording_raw.md`); every number on it is read from `results/*.json` when the documents are built, and the end-to-end script regenerated every number of the project on 14 to 15 November (`notes/log.md`). What is left for next week is in `notes/handoff.md`.
 
 <!-- INCLUDE:RESULTS -->
 
@@ -50,7 +50,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 
 *Does not show:*
 - That these models contain no causal-reasoning structure at all: a linear probe at three token positions is a limited instrument, and absence of evidence here is not evidence of absence.
-- Anything about models that can do the task. The largest model analysed here has 3 billion parameters and answers at or barely above chance.
+- Anything about models that can do the task. Interventions ran on models of up to 3 billion parameters; Qwen2.5-7B and Gemma-2-9B were analysed for answers and probes only, and none of the six models can do the task.
 - That any of these models "uses an adjacency feature": the one clear causal effect is at the answer position, where it shows only that the answer is there.
 - That the benchmarks are unsuitable for their purpose. Zero-shot evaluation, which the benchmarks were designed for, cannot exploit a label prior it has never seen. The finding concerns classifiers trained on in-distribution items, which includes probes.
 
@@ -65,8 +65,9 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 | `notes/log.md` | Dated lab notebook: expectation before each experiment, comparison after |
 | `notes/upstream_issues.md` | Bugs and documentation gaps found on the way, with minimal reproductions (not filed) |
 | `notes/prior_work.md` | Prior-work check for the benchmark note: what was opened, what was found, the queries |
-| `notes/audit_*_raw.md` | The raw reports of the independent audits (fifteen), and a claims pass |
-| `study/` | Reading order, 52 graded questions with answers, six predict-then-check exercises |
+| `notes/audit_*_raw.md`, `notes/claims_pass_*_raw.md` | The raw reports of the eighteen independent reviews and two claims passes |
+| `notes/handoff.md` | What is finished, the next phase, and what to verify by hand before using any of this |
+| `study/` | Reading order for a week, 55 graded questions with answers (15 marked as the likeliest in an interview), six predict-then-check exercises |
 | `KAGGLE.md` | How to run the GPU part (first run and round 2) |
 | `YOUR_TURN.md` | Two small experiments left for the reader |
 
@@ -76,19 +77,53 @@ The short list is in the results page at the top; the full list is Section 7 of 
 
 ## Reproduction
 
+Everything below is for the tagged version: `git checkout v1.0`. Times are for the machine this was built on (an 8 GB Apple M3, CPU only for everything except cache building).
+
+1. Environment (Python 3.12; torch 2.15 and transformers 5.22.2 were used):
+
 ```bash
 uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements.txt -e .
 ```
+
+2. Data (Corr2Cause and CLadder, from their public releases):
 
 ```bash
 .venv/bin/python scripts/download_data.py
 ```
 
+3. The text-only results, including claim 1's number, without any model (about 5 minutes):
+
 ```bash
 .venv/bin/python scripts/14_benchmark_baselines.py
 ```
 
-The last command reproduces every number in `report/benchmark_text_baselines.md` and needs no model. The model-dependent parts need the activation cache (`scripts/build_cache.sh` for the two small Qwen models; `KAGGLE.md` for Gemma, Qwen2.5-3B and the second-round interventions of Qwen2.5-1.5B), after which `scripts/run_all.sh` regenerates every number and figure. *(`run_all.sh` exists but has not been run end to end since the second round; that check is part of packaging.)*
+4. The activation caches. For Qwen2.5-0.5B, Qwen2.5-1.5B and Gemma-2-2B on a laptop (resumable; Gemma needs a Hugging Face token with the Gemma licence accepted, in `HF_TOKEN`; several hours):
+
+```bash
+./scripts/build_cache.sh
+```
+
+   For Qwen2.5-3B, Qwen2.5-7B, Gemma-2-9B and every intervention (steering, patching, the adjacency test, the held-out tests): the Kaggle notebooks in `notebooks/`, one per run, each pinned to the commit it was run at; `KAGGLE.md` lists them with their GPU, secret and running time. Each notebook writes its output to the kept output directory and a `STATUS.txt`; bring the downloads into `kaggle_out/<run>/` and ingest each with
+
+```bash
+.venv/bin/python scripts/kaggle_ingest.py --run <run name> --dir kaggle_out/<folder>
+```
+
+   The run names are in `KAGGLE.md`; the ingest refuses a run whose status is missing or not OK.
+
+5. Every number, table, figure and document from the caches (CPU only; about eight hours on the laptop; one model at a time under a memory watchdog):
+
+```bash
+./scripts/run_all.sh
+```
+
+6. Check that nothing moved:
+
+```bash
+git status --short && git diff --stat
+```
+
+   On 14 to 15 November this regenerated every number that existed before identically (`notes/log.md`, entries of 20:30 and 07:34); interventions are not rerun by `run_all.sh`, which recomputes their statistics from the saved raw outputs.
 
 ## Citations
 

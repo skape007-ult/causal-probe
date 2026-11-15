@@ -1,0 +1,10 @@
+OK
+run: r3s_qwen3b
+commit: e336431bbcf3eee973c559c9feed137c23d0b1ff
+platform: kaggle
+output directory: /kaggle/working/kaggle_out
+written: 2026-11-14T22:50:39Z
+archives:
+  results_r3s_qwen3b.zip  1728727 bytes
+  cache_r3s_qwen3b_qwen3b.zip  9864308 bytes
+problems: none

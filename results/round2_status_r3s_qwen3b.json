@@ -1,0 +1,101 @@
+{
+ "stages": {
+  "data": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "ok  corr2cause/train.csv  causal-nlp/corr2cause@42ba12c7  md5 bee2c98caa50f69bee54318d35f0ace4",
+    "ok  corr2cause/dev.csv  causal-nlp/corr2cause@42ba12c7  md5 7a343e9d341b892a7a7b1b1bddd39aa9",
+    "ok  corr2cause/test.csv  causal-nlp/corr2cause@42ba12c7  md5 c318d19ddc585bb4310084e2ce2d241f",
+    "ok  cladder/full_v1.5_default.csv  causal-nlp/CLadder@18d684e4  md5 32815a3e44cbd32fa3db84972d750815"
+   ]
+  },
+  "environment": {
+   "ok": true,
+   "minutes": 0.3,
+   "detail": "ok",
+   "log_tail": [
+    "  15.6",
+    " ],",
+    " \"sae_lens\": \"6.55.4\",",
+    " \"peft\": \"0.21.2\",",
+    " \"bitsandbytes\": \"not available (ModuleNotFoundError)\",",
+    " \"accelerate\": \"1.15.0\",",
+    " \"git_commit\": \"e336431bbcf3eee973c559c9feed137c23d0b1ff\"",
+    "}"
+   ]
+  },
+  "r2.qwen3b.cache": {
+   "ok": true,
+   "minutes": 7.9,
+   "detail": "ok",
+   "log_tail": [
+    "[cache] qwen3b/c2c_debiased chunk 4/10 5.94 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 5/10 5.96 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 6/10 5.93 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 7/10 5.87 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 8/10 5.82 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 9/10 5.78 items/s",
+    "[cache] qwen3b/c2c_debiased chunk 10/10 5.75 items/s",
+    "done in 7.9 min"
+   ]
+  },
+  "r2.qwen3b.settle": {
+   "ok": true,
+   "minutes": 54.9,
+   "detail": "ok",
+   "log_tail": [
+    "  split 0 layer 25 (original): gold_diffmeans slope +0.738, vs 100 premise-balanced controls z +1.58, signed rank 7/101, one-sided p 0.069",
+    "  split 0 layer 23 (other): gold_diffmeans slope +3.296, vs 20 premise-balanced controls z +1.62, signed rank 2/21, one-sided p 0.095",
+    "  split 0 layer 27 (other): gold_diffmeans slope +0.039, vs 20 premise-balanced controls z +1.22, signed rank 3/21, one-sided p 0.143",
+    "  split 2 layer 25 (other): gold_diffmeans slope +0.529, vs 20 premise-balanced controls z +0.92, signed rank 6/21, one-sided p 0.286",
+    "  split 3 layer 25 (other): gold_diffmeans slope +0.550, vs 20 premise-balanced controls z +1.08, signed rank 4/21, one-sided p 0.190",
+    "  split 1: the label beyond adjacency, adjacency direction projected out: slope +0.246, z +0.64 against 100 controls built the same way",
+    "  split 0: the label beyond adjacency, adjacency direction projected out: slope +0.454, z +1.28 against 100 controls built the same way",
+    "SECOND QUESTION (split 1): one-sided p = 0.277 against 100 controls: does not stand out"
+   ]
+  }
+ },
+ "run": "r3s_qwen3b",
+ "models": [
+  "qwen3b"
+ ],
+ "jobs": [
+  "cache",
+  "settle",
+  "export"
+ ],
+ "tiny": false,
+ "planned": [
+  "data",
+  "environment",
+  "r2.qwen3b.cache",
+  "r2.qwen3b.settle"
+ ],
+ "options": {
+  "n_shuf": 20,
+  "sites": "all",
+  "control_tags": "c2c_debiased,c2c_probe",
+  "n_pairs": 60,
+  "no_resid": true
+ },
+ "total_minutes": 63.3,
+ "models_run": [
+  "qwen3b"
+ ],
+ "export": {
+  "positions": [
+   "final",
+   "content_end"
+  ],
+  "bytes_per_cache_dir": {
+   "qwen3b/c2c_debiased": 9863632
+  },
+  "zip_megabytes": {
+   "cache_r3s_qwen3b_qwen3b.zip": 9.9
+  }
+ },
+ "all_ok": true,
+ "finished": true
+}

@@ -1,0 +1,99 @@
+{
+ "stages": {
+  "data": {
+   "ok": true,
+   "minutes": 0.1,
+   "detail": "ok",
+   "log_tail": [
+    "ok  corr2cause/train.csv  causal-nlp/corr2cause@42ba12c7  md5 bee2c98caa50f69bee54318d35f0ace4",
+    "ok  corr2cause/dev.csv  causal-nlp/corr2cause@42ba12c7  md5 7a343e9d341b892a7a7b1b1bddd39aa9",
+    "ok  corr2cause/test.csv  causal-nlp/corr2cause@42ba12c7  md5 c318d19ddc585bb4310084e2ce2d241f",
+    "ok  cladder/full_v1.5_default.csv  causal-nlp/CLadder@18d684e4  md5 32815a3e44cbd32fa3db84972d750815"
+   ]
+  },
+  "environment": {
+   "ok": true,
+   "minutes": 0.3,
+   "detail": "ok",
+   "log_tail": [
+    "  15.6",
+    " ],",
+    " \"sae_lens\": \"6.55.4\",",
+    " \"peft\": \"0.21.2\",",
+    " \"bitsandbytes\": \"not available (ModuleNotFoundError)\",",
+    " \"accelerate\": \"1.15.0\",",
+    " \"git_commit\": \"e336431bbcf3eee973c559c9feed137c23d0b1ff\"",
+    "}"
+   ]
+  },
+  "r2.qwen3b.patch_same_n240": {
+   "ok": true,
+   "minutes": 62.5,
+   "detail": "ok",
+   "log_tail": [
+    "[prem] pair 180/231 3325s",
+    "[prem] pair 190/231 3405s",
+    "[prem] pair 200/231 3488s",
+    "[prem] pair 210/231 3566s",
+    "[prem] pair 220/231 3654s",
+    "[prem] pair 230/231 3742s",
+    "[prem] n=231 mean delta 0.125 frac>0 0.61; final-position recovery by layer: -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 0.00 0.00 0.03 0.12 0.81 0.93 0.98 0.99 0.99 1.00",
+    "done 62.4 min"
+   ]
+  },
+  "r2.qwen3b.patch_n240": {
+   "ok": true,
+   "minutes": 53.3,
+   "detail": "ok",
+   "log_tail": [
+    "[prem] pair 150/210 2684s",
+    "[prem] pair 160/210 2764s",
+    "[prem] pair 170/210 2840s",
+    "[prem] pair 180/210 2927s",
+    "[prem] pair 190/210 3039s",
+    "[prem] pair 200/210 3114s",
+    "[prem] n=210 mean delta 0.356 frac>0 0.58; final-position recovery by layer: -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 0.00 0.00 0.00 0.03 0.11 0.79 0.92 0.98 0.98 0.98 1.00",
+    "done 53.2 min"
+   ]
+  }
+ },
+ "run": "r3p_qwen3b",
+ "models": [
+  "qwen3b"
+ ],
+ "jobs": [
+  "patch_same",
+  "patch",
+  "export"
+ ],
+ "tiny": false,
+ "planned": [
+  "data",
+  "environment",
+  "r2.qwen3b.patch_same_n240",
+  "r2.qwen3b.patch_n240"
+ ],
+ "options": {
+  "n_shuf": 20,
+  "sites": "all",
+  "control_tags": "c2c_debiased,c2c_probe",
+  "n_pairs": 240,
+  "no_resid": true
+ },
+ "total_minutes": 116.2,
+ "models_run": [
+  "qwen3b"
+ ],
+ "export": {
+  "positions": [
+   "final",
+   "content_end"
+  ],
+  "bytes_per_cache_dir": {},
+  "zip_megabytes": {
+   "cache_r3p_qwen3b_qwen3b.zip": 0.9
+  }
+ },
+ "all_ok": true,
+ "finished": true
+}

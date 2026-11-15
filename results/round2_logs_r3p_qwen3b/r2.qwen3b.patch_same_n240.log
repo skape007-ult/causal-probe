@@ -1,0 +1,53 @@
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:34<00:34, 34.03s/it]Fetching 2 files: 100%|██████████| 2/2 [00:34<00:00, 17.01s/it]
+Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<01:22,  5.28it/s]Loading weights:   9%|▉         | 40/434 [00:00<00:02, 159.58it/s]Loading weights:  14%|█▍        | 60/434 [00:00<00:02, 173.93it/s]Loading weights:  18%|█▊        | 80/434 [00:00<00:02, 143.53it/s]Loading weights:  23%|██▎       | 100/434 [00:00<00:02, 149.66it/s]Loading weights:  28%|██▊       | 123/434 [00:00<00:01, 161.22it/s]Loading weights:  32%|███▏      | 141/434 [00:00<00:01, 147.22it/s]Loading weights:  37%|███▋      | 159/434 [00:01<00:01, 155.06it/s]Loading weights:  41%|████      | 176/434 [00:01<00:01, 152.96it/s]Loading weights:  45%|████▍     | 195/434 [00:01<00:01, 143.66it/s]Loading weights:  48%|████▊     | 210/434 [00:01<00:01, 143.60it/s]Loading weights:  53%|█████▎    | 232/434 [00:01<00:01, 161.33it/s]Loading weights:  57%|█████▋    | 249/434 [00:01<00:01, 159.95it/s]Loading weights:  62%|██████▏   | 268/434 [00:01<00:01, 159.67it/s]Loading weights:  67%|██████▋   | 291/434 [00:01<00:00, 147.91it/s]Loading weights:  71%|███████▏  | 310/434 [00:02<00:00, 158.10it/s]Loading weights:  75%|███████▌  | 327/434 [00:02<00:00, 147.37it/s]Loading weights:  79%|███████▉  | 343/434 [00:02<00:00, 143.90it/s]Loading weights:  84%|████████▎ | 363/434 [00:02<00:00, 156.62it/s]Loading weights:  88%|████████▊ | 380/434 [00:02<00:00, 159.75it/s]Loading weights:  92%|█████████▏| 399/434 [00:02<00:00, 156.94it/s]Loading weights:  96%|█████████▌| 415/434 [00:02<00:00, 155.41it/s]Loading weights: 100%|██████████| 434/434 [00:02<00:00, 154.08it/s]
+[hyp] pair 0/231 78s
+[hyp] pair 10/231 138s
+[hyp] pair 20/231 216s
+[hyp] pair 30/231 301s
+[hyp] pair 40/231 367s
+[hyp] pair 50/231 442s
+[hyp] pair 60/231 497s
+[hyp] pair 70/231 555s
+[hyp] pair 80/231 622s
+[hyp] pair 90/231 704s
+[hyp] pair 100/231 788s
+[hyp] pair 110/231 865s
+[hyp] pair 120/231 943s
+[hyp] pair 130/231 1012s
+[hyp] pair 140/231 1084s
+[hyp] pair 150/231 1145s
+[hyp] pair 160/231 1217s
+[hyp] pair 170/231 1285s
+[hyp] pair 180/231 1358s
+[hyp] pair 190/231 1422s
+[hyp] pair 200/231 1489s
+[hyp] pair 210/231 1551s
+[hyp] pair 220/231 1621s
+[hyp] pair 230/231 1692s
+[hyp] n=231 mean delta 0.349 frac>0 0.54; final-position recovery by layer: -0.00 0.00 0.00 -0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.03 0.12 0.79 0.92 0.98 0.99 0.99 1.00
+[prem] pair 0/231 1729s
+[prem] pair 10/231 1809s
+[prem] pair 20/231 1905s
+[prem] pair 30/231 2010s
+[prem] pair 40/231 2092s
+[prem] pair 50/231 2186s
+[prem] pair 60/231 2254s
+[prem] pair 70/231 2327s
+[prem] pair 80/231 2411s
+[prem] pair 90/231 2514s
+[prem] pair 100/231 2619s
+[prem] pair 110/231 2714s
+[prem] pair 120/231 2811s
+[prem] pair 130/231 2896s
+[prem] pair 140/231 2985s
+[prem] pair 150/231 3062s
+[prem] pair 160/231 3150s
+[prem] pair 170/231 3235s
+[prem] pair 180/231 3325s
+[prem] pair 190/231 3405s
+[prem] pair 200/231 3488s
+[prem] pair 210/231 3566s
+[prem] pair 220/231 3654s
+[prem] pair 230/231 3742s
+[prem] n=231 mean delta 0.125 frac>0 0.61; final-position recovery by layer: -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 0.00 0.00 0.03 0.12 0.81 0.93 0.98 0.99 0.99 1.00
+done 62.4 min

@@ -1,0 +1,46 @@
+Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<01:51,  3.89it/s]Loading weights:  12%|█▏        | 51/434 [00:00<00:02, 166.35it/s]Loading weights:  17%|█▋        | 75/434 [00:00<00:02, 170.73it/s]Loading weights:  23%|██▎       | 99/434 [00:00<00:02, 160.46it/s]Loading weights:  27%|██▋       | 118/434 [00:00<00:01, 166.84it/s]Loading weights:  32%|███▏      | 137/434 [00:00<00:01, 161.21it/s]Loading weights:  37%|███▋      | 159/434 [00:01<00:01, 165.58it/s]Loading weights:  41%|████      | 177/434 [00:01<00:01, 157.69it/s]Loading weights:  45%|████▍     | 195/434 [00:01<00:01, 163.14it/s]Loading weights:  49%|████▉     | 212/434 [00:01<00:01, 156.54it/s]Loading weights:  53%|█████▎    | 232/434 [00:01<00:01, 148.78it/s]Loading weights:  59%|█████▉    | 255/434 [00:01<00:01, 157.93it/s]Loading weights:  64%|██████▍   | 279/434 [00:01<00:00, 163.55it/s]Loading weights:  70%|██████▉   | 303/434 [00:01<00:00, 157.85it/s]Loading weights:  74%|███████▎  | 319/434 [00:02<00:00, 155.78it/s]Loading weights:  78%|███████▊  | 340/434 [00:02<00:00, 158.61it/s]Loading weights:  84%|████████▎ | 363/434 [00:02<00:00, 159.70it/s]Loading weights:  89%|████████▉ | 387/434 [00:02<00:00, 173.42it/s]Loading weights:  93%|█████████▎| 405/434 [00:02<00:00, 158.55it/s]Loading weights:  97%|█████████▋| 423/434 [00:02<00:00, 158.51it/s]Loading weights: 100%|██████████| 434/434 [00:02<00:00, 159.99it/s]
+[hyp] pair 0/210 42s
+[hyp] pair 10/210 128s
+[hyp] pair 20/210 178s
+[hyp] pair 30/210 233s
+[hyp] pair 40/210 310s
+[hyp] pair 50/210 360s
+[hyp] pair 60/210 420s
+[hyp] pair 70/210 483s
+[hyp] pair 80/210 542s
+[hyp] pair 90/210 598s
+[hyp] pair 100/210 672s
+[hyp] pair 110/210 760s
+[hyp] pair 120/210 829s
+[hyp] pair 130/210 887s
+[hyp] pair 140/210 956s
+[hyp] pair 150/210 1024s
+[hyp] pair 160/210 1088s
+[hyp] pair 170/210 1150s
+[hyp] pair 180/210 1219s
+[hyp] pair 190/210 1310s
+[hyp] pair 200/210 1370s
+[hyp] n=210 mean delta 0.645 frac>0 0.63; final-position recovery by layer: 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 -0.00 0.04 0.12 0.77 0.92 0.98 0.98 0.98 1.00
+[prem] pair 0/210 1464s
+[prem] pair 10/210 1570s
+[prem] pair 20/210 1631s
+[prem] pair 30/210 1700s
+[prem] pair 40/210 1795s
+[prem] pair 50/210 1857s
+[prem] pair 60/210 1932s
+[prem] pair 70/210 2010s
+[prem] pair 80/210 2085s
+[prem] pair 90/210 2153s
+[prem] pair 100/210 2246s
+[prem] pair 110/210 2355s
+[prem] pair 120/210 2440s
+[prem] pair 130/210 2513s
+[prem] pair 140/210 2599s
+[prem] pair 150/210 2684s
+[prem] pair 160/210 2764s
+[prem] pair 170/210 2840s
+[prem] pair 180/210 2927s
+[prem] pair 190/210 3039s
+[prem] pair 200/210 3114s
+[prem] n=210 mean delta 0.356 frac>0 0.58; final-position recovery by layer: -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 0.00 0.00 0.00 0.03 0.11 0.79 0.92 0.98 0.98 0.98 1.00
+done 53.2 min

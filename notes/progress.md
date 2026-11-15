@@ -1,5 +1,12 @@
 # Progress (read this first after a restart)
 
+## FINAL, Sunday 15 November 08:11: version v1.0
+
+- `RESULTS.md` final (last change: Q5 and Q7, commit `640fef0`, on the owner's instruction). Claim 2's headline reads "With the hypothesis-only and premise-only shortcuts removed (prompt length still leaks within a hypothesis type)"; "every single-input shortcut removed" is gone since the final pass (`2bf06d6`). Known stale word, left as the owner closed the page: "Seventeen reviews" (eighteen on file).
+- `README.md`: final status, exact reproduction steps, tag noted. `notes/handoff.md`: what is finished, next phase (D3, then D1, D2 if justified), and the verification checklist. `study/`: final reading order for the week; fifteen questions marked ★. Report Section 8 empty for the owner.
+- Tests: 49 passed. No file over 20 MB, no weights, data or cache in the repository. The rehearsal worktree is removed.
+- Tag: `v1.0` on the commit that adds this section.
+
 ## MORNING STATUS, Sunday 15 November (written 07:24; updated when the end-to-end run finishes)
 
 **1. Audits since last night.**

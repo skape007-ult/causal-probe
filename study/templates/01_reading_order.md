@@ -9,7 +9,19 @@
 - **Gold label**: the benchmark's correct answer for an item (valid or invalid; yes or no).
 - **Baseline**: a simpler predictor of the same label that the probe is compared with. A *text-only* baseline sees the prompt text and no model.
 
-**One warning about the current state of the documents.** Some tables and figures in `report/report.md` already contain rows or panels for Gemma-2-2B interventions and for Qwen2.5-3B. The report's text does not discuss them yet. Skip those rows this week. The topics that are still open are listed at the end of this file.
+## Final reading order for the week of 16 November (the version tagged v1.0)
+
+The sessions below were written as the project went. For the week, read in this order:
+
+1. **Day 1.** `RESULTS.md`, once slowly (the three claims and their caveats). Then `EXPLAINER.md`, "Start here". Then `EXPLAINER.md`, "Concept primer", all of it.
+2. **Day 2.** Sessions 1 and 2 below (the question, the models, probes and the first retraction).
+3. **Day 3.** Sessions 3 and 4 (the debiased pool; steering and patching).
+4. **Day 4.** Sessions 6 and 7 (how intervention results went wrong, and what a result that beats its controls is worth).
+5. **Day 5.** Session 8 (pooling, counting, and a control that destroys too much; prompt length) and report Section 3.6, the paragraphs on prompt length and Gemma-2-9B.
+6. **Day 6.** Session 5 (the defence), then the fifteen questions marked ★ in `study/02_questions.md`, answered aloud before reading the answers.
+7. **Day 7.** `notes/handoff.md`, part (c), "Verify yourself before using this in any application": do the checks, starting with the 0.895.
+
+The documents are final at the tag `v1.0`; every number below is read from `results/` when the study files are built.
 
 ---
 
@@ -223,4 +235,4 @@ After that hour you should be able to say these five sentences from memory.
 
 ## Still to be added
 
-- The held-out test of the Qwen 3B steering case (queued), the runs on all available patching pairs (queued), Gemma-2-9B (launched, not returned)
+Nothing for this version.

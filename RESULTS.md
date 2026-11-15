@@ -3,7 +3,7 @@
 
 **Question.** When small language models answer formal causal-reasoning questions wrongly, is the correct answer nevertheless linearly readable from their activations, and is it used?
 
-**Run:** Qwen2.5-0.5B, 1.5B, 3B and Gemma-2-2B on Corr2Cause and CLadder: probes against text-only baselines, steering, patching. Qwen2.5-7B (4-bit) and Gemma-2-9B: answers, and probes on the debiased pool. Seventeen reviews by fresh reviewer agents; those of results were given code and files, not the conclusions. Numbers: `results/*.json`; caveats: `report/report.md`.
+**Run:** Qwen2.5-0.5B, 1.5B, 3B and Gemma-2-2B on Corr2Cause and CLadder: probes against text-only baselines, steering, patching. Qwen2.5-7B (4-bit) and Gemma-2-9B: answers, and probes on the debiased pool. Eighteen reviews by fresh reviewer agents; those of results were given code and files, not the conclusions. Numbers: `results/*.json`; caveats: `report/report.md`.
 
 ## Three headline claims
 
@@ -22,7 +22,7 @@
 - *The four:* Qwen2.5-3B, end of the hypothesis, class-mean difference (+0.738) and Qwen2.5-1.5B, same token, probe direction (-0.251) were tested again by a rule fixed beforehand, refitted on the other half of the data: both kept their sign and lay inside 500 controls (p = 0.08 and 0.12). Gemma-2-2B, answer position, probe direction (+0.475, first by 3%) and Qwen2.5-0.5B, original pool, class-mean difference (+0.865) are undecided.
 - *Caveats:* taken together the gold class-mean differences do rank above their controls (mean rank 6.44 of 21; 11 expected). At the answer position on the debiased pool that is the answers' own within-question correlation with the label read back (three of four models) and does not show that validity is used; at the end of the hypothesis it is unexplained. Shifting items along the encoding of adjacency before the answer position is outside its controls in one of four models ([figure](figures/fig12_adjacency_end_of_hypothesis.png)); at the answer position it moves the answer the same way for every hypothesis type, which locates the answer.
 
-*Checked by:* claim 1, audits 1 and 6; claim 2, audits 3, 5, 6, 11, 14 and 16; claim 3, audits 2, 4, 5, 6, 8, 11, 15 and 17.
+*Checked by:* claim 1, audits 1 and 6; claim 2, audits 3, 5, 6, 11, 14, 16 and 18; claim 3, audits 2, 4, 5, 6, 8, 11, 15 and 17.
 
 ## What was retracted, and why
 

@@ -82,3 +82,5 @@ Now: "Qwen2.5-7B (4-bit): answers, and probes on the debiased pool." The caveat 
 ## Update 19:20: Q6 confirmed by the seventeenth review
 
 Every number recomputed exactly; the review's own sentence for the held-out test agrees with Q6 ("again had a positive slope … did not stand out from 500 matched controls"). Q6 is applied in the final pass at 08:00 together with Q4 and whatever the audited prompt-length comparison requires, as the user instructed. Counts then: seventeen reviews on file plus the one of the length comparison if it has reported; claim 3's "Checked by" gains 17.
+
+## 07:24: final pass applied (commit `2bf06d6`): Q6 and Q4 with the compensating cuts. Still queued: Q5 (Run line names Gemma-2-9B), Q7 (claim 2's "Checked by" lacks audit 16), and anything the eighteenth review supports. Under the user's rule nothing changes on the page after the final pass without a new decision.

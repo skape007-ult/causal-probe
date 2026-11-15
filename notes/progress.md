@@ -1,5 +1,31 @@
 # Progress (read this first after a restart)
 
+## MORNING STATUS, Sunday 15 November (written 07:24; updated when the end-to-end run finishes)
+
+**1. Audits since last night.**
+- *Seventeenth review, both Qwen 3B runs* (`notes/audit_qwen3b_runs_raw.md`, 19:20): clean, every number recomputed exactly. Held-out test: registered outcome "p > 0.05" (p = 0.082), firm; weaker evidence than the pre-run ratio (1.3 to 2 at the observed value). All-pairs patching: the 60-pair interval did not replicate; the new bound excludes label shifts of about one logit, not "a third of |D|" as I had first written (corrected in the report).
+- *Eighteenth review, the prompt-length comparison:* **running since 07:22, not finished.** It reviews exactly the numbers the end-to-end run regenerated (six models). Nothing from that comparison is on the results page.
+
+**2. The final results page** (commit `2bf06d6`, 07:23; 856 words). Changed sentences, as approved (Q6 and Q4 with their compensating cuts):
+- Run line: "Seventeen reviews …"; "Numbers: `results/*.json`; caveats: `report/report.md`."
+- The status line ("Not in this page: …") removed.
+- Claim 1: figure link text "four of the eight cells".
+- Claim 2 headline: "With the hypothesis-only and premise-only shortcuts removed (prompt length still leaks within a hypothesis type), a probe on the activations of the models from 1.5B to 7B is about as accurate as a lookup …"
+- Claim 3, "The four": "Qwen2.5-3B, end of the hypothesis, class-mean difference (+0.738) and Qwen2.5-1.5B, same token, probe direction (−0.251) were tested again by a rule fixed beforehand, refitted on the other half of the data: both kept their sign and lay inside 500 controls (p = 0.08 and 0.12). Gemma-2-2B, answer position, probe direction (+0.475, first by 3%) and Qwen2.5-0.5B, original pool, class-mean difference (+0.865) are undecided."
+- "Checked by": claim 3 gains audit 17.
+- **Not in it**, because its audit had not reported at the time of the pass: anything from the prompt-length comparison. First numbers (unaudited): adding prompt length leaves the tuned text stack at 0.887 for every model; the lookup stacked with length is 0.772 (lookup 0.765); probe minus that, models 1.5B to 9B: −1.9 to +1.2 points, every interval including zero, so "about as accurate as a lookup" is not changed by length. The probe's gain over the tuned stack with length is indistinguishable from zero for five models; for Gemma-2-9B it is +0.80 [−0.08, +1.68] on the report half, +0.95 [+0.09, +1.91] on the selection half, +0.87 [+0.25, +1.50] on all items (not corrected for six models; under review).
+
+**3. Did `run_all.sh` reproduce every number?** The real run started at 23:11 at commit `f354166` (the rehearsal in the isolated copy had already reproduced every committed number for the code of `b6b32b0`). At 07:23 it is in its last steps (tier 1, the debiased-pool path and all six probe-content steps done). **Comparison with the committed files: pending; this section is updated when it finishes.**
+
+**4. Needs your decision before packaging at 10:00.**
+1. *The eighteenth review's verdict on the prompt-length comparison,* when it arrives: whether anything of it should go on the page. Under your rule nothing changes on the page after the final pass; I will queue, not apply.
+2. *Q5 (queued):* the Run line names Qwen2.5-7B but not Gemma-2-9B, which claim 2's caveat mentions; proposed "Qwen2.5-7B (4-bit) and Gemma-2-9B: answers, and probes on the debiased pool" (+3 words). The 9B probe exists (0.771 [0.749, 0.793]) and is part of the running review.
+3. *A small omission on the page (queued):* claim 2's "Checked by" does not list audit 16 (the Gemma-2-9B answers, which claim 2's caveat reports).
+4. *Housekeeping:* remove the rehearsal worktree `../rehearsal_run_all` (`git worktree remove --force ../rehearsal_run_all`; its cache is a copy-on-write clone; its results are not needed).
+5. *A wording slip in a commit message of mine:* `2bf06d6` says the comparison's audit "had not finished by 08:00"; it was written at 07:23 and means "at the time of the pass".
+
+**5. Overnight in one line each.** Rehearsal of `run_all.sh` complete at 20:30, every committed number reproduced. Gemma-2-9B probes done (one step stopped by the swap watchdog under memory pressure and rerun; 4.5 minutes the second time). My first "lookup plus length" reference overfit (0.732, below the lookup) and was replaced by a stacked one before the end-to-end run; the first version stays in the result file under its own name. The order of the night changed: the end-to-end run regenerated the prompt-length comparison and its review runs alongside, instead of before it, so as to finish by morning (log 22:55).
+
 ## STATUS, Saturday 14 November 17:38 (the block below it is the status of 11:40; this one supersedes it where they differ)
 
 - **RESULTS.md:** cut to 834 words and committed on the user's approval (`0b8ec33`). Rule since 12:25: no wording change without the user's answer; three changes are queued in `notes/results_md_queue.md` (Q3a to Q3c: drop the 9B from the status line; in claim 2's caveat remove "go against it for direct-causation hypotheses (0.442)", add the prompt-length control for the 7B model and one sentence on the 9B; add the pool's prompt-length leak to the first limitation).

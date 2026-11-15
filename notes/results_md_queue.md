@@ -69,3 +69,12 @@ If the length-augmented comparison (running) moves the probe below the lookup, "
 ## Q5. Run line (queued 17:44; depends on the 9B probe ladder, which has not finished)
 
 Now: "Qwen2.5-7B (4-bit): answers, and probes on the debiased pool." The caveat of claim 2 now mentions Gemma-2-9B, which the Run line does not. Proposed, once the 9B probes exist: "Qwen2.5-7B (4-bit) and Gemma-2-9B: answers, and probes on the debiased pool." (+3 words)
+
+## Q6. The Qwen 3B held-out test and the end of the status line (queued 19:07; waits for the seventeenth review of both Qwen 3B runs)
+
+- **"The four", now:** "Qwen2.5-3B, end of the hypothesis, class-mean difference (+0.738); Qwen2.5-1.5B, same token, probe direction (−0.251; inside its 500 controls in a test fixed beforehand, p = 0.12); Gemma-2-2B, answer position, probe direction (+0.475, first by 3%); Qwen2.5-0.5B, original pool, class-mean difference (+0.865). Three are undecided and one was not confirmed."
+- **Proposed:** "Qwen2.5-3B, end of the hypothesis, class-mean difference (+0.738) and Qwen2.5-1.5B, same token, probe direction (−0.251) were tested again by a rule fixed beforehand, refitted on the other half of the data: both kept their sign and lay inside 500 controls (p = 0.08 and 0.12). Gemma-2-2B, answer position, probe direction (+0.475, first by 3%) and Qwen2.5-0.5B, original pool, class-mean difference (+0.865) are undecided." (about the same length)
+- **Status line:** remove it (both runs it names are in). −22 words.
+- **Counts:** "Sixteen reviews" → the number on file when this is applied; "Checked by … claim 3, audits 2, 4, 5, 6, 8, 11 and 15" → add the seventeenth.
+- **Reason:** the Qwen 3B test returned the registered outcome "p > 0.05" (p = 0.082; slope +0.569, 77% of the first, which a response unrelated to the label predicts from the overlap of the two halves' directions). The page currently calls that case undecided and says a test is running.
+- **Not proposed:** anything about patching; the page does not mention it. The report (Section 4.2) gets the all-pairs result.

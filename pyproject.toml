@@ -1,6 +1,8 @@
 [project]
 name = "causal-probe"
-version = "0.1.0"
+version = "1.0.1"
+description = "Do small LLMs encode the causal-reasoning answer they get wrong? Probing, steering and patching on Corr2Cause and CLadder, against text-only baselines."
+readme = "README.md"
 requires-python = ">=3.12"
 
 [tool.setuptools.packages.find]

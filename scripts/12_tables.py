@@ -662,6 +662,7 @@ def t_settle():
              "real effect of the size first observed: " + "; ".join(f"{LAB[m_]} {FREQ[m_]}" for m_ in have) + ". **The outcome in between is evidence for neither account.** "
              "The 'nothing label-specific' frequencies assume a response to label-free directions that is the same in all directions; with the unevenness the first run allows, "
              "'beyond all 500' would occur in 1 to 12% of runs instead (`notes/audit_settle_code2_raw.md`).",
+             "The column of 20 isotropic directions measures how unevenly the model responds to directions, not a reference for the tested slope: the matched controls respond about twice as strongly as isotropic directions (seventeenth review, F5), so a slope outside the isotropic range is not evidence of anything.",
              "The threshold counts the 24 comparisons that existed when the two arms were chosen. Over all 32 comparisons now in the steering-controls table it would be 0.0016, "
              "below the smallest p that 500 controls can give (0.0020).",
              "Second question (registered with its reading; by the rule it matters only if the primary test is passed, and is shown for completeness): the label with the adjacency direction projected out, against 100 controls from labels shuffled within "

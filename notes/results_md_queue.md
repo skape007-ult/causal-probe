@@ -78,3 +78,7 @@ Now: "Qwen2.5-7B (4-bit): answers, and probes on the debiased pool." The caveat 
 - **Counts:** "Sixteen reviews" → the number on file when this is applied; "Checked by … claim 3, audits 2, 4, 5, 6, 8, 11 and 15" → add the seventeenth.
 - **Reason:** the Qwen 3B test returned the registered outcome "p > 0.05" (p = 0.082; slope +0.569, 77% of the first, which a response unrelated to the label predicts from the overlap of the two halves' directions). The page currently calls that case undecided and says a test is running.
 - **Not proposed:** anything about patching; the page does not mention it. The report (Section 4.2) gets the all-pairs result.
+
+## Update 19:20: Q6 confirmed by the seventeenth review
+
+Every number recomputed exactly; the review's own sentence for the held-out test agrees with Q6 ("again had a positive slope … did not stand out from 500 matched controls"). Q6 is applied in the final pass at 08:00 together with Q4 and whatever the audited prompt-length comparison requires, as the user instructed. Counts then: seventeen reviews on file plus the one of the length comparison if it has reported; claim 3's "Checked by" gains 17.

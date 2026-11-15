@@ -145,9 +145,9 @@ cost the others. All four are thin wrappers around `scripts/gpu_round2.py`.
 | **C** `notebooks/kaggle_r2_qwen1.5b.ipynb` (Colab: `colab_r2_qwen1.5b.ipynb`, the same run) | Kaggle, T4 x2 (or Colab, T4) | none | Qwen 1.5B: matched steering controls at both tokens, adjacency causal test with all its arms at four sites, label-preserving patching pairs. One run; no follow-up needed | about 1.25 h (72 min measured on Kaggle, 13 Nov) |
 | **D** `notebooks/kaggle_r2_gemma.ipynb` | Kaggle, T4 x2 | `HF_TOKEN` secret | Gemma 2B: matched steering controls at both tokens, adjacency causal test, label-preserving patching pairs | 2.5 – 4 h |
 
-**Updated Fri 23:10 (see the table under "Round 3" for the current pin of every notebook).** What changed since `cdb08d7` in
+**Updated Fri 23:10 (see the table under "Round 3" for the current pin of every notebook).** What changed since `50242a8` in
 the round-2 notebooks is where the output goes, how that is checked, and a fix for models split over two GPUs; the experiments
-are identical. Runs from `6d9ce8d` (output-path fix, last cell raises instead of writing `STATUS.txt`) are valid.
+are identical. Runs from `6eb0f87` (output-path fix, last cell raises instead of writing `STATUS.txt`) are valid.
 
 *What happened.* The Qwen 1.5B notebook was written for Colab and chose its output directory by testing whether `/content`
 exists. Kaggle's image has a `/content` folder too. Run on Kaggle, the notebook finished all 12 stages in 72 minutes and wrote
@@ -162,7 +162,7 @@ to `kaggle_out/` was wrong, because I had assumed `/content` does not exist on K
 2. The same cell stops at once, before any GPU time is spent, if that directory is not under the path the platform keeps or
    cannot be written. The runner (`scripts/gpu_round2.py`) refuses to start on Kaggle with any other output directory.
 3. **The last cell lists the output directory with sizes, writes `STATUS.txt` into it and prints a banner. It never
-   raises** (changed at pin `041f11e`, on the user's instruction: whether Kaggle keeps the output of a version whose last
+   raises** (changed at pin `c57fe37`, on the user's instruction: whether Kaggle keeps the output of a version whose last
    cell failed is not known, so nothing may depend on it). First line of `STATUS.txt`: `OK`, `FAILED` (followed by the
    list of problems: an expected archive missing, empty or misplaced, or the runner never reached its export step) or
    `SKIPPED` (the run decided not to run; the reason follows). Expected are `results_<run>.zip`, every archive the runner
@@ -175,23 +175,23 @@ to `kaggle_out/` was wrong, because I had assumed `/content` does not exist on K
 
 *Notebooks already launched.* A (Qwen 3B) and B (Qwen 7B) are Kaggle notebooks and wrote to `/kaggle/working` in every
 version, so their output is kept; their zips are at the top level of the Output tab, not in `kaggle_out`. **A was run from
-`cdb08d7`, which already contains the fifth audit's corrections, so its follow-up A2 is not needed.** The rerun of C from this
+`50242a8`, which already contains the fifth audit's corrections, so its follow-up A2 is not needed.** The rerun of C from this
 commit likewise replaces both the original C and its follow-up C2.
 
-Earlier pins (`4d6afe5`, `5c31791`, `bab7d1b`) remain usable: their raw outputs are re-analysed on the laptop with the corrected analysis, and the ingest accepts them. Compared with this version they lack some of the following: two small arms of the adjacency test; steering controls shuffled within hypothesis string on the debiased pool (fifth audit); and the runner hardening (a smoke test kept under its own run name, an explicit finished flag), which I reported as done at 18:10 and which was in fact only applied in this commit. An independent review of the round-2 code
+Earlier pins (`6c380fb`, `d7cde32`, `b0e1e2d`) remain usable: their raw outputs are re-analysed on the laptop with the corrected analysis, and the ingest accepts them. Compared with this version they lack some of the following: two small arms of the adjacency test; steering controls shuffled within hypothesis string on the debiased pool (fifth audit); and the runner hardening (a smoke test kept under its own run name, an explicit finished flag), which I reported as done at 18:10 and which was in fact only applied in this commit. An independent review of the round-2 code
 (`notes/audit_round2_code_raw.md`) found that the first version of the adjacency test could not
 answer its question (its "removal" left the information readable; one of its two directions did
 not separate the classes for "X directly causes Y" hypotheses). Notebooks A, C and D now run the
 corrected test (`scripts/17_adjacency_test.py`). If you launched A, C or D from an earlier version
-(pinned commit `9fdec33` or `3c7b87d`, visible in the notebook's first code cell), let it finish:
+(pinned commit `1dd4b11` or `b048728`, visible in the notebook's first code cell), let it finish:
 its steering-controls and patching results are unaffected. Then run the matching follow-up, which
 does only the corrected adjacency test:
 
 | Follow-up | For | Where | Token | Estimated GPU time |
 |---|---|---|---|---|
-| `notebooks/kaggle_r2b_qwen3b_adjacency.ipynb` | A launched from a pin before `cdb08d7` (**not the case: A ran from `cdb08d7`; skip**) | Kaggle T4 x2 | none | 1.5 – 2.5 h |
-| `notebooks/colab_r2b_qwen1.5b_adjacency.ipynb` | C launched from a pin before `cdb08d7` (**not needed: C is rerun from `6d9ce8d`**) | Colab T4 or Kaggle | none | about 1 h |
-| `notebooks/kaggle_r2b_gemma_adjacency.ipynb` | D launched from a pin before `cdb08d7` | Kaggle T4 x2 | `HF_TOKEN` | 1.5 – 2.5 h |
+| `notebooks/kaggle_r2b_qwen3b_adjacency.ipynb` | A launched from a pin before `50242a8` (**not the case: A ran from `50242a8`; skip**) | Kaggle T4 x2 | none | 1.5 – 2.5 h |
+| `notebooks/colab_r2b_qwen1.5b_adjacency.ipynb` | C launched from a pin before `50242a8` (**not needed: C is rerun from `6eb0f87`**) | Colab T4 or Kaggle | none | about 1 h |
+| `notebooks/kaggle_r2b_gemma_adjacency.ipynb` | D launched from a pin before `50242a8` | Kaggle T4 x2 | `HF_TOKEN` | 1.5 – 2.5 h |
 
 Each follow-up reruns, at the current pin, the steering controls at both tokens (on the debiased pool with labels shuffled within hypothesis string) and the adjacency test with all its arms. It does not repeat the patching. Launch it after the main run of that model has finished, so that the two do not compete for quota.
 
@@ -275,15 +275,15 @@ run shows the result within a minute: it must print `platform: kaggle | archives
 
 Decision D32 in `EXPLAINER.md`. Quota is no longer the limit; two concurrent sessions and Sunday 10:00 are.
 **Nothing is launched after Saturday 18:00 (Toronto).** Every notebook below is one *Save & Run All*, writes its
-archives and `STATUS.txt` to `/kaggle/working/kaggle_out`, and is pinned to commit `e336431` (shown in its first
+archives and `STATUS.txt` to `/kaggle/working/kaggle_out`, and is pinned to commit `988941b` (shown in its first
 code cell).
 
 | | Notebook | Run folder in `kaggle_in/` | HF secret | GPU hours | State (Sat 14 Nov, morning) |
 |---|---|---|---|---|---|
 | A | `notebooks/kaggle_r2_qwen3b.ipynb` | `r2_qwen3b` | no | 2.3 (measured) | **done, ingested, audited** |
 | C | `notebooks/kaggle_r2_qwen1.5b.ipynb` | `r2_qwen15b` | no | 1.2 (measured) | **done, ingested, audited** |
-| B | `notebooks/kaggle_r2_qwen7b.ipynb` | `r2_qwen7b` | no | 1.5 – 3 | launched Fri night from pin `6d9ce8d` (see the note on B below) |
-| D | `notebooks/kaggle_r2_gemma.ipynb` | `r2_gemma` | **yes** | 2.5 – 4 | launched Fri night from pin `6d9ce8d` |
+| B | `notebooks/kaggle_r2_qwen7b.ipynb` | `r2_qwen7b` | no | 1.5 – 3 | launched Fri night from pin `6eb0f87` (see the note on B below) |
+| D | `notebooks/kaggle_r2_gemma.ipynb` | `r2_gemma` | **yes** | 2.5 – 4 | launched Fri night from pin `6eb0f87` |
 | **H** | `notebooks/kaggle_r3_settle_qwen3b.ipynb` | `r3s_qwen3b` | no | about 1.5 | **your decision.** Test and threshold fixed in advance; reviewed twice. It has about one chance in three to one in two of an informative outcome (see below) |
 | H | `notebooks/kaggle_r3_settle_qwen1.5b.ipynb` | `r3s_qwen15b` | no | about 1 | the same for the Qwen 1.5B arm (gold probe, negative slope); the more informative of the two (a little better than even) |
 | E | `notebooks/kaggle_r3_gemma9b.ipynb` | `r3_gemma9b` | **yes** (licence of `google/gemma-2-9b-it` accepted) | 2 – 3.5; ends within about 15 minutes if it cannot run | ready |
@@ -294,10 +294,10 @@ code cell).
 | G | `notebooks/kaggle_r3_controls100_qwen0.5b.ipynb` | `r3c_qwen05b` | no | about 1 | ready, low priority (places the borderline end-of-hypothesis contrast of Qwen 0.5B among 100 controls) |
 | G | `notebooks/kaggle_r3_controls100_gemma.ipynb` | `r3c_gemma` | **yes** | 2.5 – 4.5 | not before D is ingested (it stops early otherwise) |
 
-**Note on B.** B was launched from the notebook pinned to `6d9ce8d`. That version first tries to load Qwen 7B in 4-bit; if that works,
+**Note on B.** B was launched from the notebook pinned to `6eb0f87`. That version first tries to load Qwen 7B in 4-bit; if that works,
 the run is fine. If 4-bit loading failed and it fell back to float16 over two GPUs, the cache stage will have failed at its first
-batch (the collector bug fixed in `041f11e`), the summary will show `FAILED` for `r2.qwen7b.behaviour.cache` and there will be no
-activation archive. In that case rerun B from the current notebook; nothing from the failed run needs keeping. Runs from `6d9ce8d`
+batch (the collector bug fixed in `c57fe37`), the summary will show `FAILED` for `r2.qwen7b.behaviour.cache` and there will be no
+activation archive. In that case rerun B from the current notebook; nothing from the failed run needs keeping. Runs from `6eb0f87`
 write no `STATUS.txt`; the ingest accepts them without it.
 
 ## H: the settle run (added Sat 14 Nov after the eighth audit; second version after the ninth)
@@ -326,7 +326,7 @@ comparisons on that pool, 24 in all) and a modest real effect, and found that mo
 
 Test and threshold are in `notes/log.md` ("Ninth independent audit ... and the AMENDED pre-registration"). What each outcome would do
 to the wording of claim 3 is in `notes/claim3_proposed_rewording.md`, option C. The script refuses to start unless the 20-control
-result of the model is in its checkout (it is, from pin e336431 on). **What has and has not been tested:** end to end with a stand-in
+result of the model is in its checkout (it is, from pin 988941b on). **What has and has not been tested:** end to end with a stand-in
 for the model (both arms, smoke configuration, resume from a partial file); every control family checked to be calibrated under a
 response unrelated to any label, if that response is isotropic (exact computation on the Qwen 3B and Qwen 1.5B activations); the
 second version was reviewed independently (tenth audit, `notes/audit_settle_code2_raw.md`: it can run; five further changes, applied);
@@ -349,7 +349,7 @@ and 18 layers) and 8.86 GiB on the second (24 layers and the final norm). The ac
 download plus 12 GiB of free disk.
 
 *What I have not been able to test.* Anything with two GPUs. On Friday night I found by reading that the activation
-collector would have failed on a model split over two cards (fixed in `041f11e`), and the review found that my
+collector would have failed on a model split over two cards (fixed in `c57fe37`), and the review found that my
 first version of the memory check would have refused real T4s every time (it assumed 15 GiB cards; fixed). The
 review traced the rest of the two-GPU path through the cache code by reading and found no other place where two
 devices meet. None of this has run on CUDA. That is what the checks are for:

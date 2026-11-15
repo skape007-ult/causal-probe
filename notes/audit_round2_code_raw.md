@@ -3,8 +3,8 @@
 Written Fri 2026-11-13, 17:30 to 18:10, by a fresh reviewer given the code and raw outputs, not the
 author's conclusions. No language model was loaded; everything below was checked by reading the code,
 by CPU-only scripts on the cached activations and raw `.npz` files, or by running the runner and the
-ingest on empty scratch directories. Code reviewed is the working tree at commit `acbdfbb`; for
-`scripts/` and `src/` it is identical to `9fdec33`, the commit pinned in all four round-2 notebooks
+ingest on empty scratch directories. Code reviewed is the working tree at commit `344421b`; for
+`scripts/` and `src/` it is identical to `1dd4b11`, the commit pinned in all four round-2 notebooks
 (only `scripts/06_figures.py` differs). During the review the working tree gained uncommitted edits
 to `scripts/12_tables.py`, `scripts/06_figures.py` and `scripts/run_all.sh`; two of them are touched
 on below (F2, F6).
@@ -14,7 +14,7 @@ At 18:00 an uncommitted edit to `scripts/kaggle_ingest.py` also appeared: it exi
 `status["finished"]` key instead of `export`. That covers the ingest half of F1 and F8. Two things
 were still open when I looked: `scripts/gpu_round2.py` was unchanged, so it neither writes
 `finished` (the edited ingest would call every run cut short, including any run made from the
-notebooks as pinned to `9fdec33`) nor stops the marker reuse that resets `tiny` to `False` (F1's
+notebooks as pinned to `1dd4b11`) nor stops the marker reuse that resets `tiny` to `False` (F1's
 main path, which the new `tiny` check cannot see). Line numbers below refer to the committed
 versions.
 
@@ -51,10 +51,10 @@ addendum has `adj_hyp_best`. The two `first90` sites had not finished and were n
   the same length in every file. By reading: a shortened or resumed run cannot leave unfilled rows
   in the final file, and `idx` is truncated together with `out` in both the checkpoint and the
   final save.
-- **`quick_select` moved into the library.** The old inline version (from `1893e9e`) and
+- **`quick_select` moved into the library.** The old inline version (from `d83657e`) and
   `probes.quick_select` give identical grids and the same (layer, C) on Qwen 0.5B, debiased pool and
   CLadder, final token, accuracy metric (`c6_quickselect.py`, stride 8).
-- **`build_pairs`, label-changing mode.** Old code (`1893e9e`) and new code return byte-identical
+- **`build_pairs`, label-changing mode.** Old code (`d83657e`) and new code return byte-identical
   JSON for both kinds at n = 12, 120, 200. The author's claim holds.
 - **`build_pairs`, label-preserving mode.** 120 pairs per kind, 60 Yes/Yes and 60 No/No, at most two
   per premise, no duplicates. "hyp": same premise, exactly one character differs, both are dataset

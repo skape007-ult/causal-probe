@@ -22,10 +22,10 @@ Both runs are clean. I recomputed every number in the JSONs and both table rows 
 - **Byte-identical to the downloads (`cmp`).** This holds for all 17 ingested `results/` files of both runs: the settle JSON, both patching JSONs, the status, environment and output_status files, and all eight stage logs. It also holds for `steering_settle_hyp.npz`, `steering_settle_hyp_plan.npz`, `patching_n240.npz` and `patching_same_n240.npz`.
   - `meta_kaggle.json` and `readout_kaggle.npz` equal the download's `meta.json` and `readout.npz`.
   - The laptop's `meta.json` and `readout.npz` (dated 00:11) were not overwritten. The laptop `readout.npz` is byte-identical to the Kaggle one anyway, and `logit_diff` and `labels` are identical. The two meta files differ only in `positions`, `shape`, `pos` and `resid_exported` (export without activations).
-- **`git diff --name-status 345caa2~1 345caa2`.** 20 files were added. Four were modified: `notes/log.md`, `report/report.md` and two tables. **No pre-existing result file changed.**
-- **Download `results/` versus the repository.** Six files differ: `answer_bias.json`, `steering_controls_multiplicity.json` and four `probe_content_*` files. All six are the e336431 versions; the repository holds later laptop updates. None was copied.
+- **`git diff --name-status b8114df~1 b8114df`.** 20 files were added. Four were modified: `notes/log.md`, `report/report.md` and two tables. **No pre-existing result file changed.**
+- **Download `results/` versus the repository.** Six files differ: `answer_bias.json`, `steering_controls_multiplicity.json` and four `probe_content_*` files. All six are the 988941b versions; the repository holds later laptop updates. None was copied.
   - Cosmetic: the ingest report lists only three of them under "aggregates not taken". The four `probe_content_*` files are not mentioned.
-- **Code.** Both runs ran at e336431, and there is no difference between e336431 and HEAD in `scripts/07d`, `08`, `08b`, `gpu_round2.py` or `src/`. The 20-control result file is identical in both downloads and the repository.
+- **Code.** Both runs ran at 988941b, and there is no difference between 988941b and HEAD in `scripts/07d`, `08`, `08b`, `gpu_round2.py` or `src/`. The 20-control result file is identical in both downloads and the repository.
 - **Settle log.** No warnings. All probe fits converged (shares 1.0). `configurations_dropped_for_time` is empty, nothing was shortened, and all six configurations ran (54.8 of 100 minutes). No NaN or infinity appears in any output array.
   - Baseline versus cache: maximum |difference| 0.106–0.153, mean 0.03, correlation 0.99998, on answers with SD 7.2.
   - Split 0's baseline column is bit-identical to the 20-control run, whose value was also 0.1379.

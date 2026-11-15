@@ -33,22 +33,22 @@ RUNS = [  # file name, platform, run name, models, jobs, fallback, needs HF toke
     dict(file="kaggle_r2b_qwen3b_adjacency.ipynb", platform="kaggle", run="r2b_qwen3b", models="qwen3b",
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False,
          title="Round 2 / A2: Qwen2.5-3B follow-up (corrected steering controls and adjacency test)",
-         what="ONLY needed if notebook A was launched from a commit before cdb08d7: steering controls shuffled within hypothesis string, and the adjacency test with all its arms, at four sites",
+         what="ONLY needed if notebook A was launched from a commit before 50242a8: steering controls shuffled within hypothesis string, and the adjacency test with all its arms, at four sites",
          est="1.5 to 2.5 hours"),
     dict(file="kaggle_r2b_gemma_adjacency.ipynb", platform="kaggle", run="r2b_gemma", models="gemma2b",
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=True,
          gated="google/gemma-2-2b-it",
          title="Round 2 / D2: Gemma-2-2B follow-up (corrected steering controls and adjacency test)",
-         what="ONLY needed if notebook D was launched from a commit before cdb08d7: steering controls shuffled within hypothesis string, and the adjacency test with all its arms, at four sites",
+         what="ONLY needed if notebook D was launched from a commit before 50242a8: steering controls shuffled within hypothesis string, and the adjacency test with all its arms, at four sites",
          est="1.5 to 2.5 hours"),
     dict(file="colab_r2b_qwen1.5b_adjacency.ipynb", platform="colab", run="r2b_qwen15b", models="qwen1.5b",
          jobs="cache,controls,controls_hyp,adjacency,export", fallback="", token=False,
          title="Round 2 / C2: Qwen2.5-1.5B follow-up (corrected steering controls and adjacency test; Colab)",
-         what="NOT needed if notebook C is run from this commit or from cdb08d7 (it already contains all of this). Only for a C "
+         what="NOT needed if notebook C is run from this commit or from 50242a8 (it already contains all of this). Only for a C "
               "run from an earlier pin: steering controls shuffled within hypothesis string, and the adjacency test with all its arms, at four sites",
          est="about 1 hour"),
     # C exists twice, for the two platforms; both are the same run (r2_qwen15b) and either file works on either platform.
-    # One run of C replaces the original C and its follow-up C2: the code since bab7d1b has the fifth audit's corrections.
+    # One run of C replaces the original C and its follow-up C2: the code since b0e1e2d has the fifth audit's corrections.
     dict(file="kaggle_r2_qwen1.5b.ipynb", platform="kaggle", run="r2_qwen15b", models="qwen1.5b",
          jobs="cache,controls,controls_hyp,adjacency,patch_same,export", fallback="", token=False,
          title="Round 2 / C: Qwen2.5-1.5B interventions",

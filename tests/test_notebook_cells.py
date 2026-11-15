@@ -328,10 +328,10 @@ def test_stale_status_beside_the_archives_and_unknown_commit(tmp_path, monkeypat
     for i, env_commit in enumerate(["", "not-a-commit", "e" * 40]):
         _fake_run(tmp_path / f"e{i}", run, env_commit)
         assert "STATUS.txt is missing" in str(_ingest(monkeypatch, tmp_path / f"e{i}", run, None, "--allow-partial"))
-    # the real rule on real commits: 6d9ce8d has the shared cells but no STATUS.txt (accepted without); 041f11e writes it (refused without)
-    _fake_run(tmp_path / "f", run, "6d9ce8dbe7146b10c10e7285c276a786d3727fd2")
+    # the real rule on real commits: 6eb0f87 has the shared cells but no STATUS.txt (accepted without); c57fe37 writes it (refused without)
+    _fake_run(tmp_path / "f", run, "6eb0f87c3d9e2fd14ac7b86c0210d3968c618977")
     assert _ingest(monkeypatch, tmp_path / "f", run, None) == 0
-    _fake_run(tmp_path / "g", run, "041f11e" + subprocess.check_output(["git", "rev-parse", "041f11e"], cwd=Path(__file__).resolve().parents[1], text=True).strip()[7:])
+    _fake_run(tmp_path / "g", run, "c57fe37" + subprocess.check_output(["git", "rev-parse", "c57fe37"], cwd=Path(__file__).resolve().parents[1], text=True).strip()[7:])
     assert "STATUS.txt is missing" in str(_ingest(monkeypatch, tmp_path / "g", run, None))
 
 

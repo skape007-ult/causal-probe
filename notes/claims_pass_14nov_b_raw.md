@@ -1,4 +1,4 @@
-# Claims check of the 14 November text (commit b13f9e9)
+# Claims check of the 14 November text (commit 2327315)
 
 Nothing in the repository was written; `git status` is clean. All templated numbers in the checked sections match their result files; the problems are in hand-typed sentences. Line numbers refer to the built files.
 

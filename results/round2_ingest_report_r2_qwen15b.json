@@ -1,6 +1,6 @@
 {
  "dir": "kaggle_out/r2_qwen15b",
- "expected_commit": "08d99b1b0e971189160a2615cff3f7338d9222bb",
+ "expected_commit": "cefd6d3186610ecd0b3809265b69028fe7775bdd",
  "environment": {
   "python": "3.12.3",
   "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
@@ -21,14 +21,14 @@
   "peft": "0.21.2",
   "bitsandbytes": "not available (ModuleNotFoundError)",
   "accelerate": "1.15.0",
-  "git_commit": "6d9ce8dbe7146b10c10e7285c276a786d3727fd2"
+  "git_commit": "6eb0f87c3d9e2fd14ac7b86c0210d3968c618977"
  },
  "output_status": null,
  "missing": [],
  "failed": [],
  "run_finished": true,
  "notes": [
-  "run used an earlier round-2 pin (6d9ce8d); current pin is 08d99b1",
+  "run used an earlier round-2 pin (6eb0f87); current pin is cefd6d3",
   "run predates STATUS.txt (its notebook did not write one); accepted without it"
  ],
  "results_written": [

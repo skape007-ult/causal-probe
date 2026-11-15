@@ -1,10 +1,10 @@
-# Audit 11: runs r2_qwen7b (Qwen2.5-7B, 4-bit) and r2_gemma (Gemma-2-2B), ingest commit 8b8ca08
+# Audit 11: runs r2_qwen7b (Qwen2.5-7B, 4-bit) and r2_gemma (Gemma-2-2B), ingest commit 604e07f
 
 Independent review from code and result files only. Every number below was recomputed from raw outputs
 (`cache/<model>/<tag>/meta.json`, `resid.npy` via mmap, `steering_controls*.npz`, `steering_adjacency_*.npz`,
 `patching*.npz`) with my own scripts in this folder (`a_ingest.py`, `b1.py` … `b5.py`, `c1.py` … `c7.py`, `d1.py`, `e1.py`).
 No model was loaded; the Gemma tokenizer was loaded offline once (to rebuild the patching pair lists).
-Nothing in the repository was written. `results/` and `report/tables/` are unchanged between 8b8ca08 and the current HEAD (be56dec).
+Nothing in the repository was written. `results/` and `report/tables/` are unchanged between 604e07f and the current HEAD (fd08c2f).
 
 Severity: **critical** = a reported number is wrong; **major** = numbers right, but a reading they invite is not supported
 or is contradicted by the same data; **minor** = caveat, fragility or bookkeeping.
@@ -116,9 +116,9 @@ Evidence: 16 `steering_controls_*.json` + npz; `c4.py`, `c7.py`.
 
 ### F7 (minor). The ingest change is correct; three small gaps
 
-`git diff 0451340 8b8ca08 -- scripts/kaggle_ingest.py`.
+`git diff 6a3e70a 604e07f -- scripts/kaggle_ingest.py`.
 * `AGGREGATES` skip (lines 133-134, 339-341): correct. The downloaded `results/answer_bias.json` of run r2_qwen7b holds one model; taking it would replace the five-model file. The skip sits before the byte comparison and cannot mask another file.
-* Gaps: (a) the list is hand-maintained; the other model-independent files in `results/` (`benchmark_baselines.json`, `sae_*.json`) are not produced by round-2 jobs, so nothing leaks today. (b) Step 7 regenerates `answer_bias.json` but not `cross_model.json` or `steering_controls_multiplicity.json`; those stay stale until someone runs 09/07e, and the skipped names are printed, not recorded in `round2_ingest_report_<run>.json`. (c) The "code changed since then" message diffs `src`, 07c, 17, 08, 02 only; it printed "none" although `scripts/gpu_round2.py` (the driver the run executed) changed after 08d99b1. I read that diff: additions for the settle job and a `--cache-tags` option, nothing that affects these runs. `01_build_cache.py` and `15_answer_bias.py` are also outside the list.
+* Gaps: (a) the list is hand-maintained; the other model-independent files in `results/` (`benchmark_baselines.json`, `sae_*.json`) are not produced by round-2 jobs, so nothing leaks today. (b) Step 7 regenerates `answer_bias.json` but not `cross_model.json` or `steering_controls_multiplicity.json`; those stay stale until someone runs 09/07e, and the skipped names are printed, not recorded in `round2_ingest_report_<run>.json`. (c) The "code changed since then" message diffs `src`, 07c, 17, 08, 02 only; it printed "none" although `scripts/gpu_round2.py` (the driver the run executed) changed after cefd6d3. I read that diff: additions for the settle job and a `--cache-tags` option, nothing that affects these runs. `01_build_cache.py` and `15_answer_bias.py` are also outside the list.
 * `results/round2_ingest_report_r2_qwen7b.json` still lists `results/answer_bias.json` under `results_written` (the overwrite happened before the fix). The file was restored: the four older models are identical to the parent commit, and the 7B block is identical to the run's own copy.
 
 ### F8 (minor). Gemma patching: the two kinds of pair are not the same draw, and the within-template comparison has no power
@@ -147,7 +147,7 @@ Evidence: 16 `steering_controls_*.json` + npz; `c4.py`, `c7.py`.
 ## Answers to the questions
 
 ### A. Ingest
-1. All files the runs created are present and byte-identical in `results/` (and in the 8b8ca08 tree): 8 for r2_qwen7b, 28 for r2_gemma. The only changed-by-run file that differs is `results/answer_bias.json` (intended). The 196 and 197 other files in the downloads are unchanged copies of the run commit's tree. Caches: all 9 (7B) and 14 (Gemma) files byte-identical (sha256), with `gemma2b/c2c_probe/meta.json` stored as `meta_kaggle.json` beside the local one, as designed.
+1. All files the runs created are present and byte-identical in `results/` (and in the 604e07f tree): 8 for r2_qwen7b, 28 for r2_gemma. The only changed-by-run file that differs is `results/answer_bias.json` (intended). The 196 and 197 other files in the downloads are unchanged copies of the run commit's tree. Caches: all 9 (7B) and 14 (Gemma) files byte-identical (sha256), with `gemma2b/c2c_probe/meta.json` stored as `meta_kaggle.json` beside the local one, as designed.
 2. Modified pre-existing files in the commit: `notes/log.md`, eight `report/tables/*.md`, `results/answer_bias.json`, `results/steering_controls_multiplicity.json`, `scripts/kaggle_ingest.py`. Nothing else. `answer_bias.json`: four older models identical to the parent. Multiplicity: the 24 earlier arms unchanged, 8 Gemma arms added; summary 3/24 (P 0.104) → 4/32 (0.064), debiased 2/12 (0.109) → 3/16 (0.038). Tables: 72 added Gemma/7B rows, 7 source/footnote lines replaced, no other row touched.
 3. See F7.
 4. See F5, F10. No NaN, no truncated stage (controls 150 items each, adjacency 500 items each with `shortened = False`, patching 60 pairs per kind), no fallback model, self-checks 0.008–0.014 logits, STATUS OK for both.
@@ -230,7 +230,7 @@ Recomputed and equal to JSON and table: label-changing (n = 40, 28 premises) mea
 * The steered items are 75 valid + 75 invalid from the report half (13 of 25 blocks); intervals on slopes are over items only.
 * The three `steering_controls` table columns "per natural SD" compare a gold probe with controls of smaller natural SD (footnote ‡ says so).
 * The original-pool control labels are shuffled over the whole set (footnote §), so those 16 arms are not tests of validity.
-* HEAD has moved to be56dec; `scripts/12_tables.py` changed after 8b8ca08 but `report/tables/` did not.
+* HEAD has moved to fd08c2f; `scripts/12_tables.py` changed after 604e07f but `report/tables/` did not.
 
 ---
 
@@ -253,4 +253,4 @@ Recomputed and equal to JSON and table: label-changing (n = 40, 28 premises) mea
 * The Kaggle notebooks themselves and whether the downloaded folders are complete copies of the archives named in STATUS.txt (the zips are not on disk; only the unzipped folders).
 * Dependence between models in the multiplicity count (shared gold labels and items).
 * Files being written by the running job (`probes_qwen7b*`, `confound_qwen7b*`, `probe_content_qwen7b*`, `logs/q7b_*`) were not opened.
-* The excluded documents (RESULTS.md, README.md, report, EXPLAINER, progress notes, 14 Nov log entries) were not read, so I cannot say whether they over-read any of the above. I did see the subject line of commit 8b8ca08 and the footnotes of the report tables.
+* The excluded documents (RESULTS.md, README.md, report, EXPLAINER, progress notes, 14 Nov log entries) were not read, so I cannot say whether they over-read any of the above. I did see the subject line of commit 604e07f and the footnotes of the report tables.

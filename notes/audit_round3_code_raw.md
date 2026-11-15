@@ -1,6 +1,6 @@
 # Audit, round 3 code (seventh audit): raw report
 
-Scope: `git diff d52735a -- scripts src tests` (working tree, Fri 13 Nov about 23:30) plus commit `041f11e`.
+Scope: `git diff 029e856 -- scripts src tests` (working tree, Fri 13 Nov about 23:30) plus commit `c57fe37`.
 Reviewer had no CUDA. "ran" = executed on the laptop CPU with scratch directories; "read" = from the source;
 "reasoned" = inference that a run would have to confirm. Line numbers are those of the working tree at that time.
 Scratch files: `/private/tmp/claude-501/-Users-SahilPaliwal-Documents-causal-probe/bf0bfd13-4d48-4df5-becf-71aee174b8a6/scratchpad/audit7/`.
@@ -38,7 +38,7 @@ The download cell hands `results_<run>.zip` to the browser, then the final cell 
 status copy into the zip that stays in `/content/out`. The downloaded zip has no copy, and STATUS.txt is never
 offered for download.
 
-- Outcome: a complete Colab run from pin `041f11e` or later arrives without any status. `kaggle_ingest.py --run` exits
+- Outcome: a complete Colab run from pin `c57fe37` or later arrives without any status. `kaggle_ingest.py --run` exits
   with "STATUS.txt is missing ... the last cell did not run or the output is incomplete". The run is good; the message
   invites a rerun or a routine `--ignore-status`.
 - How established: read. The end-to-end test executes the cells in this order on platform "local", where the download
@@ -111,7 +111,7 @@ The run is then treated as "predates STATUS.txt".
 
 - Outcome if uploaded or committed as they are: `git checkout TESTSHA` fails in the clone cell (seconds, no GPU time).
 - Outcome on the laptop now: `kaggle_ingest.pinned_commit` (`:56`, needs 40 hex digits) returns None for every run,
-  including A, B and C that are in flight. The commit check falls back to "any ancestor of HEAD since 3c7b87d", and a
+  including A, B and C that are in flight. The commit check falls back to "any ancestor of HEAD since b048728", and a
   mismatch between the jobs run and the notebook's JOBS becomes a note instead of a problem (`:248-251`).
 - The notebooks are otherwise identical to what the current generator produces (ran: compared all 15 in memory).
 - `tests/test_notebook_cells.py::test_every_notebook_ends_with_the_output_check` passes with this pin.
@@ -182,11 +182,11 @@ only when `MIN_GPUS > 1`, or word the message by `MIN_GPUS`.
 - A UTF-8 BOM makes an OK status unreadable: "STATUS.txt says ﻿OK, not OK" (ran). Safe direction. Fix:
   `st_txt.lstrip("﻿")`. CRLF is handled (ran).
 - Round 1 (`kaggle_ingest.py` without `--run`) has no status check, although `kaggle_gpu.ipynb` now writes STATUS.txt.
-- The rule "the run's commit has STATUS.txt in `scripts/notebook_cells.py`": right for `6d9ce8d` (file present, no
-  STATUS.txt; the notebooks pinned to it at `ae0757f` do not write one) and for `041f11e` (both yes; checked with
-  `git show`), and right for any later pin. Wrong only when generator and pin are on different sides of `041f11e`:
+- The rule "the run's commit has STATUS.txt in `scripts/notebook_cells.py`": right for `6eb0f87` (file present, no
+  STATUS.txt; the notebooks pinned to it at `7957cba` do not write one) and for `c57fe37` (both yes; checked with
+  `git show`), and right for any later pin. Wrong only when generator and pin are on different sides of `c57fe37`:
   an old pin regenerated with today's generator (a missing status is then accepted), or an old notebook file with a
-  hand-edited newer COMMIT (refused). `kaggle_gpu.ipynb` at `d52735a` is the first kind (pin `406d994`, new last cell).
+  hand-edited newer COMMIT (refused). `kaggle_gpu.ipynb` at `029e856` is the first kind (pin `6d9bded`, new last cell).
 
 ### F14. minor: what the tests do not test
 `tests/test_notebook_cells.py` (7 pass, 0.4 s).

@@ -561,7 +561,7 @@ Each tier was reviewed by a fresh reviewer agent. The reviews of results receive
 | Finding | Consequence |
 |---|---|
 | The first adjacency experiment's "removal" left adjacency readable at AUROC 0.84; its pooled class-mean direction did not separate the classes for direct-causation hypotheses; its summary compared a real change with the mean of controls whose signs cancel | Experiment rewritten (`17_adjacency_test.py`): string-centred, per-template class differences, LEACE, control distributions (Section 4.4) |
-| A smoke test could be ingested as a real run; a cut-short run could pass as complete | Runner and ingest hardened (applied in commit `cdb08d7`; I had reported it done two hours earlier when it was not) |
+| A smoke test could be ingested as a real run; a cut-short run could pass as complete | Runner and ingest hardened (applied in commit `50242a8`; I had reported it done two hours earlier when it was not) |
 | `09_cross_model.py` paired models by position although one model is on another draw of the CLadder sample | Pairing by item id |
 
 **Fifth audit (Friday 19:30; the round-2 results for Qwen2.5-0.5B, the four-model debiased-pool text, the SAE section, and a claims pass over the summary, README and EXPLAINER).** Raw report: `notes/audit_round2_results_raw.md`. Verified every Section 3.6 sentence for four models and the raw-file-to-table chain. Found:
@@ -570,7 +570,7 @@ Each tier was reviewed by a fresh reviewer agent. The reviews of results receive
 |---|---|
 | "Erasing adjacency at the end of the hypothesis removes about a sixth of the dependence, beyond all 20 controls": the erasure is the translation scaled per item; its control could not fail; the summary counted a gap moving away from zero as a reduction; the erasure was checked on the half it was fitted on | Claim withdrawn; fair control, gaps before and after, held-out erasure quality (Section 4.4, decision D29) |
 | The +0.22 mean difference in label-preserving premise pairs is produced by the one-sided construction of that pair set; my explanation was wrong | Direction-matched comparison (Section 4.2) |
-| Steering controls on the debiased pool were shuffled over the whole pool, not within hypothesis string | Controls redone for Qwen2.5-0.5B (Section 4.1); in the notebooks from `bab7d1b` |
+| Steering controls on the debiased pool were shuffled over the whole pool, not within hypothesis string | Controls redone for Qwen2.5-0.5B (Section 4.1); in the notebooks from `b0e1e2d` |
 | "Fully accounted for by text" too strong; SAE section inexact in four places; Qwen2.5-3B CLadder rows not flagged as being on another draw; stale sentences | Reworded; daggers in the tables |
 
 **Sixth audit (Friday 21:15; the one-page results and everything written after the fifth audit).** Raw report: `notes/audit_consolidation_raw.md`. Recomputed every Section 4.4 number for Qwen2.5-0.5B, the within-string steering controls and the direction analysis of the patching pairs. All three headline claims survived, two only after rewording: the end-of-hypothesis contrast is not "inside the range" of its controls (above all 20 in signed value, below one in absolute value); equal accuracy of probe and lookup is not equal content; the split of the class difference by answer direction is true by construction and shows nothing. It also found an ingest bug that would have overwritten newer local results with stale copies.

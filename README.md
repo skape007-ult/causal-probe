@@ -3,7 +3,7 @@
 
 Do small open-weight language models internally represent the correct answer to formal causal-reasoning questions that they answer wrongly? A probing, steering and patching study on Corr2Cause and CLadder, run on an 8 GB laptop plus free Kaggle and Colab GPU sessions.
 
-**Status:** final, version **v1.0** (git tag `v1.0`, Sunday 15 November 2026). The results page below was checked sentence by sentence against the result files by an independent reviewer (`notes/audit_results_wording_raw.md`); every number on it is read from `results/*.json` when the documents are built, and the end-to-end script regenerated every number of the project on 14 to 15 November (`notes/log.md`). What is left for next week is in `notes/handoff.md`.
+**Status:** final, version **v1.0.1** (git tag `v1.0.1`, Sunday 15 November 2026; v1.0 differs only in the review count on the results page). The results page below was checked sentence by sentence against the result files by an independent reviewer (`notes/audit_results_wording_raw.md`); every number on it is read from `results/*.json` when the documents are built, and the end-to-end script regenerated every number of the project on 14 to 15 November (`notes/log.md`). What is left for next week is in `notes/handoff.md`.
 
 **Question.** When small language models answer formal causal-reasoning questions wrongly, is the correct answer nevertheless linearly readable from their activations, and is it used?
 
@@ -187,7 +187,7 @@ The short list is in the results page at the top; the full list is Section 7 of 
 
 ## Reproduction
 
-Everything below is for the tagged version: `git checkout v1.0`. Times are for the machine this was built on (an 8 GB Apple M3, CPU only for everything except cache building).
+Everything below is for the tagged version: `git checkout v1.0.1`. Times are for the machine this was built on (an 8 GB Apple M3, CPU only for everything except cache building).
 
 1. Environment (Python 3.12; torch 2.15 and transformers 5.22.2 were used):
 

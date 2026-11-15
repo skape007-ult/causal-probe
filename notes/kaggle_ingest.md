@@ -30,7 +30,7 @@ It does the following and prints each step:
 
 1. **Files.** Tests every zip for corruption and lists size and file count.
 2. **Code version.** Reads `results/kaggle_environment.json` from the zip and checks that the run
-   used the commit pinned in `notebooks/kaggle_gpu.ipynb` (`406d994`). Prints the torch and
+   used the commit pinned in `notebooks/kaggle_gpu.ipynb` (`6d9bded`). Prints the torch and
    transformers versions and the GPU the run had.
 3. **Stages.** Compares `results/kaggle_run_status.json` with the list of 25 expected stages and
    prints `ok` / `FAILED` (with the last log lines) / `MISSING` for each, whether the run reached
@@ -87,7 +87,7 @@ only at the very end. So a run that is cut short leaves:
 |---|---|
 | `results.zip` only, no `cache_*.zip` | The run did not reach the export step (time-out or crash). JSON results of every finished stage are in the zip: Gemma steering, the larger model's behaviour, lens and steering, whatever completed. The larger model's activations are **not** available, so its probe analysis cannot run. |
 | `results.zip` and all cache zips, but step 3 shows `FAILED` lines | The run finished; individual stages failed and the rest ran. The failed stage's log is in the zip under `results/kaggle_logs/<stage>.log`. |
-| Nothing in Output | The version did not save its output. (1) The archives were written outside `/kaggle/working`: this happened on 13 Nov with the Colab notebook run on Kaggle, pins up to `cdb08d7`; from `6d9ce8d` the first cell prevents it and the last cell reports it. (2) Check that the run was started with "Save & Run All (Commit)"; I do not know for certain whether Kaggle keeps `/kaggle/working` when a commit run hits the 12-hour limit. |
+| Nothing in Output | The version did not save its output. (1) The archives were written outside `/kaggle/working`: this happened on 13 Nov with the Colab notebook run on Kaggle, pins up to `50242a8`; from `6eb0f87` the first cell prevents it and the last cell reports it. (2) Check that the run was started with "Save & Run All (Commit)"; I do not know for certain whether Kaggle keeps `/kaggle/working` when a commit run hits the 12-hour limit. |
 
 In a partial `results.zip`, `results/kaggle_run_status.json` has no `"export"` and no `"all_ok"`
 key, and the stages that never started are simply absent from `"stages"`.
@@ -146,7 +146,7 @@ come from an older version of the analysis; after ingesting, the statistics are 
 (`17_adjacency_test.py --analyse-only` per site). Follow-up runs use the run names `r2b_qwen3b`, `r2b_qwen15b`, `r2b_gemma`.
 A smoke test (`SMOKE_TEST = True`) writes under `<run>_tiny` and is refused by the ingest.
 
-## 7. STATUS.txt (notebooks pinned to `041f11e` or later)
+## 7. STATUS.txt (notebooks pinned to `c57fe37` or later)
 
 The last cell of every notebook writes `STATUS.txt` into the output directory and a copy into the results archive
 (`results/round2_output_status_<run>.txt`). Put `STATUS.txt` into `kaggle_in/<run>/` with the zip files (if it is
@@ -157,7 +157,7 @@ forgotten, the copy inside the archive is used).
 | `OK` | every expected archive is in the kept output directory and the runner reached its export step | continues with the usual checks (commit, stages) |
 | `FAILED` | an archive is missing, empty or misplaced, or the runner was cut short; the reasons follow | refuses. `--ignore-status` ingests what is there (say why in the log); `--allow-partial` alone does not |
 | `SKIPPED` | the run decided not to run (Gemma-2-9B preflight: no access, not enough GPU memory, disk); the reason follows | refuses: there is nothing to ingest |
-| file missing | the last cell did not run, or the run is from a notebook that did not write one | refuses if the run's commit has the STATUS cell; accepts with a note for earlier pins (A at `cdb08d7`, C at `6d9ce8d`) |
+| file missing | the last cell did not run, or the run is from a notebook that did not write one | refuses if the run's commit has the STATUS cell; accepts with a note for earlier pins (A at `50242a8`, C at `6eb0f87`) |
 
 Round-3 runs (`r3_gemma9b`, `r3p_*`, `r3c_*`) are ingested with the same command, `--run <run>`. Their result files
 carry suffixes (`_n240`, `_c100`) and never replace round-2 files.

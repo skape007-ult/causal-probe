@@ -187,10 +187,10 @@ def main():
             # round-2 notebooks were re-pinned several times on 13 Nov; a run from an earlier round-2 pin is valid
             # (its raw outputs are re-analysed here) as long as that commit lies between the first round-2 pin and HEAD
             anc = lambda x, y: subprocess.run(["git", "merge-base", "--is-ancestor", x, y], cwd=ROOT).returncode == 0   # noqa: E731
-            older_pin = okc = anc("3c7b87d", got) and anc(got, "HEAD")
+            older_pin = okc = anc("b048728", got) and anc(got, "HEAD")
             if older_pin:
                 notes.append(f"run used an earlier round-2 pin ({got[:7]}); current pin is {str(commit)[:7]}")
-                if anc("bab7d1b", got):
+                if anc("b0e1e2d", got):
                     changed = subprocess.run(["git", "diff", "--name-only", got, "HEAD", "--", "src", "scripts/07c_steering_controls.py",
                                               "scripts/17_adjacency_test.py", "scripts/08_patching.py", "scripts/02_behaviour.py", "scripts/01_build_cache.py",
                                               "scripts/15_answer_bias.py", "scripts/gpu_round2.py", "scripts/07d_steering_settle.py", "scripts/preflight_model.py"],

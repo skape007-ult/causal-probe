@@ -64,10 +64,10 @@
 ## A. Ingest and run
 
 - **Files identical.** SHA-256 of `meta.json` matches between `kaggle_out/r3_gemma_9b/cache/gemma9b/<tag>/` and `cache/gemma9b/<tag>/` for all four tags; `readout.npz` also matches. `resid.npy` has the same byte size (1,479,475,328) and was not opened or hashed, as instructed. The 7 log files are byte-identical to the download.
-- **Commit 7ae5382.** 16 files: 4 modified (`notes/log.md`, `report/tables/answer_bias.md`, `report/tables/answers_within_string.md`, `results/answer_bias.json`) and 12 added, all specific to the gemma9b run. No other pre-existing result file changed.
+- **Commit d714bab.** 16 files: 4 modified (`notes/log.md`, `report/tables/answer_bias.md`, `report/tables/answers_within_string.md`, `results/answer_bias.json`) and 12 added, all specific to the gemma9b run. No other pre-existing result file changed.
   - `answer_bias.json`: +275 lines, 0 deletions; the five earlier models' entries are identical before and after (JSON comparison).
   - The download carries older copies of four `probe_content_*_c2c_debiased.json` files and `steering_controls_multiplicity.json` that differ from the repository; the ingest correctly left the repository versions alone.
-  - The run-side `answer_bias.json` (commit e336431, no within-string block) gives the same pooled gemma9b numbers as the local recomputation to six decimals in all four tags.
+  - The run-side `answer_bias.json` (commit 988941b, no within-string block) gives the same pooled gemma9b numbers as the local recomputation to six decimals in all four tags.
 - **Logs.**
   - Two T4s. The preflight records modules per device {0: 20, 1: 26} and peak memory 9.08/9.72 GiB.
   - `behaviour.cache_part0` ended with "time budget reached; re-run to resume" (exit code 1, 52.2 min). Part 1 resumed `c2c_probe` at chunk 7/10. `c2c_debiased` was computed entirely in the first load.
@@ -80,7 +80,7 @@
   - 2,400 distinct logit differences; answer-token logits range −12.4 to 22.1 (below the soft cap of 30); top-1 token is always Yes or No (2371 No, 29 Yes).
   - The first 8 debiased logits agree with the preflight within 0.019.
 - **Dtype.** Recorded as `model_dtype: torch.float16`, device `cuda:0` (first parameter); cached activations float16. The 7B records `torch.bfloat16`.
-- **Timing of the statistic.** `within_string` entered the script in commit a396597 (14 Nov 08:34 −0500). The run output was written at 18:05Z (13:05 local), and the script is unchanged since. The code predates the 9B data.
+- **Timing of the statistic.** `within_string` entered the script in commit f0d692b (14 Nov 08:34 −0500). The run output was written at 18:05Z (13:05 local), and the script is unchanged since. The code predates the 9B data.
 
 ---
 

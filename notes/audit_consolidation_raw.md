@@ -8,8 +8,8 @@ list). Everything below was recomputed from `cache/*/c2c_debiased/resid.npy`, `m
 (`a0_pool.py`, `a1_adj.py`, `b_controls.py`, `b2_premise.py`, `c_patch.py`, `c2_example.py`, `d_ladder.py`, `e_claim1.py`,
 `f_cells.py`, `g_start.py`; runner and ingest dry runs under `g/`, `ing/`, `ing2/`, `ing3/`).
 
-**Versions.** I started at commit `9efddfb`. The author committed four times while I worked (`1de96dc`, `e2a832b`, then
-`bb3dd2a` at about 20:50: the fourth adjacency site rerun with all arms; then `ddfa165`). `RESULTS.md` did not change. The
+**Versions.** I started at commit `ad572a9`. The author committed four times while I worked (`f9b2334`, `4dbb560`, then
+`7b85bb8` at about 20:50: the fourth adjacency site rerun with all arms; then `f3a6751`). `RESULTS.md` did not change. The
 fourth site (`hyp_first50`) was recomputed from both its old raw file (`_before_audit5/`) and the new one.
 
 **One thing I did wrong.** `a1_adj.py` first wrote two 4 kB scratch arrays (`split_final_best.npz`, `split_hyp_best.npz`)
@@ -131,12 +131,12 @@ with the transfer arm."
 **F5. `kaggle_ingest.py`: a run from an earlier pin silently overwrites newer local result files with stale copies.**
 Where: step 4 compares every member of the results zip with `git_blob(commit, n)`, `commit` being the notebook's current
 pin, although the zip holds `results/` as of the commit the run used.
-Evidence, reproduced on scratch directories (`ing/`): a results folder whose environment record names `bab7d1b`, containing
-`results/steering_controls_qwen0.5b_c2c_debiased.json` as of `bab7d1b`; scratch results pre-loaded with the current file
+Evidence, reproduced on scratch directories (`ing/`): a results folder whose environment record names `b0e1e2d`, containing
+`results/steering_controls_qwen0.5b_c2c_debiased.json` as of `b0e1e2d`; scratch results pre-loaded with the current file
 (`control_labels_shuffled: within hypothesis string`). `kaggle_ingest.py --run r2_qwen3b --no-fold` printed "accepted ...
 DONE: everything expected is present and consistent", reported no conflict, and replaced the file by the globally
-shuffled one. Files exposed the same way (changed between the old pin and `cdb08d7`, unchanged since): 9 for `bab7d1b`, 21
-for `5c31791`, 58 for `3c7b87d`, among them `cross_model.json`, `probe_sensitivity_qwen3b.json` and both Qwen2.5-0.5B
+shuffled one. Files exposed the same way (changed between the old pin and `50242a8`, unchanged since): 9 for `b0e1e2d`, 21
+for `d7cde32`, 58 for `b048728`, among them `cross_model.json`, `probe_sensitivity_qwen3b.json` and both Qwen2.5-0.5B
 steering-control files. Step 7 would then rebuild the tables and RESULTS.md from them.
 Fix: compare with `git_blob(got, n)` (the run's own commit) and treat "differs from HEAD and from the run's commit" as new.
 
@@ -182,13 +182,13 @@ any archive that contains `round2_status_*_tiny.json`.
 
 **m4. The ancestor check.** (i) It takes `git_commit` from the archive and passes it to git as a revision: the string
 "HEAD" is accepted as "an earlier round-2 pin" (`ing3/`); require 40 hex characters. (ii) For runs from pins before
-`cdb08d7` the status has no `finished`, and `"export" in status` counts as finished: the stale-`export` hole the hardening
+`50242a8` the status has no `finished`, and `"export" in status` counts as finished: the stale-`export` hole the hardening
 closed is open again for exactly those runs. (iii) "accepted, raw outputs are re-analysed locally": the ingest runs no
-re-analysis (a manual step in `notes/kaggle_ingest.md`), and for `07c` none is possible: a run from before `bab7d1b` has
+re-analysis (a manual step in `notes/kaggle_ingest.md`), and for `07c` none is possible: a run from before `b0e1e2d` has
 globally shuffled control directions in its raw file.
 
-**m5. `results/kaggle_environment.json` no longer describes the Kaggle run.** At `81ef2d7` it recorded Linux, two Tesla
-T4s; since `1f06b3d` it records macOS, no GPU, commit `2ff9e0f`: the runner's `environment` stage writes that file name
+**m5. `results/kaggle_environment.json` no longer describes the Kaggle run.** At `2ccc222` it recorded Linux, two Tesla
+T4s; since `e55825e` it records macOS, no GPU, commit `4b3850c`: the runner's `environment` stage writes that file name
 on every round-2 run, including local ones. The round-1 record survives only in git history and in
 `kaggle_ingest_report.json`.
 

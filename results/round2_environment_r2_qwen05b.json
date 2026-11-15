@@ -12,5 +12,5 @@
  "peft": "0.21.2",
  "bitsandbytes": "not available (ModuleNotFoundError)",
  "accelerate": "1.15.0",
- "git_commit": "2ff9e0f6cfb71136ec3c2c9ed993cbc02ccbbdab"
+ "git_commit": "4b3850c59eebf2d73a0337e37d03273b7d19fce9"
 }

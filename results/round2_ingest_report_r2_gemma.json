@@ -1,6 +1,6 @@
 {
  "dir": "kaggle_out/r2_gemma2_2b",
- "expected_commit": "e336431bbcf3eee973c559c9feed137c23d0b1ff",
+ "expected_commit": "988941bcc1adf3e23f20871cbd9e17b369b98ace",
  "environment": {
   "python": "3.12.3",
   "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
@@ -21,14 +21,14 @@
   "peft": "0.21.2",
   "bitsandbytes": "not available (ModuleNotFoundError)",
   "accelerate": "1.15.0",
-  "git_commit": "08d99b1b0e971189160a2615cff3f7338d9222bb"
+  "git_commit": "cefd6d3186610ecd0b3809265b69028fe7775bdd"
  },
  "output_status": "OK",
  "missing": [],
  "failed": [],
  "run_finished": true,
  "notes": [
-  "run used an earlier round-2 pin (08d99b1); current pin is e336431"
+  "run used an earlier round-2 pin (cefd6d3); current pin is 988941b"
  ],
  "results_written": [
   "results/adjacency_gemma2b_c2c_debiased_final_best.json",

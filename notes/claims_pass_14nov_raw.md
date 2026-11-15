@@ -253,7 +253,7 @@ Evidence: eight raw reports; the report cites the eighth.
 Severity: stale. Fix: "eight".
 
 **C2. Claim 1, "Figure (three of the eight cells): `fig5_confound_c2c_probe.png`."**
-Evidence: the figure was regenerated in commit 8d4cb5b and shows four models on the Corr2Cause pool.
+Evidence: the figure was regenerated in commit 11b0151 and shows four models on the Corr2Cause pool.
 Severity: stale. Fix: "four of the eight cells".
 
 **C3. Claim 3, "gives a pre-specified contrast of +0.013".** (Check 2a.)
@@ -281,7 +281,7 @@ The figure now has three columns; the claim text describes the first. Inconsiste
 - Missing, if claim 3 is widened: the contrast's signs use the evaluated items; probes not converged at seven GPU stages; 24 steering comparisons without correction.
 
 **C9. Retraction table.**
-Not contradicted by anything new. The two readings corrected by the eighth audit (the positive target-sign contrast; the per-natural-SD percentile) were not in the prose of `report.md` at the ingest commit (8d4cb5b has no "Qwen2.5-1.5B and Qwen2.5-3B" paragraphs; the tables of that commit did carry the unmarked per-natural-SD column and the target-sign contrast), so they are not retractions of sentences the report had made. "Checked by audit 6" for claims 1 and 2 matches section 1 of that audit.
+Not contradicted by anything new. The two readings corrected by the eighth audit (the positive target-sign contrast; the per-natural-SD percentile) were not in the prose of `report.md` at the ingest commit (11b0151 has no "Qwen2.5-1.5B and Qwen2.5-3B" paragraphs; the tables of that commit did carry the unmarked per-natural-SD column and the target-sign contrast), so they are not retractions of sentences the report had made. "Checked by audit 6" for claims 1 and 2 matches section 1 of that audit.
 
 The headline of claim 3 ("No intervention shows that what a probe reads is what the answer is computed from") is not contradicted by the three-model tables: the two effects beyond controls at the answer position act as answer shifts, and the two steering first ranks are undecided. Whether "no intervention shows" should acknowledge those two first ranks is the owner's call.
 

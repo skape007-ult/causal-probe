@@ -22,7 +22,7 @@
     " \"peft\": \"0.21.2\",",
     " \"bitsandbytes\": \"not available (ModuleNotFoundError)\",",
     " \"accelerate\": \"1.15.0\",",
-    " \"git_commit\": \"cdb08d7ca71f7236c7cada2f7ffc238067e7143f\"",
+    " \"git_commit\": \"50242a85485e3bd6f45d0be2f7398020b28f4df3\"",
     "}"
    ]
   },

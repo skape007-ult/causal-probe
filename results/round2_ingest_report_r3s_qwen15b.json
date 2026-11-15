@@ -1,6 +1,6 @@
 {
  "dir": "kaggle_out/Qwen2.5-1.5B",
- "expected_commit": "e336431bbcf3eee973c559c9feed137c23d0b1ff",
+ "expected_commit": "988941bcc1adf3e23f20871cbd9e17b369b98ace",
  "environment": {
   "python": "3.12.3",
   "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
@@ -21,7 +21,7 @@
   "peft": "0.21.2",
   "bitsandbytes": "not available (ModuleNotFoundError)",
   "accelerate": "1.15.0",
-  "git_commit": "e336431bbcf3eee973c559c9feed137c23d0b1ff"
+  "git_commit": "988941bcc1adf3e23f20871cbd9e17b369b98ace"
  },
  "output_status": "OK",
  "missing": [],

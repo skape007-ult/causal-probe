@@ -1,6 +1,6 @@
 # RESULTS.md: changes waiting for the owner's answer
 
-Rule (user, Sat 14 Nov, about 12:25): "any change to RESULTS.md wording waits for my answer; queue it with the reason instead of entering it." Nothing in this file has been applied. `RESULTS.md` is at 1,105 words (commit `b6b32b0`).
+Rule (user, Sat 14 Nov, about 12:25): "any change to RESULTS.md wording waits for my answer; queue it with the reason instead of entering it." Nothing in this file has been applied. `RESULTS.md` is at 1,105 words (commit `529fa00`).
 
 ## Q1. Cuts to bring the page to one printed page (asked for by the user; proposed 12:30)
 
@@ -52,7 +52,7 @@ The user asked: if the 9B result survives its audit, queue a revision from "the 
 
 Cost in words if all three are accepted: about +45.
 
-## Update 17:44: Q3a to Q3c and the review count applied on the user's approval (commit `997471b`; 863 words)
+## Update 17:44: Q3a to Q3c and the review count applied on the user's approval (commit `65cd15d`; 863 words)
 
 ## Q4. Claim 2's headline (queued 17:44 on the user's request; not applied; may need revising once the length-augmented comparison is audited)
 
@@ -83,4 +83,4 @@ Now: "Qwen2.5-7B (4-bit): answers, and probes on the debiased pool." The caveat 
 
 Every number recomputed exactly; the review's own sentence for the held-out test agrees with Q6 ("again had a positive slope … did not stand out from 500 matched controls"). Q6 is applied in the final pass at 08:00 together with Q4 and whatever the audited prompt-length comparison requires, as the user instructed. Counts then: seventeen reviews on file plus the one of the length comparison if it has reported; claim 3's "Checked by" gains 17.
 
-## 07:24: final pass applied (commit `2bf06d6`): Q6 and Q4 with the compensating cuts. Still queued: Q5 (Run line names Gemma-2-9B), Q7 (claim 2's "Checked by" lacks audit 16), and anything the eighteenth review supports. Under the user's rule nothing changes on the page after the final pass without a new decision.
+## 07:24: final pass applied (commit `a3958de`): Q6 and Q4 with the compensating cuts. Still queued: Q5 (Run line names Gemma-2-9B), Q7 (claim 2's "Checked by" lacks audit 16), and anything the eighteenth review supports. Under the user's rule nothing changes on the page after the final pass without a new decision.

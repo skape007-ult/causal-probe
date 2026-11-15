@@ -7,7 +7,7 @@ No language model was loaded. Everything below was recomputed from `cache/*/c2c_
 `/private/tmp/claude-501/-Users-SahilPaliwal-Documents-causal-probe/bf0bfd13-4d48-4df5-becf-71aee174b8a6/scratchpad/audit5/`
 (`a0_basic.py`, `a1_leace.py`, `a2_effects.py`, `a3_more.py`, `b_patching.py`, `b2_rebuild.py`, `d_probe.py`).
 
-**Versions.** The documents changed under me at 19:43 (commit `1d51dd2`, after the `hyp_best` rerun with the transfer block).
+**Versions.** The documents changed under me at 19:43 (commit `7523f40`, after the `hyp_best` rerun with the transfer block).
 "v1" = the wording I was briefed on (report 4.4 before 19:43; log entry 19:20: "specific to the encoding", "some of the
 information a probe reads there is used downstream"). "v2" = the wording now in `report/report.md` 4.4 point 5 and the
 May / May-not bullets, the README adjacency bullet, EXPLAINER step 10 and question 37. Each A(2) finding says which version
@@ -16,7 +16,7 @@ number I computed on the old file holds for the new one.
 
 **One thing I did wrong.** `a1_leace.py` first wrote two scratch arrays (`recon_final_best.npz`, `recon_hyp_best_old.npz`,
 17 MB each) into the repository root (relative path, 19:32). They are matched by `.gitignore` (`*.npz`), were not in commit
-`1d51dd2` (`git ls-files | grep recon_` is empty), and I moved them to the scratch directory at 19:44. Nothing else in the
+`7523f40` (`git ls-files | grep recon_` is empty), and I moved them to the scratch directory at 19:44. Nothing else in the
 repository was written except this file.
 
 ---

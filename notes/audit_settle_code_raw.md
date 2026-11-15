@@ -1,8 +1,8 @@
 # Audit of the settle run's code (ninth audit, raw report)
 
-Sat 14 Nov 2026. Reviewed at `082a6c4`: `scripts/07d_steering_settle.py`, `scripts/07c_steering_controls.py`, the `settle`
+Sat 14 Nov 2026. Reviewed at `89ece98`: `scripts/07d_steering_settle.py`, `scripts/07c_steering_controls.py`, the `settle`
 job of `scripts/gpu_round2.py`, the two `kaggle_r3_settle_*` definitions in `scripts/make_round2_notebooks.py`, and the helpers
-in `src/causal_probe/{steer,probes,data,cache,models,prompts}.py`. HEAD moved to `85fef4a` while I worked; `git diff 082a6c4 HEAD`
+in `src/causal_probe/{steer,probes,data,cache,models,prompts}.py`. HEAD moved to `c2da0eb` while I worked; `git diff 89ece98 HEAD`
 is empty for all reviewed files. No model was loaded. Everything marked "ran" used the stand-in (an answer that is linear in the
 added vector) on the cached activations of Qwen 0.5B (layer 13), Qwen 1.5B (layer 19) and Qwen 3B (layer 25) at the last token of
 the hypothesis. Scratch scripts are in

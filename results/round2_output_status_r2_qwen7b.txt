@@ -1,6 +1,6 @@
 OK
 run: r2_qwen7b
-commit: 08d99b1b0e971189160a2615cff3f7338d9222bb
+commit: cefd6d3186610ecd0b3809265b69028fe7775bdd
 platform: kaggle
 output directory: /kaggle/working/kaggle_out
 written: 2026-11-14T06:23:20Z

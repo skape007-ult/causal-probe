@@ -501,7 +501,8 @@ def t_probe_content():
             "strongest_text_only_parse_plus_4grams": "Hand parse stacked with per-string 4-grams, fixed settings",
             "text_only_parse_plus_4grams_tuned": "Hand parse stacked with per-string 4-grams, n-gram regularisation chosen on the selection half",
             "template_x_prompt_length": "Per template: prompt length only",
-            "template_x_statements_naming_the_pair_plus_length": "Per template: statements naming the queried pair (lookup), plus prompt length",
+            "template_x_statements_naming_the_pair_plus_length": "Lookup stacked with prompt length per template",
+            "template_x_statements_naming_the_pair_plus_length_one_model": "Lookup with prompt length as one more boosting feature (overfits; kept for the record)",
             "text_only_parse_plus_4grams_tuned_plus_length": "Hand parse + per-string 4-grams (tuned) + prompt length per template"}
     plab = {"pair_correlated": "queried pair correlates", "pair_adjacent_in_skeleton": "queried pair adjacent in the skeleton (never separated)",
             "pair_has_common_neighbour": "pair has a common neighbour", "common_neighbour_in_a_separating_set": "a common neighbour lies in a separating set",

@@ -252,8 +252,15 @@ def main():
         "definition": "characters of premise plus hypothesis, entered per hypothesis type (separate gradient boosting per template)",
         "min_within_string_correlation_with_this_models_token_count": float(min(np.corrcoef(plen[strs == u, 0], ntok_[strs == u])[0, 1] for u in np.unique(strs)))}
     ladder["A_no_binding_interaction"]["template_x_prompt_length"] = mean_oof(by_key_gbm(tmpl, plen))
-    ladder["B_binding_text_reference"]["template_x_statements_naming_the_pair_plus_length"] = mean_oof(by_key_gbm(tmpl, np.column_stack([Fpair, plen])))
+    # first version (14 Nov, 21:50 runs): length as one more feature of the per-template boosting. It came out three points
+    # BELOW the lookup without length (the boosting overfits the continuous feature), so it is a weaker reference, not a
+    # stronger one, and is kept only for the record under its own name
+    ladder["B_binding_text_reference"]["template_x_statements_naming_the_pair_plus_length_one_model"] = mean_oof(by_key_gbm(tmpl, np.column_stack([Fpair, plen])))
     nest["length_x_template"] = Parallel(n_jobs=a.jobs)(delayed(nested)(by_key_gbm(tmpl, plen), f, y, items) for f in seed_folds)
+    # second version (added 22:55, after seeing the first): the lookup and the per-template length model stacked by the same
+    # nested logistic stacking as every other combination here, which cannot do much worse than its better component
+    nest["lookup"] = Parallel(n_jobs=a.jobs)(delayed(nested)(by_key_gbm(tmpl, Fpair), f, y, items) for f in seed_folds)
+    ladder["B_binding_text_reference"]["template_x_statements_naming_the_pair_plus_length"] = stk(["lookup", "length_x_template"])
     s_tl = stk(["parse", f"ngram4_C{ng_c:g}", "length_x_template"])
     s_tl_probe = stk(["parse", f"ngram4_C{ng_c:g}", "length_x_template", "probe"])
     ladder["B_binding_text_reference"]["text_only_parse_plus_4grams_tuned_plus_length"] = s_tl

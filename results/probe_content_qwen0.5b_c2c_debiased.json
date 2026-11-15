@@ -6,6 +6,10 @@
  "probe_C": 1.0,
  "n_report": 1248,
  "status": "post-hoc analysis (13 Nov), revised after the third audit; does not alter the pre-registered or audited criterion",
+ "prompt_length_feature": {
+  "definition": "characters of premise plus hypothesis, entered per hypothesis type (separate gradient boosting per template)",
+  "min_within_string_correlation_with_this_models_token_count": 0.9983934957686768
+ },
  "baselines": {
   "gold_probe": {
    "accuracy": {
@@ -208,6 +212,36 @@
      "est": 0.04962812294543062,
      "lo": 0.01807924730851412,
      "hi": 0.08365391035913865,
+     "n": 1248,
+     "n_groups": 624
+    }
+   },
+   "template_x_prompt_length": {
+    "accuracy": {
+     "est": 0.5625,
+     "lo": 0.5368589743589743,
+     "hi": 0.5881410256410257,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.5706232536160422,
+     "lo": 0.5391565607536162,
+     "hi": 0.6032195743959565,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_accuracy": {
+     "est": 0.07051282051282048,
+     "lo": 0.04086538461538458,
+     "hi": 0.10576923076923073,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_auroc": {
+     "est": 0.10559716058514124,
+     "lo": 0.06959487744493761,
+     "hi": 0.14437433226495736,
      "n": 1248,
      "n_groups": 624
     }
@@ -423,6 +457,66 @@
      "n": 1248,
      "n_groups": 624
     }
+   },
+   "template_x_statements_naming_the_pair_plus_length": {
+    "accuracy": {
+     "est": 0.7315705128205128,
+     "lo": 0.7067307692307693,
+     "hi": 0.7564102564102564,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.847168289776463,
+     "lo": 0.82632285374548,
+     "hi": 0.8673122508834649,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_accuracy": {
+     "est": -0.09855769230769229,
+     "lo": -0.13221153846153844,
+     "hi": -0.06490384615384626,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_auroc": {
+     "est": -0.17094787557527957,
+     "lo": -0.20192288430719932,
+     "hi": -0.13996557954265296,
+     "n": 1248,
+     "n_groups": 624
+    }
+   },
+   "text_only_parse_plus_4grams_tuned_plus_length": {
+    "accuracy": {
+     "est": 0.8870192307692307,
+     "lo": 0.8693709935897436,
+     "hi": 0.9030448717948718,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.9563095825115057,
+     "lo": 0.944741522333169,
+     "hi": 0.966652413091716,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_accuracy": {
+     "est": -0.25400641025641024,
+     "lo": -0.28127003205128204,
+     "hi": -0.2235576923076923,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "probe_minus_this_auroc": {
+     "est": -0.28008916831032227,
+     "lo": -0.30631317800788954,
+     "hi": -0.2510796761998685,
+     "n": 1248,
+     "n_groups": 624
+    }
    }
   },
   "summary": {
@@ -437,7 +531,9 @@
     "per_string_premise_4grams",
     "hand_parse_all_features",
     "strongest_text_only_parse_plus_4grams",
-    "text_only_parse_plus_4grams_tuned"
+    "text_only_parse_plus_4grams_tuned",
+    "template_x_statements_naming_the_pair_plus_length",
+    "text_only_parse_plus_4grams_tuned_plus_length"
    ]
   }
  },
@@ -621,6 +717,70 @@
     "n_groups": 576
    },
    "note": "fourteenth review, finding 10: the text-only stack with the n-gram regularisation chosen on the selection half"
+  },
+  "over_tuned_text_plus_length": {
+   "base": {
+    "accuracy": {
+     "est": 0.8870192307692307,
+     "lo": 0.8693709935897436,
+     "hi": 0.9030448717948718,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.9563095825115057,
+     "lo": 0.944741522333169,
+     "hi": 0.966652413091716,
+     "n": 1248,
+     "n_groups": 624
+    }
+   },
+   "with_probe": {
+    "accuracy": {
+     "est": 0.8862179487179487,
+     "lo": 0.8693910256410257,
+     "hi": 0.9022636217948717,
+     "n": 1248,
+     "n_groups": 624
+    },
+    "auroc": {
+     "est": 0.9560399202827088,
+     "lo": 0.9444412341798158,
+     "hi": 0.9664119642710388,
+     "n": 1248,
+     "n_groups": 624
+    }
+   },
+   "gain_accuracy": {
+    "est": -0.0008012820512820484,
+    "lo": -0.00560897435897445,
+    "hi": 0.004807692307692291,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "gain_auroc": {
+    "est": -0.0002696622287968742,
+    "lo": -0.0008040428788625125,
+    "hi": 0.00031601845003290097,
+    "n": 1248,
+    "n_groups": 624
+   },
+   "gain_accuracy_all_items": {
+    "est": -0.0004166666666667318,
+    "lo": -0.003333333333333302,
+    "hi": 0.0025000000000000577,
+    "n": 2400,
+    "n_groups": 1200
+   },
+   "ngram_C_chosen_on_selection_half": 100.0,
+   "gain_accuracy_selection_half": {
+    "est": 0.0,
+    "lo": -0.00347222222222221,
+    "hi": 0.00347222222222221,
+    "n": 1152,
+    "n_groups": 576
+   },
+   "note": "the tuned text-only stack with prompt length per hypothesis type as a third component (owner's request, 14 Nov evening)"
   },
   "over_strongest_text_only_selection_half": {
    "est": -0.00347222222222221,
@@ -1975,5 +2135,5 @@
    "n_groups": 624
   }
  },
- "minutes": 8.1
+ "minutes": 8.5
 }

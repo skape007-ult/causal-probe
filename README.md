@@ -237,6 +237,10 @@ git status --short && git diff --stat
 
    On 14 to 15 November this regenerated every number that existed before identically (`notes/log.md`, entries of 20:30 and 07:34); interventions are not rerun by `run_all.sh`, which recomputes their statistics from the saved raw outputs.
 
+## Licence
+
+Code and documents: MIT (`LICENSE`). The benchmarks keep their own licences: Corr2Cause and CLadder are downloaded from their public releases by `scripts/download_data.py` and are not redistributed here.
+
 ## Citations
 
 - Jin et al. (2024). Can Large Language Models Infer Causation from Correlation? ICLR 2024. arXiv:2306.05836.

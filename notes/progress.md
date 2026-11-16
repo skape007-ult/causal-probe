@@ -1,5 +1,14 @@
 # Progress (read this first after a restart)
 
+## STATUS, Monday 16 November (fine-tuning study, branch `exp/finetune`, worktree `../causal-probe-ft`)
+
+v1.0 is closed and untouched. Everything below lives under `finetune/`.
+
+- **Done today:** `finetune/scripts/kaggle_run.py` (queue, 2 concurrent, 20 GPU-hour weekly cap, no relaunch, halt on failure, dry run; 20 tests); `finetune/PREREG.md` (E1 to E8 with power, commit `2c3dbe5`), under independent review; `finetune/MY_PARTS.md` with stubs for the owner's parts (a) and (b), reference implementations in `*_reference.py`, tests that run on both; Kaggle path test `ft_gputest1` launched.
+- **Next:** answer the pre-registration review and append amendments; `finetune/scripts/build_data.py` (conditions A, B, C, evaluation sets, overlap proof, text-baseline verification of B); training and evaluation code with a laptop smoke test on Qwen2.5-0.5B as stand-in; time-test notebook.
+- **Waiting on the owner:** the batched questions in the reply of 16 Nov (none blocks the data build).
+- **Deadline:** `finetune/RESULTS_FT.md`, Sunday 22 Nov 18:00, audited parts only.
+
 ## FINAL, Sunday 15 November 08:11: version v1.0
 
 - `RESULTS.md` final (last change: Q5 and Q7, commit `fc0b2fc`, on the owner's instruction). Claim 2's headline reads "With the hypothesis-only and premise-only shortcuts removed (prompt length still leaks within a hypothesis type)"; "every single-input shortcut removed" is gone since the final pass (`a3958de`). Known stale word, left as the owner closed the page: "Seventeen reviews" (eighteen on file).

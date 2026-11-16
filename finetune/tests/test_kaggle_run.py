@@ -194,9 +194,32 @@ def test_rejected_push_halts_and_spends_the_id(env):
 def test_overdue_run_is_reported_not_relaunched(env):
     env.add("run_a", env.nb, 10)
     env.launch(say=lambda *_: None)
-    env.clk.add(minutes=45)
-    env.poll(say=lambda *_: None)
+    (env.bin / "status").write_text("QUEUED")
+    env.clk.add(minutes=90); env.poll(say=lambda *_: None)                 # Kaggle's own queue: waiting is not a failure
+    assert env.load()["runs"][0]["state"] == "launched" and not env.halt.exists()
+    (env.bin / "status").write_text("RUNNING")
+    env.clk.add(minutes=1); env.poll(say=lambda *_: None)
+    env.clk.add(minutes=20); env.poll(say=lambda *_: None)
+    assert env.load()["runs"][0]["state"] == "running"
+    env.clk.add(minutes=10); env.poll(say=lambda *_: None)                 # 30 min after it started, limit 10
     assert env.load()["runs"][0]["state"] == "failed" and env.halt.exists() and len(pushes(env)) == 1
+
+
+def test_never_started_is_reported(env):
+    env.add("run_a", env.nb, 10)
+    env.launch(say=lambda *_: None)
+    (env.bin / "status").write_text("QUEUED")
+    env.clk.add(minutes=181); env.poll(say=lambda *_: None)
+    assert env.load()["runs"][0]["state"] == "failed" and env.halt.exists()
+
+
+def test_charge_counts_from_running_not_from_kaggles_queue(env):
+    env.add("run_a", env.nb, 10)
+    env.launch(say=lambda *_: None)
+    (env.bin / "status").write_text("QUEUED"); env.clk.add(minutes=60); env.poll(say=lambda *_: None)
+    (env.bin / "status").write_text("RUNNING"); env.clk.add(minutes=1); env.poll(say=lambda *_: None)
+    (env.bin / "status").write_text("COMPLETE"); env.clk.add(minutes=3); env.poll(say=lambda *_: None)
+    assert env.load()["runs"][0]["gpu_hours_charged"] == 0.05
 
 
 def test_complete_run_is_downloaded_and_charged(env):

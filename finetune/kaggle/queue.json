@@ -1,0 +1,21 @@
+{
+ "runs": [
+  {
+   "id": "ft_gputest1",
+   "notebook": "finetune/notebooks/ft_gputest.ipynb",
+   "kernel": "skape007/ft-gputest1",
+   "max_minutes": 10.0,
+   "gpu": true,
+   "note": "path test: T4 x2, internet, download, STATUS.txt, secret via API",
+   "state": "launched",
+   "added_at": "2026-11-16T17:59:10Z",
+   "launched_at": "2026-11-16T17:59:17Z",
+   "notebook_sha256": "2f76a53d7674768ba171b46bc3d4a4bb87a94c440b1fd7e40cc2d338ea1be14c",
+   "commit": "f03bb1b237dfaddce32ad0cf75bea0f01c52a6fc",
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-gputest1",
+   "last_status": "queued",
+   "last_polled": "2026-11-16T18:24:39Z"
+  }
+ ],
+ "external": []
+}

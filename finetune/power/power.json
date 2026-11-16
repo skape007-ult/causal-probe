@@ -1,0 +1,176 @@
+{
+ "reps": 400,
+ "A_within_string_difference": {
+  "pairs_per_string=12 A=0.55 B=0.6 seed_sd=0.0": {
+   "power": 0.9925,
+   "se_of_difference": 0.012058436173961087
+  },
+  "pairs_per_string=12 A=0.55 B=0.6 seed_sd=0.03": {
+   "power": 0.515,
+   "se_of_difference": 0.025841610560799838
+  },
+  "pairs_per_string=12 A=0.55 B=0.65 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.011799881959579515
+  },
+  "pairs_per_string=12 A=0.55 B=0.65 seed_sd=0.03": {
+   "power": 0.96,
+   "se_of_difference": 0.025716857593401546
+  },
+  "pairs_per_string=12 A=0.55 B=0.7 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.011461491606345303
+  },
+  "pairs_per_string=12 A=0.55 B=0.7 seed_sd=0.03": {
+   "power": 1.0,
+   "se_of_difference": 0.02555710856790091
+  },
+  "pairs_per_string=12 A=0.5 B=0.55 seed_sd=0.0": {
+   "power": 0.9875,
+   "se_of_difference": 0.012302873620337796
+  },
+  "pairs_per_string=12 A=0.5 B=0.55 seed_sd=0.03": {
+   "power": 0.42,
+   "se_of_difference": 0.022063812106607437
+  },
+  "pairs_per_string=18 A=0.55 B=0.6 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.010120547723473528
+  },
+  "pairs_per_string=18 A=0.55 B=0.6 seed_sd=0.03": {
+   "power": 0.5175,
+   "se_of_difference": 0.025451519187898793
+  },
+  "pairs_per_string=18 A=0.55 B=0.65 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.009971224120166598
+  },
+  "pairs_per_string=18 A=0.55 B=0.65 seed_sd=0.03": {
+   "power": 0.98,
+   "se_of_difference": 0.02535950414459436
+  },
+  "pairs_per_string=18 A=0.55 B=0.7 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.009830099907766766
+  },
+  "pairs_per_string=18 A=0.55 B=0.7 seed_sd=0.03": {
+   "power": 1.0,
+   "se_of_difference": 0.0253583884165729
+  },
+  "pairs_per_string=18 A=0.5 B=0.55 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.010298755470548848
+  },
+  "pairs_per_string=18 A=0.5 B=0.55 seed_sd=0.03": {
+   "power": 0.43,
+   "se_of_difference": 0.021605352993544012
+  },
+  "pairs_per_string=25 A=0.55 B=0.6 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.008173287052427257
+  },
+  "pairs_per_string=25 A=0.55 B=0.6 seed_sd=0.03": {
+   "power": 0.41,
+   "se_of_difference": 0.026999790561770994
+  },
+  "pairs_per_string=25 A=0.55 B=0.65 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.008173871832932354
+  },
+  "pairs_per_string=25 A=0.55 B=0.65 seed_sd=0.03": {
+   "power": 0.9575,
+   "se_of_difference": 0.026945822935165092
+  },
+  "pairs_per_string=25 A=0.55 B=0.7 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.008050450962209955
+  },
+  "pairs_per_string=25 A=0.55 B=0.7 seed_sd=0.03": {
+   "power": 1.0,
+   "se_of_difference": 0.02695740002087354
+  },
+  "pairs_per_string=25 A=0.5 B=0.55 seed_sd=0.0": {
+   "power": 1.0,
+   "se_of_difference": 0.008145747054390097
+  },
+  "pairs_per_string=25 A=0.5 B=0.55 seed_sd=0.03": {
+   "power": 0.38,
+   "se_of_difference": 0.022033974039593368
+  }
+ },
+ "A_one_model_vs_half": {
+  "pairs_per_string=6 auc=0.55": {
+   "power": 0.285,
+   "se_of_difference": 0.03674944099443538
+  },
+  "pairs_per_string=6 auc=0.6": {
+   "power": 0.785,
+   "se_of_difference": 0.03649566003339401
+  },
+  "pairs_per_string=12 auc=0.55": {
+   "power": 0.5175,
+   "se_of_difference": 0.024680509649501053
+  },
+  "pairs_per_string=12 auc=0.6": {
+   "power": 0.9875,
+   "se_of_difference": 0.024639405580136504
+  }
+ },
+ "B_21_premises": {
+  "items_per_premise=55 0.95 vs 0.85": {
+   "power": 1.0
+  },
+  "items_per_premise=55 0.95 vs 0.9": {
+   "power": 0.985
+  },
+  "items_per_premise=55 0.9 vs 0.87": {
+   "power": 0.61
+  },
+  "items_per_premise=107 0.95 vs 0.85": {
+   "power": 1.0
+  },
+  "items_per_premise=107 0.95 vs 0.9": {
+   "power": 1.0
+  },
+  "items_per_premise=107 0.9 vs 0.87": {
+   "power": 0.82
+  }
+ },
+ "C_steering": {
+  "alpha=0.05 r=1.0": 0.0185,
+  "alpha=0.05 r=1.5": 0.31375,
+  "alpha=0.05 r=2.0": 0.857,
+  "alpha=0.05 r=2.5": 0.997,
+  "alpha=0.05 r=3.0": 1.0,
+  "alpha=0.05 r=4.0": 1.0,
+  "alpha=0.025 r=1.0": 0.00175,
+  "alpha=0.025 r=1.5": 0.0575,
+  "alpha=0.025 r=2.0": 0.511,
+  "alpha=0.025 r=2.5": 0.93425,
+  "alpha=0.025 r=3.0": 0.9995,
+  "alpha=0.025 r=4.0": 1.0
+ },
+ "C_v1_reference": {
+  "qwen3b": {
+   "gold_slope": 0.5692686080932617,
+   "control_sd": 0.39691653614311306,
+   "control_max": 1.2813240432739257,
+   "r_observed": 1.339898214707382,
+   "p_one_sided": 0.08183632734530938
+  },
+  "qwen1.5b": {
+   "gold_slope": -0.11188604990641277,
+   "control_sd": 0.08540091881274393,
+   "control_max": 0.2282603708902995,
+   "r_observed": 1.265611280637269,
+   "p_one_sided": 0.11976047904191617
+  }
+ },
+ "D_probe_minus_text": {
+  "se_points_report_half_v1": 0.449,
+  "gain=1 points, alpha=0.05/3": 0.43380027016502065,
+  "gain=2 points, alpha=0.05/3": 0.9803277518977473,
+  "gain=3 points, alpha=0.05/3": 0.9999909789857468,
+  "gain=5 points, alpha=0.05/3": 1.0
+ }
+}

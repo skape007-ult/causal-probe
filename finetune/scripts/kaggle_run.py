@@ -47,6 +47,7 @@ ROOT = Path(__file__).resolve().parents[2]
 KDIR = ROOT / "finetune" / "kaggle"
 MAX_CONCURRENT = 2
 WEEKLY_CAP_HOURS = 20.0
+QUEUE_PATIENCE_MIN = 180              # a run Kaggle has not started after this long is reported as a failure
 ACCELERATOR = "NvidiaTeslaT4"            # the CLI's name for "GPU T4 x2"
 IN_FLIGHT = ("launched", "running")
 OK_STATES = {"complete"}
@@ -243,7 +244,12 @@ class Runner:
             m = re.search(r'has status "(?:KernelWorkerStatus\.)?(\w+)"', p.stdout + p.stderr)
             st = m.group(1).lower().replace("_", "") if m else None
             mins = (self.clock() - parse(r["launched_at"])).total_seconds() / 60
-            used = round(min(mins, r["max_minutes"]) / 60, 3) if r["gpu"] else 0.0   # an upper bound: includes queueing and poll delay
+            if st == "running" and not r.get("running_since"):
+                r["running_since"] = iso(self.clock())
+            # time on the GPU: from the first poll that saw it running (Kaggle's own queue can hold a run for a long
+            # time and is not charged). A run never seen running is charged from launch: an upper bound.
+            ran = (self.clock() - parse(r.get("running_since") or r["launched_at"])).total_seconds() / 60
+            used = round(min(ran, r["max_minutes"]) / 60, 3) if r["gpu"] else 0.0
             r["last_status"], r["last_polled"] = st or (p.stdout + p.stderr).strip()[-200:], iso(self.clock())
             if st in OK_STATES:
                 r["gpu_hours_charged"] = used
@@ -260,9 +266,14 @@ class Runner:
             elif st is None:
                 say(f"{r['id']}: status could not be read ({r['last_status']}); left as {r['state']}")
             else:
-                if mins > r["max_minutes"] + 30:
-                    self.fail(q, r, f"still '{st}' {mins:.0f} min after launch, limit {r['max_minutes']:.0f} min; check it "
+                if r.get("running_since") and ran > r["max_minutes"] + 15:
+                    self.fail(q, r, f"still '{st}' {ran:.0f} min after it started, limit {r['max_minutes']:.0f} min; check it "
                                     f"in the browser", charged=r["max_minutes"] / 60 if r["gpu"] else 0.0)
+                    changed.append(r)
+                elif not r.get("running_since") and mins > QUEUE_PATIENCE_MIN:
+                    self.fail(q, r, f"still '{st}' {mins:.0f} min after launch without having started; check it in the "
+                                    f"browser (it may still start: its full limit stays counted)",
+                              charged=r["max_minutes"] / 60 if r["gpu"] else 0.0)
                     changed.append(r)
                 else:
                     r["state"] = "running" if st == "running" else r["state"]

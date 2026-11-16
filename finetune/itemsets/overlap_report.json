@@ -1,0 +1,259 @@
+{
+ "definition": "shared premise texts / shared after renaming either way / shared graph classes (statement set up to relabelling)",
+ "graph_classes_among_all_train_premises": 2337,
+ "pairs": {
+  "train_A x eval_id_heldout": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 1092
+  },
+  "train_A x eval_id_heldout_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 1092
+  },
+  "train_A x eval_id_heldout_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 1092
+  },
+  "train_A x eval_pool": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 1200
+  },
+  "train_A x eval_pool_lb": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 1193
+  },
+  "train_A x eval_pool_lb_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 1193
+  },
+  "train_A x eval_pool_lb_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 1193
+  },
+  "train_A x eval_official_test": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 21
+  },
+  "train_A x eval_official_test_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 21
+  },
+  "train_A x eval_official_test_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 21
+  },
+  "train_A x eval_authors_paraphrasing": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 21
+  },
+  "train_A x eval_authors_refactorization": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1137,
+   "eval_premises": 21
+  },
+  "train_B x eval_id_heldout": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 1092
+  },
+  "train_B x eval_id_heldout_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 1092
+  },
+  "train_B x eval_id_heldout_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 1092
+  },
+  "train_B x eval_pool": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 1200
+  },
+  "train_B x eval_pool_lb": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 1193
+  },
+  "train_B x eval_pool_lb_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 1193
+  },
+  "train_B x eval_pool_lb_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 1193
+  },
+  "train_B x eval_official_test": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 21
+  },
+  "train_B x eval_official_test_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 21
+  },
+  "train_B x eval_official_test_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 21
+  },
+  "train_B x eval_authors_paraphrasing": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 21
+  },
+  "train_B x eval_authors_refactorization": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 850,
+   "eval_premises": 21
+  },
+  "train_C x eval_id_heldout": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 1092
+  },
+  "train_C x eval_id_heldout_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 1092
+  },
+  "train_C x eval_id_heldout_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 1092
+  },
+  "train_C x eval_pool": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 1200
+  },
+  "train_C x eval_pool_lb": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 1193
+  },
+  "train_C x eval_pool_lb_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 1193
+  },
+  "train_C x eval_pool_lb_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 1193
+  },
+  "train_C x eval_official_test": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 21
+  },
+  "train_C x eval_official_test_renamed": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 21
+  },
+  "train_C x eval_official_test_paraphrased": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 21
+  },
+  "train_C x eval_authors_paraphrasing": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 21
+  },
+  "train_C x eval_authors_refactorization": {
+   "premise_text": 0,
+   "after_renaming": 0,
+   "graph_class": 0,
+   "train_premises": 1134,
+   "eval_premises": 21
+  }
+ },
+ "largest_overlap_of_any_pair": 0
+}

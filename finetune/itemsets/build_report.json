@@ -1,0 +1,347 @@
+{
+ "tokenizer": "Qwen/Qwen2.5-1.5B-Instruct",
+ "balance_implementation": "reference",
+ "seed": 0,
+ "premises": {
+  "train_all": 2338,
+  "TRAIN": 1137,
+  "EVAL_pool": 1200,
+  "test": 21,
+  "dev_unused": 22
+ },
+ "items": {
+  "TRAIN": 98964,
+  "EVAL_pool_premises_all_official_items": 106746,
+  "train_A": {
+   "n": 8658,
+   "n_pos": 1060,
+   "n_neg": 7598,
+   "frac_pos": 0.12243012243012243,
+   "premises": 1137,
+   "mean_prompt_tokens": 649.590799031477
+  },
+  "train_B": {
+   "n": 8658,
+   "n_pos": 4329,
+   "n_neg": 4329,
+   "frac_pos": 0.5,
+   "premises": 850,
+   "mean_prompt_tokens": 544.7312348668281
+  },
+  "train_C": {
+   "n": 8658,
+   "n_pos": 1060,
+   "n_neg": 7598,
+   "frac_pos": 0.12243012243012243,
+   "premises": 1134,
+   "mean_prompt_tokens": 645.179176755448
+  },
+  "eval_id_heldout": {
+   "n": 3000,
+   "n_pos": 711,
+   "n_neg": 2289,
+   "frac_pos": 0.237,
+   "premises": 1092,
+   "mean_prompt_tokens": 483.009324009324
+  },
+  "eval_id_heldout_renamed": {
+   "n": 3000,
+   "n_pos": 711,
+   "n_neg": 2289,
+   "frac_pos": 0.237,
+   "premises": 1092,
+   "mean_prompt_tokens": 483.009324009324
+  },
+  "eval_id_heldout_paraphrased": {
+   "n": 3000,
+   "n_pos": 711,
+   "n_neg": 2289,
+   "frac_pos": 0.237,
+   "premises": 1092,
+   "mean_prompt_tokens": 479.7459207459207
+  },
+  "eval_pool": {
+   "n": 2400,
+   "n_pos": 1200,
+   "n_neg": 1200,
+   "frac_pos": 0.5,
+   "premises": 1200,
+   "mean_prompt_tokens": 495.33
+  },
+  "eval_pool_lb": {
+   "n": 4706,
+   "n_pos": 2353,
+   "n_neg": 2353,
+   "frac_pos": 0.5,
+   "premises": 1193,
+   "mean_prompt_tokens": 486.75
+  },
+  "eval_pool_lb_renamed": {
+   "n": 4706,
+   "n_pos": 2353,
+   "n_neg": 2353,
+   "frac_pos": 0.5,
+   "premises": 1193,
+   "mean_prompt_tokens": 486.75
+  },
+  "eval_pool_lb_paraphrased": {
+   "n": 4706,
+   "n_pos": 2353,
+   "n_neg": 2353,
+   "frac_pos": 0.5,
+   "premises": 1193,
+   "mean_prompt_tokens": 481.24532710280374
+  },
+  "eval_official_test": {
+   "n": 1162,
+   "n_pos": 180,
+   "n_neg": 982,
+   "frac_pos": 0.1549053356282272,
+   "premises": 21,
+   "mean_prompt_tokens": 329.3580034423408
+  },
+  "eval_official_test_renamed": {
+   "n": 1162,
+   "n_pos": 180,
+   "n_neg": 982,
+   "frac_pos": 0.1549053356282272,
+   "premises": 21,
+   "mean_prompt_tokens": 329.3580034423408
+  },
+  "eval_official_test_paraphrased": {
+   "n": 1162,
+   "n_pos": 180,
+   "n_neg": 982,
+   "frac_pos": 0.1549053356282272,
+   "premises": 21,
+   "mean_prompt_tokens": 325.9225473321859
+  },
+  "eval_authors_paraphrasing": {
+   "n": 2246,
+   "n_pos": 342,
+   "n_neg": 1904,
+   "frac_pos": 0.1522707034728406,
+   "premises": 21
+  },
+  "eval_authors_refactorization": {
+   "n": 2246,
+   "n_pos": 342,
+   "n_neg": 1904,
+   "frac_pos": 0.1522707034728406,
+   "premises": 21
+  }
+ },
+ "bins_tried": {
+  "4": {
+   "n_B": 8658,
+   "n_POOL_LB": 4706,
+   "passes": true,
+   "checks": {
+    "B_in_sample": {
+     "cells_not_half_valid_by_query": 0,
+     "cells_not_half_valid_by_group": 0,
+     "cells_not_half_valid_by_template": 0,
+     "token_count_within_string": {
+      "mean_auroc": 0.5007928191001981,
+      "largest_deviation_of_a_string": 0.08140432098765427
+     },
+     "token_count_within_template": {
+      "has_collider": 0.5,
+      "has_confounder": 0.49999999999999994,
+      "non-child descendant": 0.49999999999999994,
+      "non-parent ancestor": 0.49999999999999994,
+      "parent": 0.5
+     },
+     "passes": true
+    },
+    "POOL_LB_in_sample": {
+     "cells_not_half_valid_by_query": 0,
+     "cells_not_half_valid_by_group": 0,
+     "cells_not_half_valid_by_template": 0,
+     "token_count_within_string": {
+      "mean_auroc": 0.48395650306333415,
+      "largest_deviation_of_a_string": 0.5
+     },
+     "token_count_within_template": {
+      "has_collider": 0.4999999999999999,
+      "has_confounder": 0.5,
+      "non-child descendant": 0.5,
+      "non-parent ancestor": 0.5,
+      "parent": 0.5
+     },
+     "passes": true
+    },
+    "fit_B_test_POOL_LB": {
+     "premise_only": {
+      "auroc": 0.5,
+      "lo": 0.5,
+      "hi": 0.5,
+      "passes": true,
+      "note": "constant score"
+     },
+     "hypothesis_only": {
+      "auroc": 0.5,
+      "lo": 0.5,
+      "hi": 0.5,
+      "passes": true,
+      "note": "constant score"
+     },
+     "length_within_string": {
+      "auroc": 0.5186752396638448,
+      "lo": 0.498877637576481,
+      "hi": 0.5370663484973569,
+      "passes": true
+     },
+     "string_and_length": {
+      "auroc": 0.5177008165106114,
+      "lo": 0.4987241077505346,
+      "hi": 0.536045332513275,
+      "passes": true
+     },
+     "all_pass": true
+    },
+    "fit_POOL_LB_test_B": {
+     "premise_only": {
+      "auroc": 0.5,
+      "lo": 0.5,
+      "hi": 0.5,
+      "passes": true,
+      "note": "constant score"
+     },
+     "hypothesis_only": {
+      "auroc": 0.5,
+      "lo": 0.5,
+      "hi": 0.5,
+      "passes": true,
+      "note": "constant score"
+     },
+     "length_within_string": {
+      "auroc": 0.5087946040821993,
+      "lo": 0.49459984574093174,
+      "hi": 0.5222878849471998,
+      "passes": true
+     },
+     "string_and_length": {
+      "auroc": 0.5095678065186034,
+      "lo": 0.4961094323358031,
+      "hi": 0.5220323475387173,
+      "passes": true
+     },
+     "all_pass": true
+    }
+   }
+  }
+ },
+ "conditions": {
+  "N": 8658,
+  "B_length_bins": 4,
+  "B_pairs_per_premise": 8,
+  "A": {
+   "n": 8658,
+   "n_pos": 1060,
+   "n_neg": 7598,
+   "frac_pos": 0.12243012243012243,
+   "premises": 1137,
+   "strings": 120,
+   "shortcut_classifiers_fitted_here_tested_on_ID_heldout": {
+    "premise_only": {
+     "auroc": 0.570262964990639,
+     "lo": 0.5418523818454475,
+     "hi": 0.5983528828168388,
+     "passes": false
+    },
+    "hypothesis_only": {
+     "auroc": 0.9258967396814337,
+     "lo": 0.9158229754542531,
+     "hi": 0.9344763952728086,
+     "passes": false
+    },
+    "length_within_string": {
+     "auroc": 0.6415793997956348,
+     "lo": 0.6062141670561422,
+     "hi": 0.6773614584613568,
+     "passes": false
+    },
+    "string_and_length": {
+     "auroc": 0.9311849799598029,
+     "lo": 0.9222238263854096,
+     "hi": 0.9399416692646615,
+     "passes": false
+    },
+    "all_pass": false
+   }
+  },
+  "B": {
+   "n": 8658,
+   "n_pos": 4329,
+   "n_neg": 4329,
+   "frac_pos": 0.5,
+   "premises": 850,
+   "strings": 48,
+   "by_template": {
+    "parent": 5554,
+    "non-child descendant": 736,
+    "non-parent ancestor": 680,
+    "has_confounder": 1012,
+    "has_collider": 676
+   }
+  },
+  "C": {
+   "n": 8658,
+   "n_pos": 1060,
+   "n_neg": 7598,
+   "frac_pos": 0.12243012243012243,
+   "premises": 1134,
+   "items_whose_cell_had_no_other_premise": 19,
+   "mean_abs_token_difference_to_own_premise": 44.422268422268424,
+   "shortcut_classifiers_fitted_here_tested_on_ID_heldout": {
+    "premise_only": {
+     "auroc": 0.5710353251869916,
+     "lo": 0.5425866402307231,
+     "hi": 0.5961114626825337,
+     "passes": false
+    },
+    "hypothesis_only": {
+     "auroc": 0.9258967396814337,
+     "lo": 0.9158229754542531,
+     "hi": 0.9344763952728086,
+     "passes": false
+    },
+    "length_within_string": {
+     "auroc": 0.6445643845481265,
+     "lo": 0.6102035920094082,
+     "hi": 0.6791124598346827,
+     "passes": false
+    },
+    "string_and_length": {
+     "auroc": 0.9314688545904433,
+     "lo": 0.92236701230316,
+     "hi": 0.9402592249714823,
+     "passes": false
+    },
+    "all_pass": false
+   }
+  }
+ },
+ "evaluation": {
+  "POOL_LB_length_bins": 4,
+  "POOL_LB_pairs_per_premise": 2
+ },
+ "paraphrase_table_against_authors_file": {
+  "official_test_items": 1162,
+  "found_in_authors_file": 1162,
+  "same_label": 1162
+ },
+ "renaming_against_authors_file": {
+  "official_test_items": 1162,
+  "found_in_authors_file": 1162,
+  "same_label": 1162
+ },
+ "requirements": {
+  "B and POOL-LB pass the shortcut checks": true,
+  "zero overlap of every training set with every evaluation set": true,
+  "paraphrase table reproduces the authors' file": true,
+  "A, B and C have the same number of items": true,
+  "C keeps A's hypotheses and labels": true
+ }
+}

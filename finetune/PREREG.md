@@ -37,7 +37,7 @@ graph. The build recomputes this and fails if it stops being true.
 - TRAIN premises: train premises that are not EVAL and not in dev: 1,137 (98,964 official items, 12,666 valid among
   the 42,949 items of the 48 hypothesis strings that occur with both labels).
 - Dev is not used for anything.
-- Proof of separation, written to `finetune/data/overlap_report.json` and enforced by a test: for every (training set,
+- Proof of separation, written to `finetune/itemsets/overlap_report.json` and enforced by a test: for every (training set,
   evaluation set) pair, the count of shared premise texts, shared premise hashes after variable renaming, and shared
   graph classes, each required to be 0.
 

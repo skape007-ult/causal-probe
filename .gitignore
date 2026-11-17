@@ -14,3 +14,6 @@ logs/
 kaggle_out/
 kaggle_tmp/
 kaggle_in/
+
+# Notes meant only for the owner (study notes, model answers, specs, checklists)
+private/

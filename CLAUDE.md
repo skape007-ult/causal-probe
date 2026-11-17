@@ -46,3 +46,7 @@ Written 16 November 2026 on the owner's instruction. These bind every session th
 - Commits: no Claude co-author line. Notebooks are pinned to a pushed commit of `exp/finetune`.
 - The owner asks for "status" each morning; answer from `notes/progress.md`, updated first. No scheduler.
 - Batch questions for the owner; do not block on anything these orders let you decide.
+- From 17 Nov: anything meant only for the owner (study notes, questions with model answers, specs of the owner's
+  parts, verify-yourself checklists, notes addressed to the owner) is written under `private/` (git-ignored on
+  `exp/finetune` and `main`). Files already committed elsewhere stay where they are until the owner triggers the
+  cleanup.

@@ -998,3 +998,7 @@ The reviewer then checked the edited file: **PASS, training may start**, all fiv
 **Consequences.** A and B with 5 seeds each are five pair-sessions, about 17 to 19 hours: they do not fit the 14.4 hours left this week. Notebooks were rebuilt as pairs mixing conditions (A seed k with B seed k), so that a stop leaves A and B with equal seed counts. Three pairs (limit 4.5 h each, 13.5 h reserved) fit for certain; a fourth only if the measured session time leaves room for its limit. The base model (scoring only, about 1 to 1.5 h) goes to Colab. New: `kaggle_run.py run` (a loop that polls and launches whatever the safeguards allow, under `caffeinate -i`), `finetune/scripts/ingest.py` (refuses tiny, partial, reordered or retrained output; tried on the smoke output, which it refused), one-model Colab notebooks in `finetune/notebooks/colab/`.
 
 **Launched** (commit `6cca06f`): `ft_pair_a0_b0` and `ft_pair_a1_b1` at 15:08 UTC; `ft_pair_a2_b2` queued, launched by the loop when the reservation allows. Expected back 18:15 to 19:00 UTC.
+
+## Tue 17 Nov ~17:40 UTC
+- Owner: owner-only material now goes under `private/`, git-ignored on `exp/finetune` and `main` (main 1c6541d). Existing files not moved yet. Standing order added to CLAUDE.md.
+- Owner reports the Colab notebook is running (by hand; counts as the one Colab run allowed at a time). Kaggle pairs A0+B0 and A1+B1 at ~151 min, running.

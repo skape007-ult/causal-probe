@@ -62,15 +62,25 @@
    "max_minutes": 45.0,
    "gpu": true,
    "note": "second time test after the out-of-memory fix; waits for the owner to clear HALT",
-   "state": "running",
+   "state": "complete",
    "added_at": "2026-11-17T01:24:15Z",
    "launched_at": "2026-11-17T14:46:14Z",
    "notebook_sha256": "5e40ec8cfefb58a774987a7873b55c83971e0b39c517225137897f796634ac57",
    "commit": "550ca0c9ae760584782ae74cf0e418ccea7fecaf+uncommitted",
    "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-timetest2",
-   "last_status": "running",
-   "last_polled": "2026-11-17T14:47:25Z",
-   "running_since": "2026-11-17T14:47:25Z"
+   "last_status": "complete",
+   "last_polled": "2026-11-17T15:05:38Z",
+   "running_since": "2026-11-17T14:47:25Z",
+   "gpu_hours_charged": 0.304,
+   "download_output": "rs/SahilPaliwal/Documents/causal-probe/causal-probe-ft/finetune/kaggle/downloads/ft_timetest2/ft-timetest2.log \n\n  0%|          | 0.00/224 [00:00<?, ?B/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 224/224 [00:00<00:00, 161kB/s]\n\n  0%|          | 0.00/3.85k [00:00<?, ?B/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 3.85k/3.85k [00:00<00:00, 3.75MB/s]",
+   "downloaded": {
+    "ft-timetest2.log": 10636,
+    "kaggle_log.txt": 10637,
+    "kaggle_out/STATUS.txt": 224,
+    "kaggle_out/results_ft_timetest.zip": 3944
+   },
+   "status_txt": "OK",
+   "finished_at": "2026-11-17T15:05:40Z"
   }
  ],
  "external": [],

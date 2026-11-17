@@ -22,19 +22,18 @@ RUNS = [  # file, run name, jobs (condition, seed), extra args, title, estimate
          title="Fine-tuning study: time test", est="about 20 minutes",
          what="150 training steps of condition A and 300 evaluation items, to measure seconds per step and memory. "
               "No scores are kept and the adapter is discarded (PREREG Section 2)"),
-    dict(file="ft_core_A.ipynb", run="ft_core_A", jobs=[("base", 0)] + [("A", s) for s in S5], extra="",
-         title="Fine-tuning study: condition A (official), 5 seeds, and the base model's scores", est="set after the time test",
-         what="trains five seeds of condition A, scores each and the untuned base model on every evaluation set"),
-    dict(file="ft_core_B.ipynb", run="ft_core_B", jobs=[("B", s) for s in S5], extra="",
-         title="Fine-tuning study: condition B (balanced), 5 seeds", est="set after the time test",
-         what="trains five seeds of condition B and scores each on every evaluation set"),
-    dict(file="ft_core_A48.ipynb", run="ft_core_A48", jobs=[("A48", s) for s in S3], extra="",
-         title="Fine-tuning study: condition A48 (exposure control), 3 seeds", est="set after the time test", what="three seeds of A48"),
-    dict(file="ft_core_Bswap.ipynb", run="ft_core_Bswap", jobs=[("Bswap", s) for s in S3], extra="",
-         title="Fine-tuning study: condition Bswap (negative control), 3 seeds", est="set after the time test", what="three seeds of Bswap"),
-    dict(file="ft_core_C.ipynb", run="ft_core_C", jobs=[("C", s) for s in S3], extra="",
-         title="Fine-tuning study: condition C (premise swapped), 3 seeds", est="set after the time test", what="three seeds of C"),
 ]
+# Core runs as PAIRS: one model per T4, so a session is charged once for two models (time test of 17 Nov: 5.84 s per
+# step, 1,347 steps = 2.2 h of training per model, plus scoring). Pairs mix conditions so that a quota stop leaves the
+# conditions with equal seed counts.
+PAIRS = [[("A", 0), ("B", 0)], [("A", 1), ("B", 1)], [("A", 2), ("B", 2)], [("A", 3), ("B", 3)], [("A", 4), ("B", 4)],
+         [("A48", 0), ("C", 0)], [("A48", 1), ("C", 1)], [("A48", 2), ("C", 2)],
+         [("Bswap", 0), ("Bswap", 1)], [("Bswap", 2), ("Bswap", 3)], [("Bswap", 4)]]
+for pr in PAIRS:
+    nm = "_".join(f"{c}{sd}" for c, sd in pr)
+    RUNS.append(dict(file=f"ft_pair_{nm}.ipynb", run=f"ft_pair_{nm}", jobs=pr, extra="",
+                     title=f"Fine-tuning study: {' and '.join(f'{c} seed {sd}' for c, sd in pr)}",
+                     est="3.1 to 3.8 hours (one model per T4)", what="trains each model on its own GPU and scores it on every evaluation set"))
 
 DATA = '''
 # ---- data at pinned revisions, and the item sets rebuilt from their stored ids (hash-checked) ----

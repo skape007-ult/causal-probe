@@ -82,7 +82,7 @@ expected, skipped, not_finished = ["results_" + RUN_NAME + ".zip"], "", ""
 try:
     names = [(c + "_s%d" % s) if c != "base" else "base" for c, s in JOBS]
     missing = [n for n in names if not os.path.exists(OUT + "/" + n + "/DONE")]
-    with zipfile.ZipFile(WORK + "/" + expected[0], "w", zipfile.ZIP_DEFLATED) as z:
+    with zipfile.ZipFile(WORK + "/" + expected[0], "w", zipfile.ZIP_STORED) as z:      # stored: the scores are compressed already, and a small archive stays above the final check's 1000 bytes
         for n in names:
             for f in ("run.json", "scores.npz", "log.txt"):
                 if os.path.exists(OUT + "/" + n + "/" + f):

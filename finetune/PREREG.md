@@ -368,4 +368,23 @@ differ from the reviewer's in the third decimal for some rules (tie-breaking); t
 
 ## Amendments
 
-(none)
+**Amendment 1, 17 November 2026, 01:10 UTC, before any training run.** The second reviewer confirmed that the five
+conditions are met ("PASS, training may start"; follow-up at the end of `finetune/notes/audit_prereg2_raw.md`) and
+added four remarks that are not conditions. They are recorded here; no test, set, threshold or registered effect
+changes.
+1. *The "queried" distance of the memorisation family*, as coded and as registered, counts a statement when a
+   queried variable appears in its pair **or in its conditioning set**. The reviewer's variant counts the pair only
+   and gives 0.905 / 0.804 / 0.745 on POOL-LB (ours: 0.898 / 0.757 / 0.703). Section 7's explanation of the
+   difference ("tie-breaking") was wrong. The registered reference stays the one in `references.json`; the
+   reviewer's variant will be computed and reported beside it, and if a model is claimed above the registered
+   reference but is not above the variant, the page says so in the same sentence.
+2. *E2c is expected to be inconclusive.* With 3 seeds the interval of S(Bswap) is wide: even if Bswap is exactly at
+   0.5 it will lie inside 0.5 ± 0.05 only 2% to 20% of the time. "Inconclusive" (interval not inside the band and
+   not excluding 0.5) is the likely outcome and is reported as that, not as a failure of the control.
+3. *E5b for A* rests on the premise SE of 0.011 simulated with half-shared noise; if the real SE against the copy
+   score is 0.016, its power at the registered 0.10 is about 0.41 at seed SD 0.02. The observed premise SE is
+   reported with the test, and if it exceeds 0.014 the page says E5b(A) was underpowered for 0.10.
+4. *Stale wording, to be read as follows:* Section 0's "four parts" are five rows; E2's heading "where wording,
+   premise and length carry nothing" means "the premise alone"; in Section 6, rows 3 and 4 are superseded by
+   Section 3's table (E3 0.15, E4 0.10) and by E1 as now written (pooled AUROC against 0.922, no test).
+

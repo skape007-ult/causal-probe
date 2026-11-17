@@ -452,3 +452,81 @@ Minor:
 - The registered test is valid (conservative) for normal seed values at every premise SE the sets can give.
 - `power.py` calls the registered function; its arithmetic reproduces to the third decimal.
 - No training hyper-parameter, set or threshold is tuned on evaluation data.
+
+---
+
+## Follow-up: are the five conditions met?
+
+Checked on commit `1a6ba30` (PREREG.md Sections 0, 1, 3, 4, 5, 7; `ftstudy/stat.py`, `seedtest.py`, `datasets.py`;
+`scripts/references.py` → `itemsets/references.json`; `scripts/power.py` → `power/power.json`). Read-only; one short
+simulation of my own (200,000 replications per figure, own implementation of the test). `pytest finetune/tests -q`:
+43 passed, 18 skipped.
+
+**Verdict: PASS (training may start).** All five conditions are met. No new blocking problem. Four small
+inaccuracies are listed at the end; none needs to hold the first run.
+
+### Condition by condition
+
+| # | Condition | Status | What decides it |
+|---|---|---|---|
+| 1 | Multiplicity and power agree | **MET** | "The family is eleven tests: E2a, E2b, E3, E4a, E4b, and E5a, E5b, E5c each for A and for B … 'claimed' means Holm-adjusted p < 0.05." and "Rule: a test is registered for the smallest effect on the grid … at which power at α = 0.05/11 and seed SD 0.02 is at least 0.6." 5 + 6 = 11 matches the tests listed in Section 4. `seedtest.holm` is a correct step-down (running maximum of (m − i)·p). `power.py` passes `alpha=al` into `simulate`. |
+| 2 | One definition of each rung | **MET** | Section 0 defines L0 to L3 by E5a, E5b, E5c only; E5 says "per model, the rung of Section 0"; "E5b claimed with E5a not shown has no rung"; E5c is in the family for A and B. The row "S on POOL-LB above 0.5 \| E2" is gone. |
+| 3 | The memorisation reference | **MET** | (a) values are the registered S (`stat.S`, which applies `eligible` with `MIN_CLASS = 3`); (b) the graded tie-break is gone, the score is "the mean label of the string in the k nearest candidates … or … weighted by exp(−distance/τ)"; (c) "The memorisation reference of a condition on a set is the rule with the largest S there, chosen once on the full set"; E5b and E1 use it; E1 says "0.80 is only 0.04 above". See the note on the "queried" distance below. |
+| 4 | What the checks and Bswap show | **MET** | "scores exactly 0.500, but that is true by construction … and is not evidence of anything"; the paragraph "What these checks do not cover, measured"; "Bswap controls only what survives the swap: hypothesis string, number of variables and premise length"; POOL-LB's use is "the premise alone"; E5c names "the per-string premise-count classifier (logistic and boosting)"; E2c: "it does not clear B and POOL-LB of shared artefacts". |
+| 5 | The size statement | **MET** | "For normally distributed per-seed values … equal in both conditions … at most 0.051" with both exceptions quoted, and "a seed whose statistic lies more than 0.10 from the median of its condition is outlying … reported with and without that seed, and is claimed only if both versions are" (`seedtest.outlying_seeds`). |
+
+### Numbers checked
+
+| In the text | references.json / power.json | Mine | |
+|---|---|---|---|
+| Memorisation reference on POOL-LB 0.898 / 0.757 / 0.703 (B / A48 / A) | 0.8975 / 0.7568 / 0.7034, member `queried\|exp\|4.0` each | the eight "all statements" rules agree with my first-round values to four decimals (for example A: 0.6315, 0.6611, 0.6687, 0.6804, 0.6636, 0.6768, 0.6955) | ok |
+| On ID48 0.763 (A), 0.807 (A48), 0.708 (B) | 0.7627, 0.8074, 0.7081 | A48's "all, τ = 4" 0.8074 = mine | ok |
+| Weakest rule 0.821 / 0.674 / 0.631 | 0.8206 / 0.6741 / 0.6315 | 0.8206 / 0.6741 / 0.6315 | ok |
+| Bswap and C "at most 0.52 and 0.55" | 0.516 and 0.518; 0.551 and 0.541 | | ok |
+| Premise-count classifier from B 0.588 / 0.666; A48 0.523 / 0.584; A 0.520 / 0.566; Bswap 0.525 / 0.501 | 0.5879 / 0.6659; 0.5226 / 0.5844; 0.5204 / 0.5655; 0.5246 / 0.5007 | 0.587 / 0.675 with slightly different features and settings | ok |
+| "S = 0.59 there" (ID48, fitted on A) | 0.590 | 0.586 | ok |
+| String prior with length 0.922 | 0.9215 | | ok |
+| "a score equal to the label plus noise has S = 0.93" | 0.932 | | ok |
+| 0.065 (5 against 3, SD 0.01 / 0.04, no premise term) | 0.06477 | 0.0658 | ok |
+| Registered-effect table: E2a 0.10: 1.00 / 0.92 / 0.63 | 0.999 / 0.924 / 0.630 | 0.999 / 0.923 / 0.631 | ok |
+| E2b 0.15: 0.93 / 0.79 / 0.62 | 0.932 / 0.794 / 0.622 | 0.931 / 0.792 / 0.622 | ok |
+| E3 0.15: 0.89 / 0.76 / 0.59 | 0.895 / 0.761 / 0.593 | 0.894 / 0.760 / 0.592 | ok |
+| E4 0.10: 0.90 / 0.68 / 0.42 | 0.899 / 0.683 / 0.419 | 0.901 / 0.686 / 0.422 | ok |
+| E5a 0.10: 0.99 / 0.87 / 0.58 | 0.995 / 0.875 / 0.580 | 0.995 / 0.874 / 0.575 | ok |
+| E5b, E5c 0.10: 0.99 / 0.85 / 0.55 | 0.988 / 0.845 / 0.547 | 0.988 / 0.843 / 0.549 | ok |
+| Each registered effect is the smallest on the grid | | one step down, seed SD 0.02: E2a 0.07 → 0.50; E2b 0.10 → 0.52; E3 0.10 → 0.45; E4 0.07 → 0.15; E5a 0.07 → 0.32; E5b/c 0.07 → 0.28 | ok |
+
+### New blocking problems?
+
+None.
+
+- **Section 0 against E5:** consistent. Every rung has a registered test in the family; every pattern is assigned.
+- **Power at the registered effect, α = 0.05/11, seed SD 0.02:** all six rows are ≥ 0.6 (lowest: E4, 0.68) under
+  power.json's premise SEs, and I reproduce each.
+- The rule for an outlying seed is fixed in text and code. For a three-seed condition it leaves two seeds, where the
+  test can hardly claim anything: conservative, acceptable.
+
+### Not blocking; worth one line each (now, or as a dated amendment before any score is opened)
+
+1. **The "queried" distance is not the one behind my first-round figures, and Section 7's explanation is wrong.**
+   `memorisation_family` keeps statements whose pair **or conditioning set** names a queried variable
+   (`(t[1] | t[2]) & qv`); mine kept statements whose **pair** contains one. Both fit my wording ("statements naming
+   a queried variable"), so the condition is met. But the difference is not "the third decimal … (tie-breaking)":
+   the "all statements" rules agree to four decimals; the pair-only rules give 0.905 / 0.804 / 0.745 on POOL-LB (B /
+   A48 / A) against the registered 0.898 / 0.757 / 0.703. A memoriser of that kind sits 0.04 above A's registered
+   reference. At α = 0.05/11 that is claimed with probability 0.01 to 0.02 (measured), so it is not a practical
+   route to L2; adding the pair-only distance as a third (21 rules) would close it and can only raise the reference.
+2. **E2c's pass criterion can hardly be met with 3 seeds.** The half-width of the interval is at least
+   4.30 × 0.0106 = 0.046 with no seed variance at all. With S(Bswap) truly 0.5, the interval lies inside 0.5 ± 0.05
+   with probability 0.20 / 0.08 / 0.02 at seed SD 0.005 / 0.01 / 0.02 (5 seeds: 0.93 / 0.88 / 0.58). The text
+   should say that "not passed, not claimed different" is the expected outcome at 3 seeds and what follows from it
+   (nothing is cleared; E2 is read as its table says). As written, that case has no stated consequence.
+3. **Sensitivity of E5b for A.** With the premise SE I measured for a model against a real copy score with
+   independent errors (0.016), power at 0.10 and α = 0.05/11 is 0.41, not 0.85. The text discloses the assumption in
+   general terms with an E2a example only. A model whose errors correlate with the copy's will have a smaller SE, so
+   this is a bound, not a prediction. (E2a 0.10 at SE 0.015: 0.78; E2b 0.15: 0.73; E3 0.15 at SE 0.020: 0.60.)
+4. **Stale wording.** E2's heading still reads "where wording, premise and length carry nothing" (the set's use now
+   says "the premise alone"). Section 6, rows 3 and 4, still say E3 is registered for 0.10, E4 for 0.05, and that
+   E1 tests pooled AUROC against the string prior "by test"; Sections 3 and 4 now say 0.15, 0.10 and "gate, no
+   test". Section 0 says "four parts" above a table of five. E2 says the premise-count classifier is "0.07 to 0.08
+   higher" where Section 1 says "0.06 to 0.08" (the values are 0.065 and 0.082).

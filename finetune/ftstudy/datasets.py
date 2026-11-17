@@ -134,6 +134,69 @@ def nearest_premise_scores(train_items: list[dict], test_items: list[dict], k: i
     return out
 
 
+MEMORY_FAMILY = [(mode, kind, par) for mode in ("all", "queried") for kind, pars in (("k", (1, 3, 5, 9)), ("exp", (1.0, 2.0, 4.0))) for par in pars]
+
+
+def memorisation_family(train_items: list[dict], test_items: list[dict]) -> dict[str, np.ndarray]:
+    """The registered family of copy-from-training references (PREREG E1, E5b). For a test item, the candidate
+    neighbours are the training premises with the same number of variables that carry its hypothesis string.
+    Distance: size of the symmetric difference of the two statement sets, over all statements ("all") or only over
+    statements that name one of the two queried variables ("queried"). Score: the mean label of the k nearest
+    (k = 1, 3, 5, 9; ties in distance broken by premise id), or the mean label of all candidates weighted by
+    exp(-distance / tau) (tau = 1, 2, 4). 0.5 when there is no candidate. Fourteen members."""
+    st, lab = {}, {}
+    for it in train_items:
+        if it["group"] not in st:
+            st[it["group"]] = parse_premise(it["context"])
+        lab.setdefault(it["query"], {})[it["group"]] = it["label"]
+    out = {f"{m}|{k}|{p}": np.full(len(test_items), 0.5) for m, k, p in MEMORY_FAMILY}
+    pcache = {}
+    for i, it in enumerate(test_items):
+        if it["group"] not in pcache:
+            pcache[it["group"]] = parse_premise(it["context"])
+        n, s = pcache[it["group"]]
+        qv = set(re.findall(r"\b[A-Z]\b", it["query"]))
+        cands = sorted(g for g in lab.get(it["query"], {}) if st[g][0] == n)
+        if not cands:
+            continue
+        y = np.array([lab[it["query"]][g] for g in cands], float)
+        for mode in ("all", "queried"):
+            f = (lambda x: x) if mode == "all" else (lambda x: {t for t in x if (t[1] | t[2]) & qv})
+            mine = f(s)
+            d = np.array([len(mine ^ f(st[g][1])) for g in cands], float)
+            order = np.argsort(d, kind="stable")
+            for k in (1, 3, 5, 9):
+                out[f"{mode}|k|{k}"][i] = y[order[:k]].mean()
+            for tau in (1.0, 2.0, 4.0):
+                w = np.exp(-(d - d.min()) / tau)
+                out[f"{mode}|exp|{tau}"][i] = float((w * y).sum() / w.sum())
+    return out
+
+
+def premise_counts(items: list[dict]) -> np.ndarray:
+    """Per item: number of correlation statements, of marginal and of conditional independence statements, log of
+    the premise's word count. Surface statistics of the premise; nothing about the queried pair."""
+    return np.column_stack([_premise_features(items)[:, 1:], np.log([len(i["context"].split()) for i in items])])
+
+
+def premise_counts_within_string(fit_items, test_items, boosting: bool = False) -> np.ndarray:
+    """A per-hypothesis-string classifier on `premise_counts`, fitted on fit_items, scored on test_items (0.5 for a
+    string with fewer than 8 training items or one label). Logistic regression, or gradient boosting."""
+    from sklearn.ensemble import GradientBoostingClassifier
+    from sklearn.linear_model import LogisticRegression
+    Xf, Xt = premise_counts(fit_items), premise_counts(test_items)
+    yf = np.array([i["label"] for i in fit_items]); qf = np.array([i["query"] for i in fit_items]); qt = np.array([i["query"] for i in test_items])
+    mu, sd = Xf.mean(0), Xf.std(0) + 1e-9
+    out = np.full(len(test_items), 0.5)
+    for s in np.unique(qt):
+        a, b = np.where(qf == s)[0], np.where(qt == s)[0]
+        if len(a) < 8 or len(np.unique(yf[a])) < 2:
+            continue
+        m = GradientBoostingClassifier(n_estimators=100, max_depth=2, random_state=0) if boosting else LogisticRegression(C=1.0, max_iter=1000)
+        out[b] = m.fit((Xf[a] - mu) / sd, yf[a]).predict_proba((Xt[b] - mu) / sd)[:, 1]
+    return out
+
+
 def nearest_premise_distance(train_items: list[dict], test_items: list[dict]) -> dict[str, int]:
     """test premise -> smallest symmetric difference of statement sets to any training premise of the same size."""
     st = {}

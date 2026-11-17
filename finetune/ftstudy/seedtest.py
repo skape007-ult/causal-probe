@@ -33,12 +33,12 @@ def p_two_sided(t, df):
     return 2 * stats.t.sf(np.abs(t), df)
 
 
-def test(per_seed_x, per_seed_y=None, constant: float = 0.0, boot_D=None) -> dict:
+def test(per_seed_x, per_seed_y=None, constant: float = 0.0, boot_D=None, alpha: float = 0.05) -> dict:
     """per_seed_x, per_seed_y: the statistic of each trained model. boot_D: the values of D on premise resamples
     (models fixed), from which v_premise is taken; required."""
     x = np.asarray(per_seed_x, float)
     yv = None if per_seed_y is None else np.asarray(per_seed_y, float)
-    if boot_D is None or len(boot_D) < 200:
+    if boot_D is None or len(boot_D) < N_BOOT:
         raise ValueError("the premise resamples of D are part of the test")
     D = x.mean() - (yv.mean() if yv is not None else constant)
     v_prem = float(np.var(np.asarray(boot_D, float), ddof=1))
@@ -49,4 +49,21 @@ def test(per_seed_x, per_seed_y=None, constant: float = 0.0, boot_D=None) -> dic
     return {"D": float(D), "se": float(se), "t": t, "df": df, "p_two_sided": float(p_two_sided(t, df)), "lo": float(D - half), "hi": float(D + half),
             "seed_sd_x": float(x.std(ddof=1)), "seed_sd_y": None if yv is None else float(yv.std(ddof=1)), "premise_se": float(np.sqrt(v_prem)),
             "n_x": len(x), "n_y": 0 if yv is None else len(yv), "per_seed_x": x.tolist(), "per_seed_y": None if yv is None else yv.tolist(),
-            "claimed": bool(p_two_sided(t, df) < 0.05)}
+            "alpha": alpha, "below_alpha": bool(p_two_sided(t, df) < alpha)}
+
+
+def holm(pvalues: dict) -> dict:
+    """Holm-adjusted p for a family {name: p}."""
+    names = sorted(pvalues, key=pvalues.get)
+    m, out, running = len(names), {}, 0.0
+    for i, k in enumerate(names):
+        running = max(running, min(1.0, (m - i) * pvalues[k]))
+        out[k] = running
+    return out
+
+
+def outlying_seeds(per_seed, distance: float = 0.10) -> list[int]:
+    """Indices of seeds whose statistic is more than `distance` from the median of their condition (PREREG Section 3:
+    a test with such a seed is reported with and without it, and claimed only if both agree)."""
+    x = np.asarray(per_seed, float)
+    return [int(i) for i in np.where(np.abs(x - np.median(x)) > distance)[0]]

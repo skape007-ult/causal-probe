@@ -82,7 +82,7 @@ def premise_se(y, cell_of, group, auc_x, auc_y=None, weighted=False, min_class=3
     return float(np.mean(out))
 
 
-def simulate(delta, n_x, n_y, sd_x, sd_y, tau, paired=False, rng=None, reps=REPS, tau_noise=0.1):
+def simulate(delta, n_x, n_y, sd_x, sd_y, tau, paired=False, rng=None, reps=REPS, tau_noise=0.1, alpha=0.05):
     """Rejection rate of the registered test when the true difference is delta, seed SDs are sd_x and sd_y, and the
     premise SE of D is tau (estimated by the bootstrap with a relative error of tau_noise).
     n_y = 0: one condition against a constant.  paired: n_x within-seed differences with SD sd_x."""
@@ -95,7 +95,7 @@ def simulate(delta, n_x, n_y, sd_x, sd_y, tau, paired=False, rng=None, reps=REPS
         t, df = seedtest.t_and_df(x.mean(1) - yv.mean(1) + shift, x.var(1, ddof=1), n_x, yv.var(1, ddof=1), n_y, v_prem)
     else:
         t, df = seedtest.t_and_df(x.mean(1) + shift, x.var(1, ddof=1), n_x, None, 0, v_prem)
-    return float(np.mean(seedtest.p_two_sided(t, df) < 0.05))
+    return float(np.mean(seedtest.p_two_sided(t, df) < alpha))
 
 
 def main():
@@ -142,8 +142,8 @@ def main():
     out["false_positive_rate_max"] = max(size.values())
     out["false_positive_rate_max_at"] = max(size, key=size.get)
 
-    def grid(nx, ny, tv, deltas, paired=False):
-        return {f"delta={d} seed_sd={sd}": simulate(d, nx, ny, sd, sd, tv, paired=paired, rng=rng) for d in deltas for sd in SDS}
+    def grid(nx, ny, tv, deltas, paired=False, alpha=0.05):
+        return {f"delta={d} seed_sd={sd}": simulate(d, nx, ny, sd, sd, tv, paired=paired, rng=rng, alpha=alpha) for d in deltas for sd in SDS}
     out["power"] = {
         "E2a  S(B) - S(A) on POOL-LB, 5 vs 5": {"premise_se": round(t_lb, 4), **grid(5, 5, t_lb, (0.03, 0.05, 0.07, 0.10))},
         "E2b  S(B) - S(A48) on POOL-LB, 5 vs 3": {"premise_se": round(t_lb, 4), **grid(5, 3, t_lb, (0.05, 0.07, 0.10, 0.15))},
@@ -159,12 +159,32 @@ def main():
             {"premise_se": round(tau["ID (natural) pooled AUROC, one model at 0.92 against a fixed reference"], 4),
              **grid(5, 0, tau["ID (natural) pooled AUROC, one model at 0.92 against a fixed reference"], (0.02, 0.03, 0.05))},
     }
+    # the family of eleven tests is claimed on Holm-adjusted p: power at the strictest level a test can meet, 0.05 / 11
+    FAM, DL = 11, (0.05, 0.07, 0.10, 0.15, 0.20)
+    al = 0.05 / FAM
+    out["family_size"] = FAM
+    out["power_at_alpha_over_family"] = {
+        "E2a  S(B) - S(A) on POOL-LB, 5 vs 5": grid(5, 5, t_lb, DL, alpha=al),
+        "E2b  S(B) - S(A48) on POOL-LB, 5 vs 3": grid(5, 3, t_lb, DL, alpha=al),
+        "E3   S(A) - S(C) on ID48, 5 vs 3": grid(5, 3, t_id, DL, alpha=al),
+        "E4   within-seed difference of A on ID48, 5 seeds": grid(5, 0, t_id, DL, paired=True, alpha=al),
+        "E5a  S inside cells - 0.5 on POOL-LB, 5 seeds": grid(5, 0, t_cell, DL, alpha=al),
+        "E5bc S(model) - S(a fixed reference) on POOL-LB, 5 seeds": grid(5, 0, t_lb, DL, alpha=al),
+    }
+    out["registered_effect"] = {}
+    for k, v in out["power_at_alpha_over_family"].items():
+        ok = [d for d in DL if v[f"delta={d} seed_sd=0.02"] >= 0.6]
+        out["registered_effect"][k] = {"smallest_delta_with_power_0.6_at_seed_sd_0.02": ok[0] if ok else None,
+                                       **{f"power_there_seed_sd={sd}": v[f"delta={ok[0]} seed_sd={sd}"] for sd in (0.01, 0.02, 0.03) if ok}}
+    out["unequal_seed_sd_no_premise_term_5v3"] = {"sd 0.01 in the 5, 0.04 in the 3": simulate(0.0, 5, 3, 0.01, 0.04, 0.0, rng=rng),
+                                                  "sd 0.04 in the 5, 0.01 in the 3": simulate(0.0, 5, 3, 0.04, 0.01, 0.0, rng=rng)}
     p = ROOT / "finetune" / "power" / "power.json"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps({k: out[k] for k in ("premise_se", "false_positive_rate_max", "false_positive_rate_max_at")}, indent=1))
-    for k, v in out["power"].items():
-        print(k, {a: round(b, 2) for a, b in v.items() if "seed_sd=0.02" in a})
+    for k, v in out["registered_effect"].items():
+        print(k, {a: round(b, 2) if b is not None else None for a, b in v.items()})
+    print(out["unequal_seed_sd_no_premise_term_5v3"])
 
 
 if __name__ == "__main__":

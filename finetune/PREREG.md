@@ -279,7 +279,7 @@ yet run and no interpretation beyond the first column of E2's table.
 |---|---|
 | 1. The claim rule (interval and all nine seed pairs) had a false-positive rate of 0.10 to 0.12 | Replaced by one test pooling seeds with both variance terms; 5 seeds for A and B; simulated false-positive rate at most 0.051 (Section 3) |
 | 2. `power.py` simulated a different test | Rewritten: it calls the registered function; no clipping; 200,000 replications; premise SE from the built sets |
-| 3. E3 and E4 quoted power that was never computed | Computed; E3 and E4 are registered for 0.10, not 0.03 to 0.05 |
+| 3. E3 and E4 quoted power that was never computed | Computed for the registered test: E3 is registered for 0.10 and E4 (a within-model difference) for 0.05 |
 | 4. The in-distribution gate could be passed without the premise | E1 now requires S on ID48 (length removed) ≥ 0.80 and pooled AUROC above the string prior by test |
 | 5. The split was selected on the label | Stated; a random 187 of the remaining premises are the in-distribution set; the POOL premises are named a shifted population |
 | 6. A against B was confounded with exposure | A48 added (E2b); the outcome table says what each pattern licenses |

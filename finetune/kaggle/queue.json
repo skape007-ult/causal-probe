@@ -54,6 +54,16 @@
    "status_txt": "FAILED",
    "failure": "STATUS.txt says 'FAILED', not OK",
    "finished_at": "2026-11-17T01:18:47Z"
+  },
+  {
+   "id": "ft_timetest2",
+   "notebook": "finetune/notebooks/ft_timetest.ipynb",
+   "kernel": "skape007/ft-timetest2",
+   "max_minutes": 45.0,
+   "gpu": true,
+   "note": "second time test after the out-of-memory fix; waits for the owner to clear HALT",
+   "state": "queued",
+   "added_at": "2026-11-17T01:24:15Z"
   }
  ],
  "external": [],

@@ -1,0 +1,39 @@
+# Standing orders: fine-tuning study (branch `exp/finetune`, worktree `causal-probe-ft`)
+
+Written 16 November 2026 on the owner's instruction. These bind every session that works in this worktree.
+
+## Scope
+- v1.0 is closed. Never edit `RESULTS.md`, `report/`, the v1.0 scripts in `scripts/`, `src/causal_probe/`, or anything
+  they depend on. Import v1.0 code; do not change it. Everything new lives under `finetune/`; `notes/log.md` and
+  `notes/progress.md` are appended to as before.
+- Analysis code runs in the v1.0 environment (`../causal-probe/.venv/bin/python`), which is not modified. The
+  worktree's own `.venv` holds only the Kaggle CLI.
+
+## Claims
+1. **Audit before anything enters `finetune/RESULTS_FT.md`.** Every result is audited by a fresh reviewer who is given
+   code and result files, not conclusions. Unaudited results are reported as "in progress" or not at all.
+2. **Pre-register and power-check every test** in `finetune/PREREG.md` before the run that could decide it:
+   hypothesis, prediction, what each outcome means, exact test and threshold, power for a plausible effect. If power
+   is below 0.6, redesign or drop the test. Changes after the fact go under "Amendments" with date and reason.
+3. **Before describing any result as beyond its controls:** check multiplicity (how many comparisons could have been
+   the one reported), replication (other seeds, the other half of the data), and loading (what else the direction or
+   feature carries: prompt length, adjacency, the model's own answer).
+4. **`RESULTS_FT.md` wording changes wait for the owner.** Queue the proposed wording with its reason in
+   `finetune/notes/results_ft_queue.md`; do not enter it. Numbers that regenerate from result files are not wording.
+5. The owner's parts (`finetune/MY_PARTS.md`) are not implemented by Claude: the balancing function, the
+   within-string AUROC with length removed, the interpretation section. Reference implementations stay in separate
+   `*_reference.py` files.
+6. Never rush a claim to meet a date. The page reports audited parts and says "in progress" for the rest.
+
+## Machines and quota
+- Laptop: 8 GB, CPU only. Cap threads (`OMP_NUM_THREADS=2`), one heavy process at a time, nothing that swaps, no
+  model larger than Qwen2.5-0.5B loaded locally.
+- Kaggle: every GPU run goes through `finetune/scripts/kaggle_run.py` (queue file, at most 2 concurrent, no automatic
+  relaunch, halt and report on any failure, dry run first). **Cap: 26 GPU hours per quota week.** Ask the owner
+  before spending quota on anything that is not in the queue as planned, and before clearing `finetune/kaggle/HALT`.
+- No training run before the pre-registration has passed its independent review.
+
+## Housekeeping
+- Commits: no Claude co-author line. Notebooks are pinned to a pushed commit of `exp/finetune`.
+- The owner asks for "status" each morning; answer from `notes/progress.md`, updated first. No scheduler.
+- Batch questions for the owner; do not block on anything these orders let you decide.

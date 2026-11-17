@@ -15,11 +15,14 @@ Safeguards (each has a test in finetune/tests/test_kaggle_run.py):
   1. Queue file. Nothing is launched that is not an entry of finetune/kaggle/queue.json, and entries are
      launched in order. Every state change is written to the file before the next action.
   2. At most MAX_CONCURRENT (2) runs in flight (state launched/running).
-  3. Weekly GPU-hour cap (20 h per Kaggle quota week, which starts Saturday 00:00 UTC). Before a launch the
+  3. Weekly GPU-hour cap (26 h per Kaggle quota week, which starts Saturday 00:00 UTC). Before a launch the
      runner adds up: hours charged to finished runs this week + the FULL time limit of every run in flight +
      the full time limit of the candidate + hours entered with `external`. If that exceeds the cap it refuses.
      The time limit is also passed to Kaggle (--timeout), so a run cannot outlive what was reserved for it.
      Hours are session wall-clock hours (how Kaggle charges a session, whether it has one T4 or two).
+     Second limit: `quota --hours-left H` records what Kaggle's own page says is left this week. From then until the
+     quota week ends, the hours of runs launched after that moment (charged, or full limits while in flight) plus
+     the candidate's limit may not exceed H. The cap is the owner's rule; this is Kaggle's.
   4. No automatic relaunch. An id is launched once in its life; there is no retry and no requeue command.
      Running something again means a new `add` with a new id, typed by a person or by the agent on instruction.
   5. Stop and report on any failure. A run that errors, is cancelled, times out, cannot be downloaded, or whose
@@ -46,7 +49,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 KDIR = ROOT / "finetune" / "kaggle"
 MAX_CONCURRENT = 2
-WEEKLY_CAP_HOURS = 20.0
+WEEKLY_CAP_HOURS = 26.0             # the owner's cap (raised from 20 on 16 Nov)
 QUEUE_PATIENCE_MIN = 180              # a run Kaggle has not started after this long is reported as a failure
 ACCELERATOR = "NvidiaTeslaT4"            # the CLI's name for "GPU T4 x2"
 IN_FLIGHT = ("launched", "running")
@@ -125,9 +128,17 @@ class Runner:
             else:
                 charged += r.get("gpu_hours_charged", r["max_minutes"] / 60)
         external = sum(e["hours"] for e in q.get("external", []) if parse(e["at"]) >= w0)
-        return {"week_start": iso(w0), "charged": round(charged, 3), "reserved_in_flight": round(reserved, 3),
-                "external": round(external, 3), "total": round(charged + reserved + external, 3),
-                "cap": WEEKLY_CAP_HOURS}
+        led = {"week_start": iso(w0), "charged": round(charged, 3), "reserved_in_flight": round(reserved, 3),
+               "external": round(external, 3), "total": round(charged + reserved + external, 3),
+               "cap": WEEKLY_CAP_HOURS, "kaggle_left": None}
+        qs = [x for x in q.get("quota", []) if parse(x["at"]) >= w0]
+        if qs:
+            last = qs[-1]
+            since = sum((r["max_minutes"] / 60 if r["state"] in IN_FLIGHT else r.get("gpu_hours_charged", r["max_minutes"] / 60))
+                        for r in q["runs"] if r.get("launched_at") and parse(r["launched_at"]) >= parse(last["at"]) and r.get("gpu", True))
+            led["kaggle_left"] = round(last["hours_left"] - since, 3)
+            led["kaggle_left_recorded"] = f"{last['hours_left']} h at {last['at']}"
+        return led
 
     # ------------------------------------------------------------------ commands
     def add(self, rid: str, notebook: str, max_minutes: float, note: str = "", owner: str | None = None,
@@ -161,6 +172,11 @@ class Runner:
         q.setdefault("external", []).append({"hours": hours, "note": note, "at": iso(self.clock())})
         self.save(q)
 
+    def quota(self, hours_left: float, note: str = "") -> None:
+        q = self.load()
+        q.setdefault("quota", []).append({"hours_left": hours_left, "note": note, "at": iso(self.clock())})
+        self.save(q)
+
     def launch(self, dry: bool = False, say=print) -> dict | None:
         """Launch the first queued run if every safeguard allows it. At most one launch per call."""
         q = self.load()
@@ -182,6 +198,11 @@ class Runner:
         if led["total"] + need > WEEKLY_CAP_HOURS + 1e-9:
             raise Refused(f"launching {nxt['id']} could bring the week to {led['total'] + need:.2f} GPU hours; "
                           f"the cap is {WEEKLY_CAP_HOURS}. It stays queued")
+        if led["kaggle_left"] is not None:
+            say(f"Kaggle's own quota: {led['kaggle_left_recorded']}; left after runs launched since: {led['kaggle_left']} h")
+            if need > led["kaggle_left"] + 1e-9:
+                raise Refused(f"{nxt['id']} has a limit of {need:.2f} h and only {led['kaggle_left']} h of Kaggle's weekly quota "
+                              f"are left by the record of {led['kaggle_left_recorded']}. It stays queued")
         nb = ROOT / nxt["notebook"]
         if not nb.is_file():
             raise Refused(f"{nxt['notebook']} no longer exists; {nxt['id']} stays queued")
@@ -322,6 +343,8 @@ class Runner:
         led = self.ledger(q)
         say(f"GPU hours, week from {led['week_start']}: charged {led['charged']} + in flight {led['reserved_in_flight']} "
             f"+ external {led['external']} = {led['total']} of {led['cap']}")
+        if led["kaggle_left"] is not None:
+            say(f"Kaggle's own quota: {led['kaggle_left']} h left ({led['kaggle_left_recorded']}, minus runs launched since)")
         say("HALT: " + (self.halt.read_text().rstrip() if self.halt.exists() else "not set"))
         for r in q["runs"]:
             say(f"  {r['state']:9s} {r['id']:28s} limit {r['max_minutes']:5.0f} min  "
@@ -338,6 +361,7 @@ def main(argv=None) -> int:
         s = sub.add_parser(name); s.add_argument("--dry-run", action="store_true")
     sub.add_parser("status")
     e = sub.add_parser("external"); e.add_argument("--hours", type=float, required=True); e.add_argument("--note", required=True)
+    k = sub.add_parser("quota"); k.add_argument("--hours-left", type=float, required=True); k.add_argument("--note", default="")
     c = sub.add_parser("clear-halt"); c.add_argument("--reason", required=True)
     args = ap.parse_args(argv)
     try:
@@ -354,6 +378,8 @@ def main(argv=None) -> int:
             R.report()
         elif args.cmd == "external":
             R.external(args.hours, args.note)
+        elif args.cmd == "quota":
+            R.quota(args.hours_left, args.note)
         elif args.cmd == "clear-halt":
             R.clear_halt(args.reason)
     except Refused as x:

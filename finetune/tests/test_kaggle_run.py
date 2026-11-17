@@ -112,11 +112,12 @@ def test_max_two_concurrent(env):
 
 
 def test_weekly_cap_counts_full_limits_of_runs_in_flight(env):
-    env.add("run_a", env.nb, 600); env.add("run_b", env.nb, 600); env.add("run_c", env.nb, 1)
-    env.launch(say=lambda *_: None); env.launch(say=lambda *_: None)      # 10 h + 10 h reserved = the cap
+    env.add("run_a", env.nb, 720); env.add("run_b", env.nb, 720); env.add("run_c", env.nb, 121)
+    env.launch(say=lambda *_: None); env.launch(say=lambda *_: None)      # 12 h + 12 h reserved
+    (env.bin / "status").write_text("RUNNING"); env.clk.add(minutes=1); env.poll(say=lambda *_: None)
     (env.bin / "status").write_text("COMPLETE")
-    env.clk.add(hours=10); env.poll(say=lambda *_: None)                   # charged 20 h
-    with pytest.raises(K.Refused, match="cap is 20"):
+    env.clk.add(hours=12); env.poll(say=lambda *_: None)                   # charged 24 h; 2.02 h more would pass 26
+    with pytest.raises(K.Refused, match="cap is 26"):
         env.launch(say=lambda *_: None)
     assert len(pushes(env)) == 2
     env.clk.add(days=5)                                                    # Saturday 22:00 UTC: a new quota week
@@ -125,16 +126,17 @@ def test_weekly_cap_counts_full_limits_of_runs_in_flight(env):
 
 
 def test_cap_reserves_before_anything_is_charged(env):
-    env.add("run_a", env.nb, 720); env.add("run_b", env.nb, 500)
+    env.external(3.0, "by hand")
+    env.add("run_a", env.nb, 720); env.add("run_b", env.nb, 720)
     env.launch(say=lambda *_: None)
-    with pytest.raises(K.Refused, match="cap is 20"):                      # 12 h in flight + 8.33 h > 20
+    with pytest.raises(K.Refused, match="cap is 26"):                      # 3 h + 12 h in flight + 12 h > 26
         env.launch(say=lambda *_: None)
 
 
 def test_external_hours_count(env):
-    env.external(19.95, "by hand")
+    env.external(25.95, "by hand")
     env.add("run_a", env.nb, 10)
-    with pytest.raises(K.Refused, match="cap is 20"):
+    with pytest.raises(K.Refused, match="cap is 26"):
         env.launch(say=lambda *_: None)
 
 
@@ -230,3 +232,17 @@ def test_complete_run_is_downloaded_and_charged(env):
     r = env.load()["runs"][0]
     assert r["state"] == "complete" and r["status_txt"] == "OK" and r["gpu_hours_charged"] == 0.1
     assert "kaggle_out/STATUS.txt" in r["downloaded"] and not env.halt.exists()
+
+
+def test_kaggles_own_quota_left_is_a_second_limit(env):
+    env.quota(1.0, "from the Kaggle page")
+    env.add("run_a", env.nb, 45); env.add("run_b", env.nb, 30); env.add("run_c", env.nb, 10)
+    env.launch(say=lambda *_: None)                                        # 0.75 h of 1.0
+    with pytest.raises(K.Refused, match="weekly quota"):
+        env.launch(say=lambda *_: None)                                    # + 0.5 h would pass what Kaggle has left
+    (env.bin / "status").write_text("RUNNING"); env.clk.add(minutes=1); env.poll(say=lambda *_: None)
+    (env.bin / "status").write_text("COMPLETE"); env.clk.add(minutes=6); env.poll(say=lambda *_: None)   # charged 0.1 h
+    env.launch(say=lambda *_: None)                                        # 0.1 + 0.5 fits
+    env.clk.add(days=5)                                                    # new quota week: the old record no longer applies
+    env.launch(say=lambda *_: None)
+    assert len(pushes(env)) == 3

@@ -105,14 +105,14 @@ print("expected archives:", expected, "|", not_finished or "all jobs finished")
 '''
 
 
-# Colab overflow: one model per notebook (a free Colab session can end at any time; one model is about an hour and a
-# half), launched by hand by the owner, never more than one at a time. Same cells: the platform cell detects Colab,
+# Colab overflow: one model per notebook (a free Colab session can end at any time; one model is about three hours: training
+# plus scoring), launched by hand by the owner, never more than one at a time. Same cells: the platform cell detects Colab,
 # writes to /content/out and the last cell hands STATUS.txt and the archives to the browser.
 COLAB_JOBS = [("base", 0)] + [(c, s) for c, n in (("A", 5), ("B", 5), ("A48", 3), ("C", 3), ("Bswap", 5)) for s in range(n)]
 for c, sd in COLAB_JOBS:
     nm = "base" if c == "base" else f"{c}_s{sd}"
     RUNS.append(dict(file=f"colab/colab_{nm}.ipynb", run=f"colab_{nm}", jobs=[(c, sd)], extra="",
-                     title=f"Fine-tuning study, Colab overflow: {nm}", est="about 1.5 to 2 hours on a free T4 (set from the time test)",
+                     title=f"Fine-tuning study, Colab overflow: {nm}", est=("about 50 minutes (scoring only)" if c == "base" else "about 3 to 3.5 hours on a free T4 (Kaggle, 17 Nov: training 114-141 min, scoring 57-63 min)"),
                      what=f"trains and scores one model ({nm}). Colab: Runtime -> Change runtime type -> T4 GPU, then Run all. "
                           "Keep the tab open. At the end the browser downloads STATUS.txt and the zip files; put them in one folder "
                           "and give Claude the folder (finetune/scripts/ingest.py checks them). Never run two Colab notebooks at once"))

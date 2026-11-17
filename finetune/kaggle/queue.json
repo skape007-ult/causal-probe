@@ -89,8 +89,12 @@
    "max_minutes": 270.0,
    "gpu": true,
    "note": "core pair A0_B0; limit 4.5 h against an expected 3.1 to 3.8 h",
-   "state": "queued",
-   "added_at": "2026-11-17T15:08:16Z"
+   "state": "launched",
+   "added_at": "2026-11-17T15:08:16Z",
+   "launched_at": "2026-11-17T15:08:26Z",
+   "notebook_sha256": "f0c93dab61b4d9da4324b09048054ad26d40318e5a7428c2c963606c35770204",
+   "commit": "b5561e92875d8093a4e7ab40a517ca0adb7afac4",
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a0-b0"
   },
   {
    "id": "ft_pair_a1_b1",
@@ -99,8 +103,12 @@
    "max_minutes": 270.0,
    "gpu": true,
    "note": "core pair A1_B1; limit 4.5 h against an expected 3.1 to 3.8 h",
-   "state": "queued",
-   "added_at": "2026-11-17T15:08:16Z"
+   "state": "launched",
+   "added_at": "2026-11-17T15:08:16Z",
+   "launched_at": "2026-11-17T15:08:28Z",
+   "notebook_sha256": "773e989461de3d5a546c2dfa21cd3f6bbe59026d536a1fdcbc088085da33b32a",
+   "commit": "b5561e92875d8093a4e7ab40a517ca0adb7afac4+uncommitted",
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a1-b1"
   },
   {
    "id": "ft_pair_a2_b2",

@@ -1,5 +1,12 @@
 # Progress (read this first after a restart)
 
+## STATUS, Tuesday 17 November, 15:10 UTC (fine-tuning study)
+
+- **Running on Kaggle:** `ft_pair_a0_b0`, `ft_pair_a1_b1` (since 15:08 UTC, expected back 18:15 to 19:00 UTC); `ft_pair_a2_b2` queued, launched automatically when a pair returns. Loop: `caffeinate -i .venv/bin/python finetune/scripts/kaggle_run.py run`, log `finetune/kaggle/run_loop.log`.
+- **Budget:** 14.4 Kaggle hours left until the reset (Sat 21 Nov about 00:00 UTC). One model = 3.0 to 3.7 h; a pair-session 3.1 to 3.8 h.
+- **For the owner, by hand (Colab, one at a time):** `finetune/notebooks/colab/colab_base.ipynb` first (scoring only), then `colab_A_s3` and `colab_B_s3` if the fourth Kaggle pair does not fit.
+- **Next (CPU):** behaviour analysis E1 to E5 written and tested on synthetic scores before real scores arrive; ingest the pairs as they return.
+
 ## STATUS, Monday 16 November, end of day (fine-tuning study, branch `exp/finetune`, worktree `../causal-probe-ft`)
 
 v1.0 is closed and untouched. Everything below lives under `finetune/`. Standing orders: `CLAUDE.md` in the worktree.

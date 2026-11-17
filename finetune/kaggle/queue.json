@@ -81,6 +81,36 @@
    },
    "status_txt": "OK",
    "finished_at": "2026-11-17T15:05:40Z"
+  },
+  {
+   "id": "ft_pair_a0_b0",
+   "notebook": "finetune/notebooks/ft_pair_A0_B0.ipynb",
+   "kernel": "skape007/ft-pair-a0-b0",
+   "max_minutes": 270.0,
+   "gpu": true,
+   "note": "core pair A0_B0; limit 4.5 h against an expected 3.1 to 3.8 h",
+   "state": "queued",
+   "added_at": "2026-11-17T15:08:16Z"
+  },
+  {
+   "id": "ft_pair_a1_b1",
+   "notebook": "finetune/notebooks/ft_pair_A1_B1.ipynb",
+   "kernel": "skape007/ft-pair-a1-b1",
+   "max_minutes": 270.0,
+   "gpu": true,
+   "note": "core pair A1_B1; limit 4.5 h against an expected 3.1 to 3.8 h",
+   "state": "queued",
+   "added_at": "2026-11-17T15:08:16Z"
+  },
+  {
+   "id": "ft_pair_a2_b2",
+   "notebook": "finetune/notebooks/ft_pair_A2_B2.ipynb",
+   "kernel": "skape007/ft-pair-a2-b2",
+   "max_minutes": 270.0,
+   "gpu": true,
+   "note": "core pair A2_B2; limit 4.5 h against an expected 3.1 to 3.8 h",
+   "state": "queued",
+   "added_at": "2026-11-17T15:08:17Z"
   }
  ],
  "external": [],

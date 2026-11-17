@@ -8,6 +8,9 @@ file is frozen with v1.0, which is why this one lives under finetune/.
   .venv/bin/python finetune/scripts/kaggle_run.py launch [--dry-run]     # at most one launch per call
   .venv/bin/python finetune/scripts/kaggle_run.py poll   [--dry-run]     # status; download + STATUS.txt check when done
   .venv/bin/python finetune/scripts/kaggle_run.py status                 # the queue and the GPU-hour ledger, no network
+  caffeinate -i .venv/bin/python finetune/scripts/kaggle_run.py run --every 300   # loop: poll, then launch whatever the
+        # safeguards allow; ends when nothing is in flight and nothing more can be launched (queue empty, HALT, cap or
+        # quota), or after --max-hours. A refusal is a reason to stop launching, never to retry the same id.
   .venv/bin/python finetune/scripts/kaggle_run.py external --hours 3 --note "launched by hand in the web editor"
   .venv/bin/python finetune/scripts/kaggle_run.py clear-halt --reason "..."   # the owner's decision, never automatic
 
@@ -338,6 +341,31 @@ class Runner:
             f.write(self.halt.read_text() + f"{iso(self.clock())}  CLEARED: {reason}\n\n")
         self.halt.unlink()
 
+    def run_loop(self, every: int = 300, max_hours: float = 30.0, say=print, sleep=None) -> str:
+        import time as _t
+        sleep = sleep or _t.sleep
+        t_end = _t.time() + max_hours * 3600
+        while True:
+            self.poll(say=say)
+            launched_or_refused = None
+            while True:                                   # launch as many as the safeguards allow, one call at a time
+                try:
+                    r = self.launch(say=say)
+                except Refused as x:
+                    launched_or_refused = str(x); break
+                if r is None:
+                    break
+            q = self.load()
+            flying = [r for r in q["runs"] if r["state"] in IN_FLIGHT]
+            if not flying:
+                why = "HALT is set" if self.halt.exists() else (launched_or_refused or "nothing queued")
+                say(f"loop ends: nothing in flight; {why}")
+                return why
+            if _t.time() > t_end:
+                say("loop ends: --max-hours reached with runs in flight; run the loop again to keep polling")
+                return "max hours"
+            sleep(every)
+
     def report(self, say=print) -> None:
         q = self.load()
         led = self.ledger(q)
@@ -360,6 +388,7 @@ def main(argv=None) -> int:
     for name in ("launch", "poll"):
         s = sub.add_parser(name); s.add_argument("--dry-run", action="store_true")
     sub.add_parser("status")
+    rl = sub.add_parser("run"); rl.add_argument("--every", type=int, default=300); rl.add_argument("--max-hours", type=float, default=30.0)
     e = sub.add_parser("external"); e.add_argument("--hours", type=float, required=True); e.add_argument("--note", required=True)
     k = sub.add_parser("quota"); k.add_argument("--hours-left", type=float, required=True); k.add_argument("--note", default="")
     c = sub.add_parser("clear-halt"); c.add_argument("--reason", required=True)
@@ -374,6 +403,8 @@ def main(argv=None) -> int:
             R.launch(dry=args.dry_run)
         elif args.cmd == "poll":
             R.poll(dry=args.dry_run)
+        elif args.cmd == "run":
+            R.run_loop(args.every, args.max_hours)
         elif args.cmd == "status":
             R.report()
         elif args.cmd == "external":

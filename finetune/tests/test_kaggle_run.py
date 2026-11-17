@@ -246,3 +246,24 @@ def test_kaggles_own_quota_left_is_a_second_limit(env):
     env.clk.add(days=5)                                                    # new quota week: the old record no longer applies
     env.launch(say=lambda *_: None)
     assert len(pushes(env)) == 3
+
+
+def test_run_loop_launches_in_order_within_limits_and_stops(env):
+    env.add("run_a", env.nb, 60); env.add("run_b", env.nb, 60); env.add("run_c", env.nb, 60)
+    (env.bin / "status").write_text("RUNNING")
+    ticks = []
+    def sleep(_):
+        ticks.append(1)
+        env.clk.add(minutes=30)
+        if len(ticks) == 2:
+            (env.bin / "status").write_text("COMPLETE")
+    why = env.run_loop(every=1, say=lambda *_: None, sleep=sleep)
+    assert [c.split()[3].rsplit("/", 1)[1] for c in pushes(env)] == ["run_a", "run_b", "run_c"]
+    assert why == "nothing queued" and all(r["state"] == "complete" for r in env.load()["runs"])
+
+
+def test_run_loop_stops_launching_on_halt(env):
+    env.add("run_a", env.nb, 60); env.add("run_b", env.nb, 60); env.add("run_c", env.nb, 60)
+    (env.bin / "status").write_text("ERROR")
+    why = env.run_loop(every=1, say=lambda *_: None, sleep=lambda _: env.clk.add(minutes=5))
+    assert why == "HALT is set" and len(pushes(env)) == 2

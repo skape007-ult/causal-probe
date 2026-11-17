@@ -1,229 +1,298 @@
-# Pre-registration: the fine-tuning study (D3)
+# Pre-registration: the fine-tuning study (D3) — version 2
 
-Written Monday 16 November 2026, before any fine-tuned model exists. The commit that adds this file precedes every
-training run; later changes are appended under "Amendments" with date and reason, never edited in place.
-Power numbers: `finetune/scripts/power.py` → `finetune/power/power.json`. Dataset counts quoted here were measured
-today on the released v2.0 data (`data/raw/corr2cause`, revision in `report/benchmark_text_baselines.md`).
+Version 2, 17 November 2026 (UTC), before any fine-tuned model exists. Version 1 (commit `2c3dbe5`, kept unchanged
+in `finetune/prereg_history/PREREG_v1_2c3dbe5.md`) was reviewed independently before any run
+(`finetune/notes/audit_prereg_raw.md`): eight blocking findings. It was replaced, not patched; Section 6 answers
+every finding. From the commit that passes the second review onward this file is changed only by dated entries
+under "Amendments".
 
-## 0. Question and what would count as an answer
+Every count below is read from `finetune/itemsets/build_report.json` (built by `finetune/scripts/build_data.py`
+with the reference balancing function); every size and power figure from `finetune/power/power.json`
+(`finetune/scripts/power.py`, which simulates the function the analysis will call, `finetune/ftstudy/seedtest.py`).
 
-When Qwen2.5-1.5B-Instruct is LoRA fine-tuned on Corr2Cause until it does the task in distribution, has it learned the
-causal structure or the shortcuts measured in v1.0 (hypothesis wording, prompt length within hypothesis type, lookup of
-the premise statements about the queried pair)?
+## 0. Question, and what would count as an answer
 
-"Learned the causal structure" is given an operational meaning here, because "above chance on the debiased pool" is
-not one: on that pool a lookup of the statements naming the queried pair already scores 0.765, a hand-written parse
-0.816 and the tuned text stack 0.887 (v1.0, claim 2). The ladder, weakest reading first:
+When Qwen2.5-1.5B-Instruct is LoRA fine-tuned on Corr2Cause, what has it learned: the causal structure, or what can
+be had without it? "Without it" has four parts here, each with its own reference:
 
-| Level | Evidence required | Experiment |
+| What a model could be doing | Reference that does only that | Its score |
 |---|---|---|
-| L0 shortcut only | in distribution high; on the length-balanced pool the within-string AUROC with length removed is not above 0.5; condition C reproduces most of A in distribution | E1, E2, E3 |
-| L1 pairwise lookup | above 0.5 on the length-balanced pool, but not above 0.5 inside cells of hypothesis string × adjacency of the queried pair, and not above the hand parse | E5 |
-| L2 beyond lookup | above 0.5 inside those cells, and survives renaming and paraphrase on held-out premises | E4, E5 |
-| L3 represented beyond the text | a probe for the gold label beats every audited text reference, including ones trained on the model's own training set | E6 |
-| L4 used | steering along the gold direction beats 500 matched controls in a held-out test; patching localises it | E7, E8 |
+| reading the hypothesis wording | P(valid | hypothesis string) from the training set | pooled AUROC 0.885 on ID (fitted on A) |
+| reading prompt length | token count within string | raw within-string AUROC 0.758 on ID48; removed from S by construction |
+| copying from the most similar training premise | nearest-training-premise copy (Section 1) | S = 0.805 on POOL-LB from B's training set; 0.641 from A's; 0.660 from A48's |
+| looking up the statements about the queried pair | v1.0 lookup, hand parse, tuned text stack, fitted on the condition's training set | computed with the behaviour analysis, before model scores are opened |
 
-Each level is claimed only if its test passes as registered below. No level is inferred from a higher or lower one.
+The ladder, each rung claimed only if its registered test passes; "not shown" is reported with the interval and
+never read as "absent":
 
-## 1. Data (fixed before training; built on the laptop)
+| Rung | Evidence | Experiment |
+|---|---|---|
+| L0 | S on POOL-LB not shown above 0.5 | E2 |
+| L1 | S on POOL-LB above 0.5, not shown above the nearest-premise copy of the model's own training set | E2, E5b |
+| L2 | above the nearest-premise copy, and above 0.5 inside cells of hypothesis string × adjacency | E5a, E5b |
+| L3 | L2, and above the best fitted text reference (lookup, hand parse, tuned stack) | E5c |
+| L4 | an intervention shows the label direction is used | E7, E8: not registered yet (Section 3) |
 
-**Premises.** Official train has 205,734 items on 2,338 premises; test 1,162 items on 21; dev 1,076 on 22. Premise
-overlap: train–test 0, train–dev 2, dev–test 3. Parsing every premise into its set of correlation and independence
-statements and canonicalising over all relabellings of the variables gives 2,338 distinct classes for 2,338 train
-premises, none shared with test: **every premise is its own graph class**, so held out by premise is held out by
-graph. The build recomputes this and fails if it stops being true.
+## 1. Data (built and fixed; `finetune/itemsets/`)
 
-- EVAL premises: the 1,200 premises of the v1.0 debiased pool, plus the 21 official test premises.
-- TRAIN premises: train premises that are not EVAL and not in dev: 1,137 (98,964 official items, 12,666 valid among
-  the 42,949 items of the 48 hypothesis strings that occur with both labels).
-- Dev is not used for anything.
-- Proof of separation, written to `finetune/itemsets/overlap_report.json` and enforced by a test: for every (training set,
-  evaluation set) pair, the count of shared premise texts, shared premise hashes after variable renaming, and shared
-  graph classes, each required to be 0.
+**Premises.** Official train: 205,734 items on 2,338 premises; test 1,162 on 21; dev 1,076 on 22 (2 of them also
+in train, 3 in test; dev is not used). The 2,358 premises of train-minus-dev plus test are 2,358 distinct graph
+classes (statement set canonicalised over every relabelling of the variables). That is necessary for "held out by
+graph" and **not sufficient**: a held-out premise differs from its nearest training premise by a median of 4
+statements (quartiles 3 and 8) out of about 33. Hence the nearest-premise reference.
 
-**Training conditions.** All three have exactly N items and the same number of optimisation steps. N is not chosen by
-me: it is the number of items condition B yields (below), rounded down to a multiple of 100.
+Three groups of premises:
 
-- **A, official.** A uniform random sample of N official items of the TRAIN premises, as released (all 120 hypothesis
-  strings, about 18% valid). "Official train as is" cannot be taken literally: see Deviations.
-- **B, debiased.** Built by the balancing function (`finetune/ftstudy/balance.py`, the owner's implementation; a
-  reference implementation is kept in `balance_reference.py`). Properties, by construction and tested: (i) inside
-  every hypothesis string, valid = invalid; (ii) inside every premise, valid = invalid; (iii) inside every hypothesis
-  type × prompt-length bin, valid = invalid, with bins narrow enough that (iv) holds. (iv) Verification on the built
-  set, premise-grouped 5-fold: AUROC for the label of a hypothesis-only classifier, a length-only classifier (token
-  count of the full prompt under the Qwen2.5 tokenizer; within type and within string), a premise-only classifier, and
-  a classifier on hypothesis string × length jointly. Requirement for each: |AUROC − 0.5| ≤ 0.02 and the premise
-  bootstrap interval contains 0.5. If a requirement fails the set is rebuilt with narrower bins; no model is trained
-  on a set that fails.
-- **C, shortcut control.** The items of A with each premise replaced by the premise of another TRAIN item that has the
-  same number of variables and the same prompt-length bin, drawn at random (seeded), never the item's own premise.
-  Hypothesis, label and (to bin width) length are those of A, so every hypothesis-only and length-only statistic of C
-  equals A's; the premise content is unrelated to the label. C measures how far hypothesis wording plus length carry a
-  fine-tuned model. It cannot see the lookup shortcut; that one is measured by text baselines (E3).
+- **POOL premises (1,200):** those of the v1.0 debiased pool. They were *selected on the label* by the v1.0 builder
+  (premises holding a valid item of a two-label string): 23.8% of their official items are valid, 54.8% inside the
+  48 two-label strings. They are not a random sample of train.
+- Of the remaining 1,137 premises, a seeded random 187 are the **ID premises** (in-distribution evaluation) and
+  the other **950 are TRAIN**. Valid rate of official items: TRAIN 12.5%, ID 14.5% (28.7% and 33.5% inside the 48
+  strings). "In distribution" in this study means the ID premises. The POOL premises are a shifted population
+  (about twice the valid rate), and every statement about them says so.
 
-Measured today with premise word count as a stand-in for token count: inside a hypothesis type, length alone predicts
-the label in the TRAIN items of the 48 two-label strings with AUROC 0.26 to 0.30 (shorter premise, more often valid).
-That is a far larger leak than the 0.41 to 0.58 of the v1.0 pool, and it is what condition A is free to learn.
+**Training conditions**, N = 7,184 items each (the size B yields; fixed):
 
-**Evaluation sets.** Every model is scored on exactly the same items (ids and sha256 of each set are committed).
-
-| Set | Items | Premises | Purpose |
+| | Items | Seeds | Role |
 |---|---|---|---|
-| ID-heldout | 6,000 official items sampled uniformly from the EVAL pool premises (natural label rate, all strings) | 1,200 | "does the task in distribution" on unseen premises |
+| A | uniform sample of the 82,458 official TRAIN items: 120 strings, 12.8% valid; 3,126 items in the 48 two-label strings, 919 of them valid | 5 | "official data" |
+| A48 | uniform sample of the TRAIN items of the 48 two-label strings, natural labels (28.8% valid), no balancing | 3 | exposure control for B: same strings, same count, only the balancing differs |
+| B | balanced (below): 48 strings, 707 premises, exactly half valid | 5 | "debiased data" |
+| C | A's items, each on the premise of another TRAIN premise | 3 | how far everything except the item's own premise carries A |
+| Bswap | B's items, each on the premise of another TRAIN premise | 3 | negative control for B and POOL-LB: must score 0.5 |
+
+- **B** is built by the balancing function (`ftstudy/balance.py`; the core runs use the reference implementation
+  `balance_reference.py`; the owner's independent implementation must reproduce the stored sets exactly, and the
+  page will report it that way) with 4 length bins and at most 8 pairs per premise. By construction, valid =
+  invalid inside every hypothesis string, every premise, every type × length bin, and every string × length bin.
+- **Premise swap (C, Bswap).** TRAIN premises are stratified by number of variables, then sorted by premise token
+  count and cut into consecutive strata of at least 10 premises (93 strata of 10 to 19). The donor is drawn
+  uniformly among the *premises* of the item's stratum other than its own. This is independent of B's bins. A
+  swapped item keeps its hypothesis and label. In C the kept label is still the true label of (new premise,
+  hypothesis) for 85% of the items that exist on the new premise, because most strings have one label and a
+  stratum fixes a premise's size: **C is a mostly correct, noisy Corr2Cause in which the item's own premise is not
+  available.** What C measures is how far hypothesis wording, length and premise size carry, not "shortcuts" in
+  general. In Bswap the kept label is correct for 49.9%: nothing but chance is available.
+- **Seeds** change LoRA initialisation and data order. The items of a condition are one draw, the same for every
+  seed: "consistent across seeds" does not cover "consistent across draws of the training set" (limitation).
+
+**Shortcut checks on B and POOL-LB** (passed; in the build report). Exact balance holds in-sample. Classifiers
+fitted on one set and tested on the other (disjoint premises), AUROC with premise-bootstrap interval, requirement
+|AUROC − 0.5| ≤ 0.02 and interval containing 0.5: hypothesis string (label rate per string): 0.500 both ways;
+premise surface statistics (logistic regression on variable count, numbers of correlation, marginal and
+conditional independence statements, log length): 0.500 both ways; length within string (per-string logistic
+regression on centred log token count and its square): 0.519 [0.499, 0.538] fitted on B, 0.507 [0.491, 0.521] the
+other way; string and length jointly: 0.515 and 0.509. The same classifiers fitted on A and tested on ID: 0.885,
+0.676, 0.726 and 0.922. (Folds inside one exactly balanced set give below-chance values, 0.37 to 0.43, by the
+mirror effect of v1.0 decision D21; that method was mine in version 1 and is not used.) These checks cover the four
+named statistics only; a balancing function can leave or create others, shared by B and POOL-LB and absent from A.
+Bswap is the control for that.
+
+**Evaluation sets** (ids and sha256 committed; every model is scored on every item):
+
+| Set | Items | Premises | Use |
+|---|---|---|---|
+| ID | 2,000 official items of the ID premises, natural labels (15.3% valid) | 187 | pooled AUROC, F1; E1 |
+| ID48 | 2,000 items of the ID premises from the 48 two-label strings, natural labels (34.8% valid; 47 strings with at least 3 items per class) | 187 | S in distribution; E1, E3, E4 |
+| POOL-LB | 4,706, built from the POOL premises by the balancing function (4 bins, 2 pairs per premise; at most 4 items per premise; 47 strings with at least 3 items per class, median 29 pairs per string) | 1,193 | S where wording, premise and length carry nothing; E2, E5 |
+| POOL | the v1.0 pool, 2,400 | 1,200 | continuity with v1.0; descriptive |
 | official test | 1,162 | 21 | continuity with the paper; descriptive |
-| POOL | the v1.0 debiased pool, unchanged | 1,200 | continuity with v1.0 |
-| POOL-LB | rebuilt from all official items of the 1,200 pool premises with the same balancing function as B | 1,200 at most | the primary set: wording, premise and length carry nothing |
-| renamed | ID-heldout, POOL, POOL-LB with A…F → Z…U (v1.0 `rename_variables`) | same | variable refactorisation |
-| paraphrased | ID-heldout, POOL, POOL-LB with the authors' paraphrase templates, taken from their released file | same | paraphrase |
-| authors' perturbed | `perturbation_by_refactorization_test.csv`, `perturbation_by_paraphrasing_test.csv` (2,246 items each; valid = `label == 1`) | 21 | replication of Table 5b; descriptive |
+| ID renamed, ID paraphrased | ID with the authors' two perturbations | 187 | Table 5b on held-out premises; descriptive |
+| ID48 renamed, ID48 renamed keeping order | A…F → Z…U (the authors'; reverses alphabetical order) and A…F → U…Z (order kept) | 187 | E4 |
+| POOL-LB renamed | A…F → Z…U | 1,193 | descriptive |
+| authors' perturbed sets | distinct inputs of their two files: 1,884 and 1,522 (the files have 2,246 rows each) | 21 | Table 5b; descriptive |
 
-The authors' perturbed sets are released (Hugging Face `causal-nlp/corr2cause`) and rest on the 21 test premises.
-The refactorisation file contains all 1,162 renamed v2.0 test items with identical labels (checked today). Our
-paraphrased sets apply the authors' own four hypothesis templates to our held-out premises; the mapping from relation
-to template is read from their file and committed.
+No training set shares a premise text, a premise text with renaming undone, or a graph class with any evaluation
+set (60 pairs checked, `overlap_report.json`, enforced by the build). Our renaming and paraphrase reproduce the
+authors' files on all 1,162 official test items with identical labels.
 
-## 2. Training (fixed before the first run)
+Two properties of the authors' perturbations, stated so that no drop is over-read: (i) in this benchmark the
+letters carry causal order: a directional hypothesis whose first-named variable is the later letter is never valid
+in train. Reversing the alphabet therefore inverts a real regularity of the data as well as changing names.
+(ii) The paraphrase gives "parent" and "child" one wording and the two indirect relations one wording (four
+templates for six relations), and the paraphrase file is labelled three-way (valid = entailment).
 
-Qwen2.5-1.5B-Instruct; LoRA with pinned peft 0.21.2, rank 16, alpha 32, dropout 0.05, on all attention and MLP
-projections; AdamW, learning rate 2e-4, linear warm-up 30 steps then linear decay; batch 16; 3 epochs over N; loss:
-cross-entropy on the answer token (Yes/No) at the final prompt position over the full vocabulary; prompt format
-identical to v1.0 (`causal_probe.prompts`). No class weighting in any condition. Seeds 0, 1, 2 change LoRA
-initialisation and data order; the training items of a condition are the same for every seed. Nothing is tuned on
-any evaluation set; there is no early stopping; the last checkpoint is the model.
+**The nearest-premise reference.** For a test item: among the premises of the given training set that have the
+same number of variables and carry the item's hypothesis string, the one whose statement set has the smallest
+symmetric difference to the test premise; score = the label of the string there (`datasets.nearest_premise_scores`,
+k = 1). Computed per condition on that condition's own training set. Already computed (no model involved):
+S on POOL-LB 0.805 from B, 0.660 from A48, 0.641 from A; S on ID48 0.678 from A.
 
-A time test (one seed of A, 300 steps, plus the evaluation pass on 500 items) runs first. Only seconds per step,
-memory and "the loss decreased" are read from it; its adapter is discarded.
+## 2. Training (fixed)
 
-**Reference model A-full** (one seed, all 98,964 TRAIN items, one epoch). Not part of any A/B/C comparison. It exists
-because N is set by B and may be too small for A to do the task in distribution. It is trained only if A at N fails
-the gate of E1, and is then the "model that does the task" for E6 to E8, labelled as such.
+Qwen2.5-1.5B-Instruct; LoRA (peft 0.21.2), rank 16, alpha 32, dropout 0.05, all attention and MLP projections;
+AdamW, learning rate 2e-4, 30 warm-up steps then linear decay; batch 16; 3 epochs over the 7,184 items (1,347
+steps); cross-entropy on the answer token at the final prompt position; prompt format of v1.0. No class weighting,
+no early stopping, nothing tuned on any evaluation set; the last checkpoint is the model. 19 fine-tuned models
+(5 + 3 + 5 + 3 + 3) and the base model.
 
-## 3. Experiments
+A time test comes first: one seed of A for 150 steps, then the evaluation pass on 300 items. Read from it:
+seconds per step, memory, "the loss decreased". Its evaluation scores are not opened and its adapter is discarded.
+There is no A-full model (version 1 had one; it changed items, epochs and steps at once).
 
-Unit of inference everywhere: the premise (cluster bootstrap over premises, 2,000 draws, paired where two models
-score the same items). Seeds are a replication criterion, not a sample: with 3 seeds against 3 an exact permutation
-test cannot go below p = 0.10, so no seed-level test is run. A difference between conditions is **claimed** only if
-(a) the 95% premise-bootstrap interval of the difference of seed-averaged statistics excludes 0, and (b) all nine
-seed pairs have the same sign. If (a) holds and (b) fails, the page says "not consistent across seeds".
+## 3. Statistics
 
-Score = answer logit difference (Yes − No) at the final position. S(model, set) = mean over hypothesis strings of the
-within-string AUROC of the score for the label, **with prompt length removed** (residual of the score on a quadratic
-in log token count, fitted within string; the owner's implementation, checked against the reference).
+**S(model, set).** The items are first restricted to hypothesis strings with at least 3 valid and 3 invalid items
+in that set. Then `within_string_auroc_length_removed` (the owner's part (b); reference in
+`within_string_reference.py`; one test fixture for both): inside each string the score is regressed on centred
+log token count and its square, without the labels; the AUROC of the residual for the label, ties one half; the
+unweighted mean over strings. Score = answer logit difference (Yes − No) at the final position. Token count = the
+full templated prompt of the item as evaluated (re-counted for renamed items). S is always computed per model and
+then combined; scores are never averaged across seeds.
 
-**E1. In distribution (gate, not a test).** A reaches pooled AUROC ≥ 0.90 and valid-class F1 ≥ 0.70 on ID-heldout,
-mean of three seeds, with accuracy, macro-F1 and intervals reported. *Prediction:* passes (the paper's Table 5a
-reports F1 of about 92 for fine-tuned LLaMA-7B, trained on far more data; N is the risk). *If it fails:* A-full is trained; if A-full
-fails too, the page reports that a 1.5B LoRA did not learn the task at this budget and E6 to E8 are not run.
-*Power:* not a test.
+**The one registered test** (`ftstudy/seedtest.py`), used for every comparison below, two-sided, α = 0.05:
 
-**E2. A against B where the shortcuts carry nothing (primary).** Statistic: S(B, POOL-LB) − S(A, POOL-LB).
-*Hypothesis:* A's in-distribution skill rests largely on wording and length, so on POOL-LB it is near chance, and B,
-which could not use them, is higher. *Prediction:* S(A) between 0.50 and 0.60; S(B) ≥ S(A) + 0.10.
-*Outcomes:* difference claimed positive → training on debiased data buys validity-tracking that official data does
-not. Difference not claimed and both intervals inside 0.5 ± 0.05 → neither learned anything the shortcuts do not
-carry (L0). Difference not claimed and both clearly above 0.5 → official data already teaches it; the shortcuts were
-not the whole story. Negative → B's smaller effective variety hurt; reported as such.
-*Test:* rule (a)+(b) above, two-sided, α = 0.05. *Power* (48 strings; 12 to 25 pairs per string; item noise
-correlated 0.5 between conditions): with no seed variance, ≥ 0.99 for a difference of 0.05. With a between-seed SD of
-0.03 in AUROC (unknown until the runs exist; assumed): 0.41 to 0.52 for 0.05, 0.96 to 0.98 for 0.10, 1.0 for 0.15.
-**Smallest effect this design is registered to detect: 0.10.** A true difference under 0.10 may be missed, and the
-page will say so rather than "no difference". Pre-stated rescue: if the observed seed SD exceeds 0.02 and the
-observed difference lies between 0.04 and 0.10, two more seeds of A and B are trained from the quota reserved for
-the scaling check, and the test is run once on five seeds; this option is used at most once.
+    D   = mean over seeds of the statistic in condition X − mean over seeds in condition Y
+          (or − a constant; or the mean over seeds of a within-seed difference)
+    SE² = s_X²/n_X + s_Y²/n_Y + v_premise
+    t   = D / SE, Student's t, Welch–Satterthwaite degrees of freedom of the seed terms
 
-**E3. How much of A is shortcut.** (i) S and pooled AUROC of C on ID-heldout against A: shortcut share =
-(AUROC_C − 0.5) / (AUROC_A − 0.5), with interval. (ii) Sanity: S(C, POOL-LB) interval contains 0.5; if it does not,
-POOL-LB or C is leaking and nothing downstream is read until that is explained. (iii) Text references on the same
-items, trained on A's own training set: hypothesis-only, length-only, lookup, hand parse, tuned stack.
-*Prediction:* share ≥ 0.7 in distribution (the hypothesis alone reaches 0.895 on the official test split).
-*Outcomes:* share near 1 → A's in-distribution score is reproducible without reading the premise. Share well below 1
-→ A uses premise content; whether that content is the lookup is E5's question.
-*Test:* premise-bootstrap interval of AUROC_A − AUROC_C on ID-heldout (6,000 items, 1,200 premises), claimed by
-(a)+(b). *Power:* pooled AUROC on 6,000 items has a standard error under 0.01; a difference of 0.03 is detected with
-power above 0.9 even with seed SD 0.02.
+s² is the variance of the per-seed statistics; v_premise is the variance of D over 2,000 premise resamples with
+the trained models fixed (every model rescored on the same resample). A difference is "claimed" when p < 0.05;
+otherwise it is "not shown", with its interval. There is no second criterion.
 
-**E4. Robustness, extending Table 5b.** Drop = statistic on the original items − statistic on the perturbed version
-of the same items, for renaming and for paraphrase, on ID-heldout (pooled AUROC and F1) and POOL-LB (S).
-*Hypothesis:* the paper's drops are what a wording and name shortcut predicts; a model trained without those
-shortcuts drops less. *Prediction:* drop(A) > drop(B) for renaming on ID-heldout by at least 0.05 AUROC.
-*Outcomes:* A drops, B does not → the fragility the paper reported is a property of the training distribution, not of
-fine-tuning. Both drop → the fragility survives debiasing (names or templates are still read literally). Neither
-drops → the paper's result does not reproduce in this model family; reported with the replication table.
-*Test:* drop(A) − drop(B), (a)+(b). *Power:* as E3 on ID-heldout (standard error of a paired drop under 0.01).
-**On the authors' own perturbed sets (21 premises) no A-against-B test is run:** a within-model drop of 0.05 has
-power 0.99 to 1.0 there, but a difference of 0.03 between two models has power 0.61 to 0.82 before seed
-variance, which falls below 0.6 with it. Those sets enter as a descriptive replication table next to Table 5b.
+**Simulated false-positive rate of exactly this test** (200,000 replications per setting; seed SD 0.005 to 0.04,
+equal or unequal between conditions; premise SE 0 to 0.03): at most 0.051 in every setting, for 5
+against 5, 5 against 3, and one condition with 5 or 3 seeds. It is conservative when the
+premise term is large relative to the seed term.
 
-**E5. Beyond the lookup.** On POOL-LB, for A, B (seed-averaged): (i) S restricted to cells of hypothesis string ×
-adjacency of the queried pair (premise states the pair correlated / independent), cells with both labels only;
-(ii) pooled AUROC minus the hand parse's and minus the lookup's on the same items.
-*Hypothesis:* a model that learned the structure tracks validity where the pairwise statements do not decide it.
-*Prediction:* B above 0.5 inside cells; A not.
-*Outcomes:* above 0.5 inside cells and above the hand parse → L2. At the lookup's level and 0.5 inside cells → L1:
-the debiased model learned the lookup, which is the next shortcut in line.
-*Test:* (i) permutation of labels within cell, 5,000 permutations, one-sided, α = 0.05/2 (two conditions), on the
-seed-averaged score, plus (b) across seeds; (ii) premise-bootstrap interval of the difference.
-*Power:* for one model against 0.5 with 12 pairs per string in two-class cells: 0.52 for a true 0.55, 0.99 for 0.60;
-with 6 pairs: 0.29 and 0.79. **Registered for effects of 0.60 or more inside cells.** If the build leaves fewer than 6
-pairs per string in two-class cells, E5(i) is dropped and only (ii) is reported.
+**Power** is given per experiment for seed SD 0.01, 0.02 and 0.03 (unknown until the models exist). The premise SE
+comes from the built sets (scores simulated on the real items, strings, cells and premise clusters): 0.011 for
+a difference of two models' S on POOL-LB, 0.013 on ID48. Rule: a test is registered for the smallest effect at
+which power is at least 0.6 at seed SD 0.02; if the observed seed SD is larger than 0.03 the page says the test
+was underpowered for the registered effect rather than "no difference".
 
-**E6. Representations.** Base, A, B (seed 0 for layer selection and the headline; seeds 1 and 2 as replication):
-the v1.0 probe ladder on POOL-LB with every audited text reference (tuned stack, lookup, hand parse, each with
-length), plus the same references fitted on the condition's training set. Layer and regularisation chosen on the
-selection half of the blocks; numbers from the report half.
-*Hypothesis:* in v1.0 no probe beat the tuned text stack in any model. If fine-tuning builds a representation of
-validity, the probe now does. *Prediction:* for the model that passes E5, probe − tuned stack ≥ 3 points.
-*Outcomes:* probe above all text references in a fine-tuned model and not in base → fine-tuning made the label
-decodable beyond the text (L3), at the reported layer. Probe level with the stack → the model's behaviour needs no
-representation beyond what a text classifier extracts.
-*Test:* premise-bootstrap interval of probe accuracy − best text reference on the report half, α = 0.05/3 (three
-models). *Power* (standard error 0.45 points, from v1.0's report-half intervals): 0.43 for 1 point, 0.98 for 2, 1.0
-for 3. **Registered for gains of 2 points or more.**
+**Multiplicity.** Seven tests are registered (E2a, E2b, E3, E4a, E4b, E5a, E5b; E2c is a control, E1 a gate, E5c
+descriptive of L3 and tested once). Each is reported with its unadjusted p and its Holm-adjusted p over the seven;
+a rung of the ladder is claimed on the Holm-adjusted value.
 
-**E7. Steering (held-out, one test per model, at most two models).** Run only on a model with S(POOL-LB) ≥ 0.65 and
-lower interval bound above 0.55. Site: last token of the hypothesis (not the answer position, where v1.0 showed a
-gold direction reads back the answer), layer chosen on the selection half as the best gold probe layer. Direction:
-gold class-mean difference fitted on the selection half. Statistic: slope of the answer logit difference per unit
-step on the report half. Controls: 500 class-mean differences of labellings that share both balances of the gold
-label (within string and within premise), as in v1.0's held-out test. p = (1 + number of controls ≥ gold) / 501,
-one-sided in the positive direction; threshold 0.05 for one model, 0.025 each for two.
-*Hypothesis:* in a model that does the task the gold direction is used upstream of the answer.
-*Outcomes:* p under threshold → L4 for that site. p over → "not shown at this site", with the detectable size stated.
-*Power:* depends on r = gold slope in control standard deviations, which cannot be known before the model exists.
-From v1.0's control spread: r = 2.0 gives 0.86 at α = 0.05 and 0.51 at 0.025; r = 2.5 gives 1.0 and 0.93. v1.0
-observed r = 1.3 in models that could not do the task (power under 0.3). **Rule:** before the run, r is estimated on
-the selection half only, with 100 controls, from activations already exported by the training notebooks (no new GPU
-time). If the estimate is under 2.0 (one model) or 2.3 (two models), the test is dropped and reported as "not run:
-power below 0.6", and E8 alone is run.
+## 4. Experiments
 
-**E8. Patching (localisation; descriptive with one test).** On the same model: activation patching across layers
-and the three positions on label-changing against label-preserving pairs from POOL-LB (same premise, hypotheses of
-one type), as v1.0 `08_patching.py`. *Test:* at the layer × position cell chosen on half the pairs, the
-label-changing effect minus the label-preserving effect on the other half; interval excludes 0. *Power:* computed
-from v1.0's all-pairs run (`patching_*_n240`) before launch and appended here; dropped if under 0.6 for an effect of
-one third of the model's mean |logit difference|.
+**E1. Does A do the task in distribution? (gate)** Passed if, for A (5 seeds): (i) mean S on ID48 ≥ 0.80, and
+(ii) pooled AUROC on ID exceeds the hypothesis-string prior's (0.885, scored as a fixed reference on the same
+resamples) by the registered test. Reported beside it: valid-class F1 on ID at the threshold "logit difference
+> 0" and at the threshold that maximises F1 on the training set (the label prior differs little between TRAIN and
+ID), accuracy, macro-F1, and the nearest-premise copy (S 0.678 on ID48).
+*Why these numbers:* length alone gives a raw within-string AUROC of 0.758 on ID48 (shorter premise, more often
+valid), which is why S removes it. The string prior alone gives pooled AUROC 0.885 on ID and F1 0.56 at its best
+threshold; on version 1's evaluation population it gave 0.923 and 0.716 (first review), so version 1's gate (AUROC
+≥ 0.90, F1 ≥ 0.70) could be passed without the premise. 0.80 is 0.12 above the nearest-premise copy; it is a
+convention, stated before the fact, and the page reports the value whatever side of it A falls.
+*Outcomes:* passes → A is "a model that does the task in distribution" for the rest. Fails → the page says that a
+1.5B LoRA at N = 7,184 did not reach it, E2 to E5 are still reported (they do not depend on the gate), and nothing
+is said about "a model that does the task".
+*Power for (ii):* premise SE 0.011; registered for a margin of 0.05 or more (power 0.94 / 0.79 / 0.58 at seed SD 0.01 / 0.02 / 0.03; 0.45 / 0.30 / 0.20 for 0.03).
 
-**Scaling check (only if quota remains after E1 to E8).** Qwen2.5-0.5B and 3B, conditions A and B, one seed each:
-E1 and E2 statistics, descriptive only. One seed per size supports no test and none is run.
+**E2. Balanced against official training data, where wording, premise and length carry nothing.** Statistic S on
+POOL-LB.
+- **E2a (primary):** S(B) − S(A), 5 against 5.
+- **E2b (exposure control):** S(B) − S(A48), 5 against 3. B has 2.3 times as many training items of the tested
+  strings as A and 3.9 times as many valid ones; A48 has the same number as B.
+- **E2c (negative control, read first):** S(Bswap) − 0.5, 3 seeds. If claimed different from 0.5, B and POOL-LB
+  share an artefact of the balancing function and E2a, E2b and E5 are not interpreted until it is explained.
+*Prediction:* S(A) between 0.50 and 0.65; S(B) ≥ S(A) + 0.10; S(B) − S(A48) positive but smaller.
+*What each outcome licenses:*
 
-## 4. Order, stopping, audits
+| E2a | E2b | Statement |
+|---|---|---|
+| claimed > 0 | claimed > 0 | on this pool, training on the balanced set gives higher S than the same number of unbalanced items of the same strings |
+| claimed > 0 | not shown | B is above A; the difference is not shown to be more than exposure to the tested strings |
+| not shown | any | not shown that balancing changes S; intervals given |
+| claimed < 0 | any | reported as found |
 
-Order: E1 → E2, E3, E4, E5 (one behaviour audit) → E6 (audit) → E7, E8 (audit). Each audit is done by a fresh
-reviewer given code and result files, not conclusions. Only audited results enter `RESULTS_FT.md`. If Sunday 22
-November 18:00 arrives first, the page says "in progress" and reports the audited part.
+No outcome of E2 says what B learned; that is E5. In particular the nearest-premise copy is far stronger from B's
+training set (0.805) than from A's (0.641) or A48's (0.660): B's set covers the pool's strings with
+both labels, so "B > A48" is also what memorising neighbours predicts.
+*Power* (premise SE 0.011): E2a: 0.05: 0.93 / 0.71 / 0.48; 0.07: 1.00 / 0.95 / 0.78; 0.10: 1.00 / 1.00 / 0.98 (seed SD 0.01 / 0.02 / 0.03). E2b: 0.05: 0.79 / 0.50 / 0.31; 0.07: 0.97 / 0.79 / 0.55; 0.10: 1.00 / 0.97 / 0.83. **Registered for a difference of 0.05 (E2a) and 0.07
+(E2b).** E2c catches a leak of 0.10 with probability 1.00 / 0.93 / 0.71 and one of 0.05 with only 0.45 / 0.25 / 0.17: it is a coarse
+control, and S(Bswap) is reported with its interval whatever the test says.
 
-## 5. Deviations from the brief, decided before any run
+**E3. How far does A get without the item's own premise?** S(A) − S(C) on ID48, 5 against 3; beside it pooled
+AUROC and F1 of A and C on ID, the share (AUROC_C − 0.5)/(AUROC_A − 0.5) with a bootstrap interval (descriptive),
+and the text references fitted on A's training set.
+*Prediction:* C's pooled AUROC on ID is at least 0.85 (the string prior alone is 0.885); S(C) on ID48 is near 0.5
+after length is removed; S(A) − S(C) ≥ 0.15.
+*Outcomes:* claimed > 0 → A uses the content of the item's own premise in distribution, by that much. Not shown →
+not shown that it does. Either way the pooled AUROC of C says how much of A's headline in-distribution score is
+available without the premise; the write-up says "available without", not "A is shortcut".
+*Power* (premise SE 0.013, 187 premises): 0.05: 0.67 / 0.44 / 0.28; 0.10: 1.00 / 0.95 / 0.80; 0.15: 1.00 / 1.00 / 0.98. **Registered for 0.10.**
 
-1. **A is not the official train split "as is".** The evaluation pool is cut from train, so A is sampled from the
-   1,137 train premises outside it; and "same item count" makes A's size N, set by B. A-full covers the risk.
-2. **B is also balanced within premise** (not asked for). Without it the premise alone predicted the label with
-   AUROC 0.72 in v1.0's first design (decision D21).
-3. **Length is balanced in bins, not exactly.** Premise lengths range from 60 to 1,358 words; exact matching within
-   string would keep 9,394 of 42,949 candidate items and 184 of the pool's 2,400. The verification in (iv) is the
-   criterion, not the bin width.
-4. **No test on 21 premises**, and no seed-level test (see E4 and Section 3).
-5. **The analysis of "what it learned" has a rung for the lookup** (E5), which the brief lists as a shortcut but does
-   not test separately.
+**E4. The authors' renaming: names, or the order the letters encode?** For A, on ID48, within seed:
+- **E4a:** S(original) − S(renamed, A…F → Z…U). Replicates Table 5b's direction on held-out premises.
+- **E4b:** S(renamed keeping order, A…F → U…Z) − S(renamed reversing).
+*Prediction:* both positive; E4b at least half of E4a (most of the drop is the reversed order cue).
+*Outcomes:* E4a claimed, E4b claimed → part of the published fragility under "variable refactorisation" is the
+inversion of the alphabetical-order regularity, not sensitivity to names. E4a claimed, E4b not shown → not shown
+to be more than the names. E4a not shown → the drop does not reproduce for S in this model; the descriptive table
+(pooled F1 on ID, ID renamed, ID paraphrased, the authors' sets, every condition) is still given beside Table 5b.
+No A-against-B test of drops is run (different baselines; floor effects). Paraphrase is descriptive only: it
+merges strings, so S is computed on the original string identity and reported as such.
+*Power* (5 within-seed differences): 0.05: 0.79 / 0.64 / 0.48; 0.10: 1.00 / 1.00 / 0.99 (SD of the within-seed differences 0.01 / 0.02 / 0.03). **Registered for 0.05.** The premise SE used is that of two
+different models and overstates the SE of a within-model difference; the power is a lower bound.
+
+**E5. What is S made of? (for A, A48, B separately, on POOL-LB)**
+- **E5a:** S inside cells of hypothesis string × adjacency, minus 0.5, 5 seeds (3 for A48). Adjacency is v1.0's
+  `probes.structural_features(items)[:, 2]` (the pair is stated correlated and no statement makes it
+  conditionally independent). Cells with at least 3 items per class (70 of 95 cells, 4,139 items, 43 strings);
+  AUROC of the length-removed score (residual fitted within string, as in S) inside each cell, averaged with
+  weights valid × invalid pairs, as v1.0 `15_answer_bias.py`. Adjacency alone scores S = 0.498 on POOL-LB.
+- **E5b:** S(model) − S(nearest-premise copy from the model's own training set), the copy scored as a fixed
+  reference on the same resamples.
+- **E5c:** S(model) − S(best of lookup, hand parse, tuned stack, each fitted on the model's own training set with
+  the stack's settings chosen by premise-grouped cross-validation inside that training set, none on POOL-LB).
+*Prediction:* B passes E5a; B does not exceed its nearest-premise copy (E5b not shown or negative).
+*Outcomes:* per model the rung of Section 0. E5a claimed and E5b not → the model tracks validity beyond adjacency
+but not beyond what copying a neighbour gives (L1). Both claimed → L2. E5c claimed as well → L3. A pure lookup of
+all statements naming the pair can pass E5a; that is why L2 needs E5b too and L3 needs E5c.
+*Power* (5 seeds; premise SE 0.011): E5a 0.03: 0.44 / 0.30 / 0.20; 0.05: 0.94 / 0.79 / 0.57; 0.10: 1.00 / 1.00 / 1.00; E5b 0.03: 0.40 / 0.27 / 0.19; 0.05: 0.91 / 0.76 / 0.56; 0.10: 1.00 / 1.00 / 0.99. **Registered for 0.05 (at seed SD up to
+0.02).** For A48 (3 seeds) both are reported with intervals and no test.
+
+**E6. Representations (descriptive in this version).** Base, A, B: the v1.0 probe ladder on POOL-LB (selection
+and report halves by premise), at the final position and at the last token of the hypothesis, with the text
+references of E5c and the model's own answer as reference rows. No rung rests on it: in a model that answers
+correctly a probe for the gold label after the hypothesis decodes the model's own decision, so "probe above text"
+would repeat E5c through a linear readout. What is reported: the layer at which the gold label becomes decodable,
+and whether the probe exceeds the model's own answers (information present and not used).
+
+**E7, E8. Steering and patching: not registered in this version.** They need: a site upstream of where the answer
+is decodable; the model's own-answer direction and the text prediction's direction as controls, with the test on
+the gold direction after projecting them out; a power figure from a small GPU pilot (a steering slope cannot be
+computed from stored activations, as version 1 proposed). They will be registered in an amendment, reviewed
+independently before any intervention runs, after E1 to E5 are audited. If that does not happen by the deadline,
+the page says the causal tests were not run.
+
+## 5. Order, quota, stopping
+
+1. Time test. 2. A and B (5 seeds each). 3. A48, Bswap, C (3 seeds each). 4. Behaviour analysis E1 to E5 in the
+order E2c, E1, E2, E3, E4, E5; one independent audit (code and result files, not conclusions). 5. E6 and its
+audit. 6. Amendment for E7 and E8.
+Quota: 26 GPU hours per week through the queue runner; Kaggle reported 15 hours left on 16 November and resets on
+Saturday 21 November 00:00 UTC. If the time test shows the 19 runs do not fit, runs are launched in the order
+above and the rest wait for the reset; no condition is shortened.
+Sunday 22 November 18:00: the page reports only audited results; everything else is "in progress". If the page
+must go out before step 3 is complete, E2a alone may be reported (it needs only A and B), with E2c stated as not
+yet run and no interpretation beyond the first column of E2's table.
+
+## 6. Answers to the first review (`finetune/notes/audit_prereg_raw.md`)
+
+| Finding (blocking) | Answer |
+|---|---|
+| 1. The claim rule (interval and all nine seed pairs) had a false-positive rate of 0.10 to 0.12 | Replaced by one test pooling seeds with both variance terms; 5 seeds for A and B; simulated false-positive rate at most 0.051 (Section 3) |
+| 2. `power.py` simulated a different test | Rewritten: it calls the registered function; no clipping; 200,000 replications; premise SE from the built sets |
+| 3. E3 and E4 quoted power that was never computed | Computed; E3 and E4 are registered for 0.10, not 0.03 to 0.05 |
+| 4. The in-distribution gate could be passed without the premise | E1 now requires S on ID48 (length removed) ≥ 0.80 and pooled AUROC above the string prior by test |
+| 5. The split was selected on the label | Stated; a random 187 of the remaining premises are the in-distribution set; the POOL premises are named a shifted population |
+| 6. A against B was confounded with exposure | A48 added (E2b); the outcome table says what each pattern licenses |
+| 7. A nearest-training-premise copy scores 0.78 to 0.81 | Added as a reference per condition (E1, E5b); L2 requires beating it |
+| 8. The adjacency cell was defined two ways | Pinned to v1.0's `structural_features[:, 2]`, with weighting, minimum cell size and residualisation stated (E5a) |
+
+Should-fix items: the rescue with extra seeds is deleted; POOL-LB's size, bins and items per premise are fixed;
+the balancing code exists and its output is stored; Bswap added; C's strata, sampling unit and meaning restated;
+E4 reduced to two within-model tests plus a descriptive table, with an order-preserving renaming; the paraphrase's
+merged templates and the files' duplicate rows stated; E5's references are S against S, fitted off the evaluation
+set; E6 made descriptive; E7 and E8 withdrawn until registered properly; the 21-premise sets carry no test;
+multiplicity handled by Holm over the seven tests; one training-set draw per condition stated as a limitation;
+the deadline's drop order stated (Section 5).
 
 ## Amendments
 

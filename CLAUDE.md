@@ -28,6 +28,9 @@ Written 16 November 2026 on the owner's instruction. These bind every session th
 ## Machines and quota
 - Laptop: 8 GB, CPU only. Cap threads (`OMP_NUM_THREADS=2`), one heavy process at a time, nothing that swaps, no
   model larger than Qwen2.5-0.5B loaded locally.
+- Run every long local job and the Kaggle queue runner under `caffeinate -i` (for example
+  `caffeinate -i .venv/bin/python finetune/scripts/kaggle_run.py poll`), so the Mac stays awake exactly while work is
+  running and can sleep otherwise. At the end of each day tell the owner whether anything will run overnight.
 - Kaggle: every GPU run goes through `finetune/scripts/kaggle_run.py` (queue file, at most 2 concurrent, no automatic
   relaunch, halt and report on any failure, dry run first). **Cap: 26 GPU hours per quota week.** Ask the owner
   before spending quota on anything that is not in the queue as planned, and before clearing `finetune/kaggle/HALT`.

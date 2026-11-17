@@ -84,18 +84,85 @@ def paraphrase(item: dict) -> dict:
     raise ValueError("no paraphrase template for: " + item["query"])
 
 
+KEEP_ORDER_MAP = dict(zip("ABCDEF", "UVWXYZ"))
+_VAR_AF = re.compile(r"\b([A-F])\b")
+
+
+def rename_keep_order(item: dict) -> dict:
+    """A..F -> U..Z: new letters, alphabetical order kept. The authors' refactorisation (v1.0 `rename_variables`,
+    A..F -> Z..U) also REVERSES the order, and in this benchmark a directional hypothesis whose first letter is the
+    later one is never valid; this version changes the names only."""
+    sub = lambda t: _VAR_AF.sub(lambda m: KEEP_ORDER_MAP[m.group(1)], t)
+    return dict(item, uid=item["uid"] + "-rko", context=sub(item["context"]), query=sub(item["query"]))
+
+
+def swap_strata(premises: dict[str, tuple[int, int]], min_size: int = 10) -> dict[str, int]:
+    """premise -> stratum id. premises: group -> (number of variables, premise tokens). Inside each variable count the
+    premises are sorted by length and cut into consecutive strata of at least `min_size` premises (the last one
+    absorbs the remainder); a variable count with fewer than min_size premises is one stratum."""
+    out, sid = {}, 0
+    for nv in sorted({v[0] for v in premises.values()}):
+        gs = sorted((g for g, v in premises.items() if v[0] == nv), key=lambda g: (premises[g][1], g))
+        k = max(1, len(gs) // min_size)
+        for j, g in enumerate(gs):
+            out[g] = sid + min(j // min_size, k - 1)
+        sid += k
+    return out
+
+
+def nearest_premise_scores(train_items: list[dict], test_items: list[dict], k: int = 1) -> np.ndarray:
+    """The nearest-training-premise reference: for each test item, the label its hypothesis STRING has in the training
+    premise (same number of variables, among those that carry this string in `train_items`) whose statement set
+    differs least from the test premise's (size of the symmetric difference, same letters). Score = that label, minus
+    a small multiple of the distance so that ties are ordered by closeness of a valid neighbour; 0.5 if no training
+    premise carries the string. No model, no fitting: what memorising the training items and copying gives."""
+    st, lab = {}, {}
+    for it in train_items:
+        if it["group"] not in st:
+            st[it["group"]] = parse_premise(it["context"])
+        lab.setdefault(it["query"], {})[it["group"]] = it["label"]
+    cache, out = {}, np.full(len(test_items), 0.5)
+    for i, it in enumerate(test_items):
+        if it["group"] not in cache:
+            cache[it["group"]] = parse_premise(it["context"])
+        n, s = cache[it["group"]]
+        cand = [(len(s ^ st[g][1]), g) for g in lab.get(it["query"], {}) if st[g][0] == n]
+        if cand:
+            cand.sort()
+            top = cand[:k]
+            out[i] = float(np.mean([lab[it["query"]][g] for _, g in top])) - 1e-4 * top[0][0] * (1 if lab[it["query"]][top[0][1]] else -1)
+    return out
+
+
+def nearest_premise_distance(train_items: list[dict], test_items: list[dict]) -> dict[str, int]:
+    """test premise -> smallest symmetric difference of statement sets to any training premise of the same size."""
+    st = {}
+    for it in train_items:
+        if it["group"] not in st:
+            st[it["group"]] = parse_premise(it["context"])
+    out = {}
+    for it in test_items:
+        if it["group"] not in out:
+            n, s = parse_premise(it["context"])
+            out[it["group"]] = min((len(s ^ t) for m, t in st.values() if m == n), default=-1)
+    return out
+
+
 def swap_premise(item: dict, donor: dict) -> dict:
     """Condition C: the item's hypothesis and label on another item's premise."""
     assert donor["num_variables"] == item["num_variables"] and donor["group"] != item["group"]
     return dict(item, uid=item["uid"] + "-swap", context=donor["context"], group=donor["group"], own_group=item["group"])
 
 
-def load_authors(kind: str) -> list[dict]:
+def load_authors(kind: str, distinct: bool = True) -> list[dict]:
     """The authors' perturbed test sets ("paraphrasing" | "refactorization"), as items. valid = label 1
     (the paraphrase file is three-way: 1 entailment, 0 neutral, 2 contradiction)."""
-    out = []
+    out, seen = [], set()
     with open(D.DATA_RAW / "corr2cause" / f"perturbation_by_{kind}_test.csv") as f:
         for i, r in enumerate(csv.DictReader(f)):
+            if distinct and r["input"] in seen:          # the files repeat rows (2,246 rows; 1,522 and 1,884 distinct inputs)
+                continue
+            seen.add(r["input"])
             prem, hyp = r["input"][len("Premise: "):].split(D.HYP_SEP)
             out.append(dict(uid=f"c2c-authors-{kind}-{i}", dataset="c2c", split="authors_" + kind, context=prem, query=hyp,
                             label=int(r["label"] == "1"), group=f"prem-{D._h(prem)}", template="", num_variables=-1))
@@ -111,7 +178,7 @@ def digest(items: list[dict]) -> str:
 
 
 def save_set(name: str, items: list[dict], transform: str = "none", donors: list[dict] | None = None, note: str = "", **extra):
-    base = [it["uid"].removesuffix({"rename": "-ren", "paraphrase": "-par", "premise_swap": "-swap"}.get(transform, "\0"))
+    base = [it["uid"].removesuffix({"rename": "-ren", "rename_keep_order": "-rko", "paraphrase": "-par", "premise_swap": "-swap"}.get(transform, "\0"))
             for it in items]
     spec = {"name": name, "n": len(items), "transform": transform, "note": note, **extra, "sha256": digest(items), "uids": base}
     if donors is not None:
@@ -142,6 +209,8 @@ def materialise(name: str) -> list[dict]:
         items = [U[u] for u in spec["uids"]]
         if spec["transform"] == "rename":
             items = [D.rename_variables(i) for i in items]
+        elif spec["transform"] == "rename_keep_order":
+            items = [rename_keep_order(i) for i in items]
         elif spec["transform"] == "paraphrase":
             items = [paraphrase(i) for i in items]
         elif spec["transform"] == "premise_swap":

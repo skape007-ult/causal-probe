@@ -1,257 +1,426 @@
 {
- "definition": "shared premise texts / shared after renaming either way / shared graph classes (statement set up to relabelling)",
- "graph_classes_among_all_train_premises": 2337,
+ "definition": "shared premise texts as given / shared premise texts with any renaming undone / shared graph classes (statement set canonicalised over every relabelling of the variables)",
+ "premises_TRAIN_ID_pool_test": 2358,
+ "graph_classes_among_them": 2358,
  "pairs": {
-  "train_A x eval_id_heldout": {
+  "train_A x eval_id": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1137,
-   "eval_premises": 1092
-  },
-  "train_A x eval_id_heldout_renamed": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 1137,
-   "eval_premises": 1092
-  },
-  "train_A x eval_id_heldout_paraphrased": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 1137,
-   "eval_premises": 1092
+   "train_premises": 949,
+   "eval_premises": 187
   },
   "train_A x eval_pool": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1137,
+   "train_premises": 949,
    "eval_premises": 1200
   },
   "train_A x eval_pool_lb": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1137,
-   "eval_premises": 1193
-  },
-  "train_A x eval_pool_lb_renamed": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 1137,
-   "eval_premises": 1193
-  },
-  "train_A x eval_pool_lb_paraphrased": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 1137,
+   "train_premises": 949,
    "eval_premises": 1193
   },
   "train_A x eval_official_test": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1137,
+   "train_premises": 949,
    "eval_premises": 21
   },
-  "train_A x eval_official_test_renamed": {
+  "train_A x eval_id_renamed": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1137,
-   "eval_premises": 21
+   "train_premises": 949,
+   "eval_premises": 187
   },
-  "train_A x eval_official_test_paraphrased": {
+  "train_A x eval_id_paraphrased": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1137,
-   "eval_premises": 21
+   "train_premises": 949,
+   "eval_premises": 187
+  },
+  "train_A x eval_id48": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 949,
+   "eval_premises": 187
+  },
+  "train_A x eval_id48_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 949,
+   "eval_premises": 187
+  },
+  "train_A x eval_id48_renamed_keep_order": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 949,
+   "eval_premises": 187
+  },
+  "train_A x eval_pool_lb_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 949,
+   "eval_premises": 1193
   },
   "train_A x eval_authors_paraphrasing": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1137,
+   "train_premises": 949,
    "eval_premises": 21
   },
   "train_A x eval_authors_refactorization": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1137,
+   "train_premises": 949,
    "eval_premises": 21
   },
-  "train_B x eval_id_heldout": {
+  "train_A48 x eval_id": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
-   "eval_premises": 1092
+   "train_premises": 950,
+   "eval_premises": 187
   },
-  "train_B x eval_id_heldout_renamed": {
+  "train_A48 x eval_pool": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
-   "eval_premises": 1092
+   "train_premises": 950,
+   "eval_premises": 1200
   },
-  "train_B x eval_id_heldout_paraphrased": {
+  "train_A48 x eval_pool_lb": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
-   "eval_premises": 1092
+   "train_premises": 950,
+   "eval_premises": 1193
+  },
+  "train_A48 x eval_official_test": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 21
+  },
+  "train_A48 x eval_id_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 187
+  },
+  "train_A48 x eval_id_paraphrased": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 187
+  },
+  "train_A48 x eval_id48": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 187
+  },
+  "train_A48 x eval_id48_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 187
+  },
+  "train_A48 x eval_id48_renamed_keep_order": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 187
+  },
+  "train_A48 x eval_pool_lb_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 1193
+  },
+  "train_A48 x eval_authors_paraphrasing": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 21
+  },
+  "train_A48 x eval_authors_refactorization": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 950,
+   "eval_premises": 21
+  },
+  "train_B x eval_id": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 707,
+   "eval_premises": 187
   },
   "train_B x eval_pool": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
+   "train_premises": 707,
    "eval_premises": 1200
   },
   "train_B x eval_pool_lb": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
-   "eval_premises": 1193
-  },
-  "train_B x eval_pool_lb_renamed": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 850,
-   "eval_premises": 1193
-  },
-  "train_B x eval_pool_lb_paraphrased": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 850,
+   "train_premises": 707,
    "eval_premises": 1193
   },
   "train_B x eval_official_test": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
+   "train_premises": 707,
    "eval_premises": 21
   },
-  "train_B x eval_official_test_renamed": {
+  "train_B x eval_id_renamed": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
-   "eval_premises": 21
+   "train_premises": 707,
+   "eval_premises": 187
   },
-  "train_B x eval_official_test_paraphrased": {
+  "train_B x eval_id_paraphrased": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
-   "eval_premises": 21
+   "train_premises": 707,
+   "eval_premises": 187
+  },
+  "train_B x eval_id48": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 707,
+   "eval_premises": 187
+  },
+  "train_B x eval_id48_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 707,
+   "eval_premises": 187
+  },
+  "train_B x eval_id48_renamed_keep_order": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 707,
+   "eval_premises": 187
+  },
+  "train_B x eval_pool_lb_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 707,
+   "eval_premises": 1193
   },
   "train_B x eval_authors_paraphrasing": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
+   "train_premises": 707,
    "eval_premises": 21
   },
   "train_B x eval_authors_refactorization": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 850,
+   "train_premises": 707,
    "eval_premises": 21
   },
-  "train_C x eval_id_heldout": {
+  "train_C x eval_id": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1134,
-   "eval_premises": 1092
-  },
-  "train_C x eval_id_heldout_renamed": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 1134,
-   "eval_premises": 1092
-  },
-  "train_C x eval_id_heldout_paraphrased": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 1134,
-   "eval_premises": 1092
+   "train_premises": 949,
+   "eval_premises": 187
   },
   "train_C x eval_pool": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1134,
+   "train_premises": 949,
    "eval_premises": 1200
   },
   "train_C x eval_pool_lb": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1134,
-   "eval_premises": 1193
-  },
-  "train_C x eval_pool_lb_renamed": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 1134,
-   "eval_premises": 1193
-  },
-  "train_C x eval_pool_lb_paraphrased": {
-   "premise_text": 0,
-   "after_renaming": 0,
-   "graph_class": 0,
-   "train_premises": 1134,
+   "train_premises": 949,
    "eval_premises": 1193
   },
   "train_C x eval_official_test": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1134,
+   "train_premises": 949,
    "eval_premises": 21
   },
-  "train_C x eval_official_test_renamed": {
+  "train_C x eval_id_renamed": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1134,
-   "eval_premises": 21
+   "train_premises": 949,
+   "eval_premises": 187
   },
-  "train_C x eval_official_test_paraphrased": {
+  "train_C x eval_id_paraphrased": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1134,
-   "eval_premises": 21
+   "train_premises": 949,
+   "eval_premises": 187
+  },
+  "train_C x eval_id48": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 949,
+   "eval_premises": 187
+  },
+  "train_C x eval_id48_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 949,
+   "eval_premises": 187
+  },
+  "train_C x eval_id48_renamed_keep_order": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 949,
+   "eval_premises": 187
+  },
+  "train_C x eval_pool_lb_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 949,
+   "eval_premises": 1193
   },
   "train_C x eval_authors_paraphrasing": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1134,
+   "train_premises": 949,
    "eval_premises": 21
   },
   "train_C x eval_authors_refactorization": {
    "premise_text": 0,
-   "after_renaming": 0,
+   "renaming_undone": 0,
    "graph_class": 0,
-   "train_premises": 1134,
+   "train_premises": 949,
+   "eval_premises": 21
+  },
+  "train_Bswap x eval_id": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 187
+  },
+  "train_Bswap x eval_pool": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 1200
+  },
+  "train_Bswap x eval_pool_lb": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 1193
+  },
+  "train_Bswap x eval_official_test": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 21
+  },
+  "train_Bswap x eval_id_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 187
+  },
+  "train_Bswap x eval_id_paraphrased": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 187
+  },
+  "train_Bswap x eval_id48": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 187
+  },
+  "train_Bswap x eval_id48_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 187
+  },
+  "train_Bswap x eval_id48_renamed_keep_order": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 187
+  },
+  "train_Bswap x eval_pool_lb_renamed": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 1193
+  },
+  "train_Bswap x eval_authors_paraphrasing": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
+   "eval_premises": 21
+  },
+  "train_Bswap x eval_authors_refactorization": {
+   "premise_text": 0,
+   "renaming_undone": 0,
+   "graph_class": 0,
+   "train_premises": 936,
    "eval_premises": 21
   }
  },

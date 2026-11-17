@@ -17,7 +17,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
-from notebook_cells import FINAL_CHECK, PLATFORM_SETUP          # noqa: E402
+from notebook_cells import FINAL_CHECK                         # noqa: E402
+from ft_cells import FT_PLATFORM_SETUP                         # noqa: E402
 
 HEAD = '''
 import os, subprocess, json, time, zipfile
@@ -93,7 +94,7 @@ def main():
     commit = sys.argv[1] if len(sys.argv) > 1 else "uncommitted"
     nb = {"cells": [{"cell_type": "markdown", "metadata": {},
                      "source": ["# Fine-tuning study: Kaggle path test (a few minutes, no model is loaded)\n"]},
-                    code(HEAD % commit), code(PLATFORM_SETUP), code(BODY), code(FINAL_CHECK)],
+                    code(HEAD % commit), code(FT_PLATFORM_SETUP), code(BODY), code(FINAL_CHECK)],
           "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                        "language_info": {"name": "python"}},
           "nbformat": 4, "nbformat_minor": 5}

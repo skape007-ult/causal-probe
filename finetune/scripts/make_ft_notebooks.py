@@ -2,7 +2,7 @@
 
   ../causal-probe/.venv/bin/python finetune/scripts/make_ft_notebooks.py <commit-sha>
 
-Each notebook is one "Run all": the v1.0 platform cell (output path, GPU check), a clone of the repository at the
+Each notebook is one "Run all": the platform cell (v1.0's, with the platform decision of finetune/scripts/ft_cells.py), a clone of the repository at the
 pinned commit, the v1.0 pinned environment, the data at pinned revisions, then finetune/scripts/ft_run.py once per
 (condition, seed), two at a time (one per T4), and the v1.0 final check that writes STATUS.txt. No Hugging Face
 secret is needed: Qwen2.5 is public (and a secret cannot be attached to a notebook pushed through the API).
@@ -13,7 +13,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
-from notebook_cells import FINAL_CHECK, PLATFORM_SETUP                              # noqa: E402
+from notebook_cells import FINAL_CHECK                                              # noqa: E402
+from ft_cells import FT_PLATFORM_SETUP                                             # noqa: E402
 from make_round2_notebooks import CLONE, COMMON_SETUP, ENV, SETUP_HEAD, code, md     # noqa: E402
 
 S5, S3 = [0, 1, 2, 3, 4], [0, 1, 2]
@@ -126,11 +127,12 @@ RUN_NAME, COMMIT = "{r['run']}", "{commit}"
 JOBS = {json.dumps(r['jobs'])}
 EXTRA_ARGS = "{r['extra']}"
 NEEDS_TOKEN, MODELS, MIN_GPUS = False, "qwen1.5b", 1
+EXPECT_PLATFORM = "{"colab" if r["file"].startswith("colab/") else "kaggle"}"
 print("first line of this log:", RUN_NAME, "at commit", COMMIT, "| jobs:", JOBS)
 ''')
         cells = [md(f"# {r['title']}\n\nWhat it does: {r['what']}.\n\nEstimated time: {r['est']}. Accelerator: " + ("Colab T4 (one GPU)" if r["file"].startswith("colab/") else "GPU T4 x2") + ". Internet: on. "
                     f"No secret needed. Code: commit `{commit}` of branch `exp/finetune`. " + ("Launched by hand on Colab." if r["file"].startswith("colab/") else "Launched through `finetune/scripts/kaggle_run.py`.")),
-                 code(head), code(PLATFORM_SETUP), code(COMMON_SETUP), code(CLONE), code(ENV), code(DATA), code(RUN), code(PACK), code(FINAL_CHECK)]
+                 code(head), code(FT_PLATFORM_SETUP), code(COMMON_SETUP), code(CLONE), code(ENV), code(DATA), code(RUN), code(PACK), code(FINAL_CHECK)]
         nb = {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                                            "language_info": {"name": "python"}}, "nbformat": 4, "nbformat_minor": 5}
         (out / r["file"]).write_text(json.dumps(nb, indent=1) + "\n")

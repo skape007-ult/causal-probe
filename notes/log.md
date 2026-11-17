@@ -1002,3 +1002,8 @@ The reviewer then checked the edited file: **PASS, training may start**, all fiv
 ## Tue 17 Nov ~17:40 UTC
 - Owner: owner-only material now goes under `private/`, git-ignored on `exp/finetune` and `main` (main 1c6541d). Existing files not moved yet. Standing order added to CLAUDE.md.
 - Owner reports the Colab notebook is running (by hand; counts as the one Colab run allowed at a time). Kaggle pairs A0+B0 and A1+B1 at ~151 min, running.
+
+## Tue 17 Nov ~22:15 UTC
+- colab_base (owner, on Colab, 50 min, no Kaggle quota): the platform cell took Colab for Kaggle (Colab's image has a /kaggle folder; v1.0's test checked isdir("/kaggle") first). Output went to /kaggle/working on the VM; owner downloaded it by hand. Ingested: all 12 sets, stored uids and order, finite scores; scoring 48 min. Filed as finetune/runs/base.
+- Kaggle pairs returned: A0+B0 (211 min incl. queue), A1+B1 (297 min since launch, 85 min of it queued). Ingested A_s0, B_s0, A_s1, B_s1: training 114-141 min, scoring 57-63 min, peak 13.7 GB, no OOM retries. A2+B2 running.
+- Fix (923aa39): finetune/scripts/ft_cells.py replaces the platform decision (v1.0 file untouched): Kaggle only from KAGGLE_KERNEL_RUN_TYPE/KAGGLE_URL_BASE; Colab from COLAB_RELEASE_TAG/COLAB_GPU/google.colab; folders last, and both folders with no variable refuses. Each notebook states EXPECT_PLATFORM and stops on a mismatch; the cell prints which signals it saw. finetune/tests/test_platform.py tests the function and every committed notebook (incl. Colab with /kaggle present). All notebooks re-pinned to 923aa39.

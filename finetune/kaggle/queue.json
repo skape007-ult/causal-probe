@@ -34,15 +34,26 @@
    "max_minutes": 45.0,
    "gpu": true,
    "note": "time test: A seed 0, 150 steps, 300 evaluation items; PREREG v2 Section 2",
-   "state": "running",
+   "state": "failed",
    "added_at": "2026-11-17T01:02:04Z",
    "launched_at": "2026-11-17T01:02:11Z",
    "notebook_sha256": "a52fe217eb3a2d13f07bb8d1884a675f41eac786feb957443e2fb8f57f77aa1a",
    "commit": "0e2cbfcdbc55e575754d23ac2f2f613a05624b10+uncommitted",
    "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-timetest1",
    "running_since": "2026-11-17T01:02:13Z",
-   "last_status": "running",
-   "last_polled": "2026-11-17T01:02:13Z"
+   "last_status": "complete",
+   "last_polled": "2026-11-17T01:18:46Z",
+   "gpu_hours_charged": 0.276,
+   "download_output": "rs/SahilPaliwal/Documents/causal-probe/causal-probe-ft/finetune/kaggle/downloads/ft_timetest1/ft-timetest1.log \n\n  0%|          | 0.00/391 [00:00<?, ?B/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 391/391 [00:00<00:00, 401kB/s]\n\n  0%|          | 0.00/1.03k [00:00<?, ?B/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 1.03k/1.03k [00:00<00:00, 3.37MB/s]",
+   "downloaded": {
+    "ft-timetest1.log": 11641,
+    "kaggle_log.txt": 11642,
+    "kaggle_out/STATUS.txt": 391,
+    "kaggle_out/results_ft_timetest.zip": 1056
+   },
+   "status_txt": "FAILED",
+   "failure": "STATUS.txt says 'FAILED', not OK",
+   "finished_at": "2026-11-17T01:18:47Z"
   }
  ],
  "external": [],

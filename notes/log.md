@@ -976,3 +976,15 @@ The reviewer then checked the edited file: **PASS, training may start**, all fiv
 **Smoke tests on the laptop** (Qwen2.5-0.5B, tiny mode, under `caffeinate -i`): `ft_run.py` trains 6 steps, saves a float16 adapter, scores all twelve evaluation sets; the notebook's run, pack and final-check cells ran end to end (two jobs, STATUS.txt OK, both archives). Not testable locally: the clone, environment and data cells; the time test is their test.
 
 **Time test** `ft_timetest1` launched 01:02 UTC at commit `c0eb1b6` (limit 45 minutes), running at once. Expectation before the result: 2 to 4 seconds per step at batch 16 in micro-batches of 4, under 12 GB; about 20 examples per second in scoring; so a model takes 60 to 90 minutes with its evaluation and the 19 models 10 to 14 session hours on two GPUs, close to the 15 hours left this week.
+
+## Tue 2026-11-17 01:19 UTC — Time test FAILED (out of memory in the first training step); queue halted; fix prepared, not launched
+
+`ft_timetest1` ran 16 minutes and ended with STATUS.txt FAILED; the runner marked it failed, wrote `finetune/kaggle/HALT` and launched nothing else. Charged 0.28 GPU hours (0.44 of 26 used this week; 14.7 of Kaggle's 15 left).
+
+**What worked, for the first time on Kaggle:** the clone at the pinned commit; the pinned environment at install level 1 (full freeze: torch 2.15.0, transformers 5.22.2, as on the laptop), 14 minutes; data at pinned revisions with md5 checks, including the authors' two perturbed files; all 17 item sets rebuilt and verified against their hashes; two T4s.
+
+**What failed:** `torch.OutOfMemoryError` in the first forward pass of training, inside an MLP block. Against my expectation (under 12 GB): I had sized memory for an average prompt (about 650 tokens) and ran 4 items per forward pass; the longest prompts are about 2,500 tokens, and float32 base weights took 6 of the 14.6 GB. My laptop smoke test could not have shown it: tiny mode trains on the 64 shortest items.
+
+**Fix (commit below; smoke-tested on the laptop, not on a GPU):** the 16 items of a step are split into forward passes of at most 2,600 padded tokens (items × longest) and their gradients accumulated, which is the same optimisation step as one batch of 16, so the registered recipe is unchanged; frozen base weights in float16 (3 GB), LoRA weights float32; after an out-of-memory error the budget is halved and the step redone (logged, recorded in `run.json`); scoring batches by a token budget as well. Whether 2,600 fits is exactly what a second time test must show.
+
+**Not done, by the standing orders:** HALT is not cleared and nothing is relaunched; a second time test `ft_timetest2` (new id, 45-minute limit) is queued behind the halt for the owner's go-ahead.

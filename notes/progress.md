@@ -6,12 +6,13 @@ v1.0 is closed and untouched. Everything below lives under `finetune/`. Standing
 
 - **Kaggle path test passed** (T4 x2, internet, download, STATUS.txt). Secrets cannot be attached through the API; Qwen needs none. Kaggle's own queue held the run 44 minutes.
 - **Queue runner:** cap 26 GPU hours a week, Kaggle's own 15 hours left recorded as a second limit; 21 tests.
-- **Pre-registration version 2** (`finetune/PREREG.md`) answers the first review's eight blocking findings; **second independent review running**. No training before it passes.
+- **Pre-registration version 2** (`finetune/PREREG.md`) answers the first review's eight blocking findings and the second review's five conditions; the second reviewer's follow-up says PASS.
 - **Data built** (`finetune/itemsets/`): five conditions of 7,184 items (A, A48, B, C, Bswap), evaluation sets ID, ID48, POOL-LB, POOL, official test, perturbed versions, the authors' sets; zero overlap in 60 pairs.
 - **Owner's parts:** `finetune/MY_PARTS.md`; stubs in place, reference implementations in `*_reference.py`. Open question on what "identical on the stored sets" can mean for part (a) (log, 17 Nov 01:30 UTC).
 - **Pushed:** `exp/finetune` on GitHub.
 - **Next:** answer the second review; training and evaluation script with a laptop smoke test on Qwen2.5-0.5B; time-test notebook pinned to a pushed commit; then A and B through the queue.
-- **Running overnight:** nothing, unless stated otherwise in the day's last message.
+- **Time test failed** (out of memory in the first training step, 01:19 UTC Tue); queue halted; fix committed and smoke-tested locally; `ft_timetest2` queued, **waiting for the owner to clear the halt**. Second review of the pre-registration: PASS (conditions met, Amendment 1 recorded).
+- **Running overnight (Mon to Tue):** nothing, on the laptop or on Kaggle.
 - **Deadline:** `finetune/RESULTS_FT.md`, Sunday 22 Nov 18:00, audited parts only.
 
 ## FINAL, Sunday 15 November 08:11: version v1.0

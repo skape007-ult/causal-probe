@@ -59,20 +59,31 @@ def final_logits(model, ids, mask, amp):
         return inner.lm_head(h).float()
 
 
+def groups_within(lengths, order, budget):
+    """Split `order` (indices, longest first) into consecutive groups with  len(group) x longest item  <= budget."""
+    out, cur = [], []
+    for i in order:
+        if cur and (len(cur) + 1) * lengths[cur[0]] > budget:
+            out.append(cur); cur = []
+        cur.append(int(i))
+    return out + ([cur] if cur else [])
+
+
 @torch.no_grad()
-def score(model, tok, ans, items, device, amp, batch, log=None):
+def score(model, tok, ans, items, device, amp, budget, log=None):
     """Answer logit difference (v1.0 `answer_logit_diff`) and prompt token count for every item, in the items' order."""
     model.eval()
     enc = encode(tok, items)
     order = np.argsort([len(e) for e in enc])[::-1]            # longest first: an out-of-memory error shows at once
     out = np.zeros(len(items), np.float32)
     t0 = time.time()
-    for k in range(0, len(order), batch):
-        idx = order[k:k + batch]
+    done = 0
+    for g, idx in enumerate(groups_within([len(e) for e in enc], order, budget)):
         ids, mask = pad_left([enc[i] for i in idx], tok.pad_token_id, device)
         out[idx] = models.answer_logit_diff(final_logits(model, ids, mask, amp).cpu(), ans).numpy()
-        if log and k % (batch * 40) == 0:
-            log(f"    {k}/{len(items)} items, {time.time() - t0:.0f} s")
+        done += len(idx)
+        if log and g % 40 == 0:
+            log(f"    {done}/{len(items)} items, {time.time() - t0:.0f} s")
     return out, np.array([len(e) for e in enc], np.int32)
 
 
@@ -82,8 +93,12 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--model", default="qwen1.5b")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--micro-batch", type=int, default=4, help="items per forward pass; gradients are accumulated to the registered batch of 16")
-    ap.add_argument("--eval-batch", type=int, default=16)
+    ap.add_argument("--forward-tokens", type=int, default=2600,
+                    help="training: padded tokens per forward pass (items x longest). The 16 items of a step are split into forward "
+                         "passes within this budget and their gradients accumulated, which is the same step as one batch of 16. "
+                         "Halved automatically after an out-of-memory error. (The first time test ran 4 items per pass and ran "
+                         "out of memory on a 15 GB T4: prompts reach 2,500 tokens.)")
+    ap.add_argument("--eval-tokens", type=int, default=20000, help="scoring: padded tokens per forward pass")
     ap.add_argument("--time-test", action="store_true")
     ap.add_argument("--tiny", action="store_true", help="smoke test: 64 short training items, 6 steps, 24 items per evaluation set")
     a = ap.parse_args()
@@ -107,7 +122,8 @@ def main():
     ans = models.answer_token_ids(tok)
     yes_id, no_id = ans["yes"]["Yes"], ans["no"]["No"]
     torch.manual_seed(a.seed); np.random.seed(a.seed)
-    model = AutoModelForCausalLM.from_pretrained(hf_id, dtype=torch.float32).to(device)   # float32 weights, float16 autocast on GPU
+    # GPU: frozen base weights in float16 (3 GB instead of 6), LoRA weights in float32 (peft's default), float16 autocast
+    model = AutoModelForCausalLM.from_pretrained(hf_id, dtype=torch.float16 if amp else torch.float32).to(device)
     for p in model.parameters():
         p.requires_grad_(False)
     info = {"run": run, "condition": a.condition, "seed": a.seed, "model": hf_id, "recipe": RECIPE, "device": device,
@@ -145,19 +161,31 @@ def main():
             scaler.load_state_dict(st["scaler"]); step, tlog = st["step"], st["log"]
             log(f"resumed at step {step}")
         log(f"training {a.condition} seed {a.seed}: {len(train)} items, {run_steps} of {total} steps, batch {RECIPE['batch']} "
-            f"in micro-batches of {a.micro_batch}, {info['trainable_params']:,} trainable parameters, device {device}")
+            f"in forward passes of at most {a.forward_tokens} padded tokens, {info['trainable_params']:,} trainable parameters, device {device}")
+        lens = [len(e) for e in enc]
+        budget, n_oom = a.forward_tokens, 0
         model.train()
         t0 = time.time()
         while step < run_steps:
             idx = order[step * RECIPE["batch"]:(step + 1) * RECIPE["batch"]]
-            tot = 0.0
-            for m in range(0, len(idx), a.micro_batch):
-                sub = idx[m:m + a.micro_batch]
-                ids, mask = pad_left([enc[i] for i in sub], tok.pad_token_id, device)
-                target = torch.tensor([yes_id if train[i]["label"] == 1 else no_id for i in sub], device=device)
-                loss = torch.nn.functional.cross_entropy(final_logits(model, ids, mask, amp), target, reduction="sum") / len(idx)
-                scaler.scale(loss).backward()
-                tot += float(loss)
+            by_len = sorted(idx, key=lambda i: -lens[i])
+            while True:
+                try:
+                    tot = 0.0
+                    for sub in groups_within(lens, by_len, budget):
+                        ids, mask = pad_left([enc[i] for i in sub], tok.pad_token_id, device)
+                        target = torch.tensor([yes_id if train[i]["label"] == 1 else no_id for i in sub], device=device)
+                        loss = torch.nn.functional.cross_entropy(final_logits(model, ids, mask, amp), target, reduction="sum") / len(idx)
+                        scaler.scale(loss).backward()
+                        tot += float(loss)
+                    break
+                except torch.OutOfMemoryError:
+                    opt.zero_grad(set_to_none=True); torch.cuda.empty_cache()
+                    n_oom += 1
+                    if budget <= max(lens) or n_oom > 6:
+                        raise
+                    budget = max(max(lens), budget // 2)
+                    log(f"  out of memory at step {step}: forward passes now at most {budget} padded tokens; the step is redone")
             scaler.unscale_(opt)
             torch.nn.utils.clip_grad_norm_(params, 1.0)
             scaler.step(opt); scaler.update(); sched.step(); opt.zero_grad(set_to_none=True)
@@ -173,6 +201,7 @@ def main():
                              first_loss=tlog[0]["loss"] if tlog else None, last_loss=tlog[-1]["loss"] if tlog else None)
         if device == "cuda":
             info["train"]["max_memory_gb"] = round(torch.cuda.max_memory_allocated() / 1e9, 2)
+            info["train"].update(forward_tokens_final=budget, out_of_memory_retries=n_oom)
         if not a.time_test:
             model.save_pretrained(out / "adapter")
             from safetensors.torch import load_file, save_file
@@ -190,7 +219,7 @@ def main():
         elif a.time_test:
             items = items[:: max(1, len(items) // 25)][:25]
         log(f"  scoring {name}: {len(items)} items")
-        s, n = score(model, tok, ans, items, device, amp, a.eval_batch, log)
+        s, n = score(model, tok, ans, items, device, amp, a.eval_tokens, log)
         scores[name + "__score"], scores[name + "__n_tokens"] = s, n
         scores[name + "__uid"] = np.array([i["uid"] for i in items]); scores[name + "__label"] = np.array([i["label"] for i in items], np.int8)
         if not np.isfinite(s).all():

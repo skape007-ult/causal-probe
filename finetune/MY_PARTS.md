@@ -66,9 +66,15 @@ leaving as arriving.
    intervals. Requirement in PREREG.md: each within 0.5 ± 0.02 with the interval containing 0.5.
 3. Compare sizes with the reference (16 Nov, TRAIN premises, 16 bins, 8 pairs per premise: 7,766 items on 836
    premises). If yours keeps more with the same properties, yours is better and the reference is retired.
-4. Because B decides N for all three conditions, swapping your function in **before** the core training runs is
-   clean; swapping after them changes the training sets, so the core would then be reported as trained on the
-   reference's sets, with your function verified on the same data. Tell Claude which you want (question Q3).
+4. The core runs use the reference function (your decision, 16 Nov). Once yours passes the tests, run
+   `caffeinate -i ../causal-probe/.venv/bin/python finetune/scripts/build_data.py --check-only`: it rebuilds B and
+   POOL-LB with **your** function (the pipeline switches automatically) and compares the hashes with the stored sets.
+   **Open point, waiting for your answer:** the reference is a seeded greedy procedure, so an independently designed
+   function will pass P1 to P5 and keep a similar number of items but will not pick the same items, and this check
+   will report a difference. Two honest ways to report it: (i) "the stored sets pass the owner's independent
+   property checks, and the owner's function gives sets with the same properties" (independent design), or (ii) I
+   add the exact procedure and order of random draws to this spec and you reproduce the sets bit for bit
+   (independent typing, same design). Tell me which.
 
 ## (b) Within-hypothesis-string AUROC with length removed — `finetune/ftstudy/within_string.py`
 

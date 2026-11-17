@@ -1,12 +1,17 @@
 # Progress (read this first after a restart)
 
-## STATUS, Monday 16 November (fine-tuning study, branch `exp/finetune`, worktree `../causal-probe-ft`)
+## STATUS, Monday 16 November, end of day (fine-tuning study, branch `exp/finetune`, worktree `../causal-probe-ft`)
 
-v1.0 is closed and untouched. Everything below lives under `finetune/`.
+v1.0 is closed and untouched. Everything below lives under `finetune/`. Standing orders: `CLAUDE.md` in the worktree.
 
-- **Done today:** `finetune/scripts/kaggle_run.py` (queue, 2 concurrent, 20 GPU-hour weekly cap, no relaunch, halt on failure, dry run; 20 tests); `finetune/PREREG.md` (E1 to E8 with power, commit `2c3dbe5`), under independent review; `finetune/MY_PARTS.md` with stubs for the owner's parts (a) and (b), reference implementations in `*_reference.py`, tests that run on both; Kaggle path test `ft_gputest1` launched.
-- **Next:** answer the pre-registration review and append amendments; `finetune/scripts/build_data.py` (conditions A, B, C, evaluation sets, overlap proof, text-baseline verification of B); training and evaluation code with a laptop smoke test on Qwen2.5-0.5B as stand-in; time-test notebook.
-- **Waiting on the owner:** the batched questions in the reply of 16 Nov (none blocks the data build).
+- **Kaggle path test passed** (T4 x2, internet, download, STATUS.txt). Secrets cannot be attached through the API; Qwen needs none. Kaggle's own queue held the run 44 minutes.
+- **Queue runner:** cap 26 GPU hours a week, Kaggle's own 15 hours left recorded as a second limit; 21 tests.
+- **Pre-registration version 2** (`finetune/PREREG.md`) answers the first review's eight blocking findings; **second independent review running**. No training before it passes.
+- **Data built** (`finetune/itemsets/`): five conditions of 7,184 items (A, A48, B, C, Bswap), evaluation sets ID, ID48, POOL-LB, POOL, official test, perturbed versions, the authors' sets; zero overlap in 60 pairs.
+- **Owner's parts:** `finetune/MY_PARTS.md`; stubs in place, reference implementations in `*_reference.py`. Open question on what "identical on the stored sets" can mean for part (a) (log, 17 Nov 01:30 UTC).
+- **Pushed:** `exp/finetune` on GitHub.
+- **Next:** answer the second review; training and evaluation script with a laptop smoke test on Qwen2.5-0.5B; time-test notebook pinned to a pushed commit; then A and B through the queue.
+- **Running overnight:** nothing, unless stated otherwise in the day's last message.
 - **Deadline:** `finetune/RESULTS_FT.md`, Sunday 22 Nov 18:00, audited parts only.
 
 ## FINAL, Sunday 15 November 08:11: version v1.0

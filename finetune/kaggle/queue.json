@@ -89,12 +89,26 @@
    "max_minutes": 270.0,
    "gpu": true,
    "note": "core pair A0_B0; limit 4.5 h against an expected 3.1 to 3.8 h",
-   "state": "launched",
+   "state": "complete",
    "added_at": "2026-11-17T15:08:16Z",
    "launched_at": "2026-11-17T15:08:26Z",
    "notebook_sha256": "f0c93dab61b4d9da4324b09048054ad26d40318e5a7428c2c963606c35770204",
    "commit": "b5561e92875d8093a4e7ab40a517ca0adb7afac4",
-   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a0-b0"
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a0-b0",
+   "running_since": "2026-11-17T15:13:31Z",
+   "last_status": "complete",
+   "last_polled": "2026-11-17T18:39:28Z",
+   "gpu_hours_charged": 3.433,
+   "download_output": "|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 68.0M/70.5M [00:03<00:00, 23.5MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 70.5M/70.5M [00:03<00:00, 19.7MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 70.5M/70.5M [00:03<00:00, 19.8MB/s]\n\n  0%|          | 0.00/488k [00:00<?, ?B/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 488k/488k [00:00<00:00, 3.61MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 488k/488k [00:00<00:00, 3.58MB/s]",
+   "downloaded": {
+    "ft-pair-a0-b0.log": 27221,
+    "kaggle_log.txt": 27222,
+    "kaggle_out/STATUS.txt": 275,
+    "kaggle_out/adapters_ft_pair_A0_B0.zip": 73976534,
+    "kaggle_out/results_ft_pair_A0_B0.zip": 499488
+   },
+   "status_txt": "OK",
+   "finished_at": "2026-11-17T18:39:34Z"
   },
   {
    "id": "ft_pair_a1_b1",
@@ -103,12 +117,26 @@
    "max_minutes": 270.0,
    "gpu": true,
    "note": "core pair A1_B1; limit 4.5 h against an expected 3.1 to 3.8 h",
-   "state": "launched",
+   "state": "complete",
    "added_at": "2026-11-17T15:08:16Z",
    "launched_at": "2026-11-17T15:08:28Z",
    "notebook_sha256": "773e989461de3d5a546c2dfa21cd3f6bbe59026d536a1fdcbc088085da33b32a",
    "commit": "b5561e92875d8093a4e7ab40a517ca0adb7afac4+uncommitted",
-   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a1-b1"
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a1-b1",
+   "last_status": "complete",
+   "last_polled": "2026-11-17T20:04:58Z",
+   "running_since": "2026-11-17T16:38:57Z",
+   "gpu_hours_charged": 3.434,
+   "download_output": "|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258e| 66.0M/70.5M [00:03<00:00, 23.2MB/s]\n 98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 69.0M/70.5M [00:03<00:00, 24.5MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 70.5M/70.5M [00:03<00:00, 21.2MB/s]\n\n  0%|          | 0.00/487k [00:00<?, ?B/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 487k/487k [00:00<00:00, 3.34MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 487k/487k [00:00<00:00, 3.32MB/s]",
+   "downloaded": {
+    "ft-pair-a1-b1.log": 27220,
+    "kaggle_log.txt": 27221,
+    "kaggle_out/STATUS.txt": 275,
+    "kaggle_out/adapters_ft_pair_A1_B1.zip": 73976534,
+    "kaggle_out/results_ft_pair_A1_B1.zip": 498195
+   },
+   "status_txt": "OK",
+   "finished_at": "2026-11-17T20:05:04Z"
   },
   {
    "id": "ft_pair_a2_b2",
@@ -117,8 +145,40 @@
    "max_minutes": 270.0,
    "gpu": true,
    "note": "core pair A2_B2; limit 4.5 h against an expected 3.1 to 3.8 h",
-   "state": "queued",
-   "added_at": "2026-11-17T15:08:17Z"
+   "state": "complete",
+   "added_at": "2026-11-17T15:08:17Z",
+   "launched_at": "2026-11-17T18:39:35Z",
+   "notebook_sha256": "27d254268a8ebb9b87dde3b38abae1ef2657ecfe005b49c2fbf24961c02d70c7",
+   "commit": "d5cd2a78a4a497e2e73ff03bd05ae26600871548+uncommitted",
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a2-b2",
+   "running_since": "2026-11-17T18:44:38Z",
+   "last_status": "complete",
+   "last_polled": "2026-11-17T22:00:21Z",
+   "gpu_hours_charged": 3.262,
+   "download_output": "\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f| 65.0M/70.5M [00:04<00:00, 16.4MB/s]\n 95%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d| 67.0M/70.5M [00:04<00:00, 14.0MB/s]\n 98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 69.0M/70.5M [00:04<00:00, 14.4MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 70.5M/70.5M [00:04<00:00, 14.8MB/s]\n\n  0%|          | 0.00/489k [00:00<?, ?B/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 489k/489k [00:00<00:00, 5.20MB/s]",
+   "downloaded": {
+    "ft-pair-a2-b2.log": 27220,
+    "kaggle_log.txt": 27221,
+    "kaggle_out/STATUS.txt": 275,
+    "kaggle_out/adapters_ft_pair_A2_B2.zip": 73976534,
+    "kaggle_out/results_ft_pair_A2_B2.zip": 500836
+   },
+   "status_txt": "OK",
+   "finished_at": "2026-11-17T22:00:29Z"
+  },
+  {
+   "id": "ft_pair_a3_b3",
+   "notebook": "finetune/notebooks/ft_pair_A3_B3.ipynb",
+   "kernel": "skape007/ft-pair-a3-b3",
+   "max_minutes": 230.0,
+   "gpu": true,
+   "note": "A seed 3 + B seed 3; pinned 923aa39 (first Kaggle run of the fixed platform cell)",
+   "state": "launched",
+   "added_at": "2026-11-17T22:00:50Z",
+   "launched_at": "2026-11-17T22:00:57Z",
+   "notebook_sha256": "7a12afddd543298ecda4a840701f61bb1cf380a0ef6d3cc0dca1afbe96278542",
+   "commit": "dd63b1a7191fdffeb11753b70b00fe2166c2215b+uncommitted",
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a3-b3"
   }
  ],
  "external": [],

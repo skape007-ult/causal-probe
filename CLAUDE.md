@@ -23,7 +23,11 @@ Written 16 November 2026 on the owner's instruction. These bind every session th
 5. The owner's parts (`finetune/MY_PARTS.md`) are not implemented by Claude: the balancing function, the
    within-string AUROC with length removed, the interpretation section. Reference implementations stay in separate
    `*_reference.py` files.
-6. Never rush a claim to meet a date. The page reports audited parts and says "in progress" for the rest.
+6. In `RESULTS_FT.md` the decisive comparison for "what did it learn" is each model against the memorisation
+   reference of its own training set (copy from similar training premises; PREREG E5b). A difference between
+   conditions is never presented as evidence of learned structure without it. The owner's balancing function is
+   reported as "independently implemented; passes the same property checks; core runs used the reference sets".
+7. Never rush a claim to meet a date. The page reports audited parts and says "in progress" for the rest.
 
 ## Machines and quota
 - Laptop: 8 GB, CPU only. Cap threads (`OMP_NUM_THREADS=2`), one heavy process at a time, nothing that swaps, no
@@ -32,7 +36,9 @@ Written 16 November 2026 on the owner's instruction. These bind every session th
   `caffeinate -i .venv/bin/python finetune/scripts/kaggle_run.py poll`), so the Mac stays awake exactly while work is
   running and can sleep otherwise. At the end of each day tell the owner whether anything will run overnight.
 - Kaggle: every GPU run goes through `finetune/scripts/kaggle_run.py` (queue file, at most 2 concurrent, no automatic
-  relaunch, halt and report on any failure, dry run first). **Cap: 26 GPU hours per quota week.** Ask the owner
+  relaunch, halt and report on any failure, dry run first). **Cap: 26 GPU hours per quota week; the binding limit is what Kaggle's own page
+  says is left (recorded with `kaggle_run.py quota`); the week resets Saturday 00:00 UTC.** Colab is for overflow runs
+  the owner launches by hand, never more than one at a time. Ask the owner
   before spending quota on anything that is not in the queue as planned, and before clearing `finetune/kaggle/HALT`.
 - No training run before the pre-registration has passed its independent review.
 

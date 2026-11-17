@@ -2,3 +2,5 @@ kaggle/push/
 kaggle/downloads/
 kaggle/.lock
 kaggle/queue.tmp
+adapters/
+ft_adapters/

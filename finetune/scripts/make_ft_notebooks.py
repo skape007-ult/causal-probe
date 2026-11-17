@@ -105,9 +105,22 @@ print("expected archives:", expected, "|", not_finished or "all jobs finished")
 '''
 
 
+# Colab overflow: one model per notebook (a free Colab session can end at any time; one model is about an hour and a
+# half), launched by hand by the owner, never more than one at a time. Same cells: the platform cell detects Colab,
+# writes to /content/out and the last cell hands STATUS.txt and the archives to the browser.
+COLAB_JOBS = [("base", 0)] + [(c, s) for c, n in (("A", 5), ("B", 5), ("A48", 3), ("C", 3), ("Bswap", 5)) for s in range(n)]
+for c, sd in COLAB_JOBS:
+    nm = "base" if c == "base" else f"{c}_s{sd}"
+    RUNS.append(dict(file=f"colab/colab_{nm}.ipynb", run=f"colab_{nm}", jobs=[(c, sd)], extra="",
+                     title=f"Fine-tuning study, Colab overflow: {nm}", est="about 1.5 to 2 hours on a free T4 (set from the time test)",
+                     what=f"trains and scores one model ({nm}). Colab: Runtime -> Change runtime type -> T4 GPU, then Run all. "
+                          "Keep the tab open. At the end the browser downloads STATUS.txt and the zip files; put them in one folder "
+                          "and give Claude the folder (finetune/scripts/ingest.py checks them). Never run two Colab notebooks at once"))
+
+
 def main(commit):
     out = ROOT / "finetune" / "notebooks"
-    out.mkdir(parents=True, exist_ok=True)
+    (out / "colab").mkdir(parents=True, exist_ok=True)
     for r in RUNS:
         head = (SETUP_HEAD + f'''
 RUN_NAME, COMMIT = "{r['run']}", "{commit}"
@@ -116,8 +129,8 @@ EXTRA_ARGS = "{r['extra']}"
 NEEDS_TOKEN, MODELS, MIN_GPUS = False, "qwen1.5b", 1
 print("first line of this log:", RUN_NAME, "at commit", COMMIT, "| jobs:", JOBS)
 ''')
-        cells = [md(f"# {r['title']}\n\nWhat it does: {r['what']}.\n\nEstimated time: {r['est']}. Accelerator: GPU T4 x2. Internet: on. "
-                    f"No secret needed. Code: commit `{commit}` of branch `exp/finetune`. Launched through `finetune/scripts/kaggle_run.py`."),
+        cells = [md(f"# {r['title']}\n\nWhat it does: {r['what']}.\n\nEstimated time: {r['est']}. Accelerator: " + ("Colab T4 (one GPU)" if r["file"].startswith("colab/") else "GPU T4 x2") + ". Internet: on. "
+                    f"No secret needed. Code: commit `{commit}` of branch `exp/finetune`. " + ("Launched by hand on Colab." if r["file"].startswith("colab/") else "Launched through `finetune/scripts/kaggle_run.py`.")),
                  code(head), code(PLATFORM_SETUP), code(COMMON_SETUP), code(CLONE), code(ENV), code(DATA), code(RUN), code(PACK), code(FINAL_CHECK)]
         nb = {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                                            "language_info": {"name": "python"}}, "nbformat": 4, "nbformat_minor": 5}

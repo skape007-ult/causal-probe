@@ -66,15 +66,12 @@ leaving as arriving.
    intervals. Requirement in PREREG.md: each within 0.5 ± 0.02 with the interval containing 0.5.
 3. Compare sizes with the reference (16 Nov, TRAIN premises, 16 bins, 8 pairs per premise: 7,766 items on 836
    premises). If yours keeps more with the same properties, yours is better and the reference is retired.
-4. The core runs use the reference function (your decision, 16 Nov). Once yours passes the tests, run
-   `caffeinate -i ../causal-probe/.venv/bin/python finetune/scripts/build_data.py --check-only`: it rebuilds B and
-   POOL-LB with **your** function (the pipeline switches automatically) and compares the hashes with the stored sets.
-   **Open point, waiting for your answer:** the reference is a seeded greedy procedure, so an independently designed
-   function will pass P1 to P5 and keep a similar number of items but will not pick the same items, and this check
-   will report a difference. Two honest ways to report it: (i) "the stored sets pass the owner's independent
-   property checks, and the owner's function gives sets with the same properties" (independent design), or (ii) I
-   add the exact procedure and order of random draws to this spec and you reproduce the sets bit for bit
-   (independent typing, same design). Tell me which.
+4. How it is reported (your decision, 17 Nov): **"independently implemented; passes the same property checks; core
+   runs used the reference sets."** No bit-for-bit reproduction is asked for: the reference is a seeded greedy
+   procedure, so an independent design keeps different items with the same properties. When yours passes the tests,
+   `caffeinate -i ../causal-probe/.venv/bin/python finetune/scripts/build_data.py --check-only` rebuilds B and
+   POOL-LB with your function, runs the shortcut checks on them and prints their sizes next to the stored sets';
+   it will also say the hashes differ, which is expected and is not a failure of your part.
 
 ## (b) Within-hypothesis-string AUROC with length removed — `finetune/ftstudy/within_string.py`
 

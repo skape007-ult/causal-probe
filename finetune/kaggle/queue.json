@@ -62,8 +62,15 @@
    "max_minutes": 45.0,
    "gpu": true,
    "note": "second time test after the out-of-memory fix; waits for the owner to clear HALT",
-   "state": "queued",
-   "added_at": "2026-11-17T01:24:15Z"
+   "state": "running",
+   "added_at": "2026-11-17T01:24:15Z",
+   "launched_at": "2026-11-17T14:46:14Z",
+   "notebook_sha256": "5e40ec8cfefb58a774987a7873b55c83971e0b39c517225137897f796634ac57",
+   "commit": "550ca0c9ae760584782ae74cf0e418ccea7fecaf+uncommitted",
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-timetest2",
+   "last_status": "running",
+   "last_polled": "2026-11-17T14:47:25Z",
+   "running_since": "2026-11-17T14:47:25Z"
   }
  ],
  "external": [],

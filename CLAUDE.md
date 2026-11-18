@@ -27,7 +27,10 @@ Written 16 November 2026 on the owner's instruction. These bind every session th
    reference of its own training set (copy from similar training premises; PREREG E5b). A difference between
    conditions is never presented as evidence of learned structure without it. The owner's balancing function is
    reported as "independently implemented; passes the same property checks; core runs used the reference sets".
-7. Never rush a claim to meet a date. The page reports audited parts and says "in progress" for the rest.
+7. **Blinding (owner, 17 Nov):** no registered A-vs-B test and no A-vs-B comparison of any kind on the evaluation
+   sets until all 5 seeds of A and of B (A_s0-4, B_s0-4) are ingested in `finetune/runs/`. Until then analysis code
+   is tested only on synthetic scores and on the base model. Analysis scripts enforce this in code.
+8. Never rush a claim to meet a date. The page reports audited parts and says "in progress" for the rest.
 
 ## Machines and quota
 - Laptop: 8 GB, CPU only. Cap threads (`OMP_NUM_THREADS=2`), one heavy process at a time, nothing that swaps, no

@@ -1012,3 +1012,8 @@ The reviewer then checked the edited file: **PASS, training may start**, all fiv
 - ft_pair_a2_b2 complete (charged 3.26 h); ingested A_s2, B_s2 (train 136/116 min, scoring 55/57 min, no OOM). Filed now: base, A_s0-2, B_s0-2.
 - Quota after three pairs: 4.29 h left (runner estimate). Pair sessions measured 3.26-3.43 h, so A3+B3 fits with a 230-min limit (0.4 h above the slowest pair). Queued and launched under caffeinate (plan condition: launch only if its limit fits). It is the first Kaggle run of the fixed platform cell (923aa39); a detection mismatch would stop it within minutes.
 - Expected back ~01:30-02:00 UTC Wed. After it: about 0.4 h of quota left this week; nothing more on Kaggle until the reset (Sat 00:00 UTC).
+
+## Tue 17 Nov ~22:15 UTC: DECISION (owner)
+- Seeds 4: owner runs colab_A_s4 on Wed 18 Nov and colab_B_s4 on Thu 19 Nov (by hand, one at a time), so A and B have 5 seeds each before the quota reset. A4+B4 is dropped from the Kaggle plan.
+- Post-reset Kaggle quota (from Sat 21 Nov 00:00 UTC) goes to A48+C pairs (seeds 0-2) and the Bswap pairs.
+- Blinding rule: no registered A-vs-B test, and no A-vs-B comparison of any kind on the evaluation sets, until all 5 seeds of A and of B are ingested. Until then the analysis code is tested only on synthetic scores and on the base model. The analysis script will enforce this (it refuses an A-vs-B comparison unless finetune/runs holds A_s0-4 and B_s0-4).

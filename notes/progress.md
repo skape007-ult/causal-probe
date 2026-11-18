@@ -1,5 +1,14 @@
 # Progress (read this first after a restart)
 
+## STATUS, Tuesday 17 November, 22:15 UTC (fine-tuning study)
+
+- **Filed (ingested, all checks passed):** base (Colab), A_s0-2, B_s0-2 (Kaggle).
+- **Running on Kaggle:** `ft_pair_a3_b3` (limit 230 min, launched 22:00 UTC, expected back ~01:30-02:00 UTC; first Kaggle run of the fixed platform cell, 923aa39). After it ~0.4 h of quota is left until the reset (Sat 21 Nov 00:00 UTC).
+- **Owner, by hand on Colab:** `colab_A_s4` Wed 18 Nov, `colab_B_s4` Thu 19 Nov.
+- **After the reset (Kaggle):** A48+C pairs (seeds 0-2), then the Bswap pairs. A4+B4 is not on Kaggle.
+- **Blinding (owner decision, 17 Nov):** no A-vs-B test or comparison on the evaluation sets until A_s0-4 and B_s0-4 are all ingested. Until then analysis code is tested on synthetic scores and the base model only.
+- **Next (CPU):** behaviour analysis E1-E5, with the blinding guard, tested on synthetic scores and on base.
+
 ## STATUS, Tuesday 17 November, 15:10 UTC (fine-tuning study)
 
 - **Running on Kaggle:** `ft_pair_a0_b0`, `ft_pair_a1_b1` (since 15:08 UTC, expected back 18:15 to 19:00 UTC); `ft_pair_a2_b2` queued, launched automatically when a pair returns. Loop: `caffeinate -i .venv/bin/python finetune/scripts/kaggle_run.py run`, log `finetune/kaggle/run_loop.log`.

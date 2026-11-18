@@ -2,8 +2,8 @@
 
 ## STATUS, Tuesday 17 November, 22:15 UTC (fine-tuning study)
 
-- **Filed (ingested, all checks passed):** base (Colab), A_s0-2, B_s0-2 (Kaggle).
-- **Running on Kaggle:** `ft_pair_a3_b3` (limit 230 min, launched 22:00 UTC, expected back ~01:30-02:00 UTC; first Kaggle run of the fixed platform cell, 923aa39). After it ~0.4 h of quota is left until the reset (Sat 21 Nov 00:00 UTC).
+- **Filed (ingested, all checks passed):** base (Colab), A_s0-3, B_s0-3 (Kaggle; A3+B3 back 01:16 UTC Wed, first run of the fixed platform cell, detected correctly).
+- **Kaggle:** nothing running; about 1.1 h of quota left until the reset (Sat 21 Nov 00:00 UTC).
 - **Owner, by hand on Colab:** `colab_A_s4` Wed 18 Nov, `colab_B_s4` Thu 19 Nov.
 - **After the reset (Kaggle):** A48+C pairs (seeds 0-2), then the Bswap pairs. A4+B4 is not on Kaggle.
 - **Blinding (owner decision, 17 Nov):** no A-vs-B test or comparison on the evaluation sets until A_s0-4 and B_s0-4 are all ingested. Until then analysis code is tested on synthetic scores and the base model only.

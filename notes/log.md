@@ -1017,3 +1017,8 @@ The reviewer then checked the edited file: **PASS, training may start**, all fiv
 - Seeds 4: owner runs colab_A_s4 on Wed 18 Nov and colab_B_s4 on Thu 19 Nov (by hand, one at a time), so A and B have 5 seeds each before the quota reset. A4+B4 is dropped from the Kaggle plan.
 - Post-reset Kaggle quota (from Sat 21 Nov 00:00 UTC) goes to A48+C pairs (seeds 0-2) and the Bswap pairs.
 - Blinding rule: no registered A-vs-B test, and no A-vs-B comparison of any kind on the evaluation sets, until all 5 seeds of A and of B are ingested. Until then the analysis code is tested only on synthetic scores and on the base model. The analysis script will enforce this (it refuses an A-vs-B comparison unless finetune/runs holds A_s0-4 and B_s0-4).
+
+## Wed 18 Nov 01:20 UTC
+- ft_pair_a3_b3 complete (196 min, charged 3.18 h). Ingested A_s3, B_s3 (train 135/120 min, scoring 56/60 min, no OOM). Filed: base, A_s0-3, B_s0-3.
+- Fixed platform cell confirmed on Kaggle: the Kaggle VM shows KAGGLE_KERNEL_RUN_TYPE, KAGGLE_URL_BASE AND COLAB_RELEASE_TAG, google.colab importable, both /content and /kaggle. So Kaggle-variables-first is required, and folders decide nothing on either platform.
+- Quota left this week (runner estimate): 1.12 h; nothing queued. Loop ended; nothing runs overnight.

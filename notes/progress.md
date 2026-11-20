@@ -1,5 +1,13 @@
 # Progress (read this first after a restart)
 
+## STATUS, Friday 20 November, 22:30 UTC (fine-tuning study) — supersedes the 22:00 block
+
+- **Kaggle:** 7 runs queued in the owner's order (A4+B4; A48+C x3; Bswap 0+1, 2+3; Bswap 4 if quota remains), 230-min limits. Loop running under caffeinate since 21:59 UTC, holding until 2026-11-21T00:05Z (`--start-at`), then 2 at a time. Expected done ~Sat 10:00-14:00 UTC. Log: finetune/kaggle/run_loop.log.
+- **Backup:** ~/Documents/causal-probe-runs-backup/finetune_runs_20261120T2157Z.zip (1.9 MB).
+- **Analysis written:** finetune/ftstudy/behaviour.py (E1-E5, outlier rule, Holm, rungs; blinding guard), finetune/scripts/behaviour.py (--synthetic planted|null, --base, registered run refuses until A_s0-4 and B_s0-4 exist: exit 3, checked), finetune/scripts/text_references.py (E5c refs, computed), finetune/scripts/results_tables.py (number tables for RESULTS_FT). Tests: finetune/tests/test_behaviour.py.
+- **Explainer:** private/EXPLAINER.md (not committed).
+- **Saturday, when the loop ends (no owner input needed):** ingest each download (finetune/scripts/ingest.py) -> back up runs again -> `behaviour.py` (registered) -> `results_tables.py` -> independent audit (fresh reviewer: code + result files, no conclusions) -> RESULTS_FT.md draft (<=3 claims, Interpretation "(Sahil)", wording queued in finetune/notes/results_ft_queue.md) -> to the owner by Sun 12:00 EST (17:00 UTC). Deadline Sun 18:00 EST (23:00 UTC).
+
 ## STATUS, Friday 20 November, 22:00 UTC (fine-tuning study)
 
 - **Nothing ran Wed 18 to Fri 20.** Kaggle idle since A3+B3 (Wed 01:16 UTC); no Colab output for A_s4 or B_s4 has reached the laptop. The analysis code (E1-E5) was not written: the session was idle without a message.

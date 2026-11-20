@@ -1022,3 +1022,23 @@ The reviewer then checked the edited file: **PASS, training may start**, all fiv
 - ft_pair_a3_b3 complete (196 min, charged 3.18 h). Ingested A_s3, B_s3 (train 135/120 min, scoring 56/60 min, no OOM). Filed: base, A_s0-3, B_s0-3.
 - Fixed platform cell confirmed on Kaggle: the Kaggle VM shows KAGGLE_KERNEL_RUN_TYPE, KAGGLE_URL_BASE AND COLAB_RELEASE_TAG, google.colab importable, both /content and /kaggle. So Kaggle-variables-first is required, and folders decide nothing on either platform.
 - Quota left this week (runner estimate): 1.12 h; nothing queued. Loop ended; nothing runs overnight.
+
+## Fri 20 Nov ~22:10 UTC: DECISIONS (owner)
+1. Colab A_s4/B_s4 were not run (no files reached the laptop); A4+B4 goes first on Kaggle after the reset.
+2. Queue order: A4+B4; A48+C seeds 0-2; Bswap 0+1, 2+3; Bswap 4 only if quota remains. Loop started now under caffeinate, holding until the reset (kaggle_run.py run --start-at 2026-11-21T00:05:00Z, new option, tested). Dry run shown to the owner.
+3. Deadline confirmed: Sunday 22 Nov 18:00 EST = 23:00 UTC. RESULTS_FT.md draft to the owner by Sunday 12:00 EST (17:00 UTC).
+4. This turn: E1-E5 analysis with the blinding guard, tested on synthetic scores and the base model; explainer into private/.
+5. finetune/runs backed up to ~/Documents/causal-probe-runs-backup/finetune_runs_20261120T2157Z.zip (1.9 MB, 37 files, verified).
+6. When the last runs land: ingest -> analysis -> independent audit -> RESULTS_FT.md draft, without waiting for the owner; wording waits for the owner.
+
+## Fri 20 Nov 22:05 UTC: E5c text references computed (finetune/scripts/text_references.py, before any fine-tuned score is opened)
+S on POOL-LB (best = tuned stack for every condition; C = 100, the top of the grid, for all): A 0.846, B 0.956, A48 0.885. Premise-count classifiers reproduce references.json (A 0.520/0.566, B 0.588/0.666). These are the E5c bars: higher than the memorisation references (0.703 / 0.898).
+
+## Fri 20 Nov ~22:20 UTC: behaviour analysis written and self-tested (no A or B score opened)
+- finetune/ftstudy/behaviour.py + finetune/scripts/behaviour.py: E1-E5 as registered (E2c read first, E1 gate, E2a/b, E3 + share, E4a/b within seed, E5a/b/c for A and B, E5 for A48 descriptive, near/far halves, Amendment 1 pair-only memorisation variant beside E5b), outlying-seed rule, Holm over the eleven (a test that cannot run counts as p = 1), rungs, power notes. Blinding: the registered run exits 3 before loading anything unless A_s0-4 and B_s0-4 exist (checked: "missing A_s4, B_s4"); load_scores and analyse check again.
+- Resamples use a closed form of S shared by all models per resample; checked against stat.S on every point estimate and the first 3 resamples of each vector (tolerance 1e-4; the largest difference is recorded). Found and fixed on the way: forming fitted values by a matrix product split exact ties in the base model's float32 scores (2e-6); fitted values are now formed element by element; max difference on base 0.0. Note for the owner: the reference within-string function (and any implementation using X @ beta) can in principle split exact ties the same way; effect is of order 1e-6.
+- Base model (behaviour_base.json): S POOL-LB 0.519 [0.497, 0.534], ID48 0.572; S in cells POOL-LB 0.415. Every registered reference recomputes to its stored value exactly.
+- Synthetic planted: B-over-A found (E2a +0.309), the planted renaming drop found (E4a, E4b), E2c inconclusive. Synthetic null (A, B, A48, C identical; Bswap at chance; no renaming drop): E2a, E2b, E3, E4a, E4b not shown, E2c inconclusive. Run time about 1.5-2 min per mode.
+- Pair-only memorisation variant (Amendment 1) computes to A 0.769, B 0.913, A48 0.816 (best of the 'all' members and the pair-only 'queried' members); the reviewer reported 0.745 / 0.905 / 0.804. The difference is to be explained in the audit; the registered reference is unaffected.
+- Text references: tuned stack chose C = 100, the top of v1.0's grid, for every condition.
+- Explainer written to private/EXPLAINER.md (24 professor questions with model answers; not committed).

@@ -1,0 +1,40 @@
+===== base
+17:10:19 building sets and resamples
+17:10:23 building references
+17:12:32 wrote finetune/results/behaviour_base.json in 133 s
+===== planted
+17:12:34 building sets and resamples
+17:12:38 references from cache finetune/results/.refs_cache.pkl
+17:12:38 analysing 19 models
+17:13:58 wrote finetune/results/behaviour_synthetic_planted.json in 84 s
+  E2c     D +0.004 [-0.060, +0.067]  p 0.8331  holm nan  inconclusive: interval not inside 0.5 +/- 0.05 and not excluding 0.5 (expected with 3 seeds; Amendment 1, item 2)
+  E2a     D +0.309 [+0.290, +0.329]  p 0.0000  holm 0.0000  above
+  E2b     D +0.137 [+0.121, +0.152]  p 0.0000  holm 0.0001  above
+  E3      D +0.125 [+0.086, +0.163]  p 0.0005  holm 0.0029  above
+  E4a     D +0.069 [+0.039, +0.100]  p 0.0033  holm 0.0119  above
+  E4b     D +0.070 [+0.041, +0.098]  p 0.0025  holm 0.0119  above
+  E5a_A   D +0.134 [+0.107, +0.161]  p 0.0002  holm 0.0012  above
+  E5a_B   D +0.455 [+0.448, +0.462]  p 0.0000  holm 0.0000  above
+  E5b_A   D -0.060 [-0.095, -0.025]  p 0.0087  holm 0.0174  below
+  E5b_B   D +0.055 [+0.033, +0.078]  p 0.0024  holm 0.0119  above
+  E5c_A   D -0.202 [-0.230, -0.175]  p 0.0000  holm 0.0003  below
+  E5c_B   D -0.003 [-0.019, +0.013]  p 0.6610  holm 0.6610  not shown
+  E1 gate passed: False | rungs: L1 / L2
+===== null
+17:14:00 building sets and resamples
+17:14:04 references from cache finetune/results/.refs_cache.pkl
+17:14:04 analysing 19 models
+17:15:25 wrote finetune/results/behaviour_synthetic_null.json in 85 s
+  E2c     D +0.299 [+0.241, +0.357]  p 0.0020  holm nan  claimed different from 0.5: B and POOL-LB share an artefact; E2a, E2b and E5 are not interpreted until it is explained
+  E2a     D -0.002 [-0.022, +0.019]  p 0.8311  holm 0.8311  not shown
+  E2b     D -0.014 [-0.035, +0.007]  p 0.1542  holm 0.4626  not shown
+  E3      D +0.015 [-0.012, +0.043]  p 0.2154  holm 0.4626  not shown
+  E4a     D +0.056 [+0.028, +0.084]  p 0.0049  holm 0.0247  above
+  E4b     D +0.054 [+0.029, +0.079]  p 0.0040  holm 0.0243  above
+  E5a_A   D +0.298 [+0.275, +0.321]  p 0.0000  holm 0.0000  above
+  E5a_B   D +0.307 [+0.292, +0.322]  p 0.0000  holm 0.0000  above
+  E5b_A   D +0.101 [+0.068, +0.134]  p 0.0011  holm 0.0077  above
+  E5b_B   D -0.095 [-0.123, -0.067]  p 0.0007  holm 0.0056  below
+  E5c_A   D -0.042 [-0.068, -0.016]  p 0.0114  holm 0.0456  below
+  E5c_B   D -0.153 [-0.177, -0.130]  p 0.0001  holm 0.0005  below
+  E1 gate passed: False | rungs: L2 / L1

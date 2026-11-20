@@ -1,0 +1,6 @@
+A pool_lb {'lookup': 0.753, 'hand_parse': 0.785, 'tuned_stack': 0.846, 'premise_counts_logistic': 0.52, 'premise_counts_boosting': 0.566} best tuned_stack C 100.0
+A id48 {'lookup': 0.628, 'hand_parse': 0.777, 'tuned_stack': 0.831, 'premise_counts_logistic': 0.59, 'premise_counts_boosting': 0.584} best tuned_stack C 100.0
+B pool_lb {'lookup': 0.773, 'hand_parse': 0.887, 'tuned_stack': 0.956, 'premise_counts_logistic': 0.588, 'premise_counts_boosting': 0.666} best tuned_stack C 100.0
+B id48 {'lookup': 0.643, 'hand_parse': 0.75, 'tuned_stack': 0.802, 'premise_counts_logistic': 0.542, 'premise_counts_boosting': 0.593} best tuned_stack C 100.0
+A48 pool_lb {'lookup': 0.754, 'hand_parse': 0.812, 'tuned_stack': 0.885, 'premise_counts_logistic': 0.523, 'premise_counts_boosting': 0.584} best tuned_stack C 100.0
+A48 id48 {'lookup': 0.607, 'hand_parse': 0.795, 'tuned_stack': 0.868, 'premise_counts_logistic': 0.617, 'premise_counts_boosting': 0.614} best tuned_stack C 100.0

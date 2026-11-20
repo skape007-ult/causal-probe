@@ -341,9 +341,18 @@ class Runner:
             f.write(self.halt.read_text() + f"{iso(self.clock())}  CLEARED: {reason}\n\n")
         self.halt.unlink()
 
-    def run_loop(self, every: int = 300, max_hours: float = 30.0, say=print, sleep=None) -> str:
+    def run_loop(self, every: int = 300, max_hours: float = 30.0, say=print, sleep=None, start_at: str = "") -> str:
+        """start_at (ISO time, UTC): do nothing but wait until then (e.g. the quota reset), then loop as usual.
+        max_hours counts from the start, not from the wait."""
         import time as _t
         sleep = sleep or _t.sleep
+        if start_at:
+            t0 = parse(start_at)
+            if self.clock() < t0:
+                say(f"waiting until {iso(t0)} before polling or launching anything")
+            while self.clock() < t0:
+                sleep(min(every, max(1.0, (t0 - self.clock()).total_seconds())))
+            say(f"start time {iso(t0)} reached at {iso(self.clock())}")
         t_end = _t.time() + max_hours * 3600
         while True:
             self.poll(say=say)
@@ -388,7 +397,7 @@ def main(argv=None) -> int:
     for name in ("launch", "poll"):
         s = sub.add_parser(name); s.add_argument("--dry-run", action="store_true")
     sub.add_parser("status")
-    rl = sub.add_parser("run"); rl.add_argument("--every", type=int, default=300); rl.add_argument("--max-hours", type=float, default=30.0)
+    rl = sub.add_parser("run"); rl.add_argument("--every", type=int, default=300); rl.add_argument("--max-hours", type=float, default=30.0); rl.add_argument("--start-at", default="", help="ISO time (UTC) to wait for first, e.g. 2026-11-21T00:05:00Z")
     e = sub.add_parser("external"); e.add_argument("--hours", type=float, required=True); e.add_argument("--note", required=True)
     k = sub.add_parser("quota"); k.add_argument("--hours-left", type=float, required=True); k.add_argument("--note", default="")
     c = sub.add_parser("clear-halt"); c.add_argument("--reason", required=True)
@@ -404,7 +413,7 @@ def main(argv=None) -> int:
         elif args.cmd == "poll":
             R.poll(dry=args.dry_run)
         elif args.cmd == "run":
-            R.run_loop(args.every, args.max_hours)
+            R.run_loop(args.every, args.max_hours, start_at=args.start_at)
         elif args.cmd == "status":
             R.report()
         elif args.cmd == "external":

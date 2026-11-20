@@ -267,3 +267,17 @@ def test_run_loop_stops_launching_on_halt(env):
     (env.bin / "status").write_text("ERROR")
     why = env.run_loop(every=1, say=lambda *_: None, sleep=lambda _: env.clk.add(minutes=5))
     assert why == "HALT is set" and len(pushes(env)) == 2
+
+
+def test_run_loop_waits_for_start_time_before_launching(env):
+    env.add("run_a", env.nb, 60)
+    (env.bin / "status").write_text("COMPLETE")
+    t0 = env.clock() + __import__("datetime").timedelta(hours=2)
+    seen = []
+    def sleep(sec):
+        seen.append((env.clock() < t0, len(pushes(env))))
+        env.clk.add(seconds=sec)
+    why = env.run_loop(every=600, say=lambda *_: None, sleep=sleep, start_at=t0.strftime("%Y-%m-%dT%H:%M:%SZ"))
+    waits = [s for s in seen if s[0]]
+    assert len(waits) >= 12 and all(n == 0 for _, n in waits)       # nothing pushed while waiting
+    assert len(pushes(env)) == 1 and why == "nothing queued"

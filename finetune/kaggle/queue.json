@@ -193,6 +193,76 @@
    },
    "status_txt": "OK",
    "finished_at": "2026-11-18T01:16:35Z"
+  },
+  {
+   "id": "ft_pair_a4_b4",
+   "notebook": "finetune/notebooks/ft_pair_A4_B4.ipynb",
+   "kernel": "skape007/ft-pair-a4-b4",
+   "max_minutes": 230.0,
+   "gpu": true,
+   "note": "A seed 4 + B seed 4 (Colab runs not done); completes 5 seeds of A and B",
+   "state": "queued",
+   "added_at": "2026-11-20T21:58:41Z"
+  },
+  {
+   "id": "ft_pair_a480_c0",
+   "notebook": "finetune/notebooks/ft_pair_A480_C0.ipynb",
+   "kernel": "skape007/ft-pair-a480-c0",
+   "max_minutes": 230.0,
+   "gpu": true,
+   "note": "A48 seed 0 + C seed 0",
+   "state": "queued",
+   "added_at": "2026-11-20T21:58:42Z"
+  },
+  {
+   "id": "ft_pair_a481_c1",
+   "notebook": "finetune/notebooks/ft_pair_A481_C1.ipynb",
+   "kernel": "skape007/ft-pair-a481-c1",
+   "max_minutes": 230.0,
+   "gpu": true,
+   "note": "A48 seed 1 + C seed 1",
+   "state": "queued",
+   "added_at": "2026-11-20T21:58:42Z"
+  },
+  {
+   "id": "ft_pair_a482_c2",
+   "notebook": "finetune/notebooks/ft_pair_A482_C2.ipynb",
+   "kernel": "skape007/ft-pair-a482-c2",
+   "max_minutes": 230.0,
+   "gpu": true,
+   "note": "A48 seed 2 + C seed 2",
+   "state": "queued",
+   "added_at": "2026-11-20T21:58:42Z"
+  },
+  {
+   "id": "ft_pair_bswap0_bswap1",
+   "notebook": "finetune/notebooks/ft_pair_Bswap0_Bswap1.ipynb",
+   "kernel": "skape007/ft-pair-bswap0-bswap1",
+   "max_minutes": 230.0,
+   "gpu": true,
+   "note": "Bswap seeds 0,1",
+   "state": "queued",
+   "added_at": "2026-11-20T21:58:43Z"
+  },
+  {
+   "id": "ft_pair_bswap2_bswap3",
+   "notebook": "finetune/notebooks/ft_pair_Bswap2_Bswap3.ipynb",
+   "kernel": "skape007/ft-pair-bswap2-bswap3",
+   "max_minutes": 230.0,
+   "gpu": true,
+   "note": "Bswap seeds 2,3",
+   "state": "queued",
+   "added_at": "2026-11-20T21:58:43Z"
+  },
+  {
+   "id": "ft_pair_bswap4",
+   "notebook": "finetune/notebooks/ft_pair_Bswap4.ipynb",
+   "kernel": "skape007/ft-pair-bswap4",
+   "max_minutes": 230.0,
+   "gpu": true,
+   "note": "Bswap seed 4: only if quota remains (cap and recorded quota decide)",
+   "state": "queued",
+   "added_at": "2026-11-20T21:58:44Z"
   }
  ],
  "external": [],

@@ -1,0 +1,91 @@
+training A seed 0: 7184 items, 1347 of 1347 steps, batch 16 in forward passes of at most 2600 padded tokens, 18,464,768 trainable parameters, device cuda
+  step 25/1347 loss 0.3877  6.19 s/step
+  step 50/1347 loss 0.3801  6.27 s/step
+  step 75/1347 loss 0.3750  6.25 s/step
+  step 100/1347 loss 0.2912  6.27 s/step
+  step 125/1347 loss 0.3412  6.27 s/step
+  step 150/1347 loss 0.3547  6.26 s/step
+  step 175/1347 loss 0.2886  6.28 s/step
+  step 200/1347 loss 0.2178  6.32 s/step
+  step 225/1347 loss 0.3668  6.32 s/step
+  step 250/1347 loss 0.2526  6.32 s/step
+  step 275/1347 loss 0.1954  6.35 s/step
+  step 300/1347 loss 0.2069  6.35 s/step
+  step 325/1347 loss 0.2476  6.35 s/step
+  step 350/1347 loss 0.2487  6.34 s/step
+  step 375/1347 loss 0.2822  6.35 s/step
+  step 400/1347 loss 0.1992  6.34 s/step
+  step 425/1347 loss 0.2449  6.33 s/step
+  step 450/1347 loss 0.2024  6.32 s/step
+  step 475/1347 loss 0.2084  6.33 s/step
+  step 500/1347 loss 0.2202  6.33 s/step
+  step 525/1347 loss 0.2004  6.32 s/step
+  step 550/1347 loss 0.2366  6.31 s/step
+  step 575/1347 loss 0.1876  6.32 s/step
+  step 600/1347 loss 0.2027  6.30 s/step
+  step 625/1347 loss 0.1752  6.31 s/step
+  step 650/1347 loss 0.1871  6.31 s/step
+  step 675/1347 loss 0.1808  6.30 s/step
+  step 700/1347 loss 0.1834  6.30 s/step
+  step 725/1347 loss 0.1719  6.30 s/step
+  step 750/1347 loss 0.2398  6.30 s/step
+  step 775/1347 loss 0.1791  6.30 s/step
+  step 800/1347 loss 0.1846  6.30 s/step
+  step 825/1347 loss 0.1265  6.30 s/step
+  step 850/1347 loss 0.1811  6.30 s/step
+  step 875/1347 loss 0.1452  6.30 s/step
+  step 900/1347 loss 0.1153  6.30 s/step
+  step 925/1347 loss 0.1427  6.31 s/step
+  step 950/1347 loss 0.1313  6.30 s/step
+  step 975/1347 loss 0.0945  6.31 s/step
+  step 1000/1347 loss 0.1209  6.30 s/step
+  step 1025/1347 loss 0.1378  6.29 s/step
+  step 1050/1347 loss 0.1568  6.29 s/step
+  step 1075/1347 loss 0.0987  6.29 s/step
+  step 1100/1347 loss 0.1423  6.28 s/step
+  step 1125/1347 loss 0.1226  6.28 s/step
+  step 1150/1347 loss 0.0841  6.28 s/step
+  step 1175/1347 loss 0.1099  6.29 s/step
+  step 1200/1347 loss 0.1208  6.29 s/step
+  step 1225/1347 loss 0.0548  6.29 s/step
+  step 1250/1347 loss 0.1265  6.30 s/step
+  step 1275/1347 loss 0.1353  6.30 s/step
+  step 1300/1347 loss 0.0943  6.30 s/step
+  step 1325/1347 loss 0.0837  6.30 s/step
+  step 1347/1347 loss 0.1471  6.30 s/step
+  scoring eval_pool_lb: 4706 items
+    11/4706 items, 5 s
+    916/4706 items, 196 s
+    2494/4706 items, 384 s
+  scoring eval_id48: 2000 items
+    7/2000 items, 5 s
+    844/2000 items, 197 s
+  scoring eval_id: 2000 items
+    7/2000 items, 5 s
+    794/2000 items, 197 s
+  scoring eval_pool: 2400 items
+    11/2400 items, 5 s
+    1242/2400 items, 194 s
+  scoring eval_official_test: 1162 items
+    35/1162 items, 5 s
+  scoring eval_id48_renamed: 2000 items
+    7/2000 items, 5 s
+    844/2000 items, 196 s
+  scoring eval_id48_renamed_keep_order: 2000 items
+    7/2000 items, 5 s
+    844/2000 items, 196 s
+  scoring eval_id_renamed: 2000 items
+    7/2000 items, 5 s
+    794/2000 items, 208 s
+  scoring eval_id_paraphrased: 2000 items
+    7/2000 items, 5 s
+    796/2000 items, 214 s
+  scoring eval_pool_lb_renamed: 4706 items
+    11/4706 items, 5 s
+    916/4706 items, 213 s
+    2494/4706 items, 417 s
+  scoring eval_authors_refactorization: 1884 items
+    35/1884 items, 5 s
+  scoring eval_authors_paraphrasing: 1522 items
+    35/1522 items, 5 s
+done: evaluation 28380 items in 3763 s; training 6.30 s/step

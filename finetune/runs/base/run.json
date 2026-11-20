@@ -1,0 +1,57 @@
+{
+ "run": "base",
+ "condition": "base",
+ "seed": 0,
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "recipe": {
+  "rank": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "lr": 0.0002,
+  "warmup": 30,
+  "batch": 16,
+  "epochs": 3,
+  "targets": [
+   "q_proj",
+   "k_proj",
+   "v_proj",
+   "o_proj",
+   "gate_proj",
+   "up_proj",
+   "down_proj"
+  ]
+ },
+ "device": "cuda",
+ "gpu": "Tesla T4",
+ "tiny": false,
+ "time_test": false,
+ "versions": {
+  "torch": "2.15.0+cu132",
+  "transformers": "5.22.2",
+  "peft": "0.21.2",
+  "numpy": "2.5.4"
+ },
+ "eval": {
+  "seconds": 2857.7,
+  "items": 28380,
+  "sets": [
+   "eval_pool_lb",
+   "eval_id48",
+   "eval_id",
+   "eval_pool",
+   "eval_official_test",
+   "eval_id48_renamed",
+   "eval_id48_renamed_keep_order",
+   "eval_id_renamed",
+   "eval_id_paraphrased",
+   "eval_pool_lb_renamed",
+   "eval_authors_refactorization",
+   "eval_authors_paraphrasing"
+  ]
+ },
+ "ingested_from": {
+  "run": "colab_base",
+  "commit": "6cca06f191e3c70ee6eef01a0a11f8d9e8889558",
+  "install_level": "1 (full freeze)"
+ }
+}

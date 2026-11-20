@@ -1,5 +1,12 @@
 # Progress (read this first after a restart)
 
+## STATUS, Friday 20 November, 22:00 UTC (fine-tuning study)
+
+- **Nothing ran Wed 18 to Fri 20.** Kaggle idle since A3+B3 (Wed 01:16 UTC); no Colab output for A_s4 or B_s4 has reached the laptop. The analysis code (E1-E5) was not written: the session was idle without a message.
+- **Filed:** base, A_s0-3, B_s0-3 (all checks passed). Missing for the registered A-vs-B tests: A_s4, B_s4 (blinding holds until both are in).
+- **Kaggle:** 14.05 h charged this week; quota resets Sat 21 Nov ~00:00 UTC (cap 26 h). Nothing queued. Post-reset plan: A48+C seeds 0-2 (3 pairs), Bswap 0+1 and 2+3 (and 4); A4+B4 too if the Colab runs did not happen.
+- **Still to do for Sunday:** analysis code (E1 gate, E2-E5 with seedtest/Holm, outlier rule; E6 descriptive) tested on synthetic + base; run it once all seeds are in; independent audit; RESULTS_FT.md (<=3 claims, "(Sahil)" interpretation); explainer (private/); owner parts (a)(b) still stubs; (c) after the audit.
+
 ## STATUS, Tuesday 17 November, 22:15 UTC (fine-tuning study)
 
 - **Filed (ingested, all checks passed):** base (Colab), A_s0-3, B_s0-3 (Kaggle; A3+B3 back 01:16 UTC Wed, first run of the fixed platform cell, detected correctly).

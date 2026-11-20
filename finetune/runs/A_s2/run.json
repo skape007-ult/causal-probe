@@ -1,0 +1,345 @@
+{
+ "run": "A_s2",
+ "condition": "A",
+ "seed": 2,
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "recipe": {
+  "rank": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "lr": 0.0002,
+  "warmup": 30,
+  "batch": 16,
+  "epochs": 3,
+  "targets": [
+   "q_proj",
+   "k_proj",
+   "v_proj",
+   "o_proj",
+   "gate_proj",
+   "up_proj",
+   "down_proj"
+  ]
+ },
+ "device": "cuda",
+ "gpu": "Tesla T4",
+ "tiny": false,
+ "time_test": false,
+ "versions": {
+  "torch": "2.15.0+cu132",
+  "transformers": "5.22.2",
+  "peft": "0.21.2",
+  "numpy": "2.5.4"
+ },
+ "train": {
+  "n": 7184,
+  "valid": 919,
+  "sha256": "b2fac8a8e4f05059d9fdaf3c4b5a3fae39da441fdb9968774bf8de68ec279929",
+  "mean_tokens": 652.6014755011136,
+  "max_tokens": 2381,
+  "steps": 1347,
+  "total_steps": 1347,
+  "log": [
+   {
+    "step": 25,
+    "loss": 0.43069259451760444,
+    "minutes": 2.46
+   },
+   {
+    "step": 50,
+    "loss": 0.5258154639218628,
+    "minutes": 4.98
+   },
+   {
+    "step": 75,
+    "loss": 0.34049290011957056,
+    "minutes": 7.63
+   },
+   {
+    "step": 100,
+    "loss": 0.33144676106283444,
+    "minutes": 10.24
+   },
+   {
+    "step": 125,
+    "loss": 0.3567397952920874,
+    "minutes": 12.74
+   },
+   {
+    "step": 150,
+    "loss": 0.3395753193862038,
+    "minutes": 15.22
+   },
+   {
+    "step": 175,
+    "loss": 0.27002346310473513,
+    "minutes": 17.74
+   },
+   {
+    "step": 200,
+    "loss": 0.2695417227656435,
+    "minutes": 20.26
+   },
+   {
+    "step": 225,
+    "loss": 0.303236231795745,
+    "minutes": 22.96
+   },
+   {
+    "step": 250,
+    "loss": 0.2035940971189484,
+    "minutes": 25.51
+   },
+   {
+    "step": 275,
+    "loss": 0.28179385078499763,
+    "minutes": 28.06
+   },
+   {
+    "step": 300,
+    "loss": 0.2749614198483141,
+    "minutes": 30.55
+   },
+   {
+    "step": 325,
+    "loss": 0.2590304578314317,
+    "minutes": 33.0
+   },
+   {
+    "step": 350,
+    "loss": 0.2159109793621701,
+    "minutes": 35.51
+   },
+   {
+    "step": 375,
+    "loss": 0.18832805975043812,
+    "minutes": 38.08
+   },
+   {
+    "step": 400,
+    "loss": 0.1927319444987171,
+    "minutes": 40.67
+   },
+   {
+    "step": 425,
+    "loss": 0.20447318529201794,
+    "minutes": 43.19
+   },
+   {
+    "step": 450,
+    "loss": 0.26413559578754303,
+    "minutes": 45.72
+   },
+   {
+    "step": 475,
+    "loss": 0.2287383506223699,
+    "minutes": 48.16
+   },
+   {
+    "step": 500,
+    "loss": 0.20135488131916077,
+    "minutes": 50.71
+   },
+   {
+    "step": 525,
+    "loss": 0.1828394283330738,
+    "minutes": 53.28
+   },
+   {
+    "step": 550,
+    "loss": 0.22285796434347843,
+    "minutes": 55.82
+   },
+   {
+    "step": 575,
+    "loss": 0.22148125679074254,
+    "minutes": 58.41
+   },
+   {
+    "step": 600,
+    "loss": 0.19919993130897637,
+    "minutes": 60.96
+   },
+   {
+    "step": 625,
+    "loss": 0.18079021740368262,
+    "minutes": 63.55
+   },
+   {
+    "step": 650,
+    "loss": 0.1846998810191053,
+    "minutes": 66.03
+   },
+   {
+    "step": 675,
+    "loss": 0.1801774717809485,
+    "minutes": 68.62
+   },
+   {
+    "step": 700,
+    "loss": 0.1384303059534659,
+    "minutes": 71.17
+   },
+   {
+    "step": 725,
+    "loss": 0.21721822937648538,
+    "minutes": 73.6
+   },
+   {
+    "step": 750,
+    "loss": 0.18942217680776594,
+    "minutes": 76.16
+   },
+   {
+    "step": 775,
+    "loss": 0.16225703048063223,
+    "minutes": 78.62
+   },
+   {
+    "step": 800,
+    "loss": 0.17347516217856537,
+    "minutes": 81.11
+   },
+   {
+    "step": 825,
+    "loss": 0.15805678624212077,
+    "minutes": 83.63
+   },
+   {
+    "step": 850,
+    "loss": 0.1635487544482339,
+    "minutes": 86.21
+   },
+   {
+    "step": 875,
+    "loss": 0.16833476983740753,
+    "minutes": 88.63
+   },
+   {
+    "step": 900,
+    "loss": 0.2029956076991948,
+    "minutes": 91.27
+   },
+   {
+    "step": 925,
+    "loss": 0.1372580053271264,
+    "minutes": 93.88
+   },
+   {
+    "step": 950,
+    "loss": 0.14178538962391543,
+    "minutes": 96.36
+   },
+   {
+    "step": 975,
+    "loss": 0.10102333818737008,
+    "minutes": 98.86
+   },
+   {
+    "step": 1000,
+    "loss": 0.10489690930133776,
+    "minutes": 101.37
+   },
+   {
+    "step": 1025,
+    "loss": 0.13256718524687927,
+    "minutes": 103.81
+   },
+   {
+    "step": 1050,
+    "loss": 0.14263089360505035,
+    "minutes": 106.21
+   },
+   {
+    "step": 1075,
+    "loss": 0.10898225733705288,
+    "minutes": 108.75
+   },
+   {
+    "step": 1100,
+    "loss": 0.14916306849285718,
+    "minutes": 111.23
+   },
+   {
+    "step": 1125,
+    "loss": 0.12099667733995488,
+    "minutes": 113.77
+   },
+   {
+    "step": 1150,
+    "loss": 0.15206121173916073,
+    "minutes": 116.39
+   },
+   {
+    "step": 1175,
+    "loss": 0.1574446169869998,
+    "minutes": 118.83
+   },
+   {
+    "step": 1200,
+    "loss": 0.1278760595666131,
+    "minutes": 121.3
+   },
+   {
+    "step": 1225,
+    "loss": 0.10424055963703836,
+    "minutes": 123.77
+   },
+   {
+    "step": 1250,
+    "loss": 0.11600316026497864,
+    "minutes": 126.24
+   },
+   {
+    "step": 1275,
+    "loss": 0.12409746708779722,
+    "minutes": 128.84
+   },
+   {
+    "step": 1300,
+    "loss": 0.13090054636374815,
+    "minutes": 131.4
+   },
+   {
+    "step": 1325,
+    "loss": 0.12992611391195852,
+    "minutes": 133.9
+   },
+   {
+    "step": 1347,
+    "loss": 0.14323840244727706,
+    "minutes": 136.16
+   }
+  ],
+  "seconds_per_step": 6.065138913829325,
+  "first_loss": 0.43069259451760444,
+  "last_loss": 0.14323840244727706,
+  "max_memory_gb": 13.72,
+  "forward_tokens_final": 2600,
+  "out_of_memory_retries": 0
+ },
+ "trainable_params": 18464768,
+ "eval": {
+  "seconds": 3326.7,
+  "items": 28380,
+  "sets": [
+   "eval_pool_lb",
+   "eval_id48",
+   "eval_id",
+   "eval_pool",
+   "eval_official_test",
+   "eval_id48_renamed",
+   "eval_id48_renamed_keep_order",
+   "eval_id_renamed",
+   "eval_id_paraphrased",
+   "eval_pool_lb_renamed",
+   "eval_authors_refactorization",
+   "eval_authors_paraphrasing"
+  ]
+ },
+ "ingested_from": {
+  "run": "ft_pair_A2_B2",
+  "commit": "6cca06f191e3c70ee6eef01a0a11f8d9e8889558",
+  "install_level": "1 (full freeze)"
+ }
+}

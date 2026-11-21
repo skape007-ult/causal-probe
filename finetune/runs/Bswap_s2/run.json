@@ -1,0 +1,345 @@
+{
+ "run": "Bswap_s2",
+ "condition": "Bswap",
+ "seed": 2,
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "recipe": {
+  "rank": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "lr": 0.0002,
+  "warmup": 30,
+  "batch": 16,
+  "epochs": 3,
+  "targets": [
+   "q_proj",
+   "k_proj",
+   "v_proj",
+   "o_proj",
+   "gate_proj",
+   "up_proj",
+   "down_proj"
+  ]
+ },
+ "device": "cuda",
+ "gpu": "Tesla T4",
+ "tiny": false,
+ "time_test": false,
+ "versions": {
+  "torch": "2.15.0+cu132",
+  "transformers": "5.22.2",
+  "peft": "0.21.2",
+  "numpy": "2.5.4"
+ },
+ "train": {
+  "n": 7184,
+  "valid": 3592,
+  "sha256": "1a7417bef65b36c5cddd02842f6cd6b7030c5d766b66331ec1fa1bd9dba3b741",
+  "mean_tokens": 546.2821547884187,
+  "max_tokens": 2367,
+  "steps": 1347,
+  "total_steps": 1347,
+  "log": [
+   {
+    "step": 25,
+    "loss": 0.9062414682470262,
+    "minutes": 2.16
+   },
+   {
+    "step": 50,
+    "loss": 0.7241249706596136,
+    "minutes": 4.3
+   },
+   {
+    "step": 75,
+    "loss": 0.7325192959606648,
+    "minutes": 6.44
+   },
+   {
+    "step": 100,
+    "loss": 0.7305553609877825,
+    "minutes": 8.67
+   },
+   {
+    "step": 125,
+    "loss": 0.7181302648037672,
+    "minutes": 10.77
+   },
+   {
+    "step": 150,
+    "loss": 0.7194082433730364,
+    "minutes": 13.01
+   },
+   {
+    "step": 175,
+    "loss": 0.714649747312069,
+    "minutes": 15.24
+   },
+   {
+    "step": 200,
+    "loss": 0.7375898226350546,
+    "minutes": 17.42
+   },
+   {
+    "step": 225,
+    "loss": 0.6966006092727184,
+    "minutes": 19.59
+   },
+   {
+    "step": 250,
+    "loss": 0.7441382873058319,
+    "minutes": 21.78
+   },
+   {
+    "step": 275,
+    "loss": 0.7023834766447544,
+    "minutes": 23.94
+   },
+   {
+    "step": 300,
+    "loss": 0.7089666817337275,
+    "minutes": 26.08
+   },
+   {
+    "step": 325,
+    "loss": 0.695770820081234,
+    "minutes": 28.33
+   },
+   {
+    "step": 350,
+    "loss": 0.7124667094647884,
+    "minutes": 30.47
+   },
+   {
+    "step": 375,
+    "loss": 0.7033519294857978,
+    "minutes": 32.64
+   },
+   {
+    "step": 400,
+    "loss": 0.6942175701260567,
+    "minutes": 34.8
+   },
+   {
+    "step": 425,
+    "loss": 0.7017105029523373,
+    "minutes": 36.95
+   },
+   {
+    "step": 450,
+    "loss": 0.7248509469628334,
+    "minutes": 39.09
+   },
+   {
+    "step": 475,
+    "loss": 0.720567848160863,
+    "minutes": 41.21
+   },
+   {
+    "step": 500,
+    "loss": 0.7171591375768185,
+    "minutes": 43.4
+   },
+   {
+    "step": 525,
+    "loss": 0.7033676500618458,
+    "minutes": 45.6
+   },
+   {
+    "step": 550,
+    "loss": 0.7021011307835578,
+    "minutes": 47.74
+   },
+   {
+    "step": 575,
+    "loss": 0.7023298084735871,
+    "minutes": 49.95
+   },
+   {
+    "step": 600,
+    "loss": 0.7003222626447677,
+    "minutes": 52.16
+   },
+   {
+    "step": 625,
+    "loss": 0.7075441671907902,
+    "minutes": 54.38
+   },
+   {
+    "step": 650,
+    "loss": 0.6994072026014329,
+    "minutes": 56.46
+   },
+   {
+    "step": 675,
+    "loss": 0.6947449545562268,
+    "minutes": 58.62
+   },
+   {
+    "step": 700,
+    "loss": 0.7169755828380585,
+    "minutes": 60.72
+   },
+   {
+    "step": 725,
+    "loss": 0.7041985204815865,
+    "minutes": 62.82
+   },
+   {
+    "step": 750,
+    "loss": 0.6995306338369847,
+    "minutes": 64.87
+   },
+   {
+    "step": 775,
+    "loss": 0.7053895278275013,
+    "minutes": 67.11
+   },
+   {
+    "step": 800,
+    "loss": 0.6987453919649124,
+    "minutes": 69.34
+   },
+   {
+    "step": 825,
+    "loss": 0.6985867653787136,
+    "minutes": 71.51
+   },
+   {
+    "step": 850,
+    "loss": 0.695517938286066,
+    "minutes": 73.73
+   },
+   {
+    "step": 875,
+    "loss": 0.6991429817676544,
+    "minutes": 75.92
+   },
+   {
+    "step": 900,
+    "loss": 0.696622507572174,
+    "minutes": 78.06
+   },
+   {
+    "step": 925,
+    "loss": 0.6928632193803788,
+    "minutes": 80.23
+   },
+   {
+    "step": 950,
+    "loss": 0.7088825318217278,
+    "minutes": 82.39
+   },
+   {
+    "step": 975,
+    "loss": 0.6973727335035801,
+    "minutes": 84.48
+   },
+   {
+    "step": 1000,
+    "loss": 0.6984737473726272,
+    "minutes": 86.63
+   },
+   {
+    "step": 1025,
+    "loss": 0.6961020863056183,
+    "minutes": 88.78
+   },
+   {
+    "step": 1050,
+    "loss": 0.6953477251529694,
+    "minutes": 90.94
+   },
+   {
+    "step": 1075,
+    "loss": 0.6956160509586334,
+    "minutes": 93.15
+   },
+   {
+    "step": 1100,
+    "loss": 0.6978790012001991,
+    "minutes": 95.27
+   },
+   {
+    "step": 1125,
+    "loss": 0.6947905482351779,
+    "minutes": 97.44
+   },
+   {
+    "step": 1150,
+    "loss": 0.6952893461287022,
+    "minutes": 99.6
+   },
+   {
+    "step": 1175,
+    "loss": 0.6944924931228161,
+    "minutes": 101.82
+   },
+   {
+    "step": 1200,
+    "loss": 0.690681472569704,
+    "minutes": 103.98
+   },
+   {
+    "step": 1225,
+    "loss": 0.6988758133351802,
+    "minutes": 106.21
+   },
+   {
+    "step": 1250,
+    "loss": 0.6932081083953381,
+    "minutes": 108.43
+   },
+   {
+    "step": 1275,
+    "loss": 0.6953845255076885,
+    "minutes": 110.64
+   },
+   {
+    "step": 1300,
+    "loss": 0.693621081262827,
+    "minutes": 112.76
+   },
+   {
+    "step": 1325,
+    "loss": 0.6943783462047577,
+    "minutes": 114.89
+   },
+   {
+    "step": 1347,
+    "loss": 0.6930039003491402,
+    "minutes": 116.85
+   }
+  ],
+  "seconds_per_step": 5.204684139625532,
+  "first_loss": 0.9062414682470262,
+  "last_loss": 0.6930039003491402,
+  "max_memory_gb": 13.65,
+  "forward_tokens_final": 2600,
+  "out_of_memory_retries": 0
+ },
+ "trainable_params": 18464768,
+ "eval": {
+  "seconds": 3445.5,
+  "items": 28380,
+  "sets": [
+   "eval_pool_lb",
+   "eval_id48",
+   "eval_id",
+   "eval_pool",
+   "eval_official_test",
+   "eval_id48_renamed",
+   "eval_id48_renamed_keep_order",
+   "eval_id_renamed",
+   "eval_id_paraphrased",
+   "eval_pool_lb_renamed",
+   "eval_authors_refactorization",
+   "eval_authors_paraphrasing"
+  ]
+ },
+ "ingested_from": {
+  "run": "ft_pair_Bswap2_Bswap3",
+  "commit": "923aa396207dde6e9482c55a7cf627868f18696a",
+  "install_level": "1 (full freeze)"
+ }
+}

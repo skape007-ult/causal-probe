@@ -1,0 +1,345 @@
+{
+ "run": "A48_s1",
+ "condition": "A48",
+ "seed": 1,
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "recipe": {
+  "rank": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "lr": 0.0002,
+  "warmup": 30,
+  "batch": 16,
+  "epochs": 3,
+  "targets": [
+   "q_proj",
+   "k_proj",
+   "v_proj",
+   "o_proj",
+   "gate_proj",
+   "up_proj",
+   "down_proj"
+  ]
+ },
+ "device": "cuda",
+ "gpu": "Tesla T4",
+ "tiny": false,
+ "time_test": false,
+ "versions": {
+  "torch": "2.15.0+cu132",
+  "transformers": "5.22.2",
+  "peft": "0.21.2",
+  "numpy": "2.5.4"
+ },
+ "train": {
+  "n": 7184,
+  "valid": 2068,
+  "sha256": "f4a14c4f215ba3bca5121c4b1210c32ee1a74a947593d99d602a84dce7ab1943",
+  "mean_tokens": 653.5420378619153,
+  "max_tokens": 2381,
+  "steps": 1347,
+  "total_steps": 1347,
+  "log": [
+   {
+    "step": 25,
+    "loss": 0.6723668825300411,
+    "minutes": 2.58
+   },
+   {
+    "step": 50,
+    "loss": 0.5605997991771438,
+    "minutes": 5.19
+   },
+   {
+    "step": 75,
+    "loss": 0.6035453365097055,
+    "minutes": 7.93
+   },
+   {
+    "step": 100,
+    "loss": 0.568371849867981,
+    "minutes": 10.71
+   },
+   {
+    "step": 125,
+    "loss": 0.5532055936614051,
+    "minutes": 13.48
+   },
+   {
+    "step": 150,
+    "loss": 0.5228473415237386,
+    "minutes": 16.19
+   },
+   {
+    "step": 175,
+    "loss": 0.471550404796144,
+    "minutes": 19.05
+   },
+   {
+    "step": 200,
+    "loss": 0.4406100079705357,
+    "minutes": 21.86
+   },
+   {
+    "step": 225,
+    "loss": 0.4142270334041677,
+    "minutes": 24.7
+   },
+   {
+    "step": 250,
+    "loss": 0.4157481703278609,
+    "minutes": 27.56
+   },
+   {
+    "step": 275,
+    "loss": 0.4119126530250651,
+    "minutes": 30.37
+   },
+   {
+    "step": 300,
+    "loss": 0.36531003662472356,
+    "minutes": 33.25
+   },
+   {
+    "step": 325,
+    "loss": 0.3910223648091778,
+    "minutes": 36.14
+   },
+   {
+    "step": 350,
+    "loss": 0.39284986958838997,
+    "minutes": 39.0
+   },
+   {
+    "step": 375,
+    "loss": 0.37258609134994913,
+    "minutes": 41.75
+   },
+   {
+    "step": 400,
+    "loss": 0.34379655542375986,
+    "minutes": 44.6
+   },
+   {
+    "step": 425,
+    "loss": 0.3555255768727511,
+    "minutes": 47.37
+   },
+   {
+    "step": 450,
+    "loss": 0.40833150941849455,
+    "minutes": 50.26
+   },
+   {
+    "step": 475,
+    "loss": 0.26100894905335736,
+    "minutes": 53.04
+   },
+   {
+    "step": 500,
+    "loss": 0.33452443794136344,
+    "minutes": 55.8
+   },
+   {
+    "step": 525,
+    "loss": 0.31760057976418465,
+    "minutes": 58.6
+   },
+   {
+    "step": 550,
+    "loss": 0.2376728940490284,
+    "minutes": 61.49
+   },
+   {
+    "step": 575,
+    "loss": 0.34881041217129677,
+    "minutes": 64.37
+   },
+   {
+    "step": 600,
+    "loss": 0.27454637395087045,
+    "minutes": 67.18
+   },
+   {
+    "step": 625,
+    "loss": 0.27752685479186767,
+    "minutes": 69.92
+   },
+   {
+    "step": 650,
+    "loss": 0.3369275313312028,
+    "minutes": 72.72
+   },
+   {
+    "step": 675,
+    "loss": 0.26279031707003014,
+    "minutes": 75.7
+   },
+   {
+    "step": 700,
+    "loss": 0.31684849597979337,
+    "minutes": 78.54
+   },
+   {
+    "step": 725,
+    "loss": 0.2522710433123575,
+    "minutes": 81.2
+   },
+   {
+    "step": 750,
+    "loss": 0.19915655067254193,
+    "minutes": 83.98
+   },
+   {
+    "step": 775,
+    "loss": 0.2530610196013549,
+    "minutes": 86.83
+   },
+   {
+    "step": 800,
+    "loss": 0.2643744755051739,
+    "minutes": 89.71
+   },
+   {
+    "step": 825,
+    "loss": 0.2993455863907002,
+    "minutes": 92.56
+   },
+   {
+    "step": 850,
+    "loss": 0.23971767376497155,
+    "minutes": 95.31
+   },
+   {
+    "step": 875,
+    "loss": 0.2570369372520145,
+    "minutes": 98.08
+   },
+   {
+    "step": 900,
+    "loss": 0.2397813035321633,
+    "minutes": 100.88
+   },
+   {
+    "step": 925,
+    "loss": 0.2247045903077742,
+    "minutes": 103.67
+   },
+   {
+    "step": 950,
+    "loss": 0.21590622935827014,
+    "minutes": 106.45
+   },
+   {
+    "step": 975,
+    "loss": 0.16372325715507485,
+    "minutes": 109.23
+   },
+   {
+    "step": 1000,
+    "loss": 0.18286305972089167,
+    "minutes": 112.12
+   },
+   {
+    "step": 1025,
+    "loss": 0.19456335553186818,
+    "minutes": 114.94
+   },
+   {
+    "step": 1050,
+    "loss": 0.19583301892615054,
+    "minutes": 117.73
+   },
+   {
+    "step": 1075,
+    "loss": 0.19563354487230755,
+    "minutes": 120.47
+   },
+   {
+    "step": 1100,
+    "loss": 0.16047675039024853,
+    "minutes": 123.22
+   },
+   {
+    "step": 1125,
+    "loss": 0.22428097449961115,
+    "minutes": 126.1
+   },
+   {
+    "step": 1150,
+    "loss": 0.2311195218978628,
+    "minutes": 128.91
+   },
+   {
+    "step": 1175,
+    "loss": 0.17014433068785365,
+    "minutes": 131.69
+   },
+   {
+    "step": 1200,
+    "loss": 0.17132886226570918,
+    "minutes": 134.62
+   },
+   {
+    "step": 1225,
+    "loss": 0.12111271755366033,
+    "minutes": 137.35
+   },
+   {
+    "step": 1250,
+    "loss": 0.20679743663092268,
+    "minutes": 140.22
+   },
+   {
+    "step": 1275,
+    "loss": 0.19386802459575847,
+    "minutes": 142.92
+   },
+   {
+    "step": 1300,
+    "loss": 0.12314058245033266,
+    "minutes": 145.7
+   },
+   {
+    "step": 1325,
+    "loss": 0.18552833813833786,
+    "minutes": 148.59
+   },
+   {
+    "step": 1347,
+    "loss": 0.1687926556326147,
+    "minutes": 150.96
+   }
+  ],
+  "seconds_per_step": 6.724454327344717,
+  "first_loss": 0.6723668825300411,
+  "last_loss": 0.1687926556326147,
+  "max_memory_gb": 13.7,
+  "forward_tokens_final": 2600,
+  "out_of_memory_retries": 0
+ },
+ "trainable_params": 18464768,
+ "eval": {
+  "seconds": 3912.4,
+  "items": 28380,
+  "sets": [
+   "eval_pool_lb",
+   "eval_id48",
+   "eval_id",
+   "eval_pool",
+   "eval_official_test",
+   "eval_id48_renamed",
+   "eval_id48_renamed_keep_order",
+   "eval_id_renamed",
+   "eval_id_paraphrased",
+   "eval_pool_lb_renamed",
+   "eval_authors_refactorization",
+   "eval_authors_paraphrasing"
+  ]
+ },
+ "ingested_from": {
+  "run": "ft_pair_A481_C1",
+  "commit": "923aa396207dde6e9482c55a7cf627868f18696a",
+  "install_level": "1 (full freeze)"
+ }
+}

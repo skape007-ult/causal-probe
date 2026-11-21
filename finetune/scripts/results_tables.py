@@ -54,8 +54,21 @@ def main(path):
           f"Memorisation reference of A on ID48: {e1['memorisation_reference_A_id48']:.3f}. Passed: {e1['passed']}.", "",
           "## Rungs", "", f"A: {D['rung_A']}  ", f"B: {D['rung_B']}", "",
           "## S per model", "", "| Model | POOL-LB | ID48 |", "|---|---|---|"]
+    extra = {m for ms in r.get("extra_seeds_not_in_registered_tests", {}).values() for m in ms}
     for m, v in sorted(r["S_per_model"].items()):
-        L.append(f"| {m} | {v.get('pool_lb', float('nan')):.3f} | {v.get('id48', float('nan')):.3f} |")
+        mark = " (extra seed, not in any registered test)" if m in extra else ""
+        L.append(f"| {m}{mark} | {v.get('pool_lb', float('nan')):.3f} | {v.get('id48', float('nan')):.3f} |")
+    if "E3" in D and "text_references_fitted_on_A_on_id48" in D["E3"]:
+        L += ["", "## E3 descriptive: text references fitted on A's training set, S on ID48", "",
+              "| Reference | S |", "|---|---|"] + [f"| {k} | {v:.3f} |" for k, v in D["E3"]["text_references_fitted_on_A_on_id48"].items()]
+        sh = D["E3"].get("share_of_A_pooled_auroc_available_without_premise")
+        if sh:
+            L.append(f"\nShare of A's pooled AUROC on ID available without the premise, (AUROC_C - 0.5)/(AUROC_A - 0.5): "
+                     f"{sh['est']:.3f} [{sh['lo']:.3f}, {sh['hi']:.3f}]")
+    if "E5_A48" in D:
+        L += ["", "## E5 descriptive, A48 (intervals only, no test)", "", "| Quantity | D | 95% interval | Seed SD | Note |", "|---|---|---|---|---|"]
+        for k, t in D["E5_A48"].items():
+            L.append(f"| {k} | {f(t['D'])} | [{f(t['lo'])}, {f(t['hi'])}] | {t['seed_sd_x']:.3f} | {'; '.join(t.get('power_notes', [])) or ''} |")
     for c in ("A", "B"):
         k = f"E5_near_far_{c}"
         if k in D:

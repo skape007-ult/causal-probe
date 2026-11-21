@@ -10,7 +10,8 @@ read, and again by `analyse`.
 Speed. The registered statistic S (stat.S, which calls the owner's part (b) or its reference) is used for every
 point estimate. The 2,000 premise resamples use `Plan`, an equivalent closed form (the within-string least-squares
 fit as a projection matrix computed once per resample and shared by every model). `analyse` checks on every point
-estimate and on the first resamples that the two agree to 1e-9, and stops if they do not.
+estimate and on the first resamples that the two agree to TOL (1e-4; see TOL), records the largest difference,
+and stops if they disagree by more.
 """
 from __future__ import annotations
 
@@ -325,7 +326,7 @@ def analyse(sets: dict[str, EvalSet], scores: dict[str, dict[str, np.ndarray]], 
     for c, v in refs.get("mem_variant", {}).items():
         want["pool_lb"][(f"memv_{c}", "S")] = v["pool_lb"]
     for c, (_, v) in refs["text_best"].items():
-        want["pool_lb"][(f"text_{c}", "S")] = v
+        want["pool_lb"][(f"text_{c}", "S")] = v                       # A, B and A48
     for k, w in want.items():
         if w:
             eng.precompute(k, w)
@@ -388,6 +389,20 @@ def analyse(sets: dict[str, EvalSet], scores: dict[str, dict[str, np.ndarray]], 
                         "S_minus_memorisation": run_test(P("A48", "pool_lb"), Bv("A48", "pool_lb"),
                                                          ref_point=eng.point("pool_lb", "mem_A48", refs["mem"]["A48"]["pool_lb"]),
                                                          ref_boot=eng.boot("pool_lb", "mem_A48", refs["mem"]["A48"]["pool_lb"]))}
+        if "A48" in refs["text_best"]:
+            name, tb = refs["text_best"]["A48"]
+            Dd["E5_A48"]["S_minus_best_text"] = {**run_test(P("A48", "pool_lb"), Bv("A48", "pool_lb"), ref_point=eng.point("pool_lb", "text_A48", tb),
+                                                            ref_boot=eng.boot("pool_lb", "text_A48", tb)), "reference": name}
+        for t in Dd["E5_A48"].values():                              # descriptive: intervals only (audit 21 Nov, finding 11)
+            t["below_alpha"] = None
+            t["descriptive_only"] = "PREREG E5: reported for A48 with intervals, no test; p is not a claim"
+            sds = [x for x in (t.get("seed_sd_x"),) if x is not None and x > SEED_SD_POWERED]
+            t["power_notes"] = [f"seed SD {sds[0]:.3f} > {SEED_SD_POWERED}" ] if sds else []
+    if "text_id48" in refs and "A" in refs["text_id48"]:              # PREREG E3: text references fitted on A's training set, beside E3
+        Dd.setdefault("E3", {})["text_references_fitted_on_A_on_id48"] = refs["text_id48"]["A"]
+    for k in [k for k in Dd if k.startswith("E5b_") and k.endswith("_against_pair_only_variant")]:
+        Dd[k]["below_alpha"] = None
+        Dd[k]["descriptive_only"] = "Amendment 1: reported beside E5b, not in the family"
 
     # E5, descriptive: the half of POOL-LB nearer than the median distance to a training premise, and the farther half
     e = sets["pool_lb"]
@@ -405,7 +420,7 @@ def analyse(sets: dict[str, EvalSet], scores: dict[str, dict[str, np.ndarray]], 
         Dd[f"rung_{c}"] = rung(T[f"E5a_{c}"], T[f"E5b_{c}"], T[f"E5c_{c}"])
         if c in refs.get("mem_variant", {}) and T[f"E5b_{c}"]["claimed"] and T[f"E5b_{c}"]["D"] > 0:
             v = Dd[f"E5b_{c}_against_pair_only_variant"]
-            if not (v["below_alpha"] and v["D"] > 0):
+            if not (v["p_two_sided"] < 0.05 and v["D"] > 0):          # unadjusted, in the reference's disfavour
                 Dd[f"rung_{c}"] += " (claimed above the registered memorisation reference but not above the reviewer's pair-only variant; Amendment 1)"
     pse = T["E5b_A"]["premise_se"]
     if pse > E5B_A_PREMISE_SE_POWERED:

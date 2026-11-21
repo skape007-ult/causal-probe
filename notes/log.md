@@ -1042,3 +1042,12 @@ S on POOL-LB (best = tuned stack for every condition; C = 100, the top of the gr
 - Pair-only memorisation variant (Amendment 1) computes to A 0.769, B 0.913, A48 0.816 (best of the 'all' members and the pair-only 'queried' members); the reviewer reported 0.745 / 0.905 / 0.804. The difference is to be explained in the audit; the registered reference is unaffected.
 - Text references: tuned stack chose C = 100, the top of v1.0's grid, for every condition.
 - Explainer written to private/EXPLAINER.md (24 professor questions with model answers; not committed).
+
+## Sat 21 Nov ~15:00 UTC
+- Owner: Kaggle page shows 6 h 37 min left (recorded with kaggle_run.py quota). Runner charged 23.34 h this week, so Kaggle counted less than the runner (or the weekly quota is above 30 h). The binding limit is our 26 h cap: 2.66 h left, too little for a pair session (3.0-3.6 h). Nothing queued; nothing will be launched without the owner.
+
+## Sat 21 Nov ~15:00 UTC: all runs in; registered analysis; audit
+- 13 post-reset models ingested (A_s4, B_s4, A48_s0-2, C_s0-2, Bswap_s0-4), all checks passed. Backup: ~/Documents/causal-probe-runs-backup/finetune_runs_20261121T1439Z.zip (4.4 MB).
+- Registered behaviour analysis run (blinding condition met). Independent audit (fresh reviewer, code and files only): PASS WITH CONDITIONS, no blocking finding; its own recomputation reproduces every S to 2e-16 and every test's claim. Raw report: finetune/notes/audit_behaviour_raw.md.
+- Conditions acted on: E3's text references on ID48 and A48's E5c (with seed-SD note) added to the output; A48 and Amendment-1 rows flagged descriptive (no below_alpha); rung qualifier now reads the unadjusted p of the variant directly; extra Bswap seeds marked in the tables; cache deps include stat.py and impl.py. Registered numbers unchanged after the rerun.
+- Draft of RESULTS_FT.md with every audit condition met: finetune/notes/RESULTS_FT_draft.md; wording queued in finetune/notes/results_ft_queue.md for the owner.

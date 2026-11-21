@@ -59,7 +59,7 @@
     "n_near_items": 2014
    }
   },
-  "written": "2026-11-21T14:39:16Z"
+  "written": "2026-11-21T14:55:21Z"
  },
  "seeds": {
   "A": [
@@ -610,6 +610,13 @@
     "est": 0.8887774880822724,
     "lo": 0.861504224034946,
     "hi": 0.9140795327056368
+   },
+   "text_references_fitted_on_A_on_id48": {
+    "lookup": 0.6276340529799028,
+    "hand_parse": 0.776915941985845,
+    "tuned_stack": 0.8306693531801936,
+    "premise_counts_logistic": 0.5902468223117979,
+    "premise_counts_boosting": 0.5840459866731337
    }
   },
   "E5b_A_against_pair_only_variant": {
@@ -634,10 +641,11 @@
    ],
    "per_seed_y": null,
    "alpha": 0.05,
-   "below_alpha": false,
+   "below_alpha": null,
    "reference_S": 0.7692908163154538,
    "outlying_seeds_x": [],
-   "outlying_seeds_y": []
+   "outlying_seeds_y": [],
+   "descriptive_only": "Amendment 1: reported beside E5b, not in the family"
   },
   "E5b_B_against_pair_only_variant": {
    "D": 0.003279146328139748,
@@ -661,10 +669,11 @@
    ],
    "per_seed_y": null,
    "alpha": 0.05,
-   "below_alpha": false,
+   "below_alpha": null,
    "reference_S": 0.9125734118741435,
    "outlying_seeds_x": [],
-   "outlying_seeds_y": []
+   "outlying_seeds_y": [],
+   "descriptive_only": "Amendment 1: reported beside E5b, not in the family"
   },
   "E5_A48": {
    "S_cells_minus_half": {
@@ -687,9 +696,13 @@
     ],
     "per_seed_y": null,
     "alpha": 0.05,
-    "below_alpha": true,
+    "below_alpha": null,
     "outlying_seeds_x": [],
-    "outlying_seeds_y": []
+    "outlying_seeds_y": [],
+    "descriptive_only": "PREREG E5: reported for A48 with intervals, no test; p is not a claim",
+    "power_notes": [
+     "seed SD 0.036 > 0.03"
+    ]
    },
    "S_minus_memorisation": {
     "D": 0.08244644153178915,
@@ -711,10 +724,40 @@
     ],
     "per_seed_y": null,
     "alpha": 0.05,
-    "below_alpha": true,
+    "below_alpha": null,
     "reference_S": 0.7567501853449856,
     "outlying_seeds_x": [],
-    "outlying_seeds_y": []
+    "outlying_seeds_y": [],
+    "descriptive_only": "PREREG E5: reported for A48 with intervals, no test; p is not a claim",
+    "power_notes": []
+   },
+   "S_minus_best_text": {
+    "D": -0.045889565587249215,
+    "se": 0.013816267668603333,
+    "t": -3.321415500043517,
+    "df": 2.0,
+    "p_two_sided": 0.07992974720540443,
+    "lo": -0.10533616738651458,
+    "hi": 0.01355703621201615,
+    "seed_sd_x": 0.020970678950767607,
+    "seed_sd_y": null,
+    "premise_se": 0.006655783981253041,
+    "n_x": 3,
+    "n_y": 0,
+    "per_seed_x": [
+     0.8155788926432822,
+     0.8556338141977908,
+     0.8463771737892514
+    ],
+    "per_seed_y": null,
+    "alpha": 0.05,
+    "below_alpha": null,
+    "reference_S": 0.885086192464024,
+    "outlying_seeds_x": [],
+    "outlying_seeds_y": [],
+    "reference": "tuned_stack",
+    "descriptive_only": "PREREG E5: reported for A48 with intervals, no test; p is not a claim",
+    "power_notes": []
    }
   },
   "E5_near_far_A": {

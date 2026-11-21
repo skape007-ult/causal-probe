@@ -1,5 +1,12 @@
 # Progress (read this first after a restart)
 
+## STATUS, Saturday 21 November, 15:10 UTC (fine-tuning study) — supersedes everything below
+
+- **Runs:** all 21 fine-tuned models + base filed (A, B x5; A48, C x3; Bswap x5, 3 registered). Kaggle: 23.3 h charged; Kaggle page 6 h 37 min left; cap 2.7 h left; nothing queued.
+- **Analysis:** registered E1-E5 run and audited (PASS WITH CONDITIONS, no blocking finding; conditions met). Results: finetune/results/behaviour_registered.json and _tables.md.
+- **Draft page for the owner:** finetune/notes/RESULTS_FT_draft.md (3 claims, Interpretation "(Sahil)"); queue item 1 in finetune/notes/results_ft_queue.md. RESULTS_FT.md itself is not written until the owner approves the wording. Deadline Sun 18:00 EST (23:00 UTC).
+- **Owner's parts:** (a), (b) still stubs; (c) Interpretation.
+
 ## STATUS, Friday 20 November, 22:30 UTC (fine-tuning study) — supersedes the 22:00 block
 
 - **Kaggle:** 7 runs queued in the owner's order (A4+B4; A48+C x3; Bswap 0+1, 2+3; Bswap 4 if quota remains), 230-min limits. Loop running under caffeinate since 21:59 UTC, holding until 2026-11-21T00:05Z (`--start-at`), then 2 at a time. Expected done ~Sat 10:00-14:00 UTC. Log: finetune/kaggle/run_loop.log.

@@ -94,7 +94,7 @@ def build_refs(sets, items, conds=("A", "B", "A48")):
     tj = json.loads((ROOT / "finetune" / "itemsets" / "text_references.json").read_text())["conditions"]
     tz = np.load(ROOT / "finetune" / "itemsets" / "text_references.npz")
     e = sets["pool_lb"]
-    refs = {"mem": {}, "mem_variant": {}, "text_best": {}, "mem_registered_S": {}, "near": {}, "checks": {}}
+    refs = {"mem": {}, "mem_variant": {}, "text_best": {}, "mem_registered_S": {}, "near": {}, "checks": {}, "text_id48": {}}
     for c in conds:
         tr = DS.materialise("train_" + c)
         refs["mem_registered_S"][c] = {k: reg[c][k]["memorisation_reference"]["S"] for k in ("pool_lb", "id48")}
@@ -111,6 +111,7 @@ def build_refs(sets, items, conds=("A", "B", "A48")):
         refs["mem_variant"][c] = {"pool_lb": var[vb]}
         refs["checks"][f"mem_variant_{c}"] = {"member": vb, "S": vS[vb]}
         if c in tj:
+            refs["text_id48"][c] = tj[c]["id48"]["S"]
             best = tj[c]["pool_lb"]["best"]["name"]
             refs["text_best"][c] = (best, tz[f"{c}|pool_lb|{best}"])
             refs["checks"][f"text_{c}"] = {"best": best, "S_stored": tj[c]["pool_lb"]["best"]["S"], "S_recomputed": stat.S(e.y, tz[f"{c}|pool_lb|{best}"], e.q, e.n)}
@@ -127,7 +128,7 @@ def cached_refs(sets, items):
     import pickle
     cache = OUT / ".refs_cache.pkl"
     deps = [ROOT / "finetune" / "itemsets" / n for n in ("references.json", "text_references.json", "text_references.npz")]
-    deps += list((ROOT / "finetune" / "itemsets" / "sets").glob("*.json")) + [Path(DS.__file__), Path(__file__)]
+    deps += list((ROOT / "finetune" / "itemsets" / "sets").glob("*.json")) + [Path(DS.__file__), Path(__file__), Path(stat.__file__), Path(impl.__file__)]
     if cache.exists() and cache.stat().st_mtime > max(d.stat().st_mtime for d in deps):
         log("references from cache", cache.relative_to(ROOT))
         return pickle.loads(cache.read_bytes())

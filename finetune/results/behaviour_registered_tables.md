@@ -1,6 +1,6 @@
 # Number tables from `finetune/results/behaviour_registered.json`
 
-Mode: registered; within-string implementation: reference; premise resamples: 2000; written 2026-11-21T14:39:16Z.
+Mode: registered; within-string implementation: reference; premise resamples: 2000; written 2026-11-21T14:55:21Z.
 
 ## Registered tests (Holm over the eleven; E2c is a control, not in the family)
 
@@ -51,11 +51,31 @@ B: L1
 | Bswap_s0 | 0.491 | 0.511 |
 | Bswap_s1 | 0.499 | 0.506 |
 | Bswap_s2 | 0.497 | 0.493 |
-| Bswap_s3 | 0.501 | 0.506 |
-| Bswap_s4 | 0.514 | 0.512 |
+| Bswap_s3 (extra seed, not in any registered test) | 0.501 | 0.506 |
+| Bswap_s4 (extra seed, not in any registered test) | 0.514 | 0.512 |
 | C_s0 | 0.534 | 0.510 |
 | C_s1 | 0.519 | 0.518 |
 | C_s2 | 0.519 | 0.524 |
+
+## E3 descriptive: text references fitted on A's training set, S on ID48
+
+| Reference | S |
+|---|---|
+| lookup | 0.628 |
+| hand_parse | 0.777 |
+| tuned_stack | 0.831 |
+| premise_counts_logistic | 0.590 |
+| premise_counts_boosting | 0.584 |
+
+Share of A's pooled AUROC on ID available without the premise, (AUROC_C - 0.5)/(AUROC_A - 0.5): 0.889 [0.862, 0.914]
+
+## E5 descriptive, A48 (intervals only, no test)
+
+| Quantity | D | 95% interval | Seed SD | Note |
+|---|---|---|---|---|
+| S_cells_minus_half | +0.271 | [+0.174, +0.367] | 0.036 | seed SD 0.036 > 0.03 |
+| S_minus_memorisation | +0.082 | [+0.016, +0.149] | 0.021 |  |
+| S_minus_best_text | -0.046 | [-0.105, +0.014] | 0.021 |  |
 
 ## E5 descriptive, A: near and far halves of POOL-LB
 

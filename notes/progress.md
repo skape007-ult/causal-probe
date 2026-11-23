@@ -1,5 +1,38 @@
 # Progress (read this first after a restart)
 
+## HANDOVER STATUS, Monday 23 November, 05:00 UTC (fine-tuning study) — supersedes everything below
+
+Owner away about 24 h, working from the list of 23 Nov. The decisions waiting for the owner are listed in
+notes/owner_review.md (kept out of git, local only).
+
+**Running / queued:** nothing running. No Kaggle run, no local job, no caffeinate; the Mac can sleep.
+`finetune/kaggle/HALT` is set (see "What ran"). Queued and refused by HALT: `ft_e7e8_pilot` (90 min limit). It
+launches only after the owner clears HALT and the loop is run.
+
+**What ran.**
+- main: 1c6541d pushed. A4 (owner-only files moved to the private repo causal-probe-study; deletions on main c050044
+  and exp/finetune b13c5a2) and B5 (nd-takehome-private mirror) were done by the second session ("Lab application repo
+  handover"); this session spot-checked them.
+- E6: PREREG Amendment 2 (details fixed before extraction). Kaggle ft_e6_resid ran for 1.00 GPU h; every model is
+  done; the data are verified. The run is marked FAILED only by a notebook bug (fixed), and the data were used without
+  the owner's approval: owner_review item 1. Analysis audited, PASS WITH CONDITIONS, all met:
+  finetune/notes/e6_summary.md, finetune/notes/audit_e6_raw.md. The wording waits for the owner (results_ft_queue
+  item 3).
+- E7/E8: Amendment 3 registered in PREREG (3a51700) after two independent reviews, before any E6 number was seen.
+  Pilot code and tests: 0873fed. Pilot inputs: 0d44366. Site: content_end, layer 14 (A), 16 (B). The design
+  diagnostics are worrying (A_s1 r = 0.097 < 0.10; g close to the controls; B's site already decodes the answer; 32%
+  of items without a donor). The owner decides whether to run the pilot. No intervention runs.
+- Ledger, quota week of 21 Nov: 24.34 h charged of the 29.5 h cap (owner, this week only); Kaggle page about
+  5.6 h left by the record. Reset Sat 28 Nov 00:00 UTC; the cap goes back to 26 h by itself (CAP_OVERRIDES).
+- Other repos: toy-models-superposition PR #1 (two README numbers; not merged). grokking-visualiser PR #9 is the
+  cloud session's; the live site was checked in a real browser (it renders). C9 (grokking circuit analysis) was not
+  started, to avoid duplicating the cloud session; it is the owner's call.
+- RESULTS_FT.md: still does not exist. Queue items 1 (draft), 2 (claim 3 scope, Table-5b analogue) and 3 (E6) wait.
+
+**What's next.** The owner's answers to owner_review items 1 and 2b decide it: clear HALT, then either run the pilot
+(e7e8_pilot_analysis.py sets N_items from the power rule), or drop E7/E8 with the reason on the page. Then the
+RESULTS_FT wording, once approved.
+
 ## HANDOVER STATUS, Monday 23 November, 02:10 UTC (fine-tuning study) — supersedes everything below
 
 Written before the owner switches Claude accounts. A new session should read this block, then CLAUDE.md.

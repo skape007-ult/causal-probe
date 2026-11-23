@@ -18,3 +18,4 @@ kaggle_in/
 # Notes meant only for the owner (study notes, model answers, specs, checklists)
 private/
 finetune/results/.refs_cache.pkl
+finetune/e6/data/

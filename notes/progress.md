@@ -1,5 +1,34 @@
 # Progress (read this first after a restart)
 
+## HANDOVER STATUS, Monday 23 November, 12:30 UTC (fine-tuning study) — supersedes everything below
+
+Owner's third list of 23 Nov, done. Decisions are listed in notes/owner_review.md (local only, not in git).
+
+**Running / queued:** nothing of this session's. No Kaggle run, no runner loop, no local job. HALT is not set.
+`ft_e7e8_pilot` stays "queued" in finetune/kaggle/queue.json (owner's instruction), with the note "deferred by
+Amendment 4; do not launch; withdraw this entry before any queue-runner run". **Do not start `kaggle_run.py run` or
+`launch` without first setting that entry's state to "withdrawn"** (or getting the owner's go). A `caffeinate -dimsu`
+(pid 16361) that this session did not start is open in a terminal tab.
+
+**Done this round.**
+- **Amendment 4 in PREREG (7fa6b96):** E7/E8 are deferred to a redesign after 30 Nov. It records that the
+  pre-intervention diagnostics were seen first: E8 descriptive-only (35.6–38.3% of items lack donors); a "not shown"
+  uninformative for A and B (r < 0.10 in A_s1, A_s3, B_s2, B_s3); B's site answer about as decodable as at the answer
+  position. Reviewed (finetune/notes/audit_amendment4_raw.md), fixes applied. No registered-run code written; no
+  pilot launched.
+- **Label noise:** the post-audit numbers (flip variants, paired gaps, floors, flipped S) and E2a under exclusion and
+  flip went to a second, fresh audit: PASS WITH CONDITIONS, all met. The code-hygiene changes leave the outputs
+  identical. private/label_noise/summary.md: every line under "the zluke/corr2cause-corrected list at da5891d, not
+  independently verified".
+  - E2a: +0.138 published, +0.138 excluded, +0.127 corrected.
+  - New: Gemma-2-9B's probe is above the lookup under both refits.
+
+**Next (owner):**
+- the RESULTS_FT wording (queue items 1–4);
+- the label-noise reading (whether anything enters RESULTS_FT or the report);
+- the E7/E8 redesign after 30 Nov;
+- the first round's open items (nd-takehome fork, v1.1 tag, PRs, profile).
+
 ## HANDOVER STATUS, Monday 23 November, 07:00 UTC (fine-tuning study) — supersedes everything below
 
 Owner's list of 23 Nov (second round), every item done or waiting on the owner. Decisions are listed in

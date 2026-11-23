@@ -442,7 +442,7 @@
    "kernel": "skape007/ft-e7e8-pilot",
    "max_minutes": 90.0,
    "gpu": true,
-   "note": "E7/E8 power pilot (Amendment 3, Section 4): A_s0, A_s1, B_s0, B_s1, 200 items; waits for the owner to clear HALT",
+   "note": "deferred by Amendment 4 (owner, 23 Nov); do not launch; withdraw this entry before any queue-runner run",
    "state": "queued",
    "added_at": "2026-11-23T04:36:03Z",
    "kernel_sources": [

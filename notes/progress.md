@@ -1,5 +1,39 @@
 # Progress (read this first after a restart)
 
+## HANDOVER STATUS, Monday 23 November, 07:00 UTC (fine-tuning study) — supersedes everything below
+
+Owner's list of 23 Nov (second round), every item done or waiting on the owner. Decisions are listed in
+notes/owner_review.md (local only, not in git).
+
+**Running / queued:** nothing of this session's. No Kaggle run, no runner loop, no local job. HALT is cleared
+(owner). `ft_e7e8_pilot` is queued in finetune/kaggle/queue.json, but nothing launches it: no loop runs, and the
+owner has not said go. A `caffeinate -dimsu` (pid 16361) that this session did not start is open in a terminal tab.
+
+**Done this round.**
+1. HALT cleared through the runner (halt_history.txt).
+2. E6: the audit's 7 conditions are met (e6_summary.md, per-model intervals for (c)); the wording is queued (item 3).
+3. Claim 3 of RESULTS_FT_draft.md now says "within a hypothesis string" (approved).
+4. The Table 5b analogue: finetune/scripts/table5b.py → finetune/results/table5b.{json,md}. Audited (PASS WITH
+   CONDITIONS, all met). Added to the draft with a deviation line (computed after the behaviour audit). Queue item 4.
+5. Amendment 3, third review (PASS WITH CONDITIONS): code conditions 1, 2, 3 and 5 met (commits after 461ce34); 4
+   (Amendment 4) and 6 (registered-run code) are open. The pilot notebook is re-pinned and the dry run is clean.
+   Estimate: about 15–20 min, about 0.3 GPU h; the ledger would be 25.84 of 29.5 h at the full limit. The
+   pre-intervention diagnostics already decide that E8 is descriptive-only, that a null would be uninformative for A
+   and for B, and that B gets the upstream qualifier. The owner decides go or drop.
+6. Label noise: a per-item list was obtained from zluke/corr2cause-corrected @ da5891d. The sensitivity analysis and
+   its audit (PASS WITH CONDITIONS, all met) are in private/label_noise/ (summary.md first). The conclusions are
+   unchanged; the A − B gap on ID48 shrinks from 0.081 to 0.028 with corrected labels.
+7. scikit-learn: pinned ==1.9.1 on both branches. The pyproject and level-3 gaps are noted for the owner; nothing
+   edited.
+8. Ownership: this session owns the exp/finetune analysis, PREREG, Kaggle, progress.md and owner_review.md. The
+   defence-pack session owns private/defense/ and causal-probe-study. Heavy jobs are announced to it first.
+
+**Ledger:** 24.34 h charged of the week's 29.5 h cap; Kaggle's page about 5.6 h left by the record. Reset Sat
+28 Nov 00:00 UTC; the cap reverts to 26 h by itself.
+
+**Next (owner):** E7/E8 go or drop; the RESULTS_FT wording (queue items 1–4); the label-noise reading; the first
+round's open items (nd-takehome fork, tag, PRs, profile).
+
 ## HANDOVER STATUS, Monday 23 November, 05:00 UTC (fine-tuning study) — supersedes everything below
 
 Owner away about 24 h, working from the list of 23 Nov. The decisions waiting for the owner are listed in

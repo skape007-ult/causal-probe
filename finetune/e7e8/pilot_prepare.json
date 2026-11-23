@@ -1,0 +1,122 @@
+{
+ "site_layer": {
+  "A": 14,
+  "B": 16
+ },
+ "n_pilot_items": 198,
+ "n_pilot_premises": 50,
+ "models": {
+  "A_s0": {
+   "layer": 14,
+   "diagnostics": {
+    "r_projected_norm": 0.15430241041582152,
+    "cos_gold_ans": 0.7575642477612765,
+    "cos_gold_text": 0.9755074329466975,
+    "share_items_in_mixed_cells": 0.7800511508951407,
+    "share_gold_variance_within_cells": 0.3473985431364337,
+    "median_abs_cos_g_control": 0.776415734470043,
+    "n_cells": 173,
+    "separation_g_report": 0.06379050641951667,
+    "separation_controls_report_median": 0.05859152421886108,
+    "own_answer_S_site": 0.8442062423184997,
+    "own_answer_S_final_last_layer": 0.9610851299754394,
+    "loading_g": {
+     "answer": 0.18913339797497075,
+     "log_tokens": 0.1306934868581374,
+     "adjacency": -0.042510905293675745
+    }
+   },
+   "sigma": {
+    "g": 4.834873297991729,
+    "d_gold": 3.504004730991855,
+    "d_ans": 3.5243118958853805,
+    "d_text": 3.746881373342694
+   }
+  },
+  "A_s1": {
+   "layer": 14,
+   "diagnostics": {
+    "r_projected_norm": 0.09698638430342284,
+    "cos_gold_ans": 0.7191461437485145,
+    "cos_gold_text": 0.9879052919140127,
+    "share_items_in_mixed_cells": 0.73231031543052,
+    "share_gold_variance_within_cells": 0.3391583694255268,
+    "median_abs_cos_g_control": 0.7157549643022412,
+    "n_cells": 171,
+    "separation_g_report": 0.0682068241999891,
+    "separation_controls_report_median": 0.03881940603204152,
+    "own_answer_S_site": 0.8618987071674167,
+    "own_answer_S_final_last_layer": 0.9725775738019212,
+    "loading_g": {
+     "answer": 0.30870806037578713,
+     "log_tokens": -0.44995964692519413,
+     "adjacency": 0.09100016005656408
+    }
+   },
+   "sigma": {
+    "g": 4.727521995884078,
+    "d_gold": 5.694623406955656,
+    "d_ans": 5.593885885368784,
+    "d_text": 6.044454626198109
+   }
+  },
+  "B_s0": {
+   "layer": 16,
+   "diagnostics": {
+    "r_projected_norm": 0.11430410266189543,
+    "cos_gold_ans": 0.92405929253999,
+    "cos_gold_text": 0.9932504301667007,
+    "share_items_in_mixed_cells": 0.7527706734867861,
+    "share_gold_variance_within_cells": 0.30541042341906405,
+    "median_abs_cos_g_control": 0.7857856025984677,
+    "n_cells": 167,
+    "separation_g_report": 0.132137566089121,
+    "separation_controls_report_median": 0.10246374038558649,
+    "own_answer_S_site": 0.981193544036022,
+    "own_answer_S_final_last_layer": 0.9956747966784273,
+    "loading_g": {
+     "answer": 0.06747413394833615,
+     "log_tokens": -0.16625100851703098,
+     "adjacency": 0.3362116277471836
+    }
+   },
+   "sigma": {
+    "g": 5.579364452046049,
+    "d_gold": 5.423708557914257,
+    "d_ans": 5.179885561802915,
+    "d_text": 5.4547588410809045
+   }
+  },
+  "B_s1": {
+   "layer": 16,
+   "diagnostics": {
+    "r_projected_norm": 0.11785601625146991,
+    "cos_gold_ans": 0.9565687518360109,
+    "cos_gold_text": 0.9930298188159771,
+    "share_items_in_mixed_cells": 0.7549019607843137,
+    "share_gold_variance_within_cells": 0.3087646478111338,
+    "median_abs_cos_g_control": 0.8319174205409535,
+    "n_cells": 166,
+    "separation_g_report": 0.06840778090960822,
+    "separation_controls_report_median": 0.05809526973776253,
+    "own_answer_S_site": 0.983776654840948,
+    "own_answer_S_final_last_layer": 0.9946980721281642,
+    "loading_g": {
+     "answer": 0.019464871924616302,
+     "log_tokens": -0.12334999778062605,
+     "adjacency": 0.5940591363212063
+    }
+   },
+   "sigma": {
+    "g": 7.2390172943039905,
+    "d_gold": 5.669670485935977,
+    "d_ans": 5.981260738557964,
+    "d_text": 5.704844575294634
+   }
+  }
+ },
+ "n_donor_missing": {
+  "opposite": 64,
+  "same": 25
+ }
+}

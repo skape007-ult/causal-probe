@@ -28,6 +28,7 @@ from causal_probe import data, probes                 # noqa: E402
 from ftstudy import behaviour as BH, datasets as DS, e7e8 as E   # noqa: E402
 
 PILOT = ["A_s0", "A_s1", "B_s0", "B_s1"]
+ALL = [f"{c}_s{s}" for c in "AB" for s in range(5)]        # third review, condition 5: diagnostics for every model
 N_PILOT = 200
 POS = 1                                    # content_end in E6's resid (positions final, content_end)
 OUT = ROOT / "finetune" / "e7e8"
@@ -76,13 +77,16 @@ def main():
     print("site layers (content_end):", site, flush=True)
 
     text_sign = oof_text_sign([items[i] for i in si])
+    import text_references as TR                                  # selection-half tuned stack scored on the report half
+    trs, tes = TR.Side([items[i] for i in si]), TR.Side([items[i] for i in ri])
+    stack_rep, _, _ = TR.tuned_stack(trs, tes, TR.components(trs, tes))
     pilot_idx = E.take_premises(groups, ri, N_PILOT, seed=0)
     pilot_prem = set(groups[pilot_idx])
     pool = np.array([i for i in ri if groups[i] not in pilot_prem])
     D = E.donors(pilot_idx, pool, y, q, adj, groups, n, seed=0)
     out, meta = {"pilot_idx": pilot_idx, "donors": D}, {"site_layer": site, "n_pilot_items": int(len(pilot_idx)),
                                                         "n_pilot_premises": len(pilot_prem), "models": {}}
-    for run in PILOT:
+    for run in (PILOT if a.synthetic else ALL):
         c = run[0]
         L_c = site[c]
         if L_c is None:
@@ -107,12 +111,25 @@ def main():
         diag["own_answer_S_final_last_layer"] = own_answer_S(Hf[si], own[si], Hf[ri], own[ri], q[ri], n[ri], groups[si])
         hg = H[ri] @ V["g"]
         from e6_analysis import within_string_spearman
-        diag["loading_g"] = {"answer": within_string_spearman(hg, ld[ri], q[ri]), "log_tokens": within_string_spearman(hg, np.log(n[ri]), q[ri]),
-                             "adjacency": within_string_spearman(hg, adj[ri].astype(float), q[ri])}
+        def loading(h):
+            return {"answer": within_string_spearman(h, ld[ri], q[ri]), "text_stack": within_string_spearman(h, stack_rep, q[ri]),
+                    "log_tokens": within_string_spearman(h, np.log(n[ri]), q[ri]), "adjacency": within_string_spearman(h, adj[ri].astype(float), q[ri])}
+        diag["loading_g"] = loading(hg)
+        cl = [loading(H[ri] @ v) for v in V["controls"]]
+        diag["loading_controls"] = {k: {"median": float(np.median([x[k] for x in cl])), "min": float(min(x[k] for x in cl)),
+                                        "max": float(max(x[k] for x in cl))} for k in cl[0]}
         dirs = [V["g"], V["d_gold"], V["d_ans"]] + list(V["controls"])
         sigs = [sig["g"], sig["d_gold"], sig["d_ans"]] + list(sig["controls"])
         steer = np.array([al * s * v for v, s in zip(dirs, sigs) for al in (-2.0, -1.0, 1.0, 2.0)])        # (23*4) x d
         hi = H[pilot_idx]
+        nh = np.linalg.norm(hi, axis=1)
+        diag["steered_norm_ratio_alpha2"] = {nm: {"median": float(np.median(2 * s_ / nh)), "max": float(np.max(2 * s_ / nh))}
+                                             for nm, s_ in (("g", sig["g"]), ("d_gold", sig["d_gold"]), ("d_ans", sig["d_ans"]),
+                                                            ("controls_max_sigma", float(np.max(sig["controls"]))))}
+        if run not in PILOT:                                       # diagnostics only for the non-pilot models
+            meta["models"][run] = {"layer": L_c, "diagnostics": diag, "pilot": False}
+            print(run, "layer", L_c, "(diagnostics only)", flush=True)
+            continue
         patch = np.zeros((len(pilot_idx), 4, H.shape[1]))
         for k, (j, jj) in enumerate(D):
             for col, dn in ((0, j), (1, jj)):
@@ -129,6 +146,24 @@ def main():
         meta["models"][run] = {"layer": L_c, "diagnostics": diag, "sigma": {k: v for k, v in sig.items() if k != "controls"}}
         print(run, "layer", L_c, {k: (round(v, 3) if isinstance(v, float) else v) for k, v in diag.items() if not isinstance(v, dict)}, flush=True)
     meta["n_donor_missing"] = {"opposite": int((D[:, 0] < 0).sum()), "same": int((D[:, 1] < 0).sum())}
+    # labels the registered rules already decide from pre-intervention quantities (third review, condition 5)
+    dec = {}
+    for c in ("A", "B"):
+        ms = [meta["models"][r]["diagnostics"] for r in meta["models"] if r[0] == c and "diagnostics" in meta["models"][r]]
+        if not ms:
+            continue
+        unin = [r for r in meta["models"] if r[0] == c and "diagnostics" in meta["models"][r] and (
+            meta["models"][r]["diagnostics"]["r_projected_norm"] < 0.10
+            or meta["models"][r]["diagnostics"]["median_abs_cos_g_control"] > 0.9)]
+        ups = [r for r in meta["models"] if r[0] == c and "diagnostics" in meta["models"][r] and
+               meta["models"][r]["diagnostics"]["own_answer_S_site"] >= meta["models"][r]["diagnostics"]["own_answer_S_final_last_layer"] - 0.02]
+        skip = float(((D[:, 0] < 0) | (D[:, 1] < 0)).mean())
+        dec[c] = {"not_shown_would_be_uninformative_by_r_or_cos": unin,
+                  "upstream_qualifier_applies_in": ups,
+                  "pilot_share_items_without_both_donors": skip,
+                  "E8_descriptive_only_if_this_holds_in_the_registered_items": skip > 0.30,
+                  "note": "separation-based 'uninformative' needs report-half numbers per run and is recorded under diagnostics"}
+    meta["decided_by_pre_intervention_diagnostics"] = dec
     OUT.mkdir(exist_ok=True)
     tag = "_synthetic" if a.synthetic else ""
     np.savez_compressed(OUT / f"pilot_inputs{tag}.npz", **out)

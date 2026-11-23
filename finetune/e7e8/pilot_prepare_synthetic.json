@@ -22,8 +22,49 @@
     "own_answer_S_final_last_layer": 0.4785755642755416,
     "loading_g": {
      "answer": 0.03790886650660864,
+     "text_stack": 0.06963199187894105,
      "log_tokens": -0.012563235987807054,
      "adjacency": 0.0004270376480413473
+    },
+    "loading_controls": {
+     "answer": {
+      "median": 0.021183656504706515,
+      "min": -0.022833043190968547,
+      "max": 0.07414835840464021
+     },
+     "text_stack": {
+      "median": 0.023099100740495322,
+      "min": -0.02311701891986668,
+      "max": 0.09495889011984548
+     },
+     "log_tokens": {
+      "median": -0.010194029486799379,
+      "min": -0.043291435550341165,
+      "max": 0.030563810407153242
+     },
+     "adjacency": {
+      "median": 0.006780243765758925,
+      "min": -0.01973029355981493,
+      "max": 0.040312033238506705
+     }
+    },
+    "steered_norm_ratio_alpha2": {
+     "g": {
+      "median": 0.3519889182361313,
+      "max": 0.4771326886548551
+     },
+     "d_gold": {
+      "median": 0.49125248956952705,
+      "max": 0.6659090926250627
+     },
+     "d_ans": {
+      "median": 0.4863953921963571,
+      "max": 0.6593251355495608
+     },
+     "controls_max_sigma": {
+      "median": 0.36005706705684526,
+      "max": 0.48806933279293063
+     }
     }
    },
    "sigma": {
@@ -49,8 +90,49 @@
     "own_answer_S_final_last_layer": 0.480537798001204,
     "loading_g": {
      "answer": 0.010975561725218278,
+     "text_stack": 0.03368576231855242,
      "log_tokens": -0.004464179449010711,
      "adjacency": -0.03402418964175508
+    },
+    "loading_controls": {
+     "answer": {
+      "median": 0.006013377738346756,
+      "min": -0.01644166978204046,
+      "max": 0.05093556899490848
+     },
+     "text_stack": {
+      "median": 0.009769639591141296,
+      "min": -0.037177266645840354,
+      "max": 0.048056294464830326
+     },
+     "log_tokens": {
+      "median": -0.01245361137900922,
+      "min": -0.051088181224030395,
+      "max": 0.022562378317742264
+     },
+     "adjacency": {
+      "median": 0.0010980485703876472,
+      "min": -0.029810123657876927,
+      "max": 0.04944823817251401
+     }
+    },
+    "steered_norm_ratio_alpha2": {
+     "g": {
+      "median": 0.34886741970786883,
+      "max": 0.48029531261003205
+     },
+     "d_gold": {
+      "median": 0.4964414533969205,
+      "max": 0.6834645185598411
+     },
+     "d_ans": {
+      "median": 0.4903278513776779,
+      "max": 0.6750477555515205
+     },
+     "controls_max_sigma": {
+      "median": 0.3553253046948661,
+      "max": 0.48918605939064796
+     }
     }
    },
    "sigma": {
@@ -76,8 +158,49 @@
     "own_answer_S_final_last_layer": 0.507208914731492,
     "loading_g": {
      "answer": 0.05748416907898942,
+     "text_stack": 0.042267899820025975,
      "log_tokens": 0.053445172238988876,
      "adjacency": 0.005893475216227234
+    },
+    "loading_controls": {
+     "answer": {
+      "median": 0.014323975110595783,
+      "min": -0.04600863132202052,
+      "max": 0.06567166652697577
+     },
+     "text_stack": {
+      "median": 0.005590233938094872,
+      "min": -0.029631960502006966,
+      "max": 0.04714770627834134
+     },
+     "log_tokens": {
+      "median": 0.020556970691521785,
+      "min": 0.0017559739905037438,
+      "max": 0.03801785874967163
+     },
+     "adjacency": {
+      "median": -0.00047510316835706835,
+      "min": -0.0425514820646074,
+      "max": 0.03812184527950223
+     }
+    },
+    "steered_norm_ratio_alpha2": {
+     "g": {
+      "median": 0.3574710397015686,
+      "max": 0.5523512088786211
+     },
+     "d_gold": {
+      "median": 0.5034664298054985,
+      "max": 0.7779379592960358
+     },
+     "d_ans": {
+      "median": 0.49604700533543555,
+      "max": 0.7664737352888431
+     },
+     "controls_max_sigma": {
+      "median": 0.36517936193908646,
+      "max": 0.5642618271761857
+     }
     }
    },
    "sigma": {
@@ -103,8 +226,49 @@
     "own_answer_S_final_last_layer": 0.48952048322548475,
     "loading_g": {
      "answer": 0.04958212870109213,
+     "text_stack": 0.04915017807541998,
      "log_tokens": -0.021321199394960855,
      "adjacency": -0.014087135316371756
+    },
+    "loading_controls": {
+     "answer": {
+      "median": 0.01360429382142378,
+      "min": -0.026139753355006155,
+      "max": 0.04680463672321555
+     },
+     "text_stack": {
+      "median": 0.017844843289446716,
+      "min": -0.02715053659146896,
+      "max": 0.06281391603420551
+     },
+     "log_tokens": {
+      "median": -0.0009253623919521914,
+      "min": -0.033695041325273054,
+      "max": 0.04248886224562791
+     },
+     "adjacency": {
+      "median": 0.009610178917877753,
+      "min": -0.021616942551530075,
+      "max": 0.04299383811563615
+     }
+    },
+    "steered_norm_ratio_alpha2": {
+     "g": {
+      "median": 0.36190080736188224,
+      "max": 0.5794359117123528
+     },
+     "d_gold": {
+      "median": 0.5011647173350217,
+      "max": 0.8024100223039954
+     },
+     "d_ans": {
+      "median": 0.49751199079047403,
+      "max": 0.7965616768664582
+     },
+     "controls_max_sigma": {
+      "median": 0.3653326985276194,
+      "max": 0.5849306797428866
+     }
     }
    },
    "sigma": {
@@ -118,5 +282,33 @@
  "n_donor_missing": {
   "opposite": 64,
   "same": 25
+ },
+ "decided_by_pre_intervention_diagnostics": {
+  "A": {
+   "not_shown_would_be_uninformative_by_r_or_cos": [
+    "A_s0",
+    "A_s1"
+   ],
+   "upstream_qualifier_applies_in": [
+    "A_s0",
+    "A_s1"
+   ],
+   "pilot_share_items_without_both_donors": 0.36363636363636365,
+   "E8_descriptive_only_if_this_holds_in_the_registered_items": true,
+   "note": "separation-based 'uninformative' needs report-half numbers per run and is recorded under diagnostics"
+  },
+  "B": {
+   "not_shown_would_be_uninformative_by_r_or_cos": [
+    "B_s0",
+    "B_s1"
+   ],
+   "upstream_qualifier_applies_in": [
+    "B_s0",
+    "B_s1"
+   ],
+   "pilot_share_items_without_both_donors": 0.36363636363636365,
+   "E8_descriptive_only_if_this_holds_in_the_registered_items": true,
+   "note": "separation-based 'uninformative' needs report-half numbers per run and is recorded under diagnostics"
+  }
  }
 }

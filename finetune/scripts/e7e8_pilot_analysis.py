@@ -45,12 +45,14 @@ def main():
     gi = groups[idx]
     res = {"models": {}, "note": "pilot numbers; not a test"}
     X7, X8, se7, se8 = {"A": [], "B": []}, {"A": [], "B": []}, {"A": [], "B": []}, {"A": [], "B": []}
+    missing = [r for r in PILOT if not (Path(a.ld) / r / "checks.json").exists()]
+    if missing:
+        raise SystemExit(f"pilot incomplete, missing {missing}: not analysed (third review, condition 1)")
     for run in PILOT:
         f = Path(a.ld) / run / "ld.npy"
         ck = json.loads((Path(a.ld) / run / "checks.json").read_text())
-        if ck["status"] != "OK":
-            res["models"][run] = {"failed_checks": ck}
-            continue
+        if ck["status"] != "OK":                       # third review, condition 1: no partial pilot
+            raise SystemExit(f"{run}: Section 5 checks failed ({ck}); the pilot is not analysed")
         LD = np.load(f).astype(float)
         if a.synthetic and LD.shape[0] < len(idx):
             idx_r, D_r, g_r = idx[: LD.shape[0]], D[: LD.shape[0]], gi[: LD.shape[0]]

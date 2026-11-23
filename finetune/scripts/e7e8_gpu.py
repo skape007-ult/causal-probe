@@ -133,6 +133,16 @@ def main():
                            "ok": bool(proj.max() <= TOL_C_PROJ and rel.max() <= TOL_C_NORM)}
         ok_pre = checks["a"]["kv_ok"] and checks["a"]["hook_ok"] and checks["c"]["ok"] is not False
         LD = np.full((len(enc), 97), np.nan, np.float32)
+        if ok_pre:                                       # (b) before any steering or patching (third review, condition 2)
+            z = []
+            for e in enc:
+                with torch.no_grad(), ctx():
+                    z.append(steer.steered_logit_diffs(model, e["input_ids"], L, torch.zeros(1, d), ans, sub_batch=1,
+                                                       pos=e["pos"]["content_end"])[0])
+            stored = Z[f"{run}|stored_ld"][: len(enc)]
+            diff0 = float(np.abs(np.array(z) - stored).max())
+            checks["b"] = {"max_abs_zero_vs_stored": diff0, "ok": bool(diff0 <= TOL_B) if not a.tiny else None}
+            ok_pre = checks["b"]["ok"] is not False
         if ok_pre:
             S, P = torch.tensor(Z[f"{run}|steer"].astype(np.float32)), Z[f"{run}|patch"].astype(np.float32)
             if a.tiny:
@@ -143,15 +153,16 @@ def main():
                     LD[k] = steer.steered_logit_diffs(model, e["input_ids"], L, vecs, ans, sub_batch=16, pos=e["pos"]["content_end"])
                 if k % 25 == 0:
                     print(f"[e7e8 {run}] {k}/{len(enc)} items, {time.time() - t0:.0f} s", flush=True)
-            stored = Z[f"{run}|stored_ld"][: len(enc)]
-            diff = float(np.abs(LD[:, 0] - stored).max())
-            checks["b"] = {"max_abs_zero_vs_stored": diff, "ok": bool(diff <= TOL_B) if not a.tiny else None}
-        checks["status"] = "OK" if ok_pre and checks.get("b", {}).get("ok") is not False else "FAILED"
+            checks["b"]["zero_column_of_the_run_vs_stored"] = float(np.abs(LD[:, 0] - Z[f"{run}|stored_ld"][: len(enc)]).max())
+        checks["status"] = "OK" if ok_pre else "FAILED"
         checks["seconds"] = round(time.time() - t0, 1)
         np.save(out / "ld.npy", LD)
         (out / "checks.json").write_text(json.dumps(checks, indent=1))
         (out / "DONE").write_text(checks["status"] + "\n")
         print(f"[e7e8 {run}] {checks['status']}: {json.dumps({k: checks[k] for k in ('a', 'c') })} b={checks.get('b')}", flush=True)
+        if checks["status"] != "OK":                     # halt at the first failed check (third review, condition 1)
+            print(f"[e7e8 {run}] HALT: a Section 5 check failed; no further model is run", flush=True)
+            sys.exit(4)
         del model
         if device == "cuda":
             torch.cuda.empty_cache()

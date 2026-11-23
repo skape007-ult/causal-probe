@@ -1051,3 +1051,6 @@ S on POOL-LB (best = tuned stack for every condition; C = 100, the top of the gr
 - Registered behaviour analysis run (blinding condition met). Independent audit (fresh reviewer, code and files only): PASS WITH CONDITIONS, no blocking finding; its own recomputation reproduces every S to 2e-16 and every test's claim. Raw report: finetune/notes/audit_behaviour_raw.md.
 - Conditions acted on: E3's text references on ID48 and A48's E5c (with seed-SD note) added to the output; A48 and Amendment-1 rows flagged descriptive (no below_alpha); rung qualifier now reads the unadjusted p of the variant directly; extra Bswap seeds marked in the tables; cache deps include stat.py and impl.py. Registered numbers unchanged after the rerun.
 - Draft of RESULTS_FT.md with every audit condition met: finetune/notes/RESULTS_FT_draft.md; wording queued in finetune/notes/results_ft_queue.md for the owner.
+
+## Mon 23 Nov 02:10 UTC
+- Handover before the owner switches Claude accounts: nothing running or queued; RESULTS_FT.md not yet written (draft awaits approval; Sunday deadline passed without it). Handover block in notes/progress.md.

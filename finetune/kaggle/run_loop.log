@@ -4,3 +4,655 @@ launched ft_pair_a0_b0 as skape007/ft-pair-a0-b0 (limit 270 min): Kernel version
 ledger for the week from 2026-11-14T00:00:00Z: charged 0.747 h + in flight (full time limits) 4.5 h + external 0 h + this run's limit 4.50 h = 9.75 h of 26.0 h
 Kaggle's own quota: 15.0 h at 2026-11-17T00:05:34Z; left after runs launched since: 9.92 h
 launched ft_pair_a1_b1 as skape007/ft-pair-a1-b1 (limit 270 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a1-b1
+ft_pair_a0_b0: running (Kaggle: running; 5 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 5 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 10 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 10 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 15 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 15 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 20 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 20 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 25 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 25 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 30 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 30 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 35 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 35 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 40 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 40 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 45 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 45 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 50 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 50 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 55 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 55 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 60 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 60 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 65 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 65 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 70 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 70 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 75 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 75 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 80 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 80 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 85 min since launch)
+ft_pair_a1_b1: launched (Kaggle: queued; 85 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 91 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 90 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 96 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 96 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 101 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 101 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 106 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 106 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 111 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 111 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 116 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 116 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 121 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 121 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 126 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 126 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 131 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 131 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 136 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 136 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 141 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 141 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 146 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 146 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 151 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 151 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 156 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 156 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 161 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 161 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 166 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 166 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 171 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 171 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 176 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 176 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 181 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 181 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 186 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 186 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 191 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 191 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 196 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 196 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 201 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 201 min since launch)
+ft_pair_a0_b0: running (Kaggle: running; 206 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 206 min since launch)
+ft_pair_a0_b0: complete (Kaggle: complete; 211 min since launch)
+ft_pair_a1_b1: running (Kaggle: running; 211 min since launch)
+ledger for the week from 2026-11-14T00:00:00Z: charged 4.18 h + in flight (full time limits) 4.5 h + external 0 h + this run's limit 4.50 h = 13.18 h of 26.0 h
+Kaggle's own quota: 15.0 h at 2026-11-17T00:05:34Z; left after runs launched since: 6.487 h
+launched ft_pair_a2_b2 as skape007/ft-pair-a2-b2 (limit 270 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a2-b2
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 216 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 5 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 221 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 10 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 226 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 15 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 231 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 20 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 236 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 25 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 241 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 30 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 246 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 35 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 251 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 40 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 256 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 45 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 261 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 50 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 266 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 55 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 271 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 60 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 276 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 65 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 281 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 70 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 286 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 75 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: running (Kaggle: running; 291 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 80 min since launch)
+queue: nothing queued
+ft_pair_a1_b1: complete (Kaggle: complete; 297 min since launch)
+ft_pair_a2_b2: running (Kaggle: running; 85 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 91 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 96 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 101 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 106 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 111 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 116 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 121 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 126 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 131 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 136 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 141 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 146 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 151 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 156 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 161 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 166 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 171 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 176 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 181 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 186 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 191 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: running (Kaggle: running; 196 min since launch)
+queue: nothing queued
+ft_pair_a2_b2: complete (Kaggle: complete; 201 min since launch)
+queue: nothing queued
+loop ends: nothing in flight; nothing queued
+--- 2026-11-17T22:00:57Z loop restarted for ft_pair_a3_b3
+ledger for the week from 2026-11-14T00:00:00Z: charged 10.876 h + in flight (full time limits) 0.0 h + external 0 h + this run's limit 3.83 h = 14.71 h of 26.0 h
+Kaggle's own quota: 15.0 h at 2026-11-17T00:05:34Z; left after runs launched since: 4.291 h
+launched ft_pair_a3_b3 as skape007/ft-pair-a3-b3 (limit 230 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a3-b3
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 5 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 10 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 15 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 20 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 25 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 30 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 35 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 40 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 45 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 50 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 55 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 60 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 65 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 70 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 75 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 80 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 85 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 90 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 95 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 100 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 105 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 110 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 115 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 120 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 125 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 130 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 135 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 140 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 145 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 150 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 155 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 160 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 165 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 170 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 175 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 181 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 186 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: running (Kaggle: running; 191 min since launch)
+queue: nothing queued
+ft_pair_a3_b3: complete (Kaggle: complete; 196 min since launch)
+queue: nothing queued
+loop ends: nothing in flight; nothing queued
+--- 2026-11-20T21:58:59Z loop started, waits for 2026-11-21T00:05:00Z
+waiting until 2026-11-21T00:05:00Z before polling or launching anything
+start time 2026-11-21T00:05:00Z reached at 2026-11-21T00:05:00Z
+ledger for the week from 2026-11-21T00:00:00Z: charged 0.0 h + in flight (full time limits) 0.0 h + external 0 h + this run's limit 3.83 h = 3.83 h of 26.0 h
+launched ft_pair_a4_b4 as skape007/ft-pair-a4-b4 (limit 230 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a4-b4
+ledger for the week from 2026-11-21T00:00:00Z: charged 0.0 h + in flight (full time limits) 3.833 h + external 0 h + this run's limit 3.83 h = 7.67 h of 26.0 h
+launched ft_pair_a480_c0 as skape007/ft-pair-a480-c0 (limit 230 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a480-c0
+ft_pair_a4_b4: running (Kaggle: running; 5 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 5 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 10 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 10 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 15 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 15 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 20 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 20 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 25 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 25 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 30 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 30 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 35 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 35 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 40 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 40 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 45 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 45 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 50 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 50 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 55 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 55 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 60 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 60 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 65 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 65 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 70 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 70 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 75 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 75 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 80 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 80 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 85 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 85 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 90 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 90 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 96 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 95 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 101 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 100 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 106 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 106 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 111 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 111 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 116 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 116 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 121 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 121 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 126 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 126 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 135 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 135 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 140 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 140 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 145 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 145 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 150 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 150 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 155 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 155 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 160 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 160 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 165 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 165 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 170 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 170 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 175 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 175 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 180 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 180 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 185 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 185 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 190 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 190 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 195 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 195 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 200 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 200 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 205 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 205 min since launch)
+ft_pair_a4_b4: running (Kaggle: running; 210 min since launch)
+ft_pair_a480_c0: running (Kaggle: running; 210 min since launch)
+ft_pair_a4_b4: complete (Kaggle: complete; 215 min since launch)
+ft_pair_a480_c0: complete (Kaggle: complete; 216 min since launch)
+ledger for the week from 2026-11-21T00:00:00Z: charged 7.017 h + in flight (full time limits) 0.0 h + external 0 h + this run's limit 3.83 h = 10.85 h of 26.0 h
+launched ft_pair_a481_c1 as skape007/ft-pair-a481-c1 (limit 230 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a481-c1
+ledger for the week from 2026-11-21T00:00:00Z: charged 7.017 h + in flight (full time limits) 3.833 h + external 0 h + this run's limit 3.83 h = 14.68 h of 26.0 h
+launched ft_pair_a482_c2 as skape007/ft-pair-a482-c2 (limit 230 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-a482-c2
+ft_pair_a481_c1: running (Kaggle: running; 5 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 5 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 10 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 10 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 15 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 15 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 20 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 20 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 25 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 25 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 30 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 30 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 35 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 35 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 40 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 40 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 45 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 45 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 50 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 50 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 55 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 55 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 60 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 60 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 65 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 65 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 70 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 70 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 75 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 75 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 80 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 80 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 85 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 85 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 90 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 90 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 95 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 95 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 100 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 100 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 105 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 105 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 111 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 110 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 116 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 116 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 121 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 121 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 126 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 126 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 131 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 131 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 136 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 136 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 141 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 141 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 146 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 146 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 151 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 151 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 156 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 156 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 161 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 161 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 166 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 166 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 171 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 171 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 176 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 176 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 181 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 181 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 186 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 186 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 191 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 191 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 196 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 196 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 201 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 201 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 206 min since launch)
+ft_pair_a482_c2: running (Kaggle: running; 206 min since launch)
+ft_pair_a481_c1: running (Kaggle: running; 211 min since launch)
+ft_pair_a482_c2: complete (Kaggle: complete; 211 min since launch)
+ledger for the week from 2026-11-21T00:00:00Z: charged 10.448 h + in flight (full time limits) 3.833 h + external 0 h + this run's limit 3.83 h = 18.11 h of 26.0 h
+launched ft_pair_bswap0_bswap1 as skape007/ft-pair-bswap0-bswap1 (limit 230 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-bswap0-bswap1
+ft_pair_a481_c1: running (Kaggle: running; 216 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 5 min since launch)
+ft_pair_a481_c1: complete (Kaggle: complete; 221 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 10 min since launch)
+ledger for the week from 2026-11-21T00:00:00Z: charged 14.048 h + in flight (full time limits) 3.833 h + external 0 h + this run's limit 3.83 h = 21.71 h of 26.0 h
+launched ft_pair_bswap2_bswap3 as skape007/ft-pair-bswap2-bswap3 (limit 230 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-bswap2-bswap3
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 15 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 5 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 20 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 10 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 25 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 15 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 30 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 20 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 35 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 25 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 40 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 30 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 45 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 35 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 50 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 40 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 55 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 45 min since launch)
+ft_pair_bswap0_bswap1: launched (Kaggle: queued; 60 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 50 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 65 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 55 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 70 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 60 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 75 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 65 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 80 min since launch)
+ft_pair_bswap2_bswap3: launched (Kaggle: queued; 70 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 86 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 75 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 91 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 80 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 96 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 85 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 101 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 90 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 106 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 95 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 111 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 100 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 116 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 105 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 121 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 110 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 126 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 116 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 131 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 121 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 136 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 126 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 141 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 131 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 146 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 136 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 151 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 141 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 156 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 146 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 161 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 151 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 166 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 156 min since launch)
+ft_pair_bswap0_bswap1: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap0_bswap1: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 171 min since launch)
+ft_pair_bswap2_bswap3: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap2_bswap3: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 161 min since launch)
+ft_pair_bswap0_bswap1: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap0_bswap1: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 176 min since launch)
+ft_pair_bswap2_bswap3: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap2_bswap3: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 166 min since launch)
+ft_pair_bswap0_bswap1: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap0_bswap1: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 181 min since launch)
+ft_pair_bswap2_bswap3: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap2_bswap3: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 171 min since launch)
+ft_pair_bswap0_bswap1: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap0_bswap1: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 186 min since launch)
+ft_pair_bswap2_bswap3: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap2_bswap3: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 176 min since launch)
+ft_pair_bswap0_bswap1: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap0_bswap1: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 191 min since launch)
+ft_pair_bswap2_bswap3: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap2_bswap3: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 181 min since launch)
+ft_pair_bswap0_bswap1: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap0_bswap1: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 196 min since launch)
+ft_pair_bswap2_bswap3: status could not be read (chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.); left as running
+ft_pair_bswap2_bswap3: running (Kaggle: chmark_leaderboard differs from the actual kernel slug — use the slug from the notebook URL (kaggle.com/code/owner/KERNEL-SLUG), not from the leaderboard. It can also occur if the notebook is private.; 186 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 201 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 191 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 206 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 196 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 211 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 201 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 216 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 206 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 221 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 211 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 226 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 216 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 231 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 221 min since launch)
+ft_pair_bswap0_bswap1: running (Kaggle: running; 236 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 226 min since launch)
+ft_pair_bswap0_bswap1: complete (Kaggle: complete; 241 min since launch)
+ft_pair_bswap2_bswap3: running (Kaggle: running; 231 min since launch)
+ledger for the week from 2026-11-21T00:00:00Z: charged 16.977 h + in flight (full time limits) 3.833 h + external 0 h + this run's limit 3.83 h = 24.64 h of 26.0 h
+launched ft_pair_bswap4 as skape007/ft-pair-bswap4 (limit 230 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-pair-bswap4
+queue: nothing queued
+ft_pair_bswap2_bswap3: running (Kaggle: running; 236 min since launch)
+ft_pair_bswap4: running (Kaggle: running; 5 min since launch)
+queue: nothing queued
+ft_pair_bswap2_bswap3: running (Kaggle: running; 241 min since launch)
+ft_pair_bswap4: running (Kaggle: running; 10 min since launch)
+queue: nothing queued
+ft_pair_bswap2_bswap3: running (Kaggle: running; 246 min since launch)
+ft_pair_bswap4: running (Kaggle: running; 15 min since launch)
+queue: nothing queued
+ft_pair_bswap2_bswap3: running (Kaggle: running; 251 min since launch)
+ft_pair_bswap4: running (Kaggle: running; 20 min since launch)
+queue: nothing queued
+ft_pair_bswap2_bswap3: complete (Kaggle: complete; 256 min since launch)
+ft_pair_bswap4: running (Kaggle: running; 25 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 30 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 35 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 40 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 45 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 50 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 55 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 60 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 65 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 70 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 75 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 80 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 85 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 90 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 95 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 100 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 105 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 110 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 115 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 120 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 125 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 130 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 135 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 141 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 146 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 151 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 156 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 161 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 166 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 171 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 176 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 181 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 186 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 191 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 196 min since launch)
+queue: nothing queued
+ft_pair_bswap4: running (Kaggle: running; 201 min since launch)
+queue: nothing queued
+ft_pair_bswap4: complete (Kaggle: complete; 206 min since launch)
+queue: nothing queued
+loop ends: nothing in flight; nothing queued

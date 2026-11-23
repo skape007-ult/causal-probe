@@ -1,5 +1,60 @@
 # Progress (read this first after a restart)
 
+## HANDOVER STATUS, Monday 23 November, 02:10 UTC (fine-tuning study) — supersedes everything below
+
+Written before the owner switches Claude accounts. A new session should read this block, then CLAUDE.md.
+
+**Running / queued: nothing.** No Kaggle run in flight, nothing in finetune/kaggle/queue.json in state "queued", no
+HALT file, no caffeinate loop or local job running. The Mac can sleep.
+
+**State.**
+- All 21 fine-tuned models + base are filed in finetune/runs/ (A_s0-4, B_s0-4, A48_s0-2, C_s0-2, Bswap_s0-4; Bswap_s3-4
+  are extra, not in any registered test). scores.npz files are git-ignored; backups:
+  ~/Documents/causal-probe-runs-backup/finetune_runs_20261121T1439Z.zip (4.4 MB, all models) and the 20 Nov one.
+  Adapters: finetune/ft_adapters/ (ignored) and the Kaggle outputs.
+- Kaggle quota week from Sat 21 Nov 00:00 UTC: 23.34 h charged by the runner; owner read 6 h 37 min left on Kaggle's
+  page (recorded). Our cap (26 h) leaves 2.66 h: less than one pair session. Next reset Sat 28 Nov 00:00 UTC.
+- Registered behaviour analysis E1-E5: done and independently audited (PASS WITH CONDITIONS, no blocking finding;
+  finetune/notes/audit_behaviour_raw.md). Every condition met (commit 72f2b06). Results:
+  finetune/results/behaviour_registered.json and behaviour_registered_tables.md.
+- **RESULTS_FT.md does not exist yet.** The proposed text is finetune/notes/RESULTS_FT_draft.md, queued as item 1 in
+  finetune/notes/results_ft_queue.md. The Sunday 22 Nov 18:00 EST deadline passed without the owner's approval, so
+  nothing was entered (standing order 4: wording waits for the owner).
+- Explainer: private/EXPLAINER.md (git-ignored, 24 professor questions).
+
+**Open decisions waiting for the owner.**
+1. Approve (or edit) the RESULTS_FT draft; then copy it into finetune/RESULTS_FT.md and commit. Interpretation section
+   is the owner's.
+2. main has a local commit 1c6541d ("Ignore private/") not pushed to origin/main: push it or not.
+3. Whether to use spare quota (Kaggle shows ~6.6 h this week, our cap 2.7 h) for E6 probes (descriptive; base, A, B):
+   needs the cap raised by the owner. Nothing is planned otherwise.
+4. Existing owner-only files (MY_PARTS.md, VERIFY_YOURSELF.md) still in finetune/; moving them to private/ waits for
+   the owner's cleanup trigger.
+
+**Owner's parts (MY_PARTS.md):** (a) balancing and (b) within-string AUROC are still stubs (tests skip); (c) the
+Interpretation section.
+
+**What's next (after approval).** RESULTS_FT.md from the draft. Then, in PREREG order: E6 (representations,
+descriptive) and its audit; an amendment registering E7/E8 (steering/patching), reviewed independently before any
+intervention runs.
+
+**Known but easy to miss.**
+- behaviour.py refuses the registered run unless A_s0-4 and B_s0-4 exist (exit 3); `--base` and `--synthetic
+  planted|null` always run. The reference build is cached in finetune/results/.refs_cache.pkl (ignored; rebuilt
+  automatically when inputs change).
+- The fast resampling statistic is checked against stat.S to 1e-4 (largest difference recorded, 4.4e-16 on the real
+  run). A matrix-product fit can split exact ties in float32 scores; fitted values are formed element by element.
+- Copy-reference grids sit at their edge: best tau = 4 (top) everywhere; pair-only tau = 8 (unregistered) scores 0.778 =
+  A's mean S. Tuned text stack: C = 100 (top of grid) everywhere; C = 1000 adds 0.001. Both disclosed in the draft.
+- The Amendment 1 figures 0.745 / 0.905 / 0.804 are the pair-only tau = 2 member; the family best (registered rule) is
+  tau = 4: 0.769 / 0.913 / 0.816 (what the code uses).
+- Kaggle CLI sometimes fails to read a running kernel's status ("chmark_leaderboard differs ..."); the runner logs it
+  and keeps polling; it resolved itself on 21 Nov.
+- The Kaggle machine sets KAGGLE_* and COLAB_RELEASE_TAG and has google.colab: Kaggle variables must be tested first
+  (finetune/scripts/ft_cells.py).
+- Laptop rules: ../causal-probe/.venv/bin/python for analysis, OMP_NUM_THREADS=2, caffeinate -i for long jobs; the
+  worktree's .venv only holds the Kaggle CLI. No Claude co-author line on commits.
+
 ## STATUS, Saturday 21 November, 15:10 UTC (fine-tuning study) — supersedes everything below
 
 - **Runs:** all 21 fine-tuned models + base filed (A, B x5; A48, C x3; Bswap x5, 3 registered). Kaggle: 23.3 h charged; Kaggle page 6 h 37 min left; cap 2.7 h left; nothing queued.

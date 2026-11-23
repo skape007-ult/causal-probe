@@ -22,3 +22,13 @@
 - **Decisions for the owner:** the wording; whether to compute the table and have it audited, or list it as a
   deviation.
 - **Status:** awaiting the owner. Nothing entered.
+
+## 3. Mon 23 Nov: E6 (representations), descriptive section
+- **Proposed text:** a short descriptive section built from `finetune/notes/e6_summary.md`, keeping its "Read this
+  first" paragraph word for word. That paragraph says the probe is trained on in-distribution gold labels, so "probe
+  above answer" is not "present and unused", and that the text stack fitted on the same labels beats the probe
+  everywhere. It also states that for B the probe is at most 0.01 to 0.02 above B's answers, with ρ ≈ 0.9.
+- **Reason:** E6 is audited (PASS WITH CONDITIONS; all seven met in e6_summary.md). PREREG keeps it descriptive.
+- **Decisions for the owner:** whether E6 appears on the page at all; the wording; whether you approve the use of a
+  run marked FAILED by a notebook bug (see e6_summary.md, "Run status").
+- **Status:** awaiting the owner. Nothing entered.

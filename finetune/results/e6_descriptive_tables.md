@@ -13,6 +13,33 @@ Descriptive (PREREG Amendment 2). S = within-string AUROC with prompt length rem
 | B | final | [21, 20, 20, 22, 27] | 0.917 [0.890, 0.944] | 0.904 | +0.013 [+0.002, +0.024] | 1 | 14 | 0.897 | +0.91 |
 | B | content_end | [18, 18, 25, 22, 22] | 0.915 [0.889, 0.941] | 0.904 | +0.010 [-0.005, +0.025] | 1 | 8 | 0.905 | +0.86 |
 
+## Probe minus own answer, per model (premise interval only)
+
+| Condition | Position | run | D | 95% CI |
+|---|---|---|---|---|
+| base | final | base | +0.254 | [+0.213, +0.295] |
+| base | content_end | base | +0.326 | [+0.286, +0.365] |
+| A | final | A_s0 | +0.083 | [+0.058, +0.107] |
+| A | final | A_s1 | +0.112 | [+0.089, +0.135] |
+| A | final | A_s2 | +0.114 | [+0.088, +0.140] |
+| A | final | A_s3 | +0.094 | [+0.069, +0.120] |
+| A | final | A_s4 | +0.091 | [+0.065, +0.118] |
+| A | content_end | A_s0 | +0.086 | [+0.060, +0.112] |
+| A | content_end | A_s1 | +0.126 | [+0.100, +0.151] |
+| A | content_end | A_s2 | +0.127 | [+0.101, +0.154] |
+| A | content_end | A_s3 | +0.119 | [+0.094, +0.145] |
+| A | content_end | A_s4 | +0.128 | [+0.104, +0.152] |
+| B | final | B_s0 | +0.019 | [+0.006, +0.032] |
+| B | final | B_s1 | +0.010 | [-0.003, +0.023] |
+| B | final | B_s2 | +0.009 | [-0.003, +0.021] |
+| B | final | B_s3 | +0.015 | [+0.002, +0.028] |
+| B | final | B_s4 | +0.010 | [-0.001, +0.021] |
+| B | content_end | B_s0 | +0.015 | [+0.000, +0.029] |
+| B | content_end | B_s1 | +0.004 | [-0.014, +0.022] |
+| B | content_end | B_s2 | +0.002 | [-0.013, +0.017] |
+| B | content_end | B_s3 | +0.011 | [-0.003, +0.026] |
+| B | content_end | B_s4 | +0.018 | [+0.005, +0.032] |
+
 ## Probe against the condition's own references (descriptive)
 
 | Condition | Position | reference | D | 95% CI |

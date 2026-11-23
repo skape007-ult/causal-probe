@@ -248,6 +248,8 @@ def main():
             D_pt = float((point[pi] - point[ai]).mean())
             D_b = (Sb_sum[:, pi] - Sb_sum[:, ai]).mean(1)
             P_pt = float(point[pi].mean())
+            per_run_D = {r_: {"D": float(point[p_] - point[a_]), "ci": ci([point[p_] - point[a_]], Sb_sum[:, p_] - Sb_sum[:, a_])}
+                         for r_, p_, a_ in zip(runs, pi, ai)}          # audit condition 1: per-model intervals for (c)
             out["positions"][pname] = {
                 "layers": per_run[runs[0]]["layers"], "S_seed_mean": mean_pt.tolist(), "S_ci": [lo.tolist(), hi.tolist()],
                 "S_seed_min": point[idx].min(0).tolist(), "S_seed_max": point[idx].max(0).tolist(),
@@ -256,6 +258,7 @@ def main():
                 "max_S": mx, "chosen_layers": [per_run[r_]["positions"][pname]["chosen_layer"] for r_ in runs],
                 "S_probe_at_chosen": P_pt, "S_probe_at_chosen_ci": ci(point[pi], Sb_sum[:, pi].mean(1)),
                 "S_probe_minus_answer": D_pt, "S_probe_minus_answer_ci": ci(point[pi] - point[ai], D_b),
+                "S_probe_minus_answer_per_run": per_run_D,
                 "S_cells_at_chosen_seed_mean": float(np.mean([per_run[r_]["positions"][pname]["S_cells_at_chosen"] for r_ in runs])),
                 "spearman_with_answer_seed_mean": float(np.mean([per_run[r_]["positions"][pname]["spearman_with_answer_within_string_at_chosen"] for r_ in runs]))}
         out["answer_S_seed_mean"] = float(np.mean([per_run[r_]["answer_S_report"] for r_ in runs]))
@@ -297,6 +300,11 @@ def tables(res) -> str:
             L.append(f"| {c} | {p} | {d['chosen_layers']} | {f(d['S_probe_at_chosen'])} [{f(d['S_probe_at_chosen_ci'][0])}, {f(d['S_probe_at_chosen_ci'][1])}] "
                      f"| {f(o['answer_S_seed_mean'])} | {d['S_probe_minus_answer']:+.3f} [{d['S_probe_minus_answer_ci'][0]:+.3f}, {d['S_probe_minus_answer_ci'][1]:+.3f}] "
                      f"| {d['first_layer_ci_above_0.5']} | {d['first_layer_reaching_90pct_of_max_S']} | {f(d['S_cells_at_chosen_seed_mean'])} | {d['spearman_with_answer_seed_mean']:+.2f} |")
+    L += ["", "## Probe minus own answer, per model (premise interval only)", "", "| Condition | Position | run | D | 95% CI |", "|---|---|---|---|---|"]
+    for c, o in res["conditions"].items():
+        for p, d in o["positions"].items():
+            for r_, v in d.get("S_probe_minus_answer_per_run", {}).items():
+                L.append(f"| {c} | {p} | {r_} | {v['D']:+.3f} | [{v['ci'][0]:+.3f}, {v['ci'][1]:+.3f}] |")
     L += ["", "## Probe against the condition's own references (descriptive)", "", "| Condition | Position | reference | D | 95% CI |", "|---|---|---|---|---|"]
     for c in ("A", "B"):
         for p, d in res["conditions"][c]["positions"].items():

@@ -1,0 +1,29 @@
+[     3s] POOL-LB 4706 items: selection 2346, report 2360 (597 premises)
+22:49:52 references from cache finetune/results/.refs_cache.pkl
+[    20s] references: {'E5c_registered|A|lookup': 0.755, 'E5c_registered|A|hand_parse': 0.784, 'E5c_registered|A|tuned_stack': 0.843, 'E5c_registered|A|premise_counts_logistic': 0.525, 'E5c_registered|A|premise_counts_boosting': 0.556, 'memorisation_E5b|A': 0.716, 'E5c_registered|B|lookup': 0.777, 'E5c_registered|B|hand_parse': 0.89, 'E5c_registered|B|tuned_stack': 0.956, 'E5c_registered|B|premise_counts_logistic': 0.575, 'E5c_registered|B|premise_counts_boosting': 0.657, 'memorisation_E5b|B': 0.907, 'selection_half_fit|lookup': 0.763, 'selection_half_fit|hand_parse': 0.881, 'selection_half_fit|tuned_stack': 0.938, 'selection_half_fit|premise_counts_logistic': 0.536, 'selection_half_fit|premise_counts_boosting': 0.612}
+[    66s] base final: chosen layer 25, S report 0.762, answer 0.508, max S 0.796 at layer 20
+[   112s] base content_end: chosen layer 16, S report 0.834, answer 0.508, max S 0.844 at layer 19
+[   152s] A_s0 final: chosen layer 18, S report 0.860, answer 0.777, max S 0.861 at layer 19
+[   190s] A_s0 content_end: chosen layer 18, S report 0.863, answer 0.777, max S 0.875 at layer 17
+[   229s] A_s1 final: chosen layer 20, S report 0.878, answer 0.765, max S 0.882 at layer 18
+[   266s] A_s1 content_end: chosen layer 17, S report 0.891, answer 0.765, max S 0.891 at layer 17
+[   305s] A_s2 final: chosen layer 20, S report 0.852, answer 0.738, max S 0.853 at layer 19
+[   344s] A_s2 content_end: chosen layer 20, S report 0.865, answer 0.738, max S 0.870 at layer 19
+[   384s] A_s3 final: chosen layer 21, S report 0.854, answer 0.760, max S 0.858 at layer 19
+[   422s] A_s3 content_end: chosen layer 20, S report 0.879, answer 0.760, max S 0.888 at layer 16
+[   461s] A_s4 final: chosen layer 18, S report 0.865, answer 0.773, max S 0.880 at layer 20
+[   497s] A_s4 content_end: chosen layer 19, S report 0.901, answer 0.773, max S 0.901 at layer 19
+[   531s] B_s0 final: chosen layer 21, S report 0.918, answer 0.899, max S 0.923 at layer 19
+[   562s] B_s0 content_end: chosen layer 18, S report 0.914, answer 0.899, max S 0.919 at layer 21
+[   599s] B_s1 final: chosen layer 20, S report 0.919, answer 0.909, max S 0.920 at layer 28
+[   633s] B_s1 content_end: chosen layer 18, S report 0.913, answer 0.909, max S 0.922 at layer 20
+[   668s] B_s2 final: chosen layer 20, S report 0.917, answer 0.908, max S 0.918 at layer 25
+[   699s] B_s2 content_end: chosen layer 25, S report 0.910, answer 0.908, max S 0.919 at layer 18
+[   736s] B_s3 final: chosen layer 22, S report 0.925, answer 0.910, max S 0.928 at layer 19
+[   769s] B_s3 content_end: chosen layer 22, S report 0.921, answer 0.910, max S 0.922 at layer 16
+[   806s] B_s4 final: chosen layer 27, S report 0.907, answer 0.897, max S 0.913 at layer 18
+[   839s] B_s4 content_end: chosen layer 22, S report 0.915, answer 0.897, max S 0.921 at layer 16
+[   839s] bootstrap: 500 resamples for the curves, 2000 for the summaries, 666 columns
+/Users/SahilPaliwal/Documents/causal-probe/causal-probe-ft/finetune/ftstudy/seedtest.py:29: RuntimeWarning: divide by zero encountered in divide
+  return np.asarray(D, float) / np.sqrt(seed + np.asarray(v_premise, float)), df
+[  1010s] wrote finetune/results/e6_descriptive.json

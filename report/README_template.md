@@ -61,7 +61,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 | File | What it is |
 |---|---|
 | `RESULTS.md` | The one-page results shown at the top of this README |
-| `EXPLAINER.md` | Start here. Concept primer, decision log, how to read each figure, questions a professor would ask |
+| `EXPLAINER.md` | Start here. Concept primer, decision log, how to read each figure |
 | `report/report.md` | Method, tables and figures per tier |
 | `report/benchmark_text_baselines.md` | Stand-alone note on text-only baselines for the two benchmarks |
 | `notes/log.md` | Dated lab notebook: expectation before each experiment, comparison after |
@@ -69,9 +69,7 @@ How to read each figure: `EXPLAINER.md`, section "How to read each figure".
 | `notes/prior_work.md` | Prior-work check for the benchmark note: what was opened, what was found, the queries |
 | `notes/audit_*_raw.md`, `notes/claims_pass_*_raw.md` | The raw reports of the eighteen independent reviews and two claims passes |
 | `notes/handoff.md` | What is finished, the next phase, and what to verify by hand before using any of this |
-| `study/` | Reading order for a week, 55 graded questions with answers (15 marked as the likeliest in an interview), six predict-then-check exercises |
 | `KAGGLE.md` | How to run the GPU part (first run and round 2) |
-| `YOUR_TURN.md` | Two small experiments left for the reader |
 
 ## Limitations
 

@@ -18,7 +18,7 @@ Safeguards (each has a test in finetune/tests/test_kaggle_run.py):
   1. Queue file. Nothing is launched that is not an entry of finetune/kaggle/queue.json, and entries are
      launched in order. Every state change is written to the file before the next action.
   2. At most MAX_CONCURRENT (2) runs in flight (state launched/running).
-  3. Weekly GPU-hour cap (26 h per Kaggle quota week, which starts Saturday 00:00 UTC). Before a launch the
+  3. Weekly GPU-hour cap (26 h per Kaggle quota week; one-week exceptions in CAP_OVERRIDES, which starts Saturday 00:00 UTC). Before a launch the
      runner adds up: hours charged to finished runs this week + the FULL time limit of every run in flight +
      the full time limit of the candidate + hours entered with `external`. If that exceeds the cap it refuses.
      The time limit is also passed to Kaggle (--timeout), so a run cannot outlive what was reserved for it.
@@ -53,6 +53,13 @@ ROOT = Path(__file__).resolve().parents[2]
 KDIR = ROOT / "finetune" / "kaggle"
 MAX_CONCURRENT = 2
 WEEKLY_CAP_HOURS = 26.0             # the owner's cap (raised from 20 on 16 Nov)
+# One-week exceptions, keyed by the quota week's start (Saturday 00:00 UTC). Owner, 23 Nov: 29.5 h for the week of
+# 21 Nov only (E6), back to WEEKLY_CAP_HOURS from the reset of 28 Nov.
+CAP_OVERRIDES = {"2026-11-21T00:00:00Z": 29.5}
+
+
+def cap_for(w0) -> float:
+    return CAP_OVERRIDES.get(iso(w0), WEEKLY_CAP_HOURS)
 QUEUE_PATIENCE_MIN = 180              # a run Kaggle has not started after this long is reported as a failure
 ACCELERATOR = "NvidiaTeslaT4"            # the CLI's name for "GPU T4 x2"
 IN_FLIGHT = ("launched", "running")
@@ -133,7 +140,7 @@ class Runner:
         external = sum(e["hours"] for e in q.get("external", []) if parse(e["at"]) >= w0)
         led = {"week_start": iso(w0), "charged": round(charged, 3), "reserved_in_flight": round(reserved, 3),
                "external": round(external, 3), "total": round(charged + reserved + external, 3),
-               "cap": WEEKLY_CAP_HOURS, "kaggle_left": None}
+               "cap": cap_for(w0), "kaggle_left": None}
         qs = [x for x in q.get("quota", []) if parse(x["at"]) >= w0]
         if qs:
             last = qs[-1]
@@ -145,7 +152,7 @@ class Runner:
 
     # ------------------------------------------------------------------ commands
     def add(self, rid: str, notebook: str, max_minutes: float, note: str = "", owner: str | None = None,
-            expect_gpu: bool = True) -> dict:
+            expect_gpu: bool = True, kernel_sources: list[str] | None = None) -> dict:
         if not ID_RE.match(rid):
             raise Refused(f"id {rid!r}: use lower-case letters, digits and underscores (3 to 41 characters)")
         nb = (ROOT / notebook).resolve()
@@ -159,6 +166,11 @@ class Runner:
         owner = owner or self.username()
         r = {"id": rid, "notebook": str(nb.relative_to(ROOT)), "kernel": f"{owner}/{rid.replace('_', '-')}",
              "max_minutes": max_minutes, "gpu": expect_gpu, "note": note, "state": "queued", "added_at": iso(self.clock())}
+        for ks in kernel_sources or []:                   # outputs of earlier kernels, read-only inputs (E6: the adapters)
+            if not re.match(r"^[a-z0-9-]+/[a-z0-9-]+$", ks):
+                raise Refused(f"kernel source {ks!r} is not of the form owner/kernel-slug")
+        if kernel_sources:
+            r["kernel_sources"] = list(kernel_sources)
         q["runs"].append(r)
         self.save(q)
         return r
@@ -198,9 +210,9 @@ class Runner:
         say(f"ledger for the week from {led['week_start']}: charged {led['charged']} h + in flight (full time limits) "
             f"{led['reserved_in_flight']} h + external {led['external']} h + this run's limit {need:.2f} h "
             f"= {led['total'] + need:.2f} h of {led['cap']} h")
-        if led["total"] + need > WEEKLY_CAP_HOURS + 1e-9:
+        if led["total"] + need > led["cap"] + 1e-9:
             raise Refused(f"launching {nxt['id']} could bring the week to {led['total'] + need:.2f} GPU hours; "
-                          f"the cap is {WEEKLY_CAP_HOURS}. It stays queued")
+                          f"the cap is {led['cap']:g}. It stays queued")
         if led["kaggle_left"] is not None:
             say(f"Kaggle's own quota: {led['kaggle_left_recorded']}; left after runs launched since: {led['kaggle_left']} h")
             if need > led["kaggle_left"] + 1e-9:
@@ -213,7 +225,7 @@ class Runner:
         push = self.kdir / "push" / nxt["id"]
         meta = {"id": nxt["kernel"], "title": nxt["kernel"].split("/")[1], "code_file": nb.name, "language": "python",
                 "kernel_type": "notebook", "is_private": "true", "enable_gpu": "true" if nxt["gpu"] else "false",
-                "enable_internet": "true", "dataset_sources": [], "competition_sources": [], "kernel_sources": [],
+                "enable_internet": "true", "dataset_sources": [], "competition_sources": [], "kernel_sources": nxt.get("kernel_sources", []),
                 "model_sources": []}
         cmd = ["kernels", "push", "-p", str(push), "-t", str(int(nxt["max_minutes"] * 60))]
         if nxt["gpu"]:
@@ -312,7 +324,7 @@ class Runner:
         """Download the output and the log of a finished run. Returns '' if STATUS.txt says OK, else the reason."""
         dest = self.kdir / "downloads" / r["id"]
         dest.mkdir(parents=True, exist_ok=True)
-        p = self.cli("kernels", "output", r["kernel"], "-p", str(dest), "-o", timeout=3600)
+        p = self.cli("kernels", "output", r["kernel"], "-p", str(dest), "-o", timeout=4 * 3600)   # E6: about 9 GB
         r["download_output"] = (p.stdout + p.stderr).strip()[-300:]
         try:
             lg = self.cli("kernels", "logs", r["kernel"], timeout=300)
@@ -394,6 +406,7 @@ def main(argv=None) -> int:
     a = sub.add_parser("add"); a.add_argument("--id", required=True); a.add_argument("--notebook", required=True)
     a.add_argument("--max-minutes", type=float, required=True); a.add_argument("--note", default="")
     a.add_argument("--owner", default=None); a.add_argument("--cpu", action="store_true")
+    a.add_argument("--kernel-source", action="append", default=[], help="owner/slug of an earlier kernel whose output is attached")
     for name in ("launch", "poll"):
         s = sub.add_parser(name); s.add_argument("--dry-run", action="store_true")
     sub.add_parser("status")
@@ -406,7 +419,7 @@ def main(argv=None) -> int:
         R = Runner()
         lock = R.lock()                     # noqa: F841  (held until exit)
         if args.cmd == "add":
-            r = R.add(args.id, args.notebook, args.max_minutes, args.note, args.owner, not args.cpu)
+            r = R.add(args.id, args.notebook, args.max_minutes, args.note, args.owner, not args.cpu, args.kernel_source)
             print(f"queued {r['id']} -> {r['kernel']} (limit {r['max_minutes']:.0f} min)")
         elif args.cmd == "launch":
             R.launch(dry=args.dry_run)

@@ -388,3 +388,37 @@ changes.
    premise and length carry nothing" means "the premise alone"; in Section 6, rows 3 and 4 are superseded by
    Section 3's table (E3 0.15, E4 0.10) and by E1 as now written (pooled AUROC against 0.922, no test).
 
+
+**Amendment 2, 23 November 2026, 03:00 UTC, before the E6 run (no activation has been extracted).** Section 4 leaves
+E6's details open; they are fixed here. E6 stays descriptive: no test, no p-value, no rung, nothing in
+`RESULTS_FT.md` until the owner approves wording. Owner's instruction of 23 Nov: E6 runs this quota week under a
+cap raised to 29.5 h for that week only.
+1. *Models:* base, A_s0–4, B_s0–4 (every ingested seed; Section 4 did not fix a count). A48, C and Bswap are not run.
+2. *Activations:* POOL-LB (4,706 items), residual stream at every layer (index 0 = embeddings, l + 1 = output of block
+   l; 29 for Qwen2.5-1.5B), at the final position and at the last token of the hypothesis (v1.0 `content_end`),
+   from the scoring pass of `ft_run.py` (`finetune/scripts/e6_extract.py`). The answer logit difference recomputed in
+   the same pass must match the model's stored POOL-LB scores (largest difference recorded; above 0.05 the model's
+   activations are not used and the reason is reported).
+3. *Halves:* v1.0 `data.selection_mask` on the POOL-LB items (a seeded half of the premises). Layers and C are chosen
+   on the selection half; every reported number is on the report half.
+4. *Probe:* v1.0 `probes.fit_predict` (logistic regression on standardised features, C from v1.0's grid (0.01, 0.1, 1)
+   by premise-grouped inner cross-validation on the selection half), trained on the selection half with the gold
+   label, scored on the report half; per model, layer and position. Statistic: S (`stat.S`, the reference
+   implementation of the within-string AUROC with length removed) on the report half, plus v1.0's accuracy for
+   comparison with the v1.0 ladder.
+5. *Reference rows (report half):* the model's own answer (S of its answer logit difference); the E5c text references
+   as registered (fitted on the model's own training set); the same text-reference families fitted on the selection
+   half (what the probe was trained on), with the stack's settings chosen inside the selection half; the
+   memorisation reference of the model's training set (E5b).
+6. *What is reported:*
+   - (a) S of the probe by layer, both positions, each model (seed mean, seed range, premise-bootstrap 95% interval
+     with seeds pooled as in Section 3).
+   - (b) *Layer at which the gold label becomes decodable:* the first layer whose report-half interval of S lies
+     above 0.5, and the first at which the seed-mean S reaches 90% of its maximum over layers.
+   - (c) *Information present and not used:* at the layer chosen on the selection half (largest selection-half S),
+     report-half S(probe) − S(own answer), paired premise-bootstrap 95% interval, per model and condition.
+   - (d) *Loading (standing order 3):* at the chosen layer, the probe's S inside cells of string × adjacency
+     (`stat.S_cells`), and the correlation of the probe score with the model's own answer within string.
+   - Multiplicity: 29 layers × 2 positions × 11 models; only (c) at the selection-chosen layer is read as a summary;
+     the curves are shown whole.
+7. *Audit:* one fresh reviewer, given code and result files, not conclusions, before any wording is proposed.

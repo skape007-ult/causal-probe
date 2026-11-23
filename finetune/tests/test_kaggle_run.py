@@ -281,3 +281,23 @@ def test_run_loop_waits_for_start_time_before_launching(env):
     waits = [s for s in seen if s[0]]
     assert len(waits) >= 12 and all(n == 0 for _, n in waits)       # nothing pushed while waiting
     assert len(pushes(env)) == 1 and why == "nothing queued"
+
+
+def test_cap_override_applies_to_its_week_only(env):
+    env.clk.t = dt.datetime(2026, 11, 23, 3, 0, tzinfo=dt.timezone.utc)   # week of 21 Nov: 29.5 h (owner, 23 Nov)
+    env.external(26.0, "by hand")
+    env.add("run_a", env.nb, 180); env.add("run_b", env.nb, 60)
+    env.launch(say=lambda *_: None)                                        # 26 + 3 = 29 <= 29.5
+    with pytest.raises(K.Refused, match="cap is 29.5"):                    # 26 + 3 in flight + 1 > 29.5
+        env.launch(say=lambda *_: None)
+    env.clk.t = dt.datetime(2026, 11, 28, 1, 0, tzinfo=dt.timezone.utc)   # next week: back to 26
+    assert env.ledger(env.load())["cap"] == 26.0
+
+
+def test_kernel_sources_are_passed_and_checked(env):
+    with pytest.raises(K.Refused, match="kernel source"):
+        env.add("run_x", env.nb, 10, kernel_sources=["not a slug"])
+    env.add("run_a", env.nb, 10, kernel_sources=["tester/ft-pair-a0-b0"])
+    env.launch(say=lambda *_: None)
+    meta = json.loads((env.kdir / "push" / "run_a" / "kernel-metadata.json").read_text())
+    assert meta["kernel_sources"] == ["tester/ft-pair-a0-b0"]

@@ -37,7 +37,7 @@ def run(mod, items, ntok, n_bins=4, k=3, seed=0):
 
 
 def spec_bins(items, ntok, n_bins):
-    """Length bin of every item exactly as MY_PARTS.md defines it (None for items of single-label strings)."""
+    """Length bin of every item exactly as MY_PARTS.md (private repo causal-probe-study) defines it (None for items of single-label strings)."""
     lab = defaultdict(set)
     for it in items:
         lab[it["query"]].add(it["label"])

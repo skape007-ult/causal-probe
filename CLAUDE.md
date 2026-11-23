@@ -20,7 +20,7 @@ Written 16 November 2026 on the owner's instruction. These bind every session th
    feature carries: prompt length, adjacency, the model's own answer).
 4. **`RESULTS_FT.md` wording changes wait for the owner.** Queue the proposed wording with its reason in
    `finetune/notes/results_ft_queue.md`; do not enter it. Numbers that regenerate from result files are not wording.
-5. The owner's parts (`finetune/MY_PARTS.md`) are not implemented by Claude: the balancing function, the
+5. The owner's parts (spec: `finetune/MY_PARTS.md` in the private repository `causal-probe-study`; moved 23 Nov) are not implemented by Claude: the balancing function, the
    within-string AUROC with length removed, the interpretation section. Reference implementations stay in separate
    `*_reference.py` files.
 6. In `RESULTS_FT.md` the decisive comparison for "what did it learn" is each model against the memorisation

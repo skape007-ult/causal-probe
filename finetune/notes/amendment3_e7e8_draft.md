@@ -1,119 +1,147 @@
-# DRAFT Amendment 3: E7 (steering) and E8 (patching), registered before any intervention on a fine-tuned model
+# DRAFT Amendment 3 (version 2): E7 (steering) and E8 (patching), registered before any intervention on a fine-tuned model
 
-Status: **draft for independent review**. It goes into `finetune/PREREG.md` only after the review passes, and the
-registered runs happen only after that **and** with the owner's go-ahead (owner, 23 Nov: draft, review and pilot only;
-no intervention runs). Written 23 Nov 2026, before E6's activations were downloaded. Every quantity below that
-depends on E6 is fixed by a rule stated here, so it is decided before anyone has seen E6's numbers.
+Status: **version 2, revised to meet the 12 conditions of the first review** (`finetune/notes/audit_amendment3_raw.md`;
+version 1 is commit a3ad4b0). It goes into `finetune/PREREG.md` after a follow-up review confirms the conditions are
+met. The registered runs need that **and** the owner's go-ahead (owner, 23 Nov: draft, review, and a pilot only if
+quota is left; no intervention runs). This version is committed before `e6_analysis.py` has run on real activations
+(condition 1). Every quantity that depends on E6 is fixed by a rule given here.
 
-PREREG Section 4 requires three things: (i) a site upstream of where the answer is decodable; (ii) the model's
-own-answer direction and the text prediction's direction as controls, with the test run on the gold direction after
-both are projected out; (iii) a power figure from a small GPU pilot. Each is covered below.
+PREREG Section 4 requires: (i) a site upstream of where the answer is decodable; (ii) the model's own-answer
+direction and the text prediction's direction as controls, with the test on the gold direction after projecting them
+out; (iii) a power figure from a small GPU pilot. Bracketed numbers [c1]–[c12] mark where each review condition is met.
 
-## 0. Question
+## 0. Question, and the ladder [c10]
 
 Is the gold-label information that a linear probe reads at a site upstream of the answer **used** by the fine-tuned
-model, beyond what the model's own answer and a text-only program already account for? E7 asks this by steering
-along the direction. E8 asks it by patching the site from another item. Neither result counts towards a rung of
-Section 0. A positive result says that moving along the gold direction moves the answer more than matched controls
-do. It does not say how the answer is computed.
+model, beyond what its own answer and a text-only program already carry? E7 asks this by steering, E8 by patching.
+
+**Amendment to Section 0:** the L4 row ("an intervention shows the label direction is used") is withdrawn. E7 and E8
+are reported **outside the ladder**, with their own family (Section 3 here). No rung above L3 exists.
 
 ## 1. Models, items, site
 
-- **Models:** A_s0–4 and B_s0–4. The base model is not run (it does not do the task: E1, E6). A48, C and Bswap are
-  not run.
-- **Items:** the report half of POOL-LB (v1.0 `data.selection_mask`, as in E6). Directions and controls are fitted
-  on the selection half only. **N_items** per model is set by the pilot's power figure (Section 4), drawn as whole
-  premises in a seeded order (seed 0), with at most N_items items.
-- **Position:** `content_end`, the last token of the hypothesis. Every template token after the user's text follows
-  it, so it is upstream of the answer position in the sequence. The answer is always read at the final position.
-- **Layer, by rule from E6 (Amendment 2, 6(b)):** for condition c, L_c is E6's "first layer reaching 90% of its
-  maximum excess over 0.5" (`first_layer_reaching_90pct_of_max_excess`) at content_end. It is the same layer for all
-  seeds of c. If E6 marks a model's activations unusable (Amendment 2, item 2), that model is dropped and the page
-  says so.
-- **How upstream the site is, reported beside the result:** a probe on the model's own answer sign at (content_end,
-  L_c) against the same probe at (final, L_c), both on the report half, both S. If the own-answer probe at the site
-  already matches its value at the final position within 0.02, the page says the site is "upstream in position, not
-  in content".
+- **Models:** A_s0–4 and B_s0–4. Not run: base, A48, C, Bswap.
+- **Items [c6, c9]:** the report half of POOL-LB (v1.0 `data.selection_mask`, as in E6), minus the pilot's premises.
+  N_items per model is set by the power rule (Section 4). Items are drawn as whole premises in a seeded order (seed
+  0, then truncated to N_items), and are **the same items for E7, E8 and all ten models**. E8 donors come from the
+  same pool, and an item can be a donor.
+- **Position:** `content_end`, the last token of the hypothesis. The answer is read at the final position.
+- **Layer, by rule [c2]:** for condition c, take E6's per-run `S_selection_oof` at content_end (stride 1: every
+  layer 0–28) and average over the five seeds, giving m(l). Excess e(l) = m(l) − 0.5. L_c is the first layer with
+  e(l) ≥ 0.9 × max_l e(l). **If max_l e(l) ≤ 0.02, condition c is not run**, and its two tests enter the family with
+  p = 1 (Section 3), reported as "no gold signal at the site on the selection half". This uses selection-half numbers
+  only. Report-half S never enters the choice.
+- **How upstream the site is [c9]:** a probe on the model's own answer sign (v1.0 `probes.fit_predict`, trained on
+  the selection half), at (content_end, L_c) and at (final, layer 28). The score is the AUROC within string (the S
+  statistic with the own-answer sign as the label) on the report half. If the site value is within 0.02 of the
+  final-position value, every statement about c carries the qualifier "at a site where the model's answer is already
+  as decodable as at the answer position". The tests are run unchanged.
 
-## 2. Directions
+## 2. Directions and controls
 
 All directions are unit vectors in raw activation space at (content_end, L_c), fitted per model on the selection
 half.
 
 - `d_gold`: difference of class means of the gold label (v1.0 `steer.diff_of_means`).
-- `d_ans`: difference of class means of the model's own answer (sign of its answer logit difference).
-- `d_text`: difference of class means of the sign of the selection-half-fitted tuned stack (E6 reference row
-  `selection_half_fit|tuned_stack`, refitted out of fold on the selection half so that no item's own label enters
-  its own score).
-- **Tested direction:** `g = unit(P d_gold)`, where P projects out span{d_ans, d_text} (Gram–Schmidt, in that
-  order). The cosines of d_gold with d_ans and with d_text are reported.
-- **Controls (K = 20 per model):** labels shuffled within hypothesis string on the selection half, d computed in the
-  same way and projected the same way. This keeps each string's label balance, the class sizes and the projection.
-  Controls drawn with seeds 1 to 20.
+- `d_ans`: difference of class means of the model's own answer sign (answer logit difference > 0).
+- `d_text` [c9]: difference of class means of the sign (decision > 0) of the tuned text stack. The stack is computed
+  out of fold inside the selection half: 5 premise-grouped folds, the stack of `finetune/scripts/text_references.py`
+  fitted on 4 folds and scored on the fifth, with its n-gram C chosen inside the 4 folds.
+- **Tested direction:** g = unit(P d_gold), where P projects out span{d_ans, d_text} (Gram–Schmidt, in that order).
+- **Degenerate g [c4]:** r = ‖P d_gold‖ / ‖d_gold‖ is reported per model. If r < 0.10 in a model, that model's E7
+  and E8 values are reported, but if the condition's test is "not shown" while any of its models has r < 0.10, it is
+  labelled **uninformative**, not "not shown".
+- **Controls (K = 20 per model) [c3]:** labels are shuffled within cells of hypothesis string × own-answer sign ×
+  text-prediction sign on the selection half (seeds 1 to 20). For each shuffle, d = diff of means is computed and then
+  projected and normalised exactly as g. A control therefore has the same dependence on the model's answer and on the
+  text prediction as the gold labels have, inside each string. Only the gold-versus-other split inside those cells
+  is broken.
+- **Loading of g, reported [c3]:** within string (Spearman, averaged with item weights) on the report half,
+  correlation of h·g with the model's answer logit difference, with the selection-half tuned stack's score, with log
+  token count, and with adjacency. The same is reported for the controls (median and range).
 - **Scale:** σ = SD of the selection-half activations projected on that direction. Steps α ∈ {−2, −1, 0, +1, +2} σ.
+  The norm of each steered residual relative to the item's own norm is reported.
 
 ## 3. Statistics
 
+**Units [c6].** LD is the answer logit difference (Yes − No) at the final position. s_LD is the SD of the model's
+unsteered LD over the report-half items used. Every E7 and E8 statistic is divided by s_LD, so both are in "SD of the
+model's own answer score".
+
 ### E7, steering
-- For each item i and direction v: the answer logit difference LD_i(α) with α·v added at the site (v1.0
-  `steer.steered_logit_diffs`, KV-cache form, checked against the full forward in v1.0 tests).
-- Item slope: b_i(v), the least-squares slope of LD_i on α over the five steps.
-- Per model: β(v) = mean over items of b_i(v).
-- Model statistic: X = β(g) − mean over the 20 controls of β(control).
-- **E7(c), for c ∈ {A, B}:** D = mean over the 5 seeds of X, against 0. The registered test (Section 3) gives seed
-  variance, and v_premise comes from 2,000 premise resamples of the items, with every direction's item slopes
-  resampled together.
-- Reported beside it: the rank of β(g) among the 20 controls for each seed, β(d_gold) unprojected, β(d_ans), and the
-  slope in units of LD's own SD.
+- b_i(v): the least-squares slope of LD_i(α) on α (in σ units) over the five steps, from v1.0
+  `steer.steered_logit_diffs` (KV-cache form).
+- β(v) = mean_i b_i(v) / s_LD.
+- Model statistic X7 = β(g) − mean over the 20 controls of β(control).
+- **E7(c):** D = mean over the 5 seeds of X7 against 0, by the registered test (Section 3 of PREREG). The premise
+  variance comes from 2,000 premise resamples of the items, with every direction's slopes and s_LD recomputed on each
+  resample, models fixed.
+- Reported beside it: the rank of β(g) among its 20 controls for each seed, β(d_gold) unprojected, β(d_ans), and
+  **X7 / β(d_ans)** (the effect as a fraction of what moving along the model's own answer direction does) [c6].
 
 ### E8, patching
-- For each item i: a donor j is drawn from another premise with the same hypothesis string, the opposite gold
-  label, the same adjacency, and prompt length within ±10% (first such donor in a seeded order; no donor → item
-  skipped and counted). A same-label donor j' is drawn by the same rule.
-- Patch: replace the residual at (content_end, L_c) of i with the donor's at its own content_end, then read LD_i.
-- Item effect: e_i = [LD_i(patch j) − LD_i] × sign(y_j − y_i) − [LD_i(patch j') − LD_i] × sign(y_j − y_i). This is
-  the movement towards the donor's label, minus the movement from a same-label donor in the same direction.
-- Model statistic: mean e_i. **E8(c)**: the registered test, 5 seeds, against 0.
-- **Projected version (the one tested, by PREREG's requirement):** only the component along g is patched,
-  h_i + ((h_j − h_i)·g) g. The full-vector patch is reported beside it as descriptive.
+- **Donor [c9]:** for item i, the first item j in the seeded order such that: j is from another premise, has the same
+  hypothesis string, the opposite gold label and the same adjacency, and its token count is within ±10% of i's. A
+  same-label donor j' is chosen by the same rule with the same label. Without a donor, the item is skipped and
+  counted.
+- **Projected patch (the tested version):** h_i ← h_i + ((h_j − h_i)·g) g at (content_end, L_c). Then LD_i is read.
+- e_i = { [LD_i(patch j) − LD_i] − [LD_i(patch j') − LD_i] } × (2 y_j − 1) / s_LD. This is the move towards the
+  donor's label, minus the move a same-label donor causes (y_j is the opposite-label donor's gold label, 1 = valid).
+- Model statistic X8 = mean_i e_i. **E8(c):** the registered test, 5 seeds, against 0. The full-vector patch is
+  reported as descriptive.
+- More than 30% of items skipped in any model → E8 for that condition is descriptive only and enters the family with
+  p = 1.
 
-### Family and level
-- E7(A), E7(B), E8(A), E8(B): four tests, Holm over these four. This is a separate family from the eleven of
-  Section 3, because a different question is asked. Claimed means Holm-adjusted p < 0.05.
-- Outlying-seed rule as in Section 3.
+### Family, outliers, replication
+- **Family [c8]:** E7(A), E7(B), E8(A), E8(B). Holm over **m = 4 always**. A test that is dropped, not run, or made
+  descriptive enters with p = 1. Claimed means Holm-adjusted p < 0.05.
+- **Registered effect [c6]:** 0.10 (in s_LD units per σ for E7, in s_LD units for E8), for both.
+- **Outlying seed [c7]:** a seed whose X lies more than 0.10 (the same units) from its condition's median is
+  outlying. The test is then reported with and without it, and claimed only if both are.
+- **Replication [c11]:** half swap, pre-specified. Directions, controls and σ are refitted on the report half, and
+  steering and patching are run on items of the selection half (the same N_items rule, seed 0), at the same L_c. A
+  claimed E7(c) or E8(c) is reported as "replicated" if the swapped D has the same sign and its 95% interval excludes
+  0. Otherwise it is "not replicated", in the same sentence.
 
-## 4. Power from the pilot (GPU, before registration is final)
+## 4. Power from the pilot [c5]
 
-- **Pilot models:** A_s0, A_s1, B_s0, B_s1 (two seeds each, for a first seed SD). Items: 200 report-half items per
-  model, as whole premises (seed 0). They are not the registered items: the registered items are drawn after
-  excluding the pilot's premises.
-- **Pilot measures:** item-level SD of b_i(g) and b_i(control), the correlation between them, the seed-to-seed
-  difference of X, and the same for e_i. The effect itself is **not** used to choose anything: the pilot's
-  X values are reported as pilot numbers only, and no site, direction, step or test is changed after seeing them.
-- **Power:** the registered test simulated with those SDs (premise SE scaled to N_items), seed SD = max(pilot,
-  0.5 × |pilot X|, a floor of 0.02 in LD units per σ). It is computed at α = 0.05/4 for effects of 0.05, 0.10 and 0.20
-  LD units per σ. **Rule:** N_items is the smallest of {300, 600, 1,000, all report-half items} at which power is at
-  least 0.6 for an effect of 0.10. If none reaches 0.6, the test is dropped (standing order 2) and the page says
-  why.
-- **Pilot quota:** one Kaggle session of at most 90 minutes, inside the week's cap.
+- **Pilot models:** A_s0, A_s1, B_s0, B_s1. 200 report-half items per model (whole premises, seed 0). Their premises
+  are then excluded from the registered items.
+- **Measured:** the item-level SD of b_i(g)/s_LD and of the controls' mean, and of e_i, together with their
+  correlation. Also the per-model X7 and X8, used only to estimate a seed SD.
+- **Seed SD for the power simulation:** the upper 80% bound of the SD pooled over A and B (two seeds each, so 2
+  degrees of freedom: s × sqrt(2 / χ²₀.₂₀,₂)). The floor is 0.03. **The pilot's X values do not enter otherwise**:
+  no term in |X|, and no site, direction, step, item rule or test changes after the pilot.
+- **Correlation across seeds:** item slopes are taken as fully correlated across seeds, so the premise SE of the
+  seed mean does not shrink with the number of seeds.
+- **Rule:** N_items is the smallest value in {300, 600, 1,000, all report-half items left} at which the simulated
+  power of the registered test at α = 0.05/4 is at least 0.6, for the registered effect 0.10, for E7 and for E8
+  separately (the larger N wins, since the items are shared). If none reaches 0.6 for a test, that test is dropped
+  (standing order 2), enters the family with p = 1, and the page says why.
+- **Quota:** one Kaggle session of at most 90 minutes, inside the week's cap.
 
-## 5. Outcomes
+## 5. Code and checks on the GPU [c9, c12]
+
+- The adapter is merged into the float16 base (`merge_and_unload`) before any intervention, because `steer.py` hooks
+  the plain model's layers.
+- **Before anything else, on the Kaggle machine, the run halts if any check fails:**
+  - (a) v1.0 `tests/test_steer.py`'s two checks (KV-cache steering = full forward, at both positions) on the merged
+    model.
+  - (b) A zero vector gives an LD within 0.05 of the model's stored POOL-LB score, for every item used.
+  - (c) The unsteered activation at (content_end, L_c) agrees with E6's stored `resid.npy` within 2% relative norm,
+    for the first 20 items.
+- Activations for donors and directions come from E6's `resid.npy` (selection half), which check (c) confirms
+  against the merged model.
+
+## 6. Outcomes
 
 | E7(c) | E8(c) | Statement |
 |---|---|---|
-| claimed > 0 | claimed > 0 | in c, moving the site along the gold direction, with the own-answer and text directions removed, moves the answer towards the gold label more than matched controls do, by steering and by patching |
-| claimed > 0 | not shown | steering moves the answer beyond controls; patching the same component from real items is not shown to |
-| not shown | any | not shown that the projected gold direction at the site is used; intervals given, with the power the design had |
+| claimed > 0 | claimed > 0 | in c, moving the site along the gold direction, with the own-answer and text directions removed, moves the answer towards the gold label more than controls with the same answer and text dependence do, by steering and by patching |
+| claimed > 0 | not shown | steering moves the answer beyond controls; patching that component from real items is not shown to |
+| not shown | any | not shown that the projected gold direction at the site is used; intervals given, with the design's power |
+| uninformative (c4) | any | g was nearly removed by the projection; nothing is said about use |
 | claimed < 0 | any | reported as found |
 
-"Used" is never written without "along this direction at this site, relative to these controls".
-
-## 6. What would make the design fail, and how it is checked
-
-- The projection removes the effect along with the confounds: reported via β(d_gold) unprojected, and the cosines.
-- Steps off the activation manifold: α ≤ 2σ of the projected direction; the norm of the steered residual relative
-  to the item's own norm is reported.
-- Donor matching leaves too few items: the count of skipped items is reported. If more than 30% are skipped in any
-  model, E8 for that condition is reported as descriptive only.
-- Length: LD is also reported with E6's length residual (within string) removed. The test uses raw LD, because
-  every item is compared with itself.
+"Used" is never written without "along this direction at this site, relative to these controls", nor without the
+replication sentence and the upstream qualifier where they apply.

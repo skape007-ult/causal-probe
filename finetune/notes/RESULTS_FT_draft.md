@@ -70,6 +70,26 @@ For A on ID48, within seed:
 - **E4b, not shown:** S(renamed keeping order, A…F → U…Z) − S(renamed reversing) = +0.001 [−0.016, +0.017], Holm p
   0.92. Any effect of letter order is bounded at about ±0.017 [audit 11].
 - **Prediction failed:** E4b was predicted to be at least half of E4a [audit 11].
+- **Descriptive, registered beside E4: the Table 5b analogue** (pooled valid-class F1 at answer logit difference > 0,
+  with pooled AUROC beside it). Computed after the behaviour audit and audited on its own
+  (`finetune/notes/audit_table5b_raw.md`); full table in `finetune/results/table5b.md`. Seed means:
+
+  | Set | A: F1 / AUROC | B: F1 / AUROC | all-valid F1 |
+  |---|---|---|---|
+  | ID | 0.822 / 0.980 | 0.499 / 0.854 | 0.266 |
+  | ID renamed | 0.694 / 0.945 | 0.467 / 0.825 | 0.266 |
+  | ID paraphrased | 0.656 / 0.951 | 0.470 / 0.811 | 0.266 |
+  | official test | 0.844 / 0.984 | 0.532 / 0.871 | 0.268 |
+  | authors' refactorisation, the 1,162 matched items | 0.749 / 0.956 | 0.501 / 0.848 | 0.268 |
+  | authors' paraphrasing, the 1,162 matched items | 0.690 / 0.948 | 0.518 / 0.852 | 0.268 |
+
+  - Compare with the authors' Table 5b by direction only. Both perturbations lower A's F1 on held-out premises.
+  - AUROC falls much less than F1 does, so part of the F1 drop is a shift of the threshold rather than lost
+    ranking.
+  - The authors' full files add 722 and 360 items on the same 21 premises. On the paraphrasing extras A's F1 is
+    0.08, which is most of the full-file drop (0.586).
+  - Intervals on the 21-premise sets are rough.
+  - No robust/fragile or between-condition claim is made from this table [table audit 2–6].
 
 ## Also registered (not a headline claim)
 - **E3, claimed:** S(A) − S(C) on ID48 = +0.328 [+0.270, +0.387], Holm p < 0.001.
@@ -93,6 +113,9 @@ For A on ID48, within seed:
 - **E1:** "F1 at the threshold that maximises F1 on the training set" was not computed. Training-set scores were not
   stored, and it does not affect the gate [audit 5].
 - **E5 near/far:** split as described above [audit 8].
+- **Table 5b analogue (E4, descriptive):** registered, but not computed with the behaviour analysis. It was
+  computed on 23 Nov, after the behaviour audit, from the same stored scores, and audited separately
+  (`finetune/notes/audit_table5b_raw.md`, PASS WITH CONDITIONS, all met).
 - **Reference grids at their edge:**
   - The registered copy family's best τ is the top of its grid (4) in every condition.
   - The tuned stack's best C is the top of its grid (100). C = 1000 would raise it by 0.001, which only strengthens

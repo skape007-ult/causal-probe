@@ -34,3 +34,10 @@
 - **Decisions for the owner:** whether E6 appears on the page at all; the wording; whether you approve the use of a
   run marked FAILED by a notebook bug (see e6_summary.md, "Run status").
 - **Status:** awaiting the owner. Nothing entered.
+
+## 4. Mon 23 Nov: the Table 5b analogue (E4, descriptive)
+- **Proposed text:** the bullet and table added under claim 3 in `RESULTS_FT_draft.md`, and the deviation line
+  ("computed on 23 Nov, after the behaviour audit").
+- **Reason:** owner, 23 Nov: compute, audit, add to the draft with a deviation line. Audit: PASS WITH CONDITIONS, all
+  met (`finetune/notes/audit_table5b_raw.md`).
+- **Status:** in the draft only; nothing entered in RESULTS_FT.md.

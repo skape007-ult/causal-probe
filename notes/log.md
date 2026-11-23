@@ -1054,3 +1054,8 @@ S on POOL-LB (best = tuned stack for every condition; C = 100, the top of the gr
 
 ## Mon 23 Nov 02:10 UTC
 - Handover before the owner switches Claude accounts: nothing running or queued; RESULTS_FT.md not yet written (draft awaits approval; Sunday deadline passed without it). Handover block in notes/progress.md.
+
+## Mon 23 Nov ~04:00 UTC: owner-only material moved; defence pack checked (second session, items A4, B5, C)
+- A4: study/, YOUR_TURN.md, finetune/MY_PARTS.md, finetune/VERIFY_YOURSELF.md, private/EXPLAINER.md and the EXPLAINER section "Questions a professor would ask" copied to the owner's private repository (causal-probe-study) and deleted from main (c050044) and exp/finetune (b13c5a2); no history rewrite. References in living documents updated; historical logs and raw audits left as written.
+- B5: private mirror of nd-takehome made and verified (commits, tree and file hashes identical); public fork untouched; personal files in .git/info/exclude.
+- C: decision defence pack written for the owner (private/, git-ignored; also in the private repository). Independent check by three fresh agents that had not seen it written, against result files, code, git history, the papers and the slides: about 650 card claims plus the ledger and glossary; wrong numbers/sources/facts, overclaims (among them five places in the authorship ledger that credited the owner with more than the record shows) and stale statements after Amendment 3 were found and fixed. Found on the way, for the owner: the registered descriptive Table-5b analogue (pooled F1 on the renamed and paraphrased sets, PREREG Section 1 table and E4 outcomes) was not computed; E4b, being within-string, cannot see a string-level letter-order cue.

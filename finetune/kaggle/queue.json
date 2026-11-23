@@ -389,6 +389,52 @@
    },
    "status_txt": "OK",
    "finished_at": "2026-11-21T14:38:55Z"
+  },
+  {
+   "id": "ft_e6_resid",
+   "notebook": "finetune/notebooks/ft_e6_resid.ipynb",
+   "kernel": "skape007/ft-e6-resid",
+   "max_minutes": 150.0,
+   "gpu": true,
+   "note": "E6 (PREREG Amendment 2): residual stream of base, A_s0-4, B_s0-4 on POOL-LB; estimate 75 min",
+   "state": "failed",
+   "added_at": "2026-11-23T02:37:13Z",
+   "kernel_sources": [
+    "skape007/ft-pair-a0-b0",
+    "skape007/ft-pair-a1-b1",
+    "skape007/ft-pair-a2-b2",
+    "skape007/ft-pair-a3-b3",
+    "skape007/ft-pair-a4-b4"
+   ],
+   "launched_at": "2026-11-23T02:37:19Z",
+   "notebook_sha256": "7849e5bd829a3e18e6b1ec5744bd2c53ae747742778fbade450122db51ac9a25",
+   "commit": "8c10e8b1355603a10a776836d99aba9f5e5215b0+uncommitted",
+   "push_output": "Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-e6-resid",
+   "running_since": "2026-11-23T02:42:22Z",
+   "last_status": "complete",
+   "last_polled": "2026-11-23T03:42:30Z",
+   "gpu_hours_charged": 1.002,
+   "download_output": "99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 793M/800M [00:29<00:00, 28.1MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 796M/800M [00:30<00:00, 28.1MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 799M/800M [00:30<00:00, 27.9MB/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 800M/800M [00:30<00:00, 27.8MB/s]\n\n  0%|          | 0.00/1.77k [00:00<?, ?B/s]\n100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 1.77k/1.77k [00:00<00:00, 1.93MB/s]",
+   "downloaded": {
+    "ft-e6-resid.log": 15770,
+    "kaggle_log.txt": 15771,
+    "kaggle_out/STATUS.txt": 111,
+    "kaggle_out/e6_A_s0.zip": 838778784,
+    "kaggle_out/e6_A_s1.zip": 838778204,
+    "kaggle_out/e6_A_s2.zip": 838778391,
+    "kaggle_out/e6_A_s3.zip": 838778537,
+    "kaggle_out/e6_A_s4.zip": 838777922,
+    "kaggle_out/e6_B_s0.zip": 838779147,
+    "kaggle_out/e6_B_s1.zip": 838778382,
+    "kaggle_out/e6_B_s2.zip": 838778669,
+    "kaggle_out/e6_B_s3.zip": 838778647,
+    "kaggle_out/e6_B_s4.zip": 838779379,
+    "kaggle_out/e6_base.zip": 838782092,
+    "kaggle_out/results_ft_e6_resid.zip": 1809
+   },
+   "status_txt": "FAILED",
+   "failure": "STATUS.txt says 'FAILED', not OK",
+   "finished_at": "2026-11-23T03:48:07Z"
   }
  ],
  "external": [],
@@ -402,6 +448,11 @@
    "hours_left": 6.62,
    "note": "owner, Sat 21 Nov, from Kaggle's page: 6 h 37 min",
    "at": "2026-11-21T14:45:01Z"
+  },
+  {
+   "hours_left": 6.62,
+   "note": "owner, 23 Nov: re-recorded before E6; Kaggle page last read 21 Nov 14:45 UTC as 6 h 37 min, no run since; cap 29.5 h this week only",
+   "at": "2026-11-23T02:37:12Z"
   }
  ]
 }

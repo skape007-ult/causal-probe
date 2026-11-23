@@ -656,3 +656,35 @@ queue: nothing queued
 ft_pair_bswap4: complete (Kaggle: complete; 206 min since launch)
 queue: nothing queued
 loop ends: nothing in flight; nothing queued
+ledger for the week from 2026-11-21T00:00:00Z: charged 23.336 h + in flight (full time limits) 0.0 h + external 0 h + this run's limit 2.50 h = 25.84 h of 29.5 h
+Kaggle's own quota: 6.62 h at 2026-11-23T02:37:12Z; left after runs launched since: 6.62 h
+launched ft_e6_resid as skape007/ft-e6-resid (limit 150 min): Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/skape007/ft-e6-resid
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 5 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 10 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 15 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 20 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 25 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 30 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 35 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 40 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 45 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 50 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 55 min since launch)
+queue: nothing queued
+ft_e6_resid: running (Kaggle: running; 60 min since launch)
+queue: nothing queued
+ft_e6_resid: failed (Kaggle: complete; 65 min since launch)  FAILURE: STATUS.txt says 'FAILED', not OK
+HALT is set; nothing will be launched until the owner clears it:
+2026-11-23T03:48:07Z  ft_e6_resid (skape007/ft-e6-resid): STATUS.txt says 'FAILED', not OK
+loop ends: nothing in flight; HALT is set

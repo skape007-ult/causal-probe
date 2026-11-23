@@ -46,7 +46,7 @@ print("failed:", failed or "none", "| total %.0f min" % ((time.time() - t_start)
 
 PACK = '''
 # ---- archive. Nothing in this cell may stop the notebook ----
-not_finished = ""
+not_finished, skipped = "", ""
 try:
     expected = ["results_" + RUN_NAME + ".zip"]
     status = {}

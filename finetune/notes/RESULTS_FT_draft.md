@@ -64,7 +64,7 @@ The decisive comparison (standing order 6) is each model against the memorisatio
   - S − best text reference: −0.046 [−0.105, +0.014].
   - S in cells − 0.5: +0.271 [+0.174, +0.367]. Its seed SD of 0.036 exceeds 0.03, so this interval is underpowered.
 
-## Claim 3. On held-out premises, renaming the variables lowers S as the authors reported; the drop is not shown to be due to the reversal of letter order.
+## Claim 3. On held-out premises, renaming the variables lowers S as the authors reported; the drop is not shown to be due to the reversal of letter order within a hypothesis string.
 For A on ID48, within seed:
 - **E4a, claimed:** S(original) − S(renamed A…F → Z…U) = +0.074 [+0.046, +0.101], Holm p 0.012.
 - **E4b, not shown:** S(renamed keeping order, A…F → U…Z) − S(renamed reversing) = +0.001 [−0.016, +0.017], Holm p

@@ -1,3 +1,6 @@
 2026-11-17T01:18:47Z  ft_timetest1 (skape007/ft-timetest1): STATUS.txt says 'FAILED', not OK
 2026-11-17T14:46:14Z  CLEARED: owner, 17 Nov: clear the halt and launch ft_timetest2 (out-of-memory fix in ec36087)
 
+2026-11-23T03:48:07Z  ft_e6_resid (skape007/ft-e6-resid): STATUS.txt says 'FAILED', not OK
+2026-11-23T04:41:05Z  CLEARED: owner, 23 Nov: cleared; cause (undefined 'skipped' in the E6 packing cell) diagnosed, fixed in c6a59cd, confirmed by the E6 audit
+

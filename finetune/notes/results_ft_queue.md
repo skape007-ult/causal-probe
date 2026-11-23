@@ -21,7 +21,9 @@
   finetune/runs/*/scores.npz.
 - **Decisions for the owner:** the wording; whether to compute the table and have it audited, or list it as a
   deviation.
-- **Status:** awaiting the owner. Nothing entered.
+- **Status:** owner, 23 Nov: wording approved for the draft ("within a hypothesis string" added to claim 3's heading
+  in RESULTS_FT_draft.md); the table is to be computed, audited and added to the draft with a deviation line.
+  Nothing entered in RESULTS_FT.md.
 
 ## 3. Mon 23 Nov: E6 (representations), descriptive section
 - **Proposed text:** a short descriptive section built from `finetune/notes/e6_summary.md`, keeping its "Read this

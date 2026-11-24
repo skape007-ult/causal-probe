@@ -443,7 +443,7 @@
    "max_minutes": 90.0,
    "gpu": true,
    "note": "deferred by Amendment 4 (owner, 23 Nov); do not launch; withdraw this entry before any queue-runner run",
-   "state": "queued",
+   "state": "withdrawn",
    "added_at": "2026-11-23T04:36:03Z",
    "kernel_sources": [
     "skape007/ft-pair-a0-b0",

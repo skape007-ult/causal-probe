@@ -1071,3 +1071,6 @@ S on POOL-LB (best = tuned stack for every condition; C = 100, the top of the gr
 ## Mon 23 Nov ~06:30 UTC: defence pack, second round (second session; private/ only)
 - Re-check of the first round's fixes: pre-fix text recovered from the checkers' transcripts (validated two ways); a fresh agent checked only the changed lines (93 hunks; 77 OK, 16 fixed, among them one overclaim for the owner in the authorship ledger).
 - Five new cards (E6, Amendment 3, Corr2Cause label noise, the quick-check notebook, the missed pooled-F1 table), a drill sheet and a reading map, each independently checked; findings fixed. Noted for the owner: the label-noise summary's "within ±0.035 for 1.5B to 9B" is wrong for Gemma-2-9B (+0.042), and the rerun that met its audit's conditions was not re-audited; PR #1's commits are authored "Claude".
+
+## Tue 24 Nov ~19:30 UTC (owner's decisions of 24 Nov)
+- E7/E8 pilot entry `ft_e7e8_pilot` withdrawn from finetune/kaggle/queue.json (state "queued" → "withdrawn"; owner): with HALT cleared, any queue-runner run would have launched it by accident. It was never pushed. Dry run: "queue: nothing queued". Dated addendum appended to Amendment 4.

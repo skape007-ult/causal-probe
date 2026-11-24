@@ -644,3 +644,6 @@ independently (`finetune/notes/audit_amendment4_raw.md`, PASS WITH CONDITIONS; e
    the pre-intervention diagnostics showed the design could not give an informative null and could not test E8
    (Amendment 4)". Nothing in Amendment 3 or in the diagnostics is evidence about whether the label direction is used.
 5. *Unchanged:* every registered test of Section 3 and every result of E1–E6.
+6. *Addendum, 24 November 2026, 19:30 UTC (owner):* the pilot entry `ft_e7e8_pilot` was withdrawn from
+   `finetune/kaggle/queue.json` (state "withdrawn"), because with HALT cleared it could have been launched by accident;
+   it was never pushed to Kaggle.

@@ -1,5 +1,33 @@
 # Progress (read this first after a restart)
 
+## HANDOVER STATUS, Wednesday 25 November, morning (fine-tuning study) — supersedes everything below
+
+Owner's list of 24 Nov, done. Decisions are in notes/owner_review.md (local only, not in git).
+
+**Running / queued:** nothing of this session's. No Kaggle run, no runner loop, no local job. HALT is not set, and
+nothing is queued: `ft_e7e8_pilot` was withdrawn (state "withdrawn"; owner, 24 Nov), so a queue-runner run launches
+nothing. A `caffeinate -dimsu` (pid 16361) that this session did not start is open in a terminal tab.
+
+**Done this round.**
+- **Pilot withdrawn** from finetune/kaggle/queue.json; dated addendum (item 6) to Amendment 4; logged (5485ced).
+- **Label noise, second pass** (owner-only, private/label_noise/; no registered result or draft text changed): E4,
+  E5 (A, B; A48 descriptive), the pair-only variant and the copy references, each as published, with disputed items
+  excluded or corrected in grading, and with the references also refitted. CPU only, about 14 min per run. Fresh
+  audit: PASS WITH CONDITIONS, no bug, conditions met. Every line is under the zluke/corr2cause-corrected list at da5891d, not independently verified.
+  - Grading only: E4a, E4b, E5a, E5c and both rungs unchanged; E5b(A) claimed, E5b(B) not.
+  - Refitted references: E5b(A) no longer claimed and A's rung L1, but the audit rules this not like-for-like (the
+    models learned from uncorrected labels, the refitted references from corrected ones).
+- **Gemma-2-9B** line added to the label-noise summary (outside claim 2's range; an observation).
+- **Upstream U2/U4:** HF revision unchanged since Jan 2024, both reproductions unchanged; U2 not raised upstream, U4
+  partly (the 3-class paraphrase labels). Notes in private/; no issue text drafted.
+
+**Next (owner):**
+- the label-noise reading, both passes (whether anything enters RESULTS_FT or the report);
+- the RESULTS_FT wording (queue items 1–4);
+- the E7/E8 redesign after 30 Nov;
+- whether and how to file U2/U4;
+- the first round's open items (nd-takehome fork, v1.1 tag, PRs, profile).
+
 ## HANDOVER STATUS, Monday 23 November, 12:30 UTC (fine-tuning study) — supersedes everything below
 
 Owner's third list of 23 Nov, done. Decisions are listed in notes/owner_review.md (local only, not in git).

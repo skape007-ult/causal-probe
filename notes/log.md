@@ -1074,3 +1074,6 @@ S on POOL-LB (best = tuned stack for every condition; C = 100, the top of the gr
 
 ## Tue 24 Nov ~19:30 UTC (owner's decisions of 24 Nov)
 - E7/E8 pilot entry `ft_e7e8_pilot` withdrawn from finetune/kaggle/queue.json (state "queued" → "withdrawn"; owner): with HALT cleared, any queue-runner run would have launched it by accident. It was never pushed. Dry run: "queue: nothing queued". Dated addendum appended to Amendment 4.
+- Gemma-2-9B line added to the owner-only label-noise summary (outside claim 2's 1.5B–7B range; reported as an observation; no claim changed).
+- Label-noise second pass (owner-only, private/label_noise/; no registered result or draft text changed): E4, E5, the copy references, with five variants under the zluke/corr2cause-corrected list at da5891d (not independently verified); the registered analysis rerun per variant, as_published reproducing behaviour_registered.json. Fresh audit PASS WITH CONDITIONS (no bug; refit variants not like-for-like); conditions met; rerun to save E2/E3 identical on every audited number. The defence-pack session was told before the heavy job and sent the audited figures afterwards.
+- Upstream U2/U4 re-checked: HF corr2cause unchanged since Jan 2024 and our copy byte-identical; both reproductions unchanged. Upstream coverage noted for the owner (private/); no issue text drafted.

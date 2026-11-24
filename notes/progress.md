@@ -1,6 +1,6 @@
 # Progress (read this first after a restart)
 
-## HANDOVER STATUS, Wednesday 25 November, morning (fine-tuning study) — supersedes everything below
+## HANDOVER STATUS, Tuesday 24 November, 20:20 UTC (fine-tuning study) — supersedes everything below
 
 Owner's list of 24 Nov, done. Decisions are in notes/owner_review.md (local only, not in git).
 

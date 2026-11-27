@@ -1,8 +1,14 @@
 # causal-probe
 
-**[Results in one page](RESULTS.md)** · [Report](report/report.md) · [Start here](EXPLAINER.md) · [Reproduce](#reproduction) · [Next phase and checks](notes/handoff.md)
+**[Results in one page](RESULTS.md)** · [Check in 5 minutes](#check-the-headline-in-5-minutes) · [Report](report/report.md) · [Start here](EXPLAINER.md) · [Reproduce](#reproduction) · [Next phase and checks](notes/handoff.md)
 
 Do small open-weight language models internally represent the correct answer to formal causal-reasoning questions that they answer wrongly? A probing, steering and patching study on Corr2Cause and CLadder, run on an 8 GB laptop plus free Kaggle and Colab GPU sessions.
+
+## Check the headline in 5 minutes
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/skape007-ult/causal-probe/blob/main/repro/quickcheck.ipynb) · [`repro/quickcheck.ipynb`](repro/quickcheck.ipynb)
+
+Open it in Colab and choose *Runtime → Run all*. It needs a CPU only, no model weights, and takes about a minute on two CPUs. It downloads the official Corr2Cause files from Hugging Face at the pinned revision and recomputes three things with this repository's own code: claim 1's hypothesis-only AUROC on the official test split ({{benchmark_baselines.json|corr2cause_official_splits/test/hypothesis_only/auroc|ci}}); that hypothesis-only, premise-only and additive whole-prompt classifiers are at chance on the debiased pool; and that prompt length still leaks within a hypothesis type there (AUROC {{probe_content_qwen3b_c2c_debiased.json|baselines/A_no_binding_interaction/template_x_prompt_length/auroc|ci}}). Each number is printed beside the value committed in `results/`, with a pass/fail line. The notebook does not rerun anything that needs a model (probes, steering, patching); for those, see [Reproduction](#reproduction).
 
 **Status:** final, version **v1.0.1** (git tag `v1.0.1`, Sunday 15 November 2026; v1.0 differs only in the review count on the results page). The results page below was checked sentence by sentence against the result files by an independent reviewer (`notes/audit_results_wording_raw.md`); every number on it is read from `results/*.json` when the documents are built, and the end-to-end script regenerated every number of the project on 14 to 15 November (`notes/log.md`). What is left for next week is in `notes/handoff.md`.
 
